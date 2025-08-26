@@ -10,15 +10,17 @@ async function main() {
       password: "hashedpassword", // store hashed password in real app
       name: "John Doe",
       phone: "123456789",
-      image: "https://via.placeholder.com/150"
+      image: "https://via.placeholder.com/150",
+      role: "admin"
     }
   })
 
   const weddingTemplate = await prisma.template.create({
     data: {
+      unique_name: "elegant-wedding", // Adding required unique_name field
       name: "Elegant Wedding",
       type: "wedding",
-      image: "https://via.placeholder.com/600x300",
+      image: "https://theapka.com/storage/01J45Z76636PDX9JANP0FTWRGE.png",
       defaultConfig: {
         background: "/templates/wedding/bg.jpg",
         colors: { primary: "#e63946", secondary: "#f1faee" },
@@ -34,9 +36,10 @@ async function main() {
 
   const birthdayTemplate = await prisma.template.create({
     data: {
+      unique_name: "fun-birthday", // Adding required unique_name field
       name: "Fun Birthday",
       type: "birthday",
-      image: "https://via.placeholder.com/600x300",
+      image: "https://theapka.com/storage/01J4TYPHHH659MS837318XM7GJ.png",
       defaultConfig: {
         background: "/templates/wedding/bg.jpg",
         colors: { primary: "#e63946", secondary: "#f1faee" },

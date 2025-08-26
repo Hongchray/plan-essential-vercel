@@ -36,7 +36,7 @@ const ActionsCell = ({ row }: { row: any }) => {
 
   return (
     <div className="flex gap-2 items-end justify-end">
-      <Link href={`/admin/template/preview/${row.original.id}`}>
+      <Link href={`/preview/${row.original.id}`}>
         <Button size="icon" variant="outline">
           <EyeIcon />
         </Button>

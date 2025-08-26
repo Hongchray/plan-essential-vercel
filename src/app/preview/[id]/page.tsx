@@ -7,7 +7,7 @@ export default async function PreviewTemplate({params,}: {params: Promise<{ id: 
   const { id } = await params;
 
   return (
-    <div className="p-5">
+    <div className="">
       <Preview id={id} />
     </div>
   );
