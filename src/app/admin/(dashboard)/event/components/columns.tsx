@@ -1,0 +1,158 @@
+"use client"
+import { ColumnDef } from "@tanstack/react-table"
+import { Checkbox } from "@/components/ui/checkbox"
+import { Event } from "../data/schema"
+import { DataTableColumnHeader } from "./data-table-column-header"
+import Image from "next/image"
+import { Button } from "@/components/ui/button"
+import { EditIcon, EyeIcon, Trash2Icon } from "lucide-react"
+import Link from "next/link"
+import { ConfirmDialog } from "@/components/composable/dialog/confirm-dialog"
+import { toast } from "sonner"
+import { useRouter } from "next/navigation"
+
+const ActionsCell = ({ row }: { row: any }) => {
+  const router = useRouter(); 
+  
+  const deleteEvent = async (id: string) => {
+    try {
+      const res = await fetch(`/api/admin/event/${id}`, {
+        method: "DELETE",
+      });
+      if (res.ok) {
+        toast.success("Delete Event successfully");
+        router.refresh();
+      } else {
+        toast.error("Error deleting Event");
+      }
+    } catch (error) {
+      toast.error("Error deleting Event");
+    }
+  };
+
+  return (
+    <div className="flex gap-2 items-end justify-end">
+      <Link href={`/admin/event/edit/${row.original.id}`}>
+        <Button size="icon" variant="outline">
+          <EditIcon />
+        </Button>
+      </Link>
+      <ConfirmDialog
+        trigger={
+          <Button size="icon" variant="destructive">
+            <Trash2Icon />
+          </Button>
+        }
+        title="Delete this file?"
+        description="This will permanently remove the file."
+        onConfirm={() => deleteEvent(row.original.id)}
+      />
+    </div>
+  );
+};
+
+export const columns: ColumnDef<Event>[] = [
+  {
+    id: "select",
+    header: ({ table }) => (
+      <Checkbox
+        checked={
+          table.getIsAllPageRowsSelected() ||
+          (table.getIsSomePageRowsSelected() && "indeterminate")
+        }
+        onCheckedChange={(value) => table.toggleAllPageRowsSelected(!!value)}
+        aria-label="Select all"
+        className="translate-y-[2px]"
+      />
+    ),
+    cell: ({ row }) => (
+      <Checkbox
+        checked={row.getIsSelected()}
+        onCheckedChange={(value) => row.toggleSelected(!!value)}
+        aria-label="Select row"
+        className="translate-y-[2px]"
+      />
+    ),
+    enableSorting: false,
+    enableHiding: false,
+  },
+  {
+    accessorKey: "name",
+    header: ({ column }) => (
+      <DataTableColumnHeader column={column} title="Name" />
+    ),
+    cell: ({ row }) => {
+      return (
+        <div className="flex gap-2">
+          <span className="max-w-[200px] truncate font-medium">
+            {row.getValue("name")}
+          </span>
+        </div>
+      )
+    },
+  },
+  {
+    accessorKey: "type",
+    header: ({ column }) => (
+      <DataTableColumnHeader column={column} title="Type" />
+    ),
+    cell: ({ row }) => {
+      return (
+        <div className="flex gap-2">
+          <span className="max-w-[200px] truncate font-medium">
+            {row.getValue("type")}
+          </span>
+        </div>
+      )
+    },
+  },
+  {
+    accessorKey: "startTime",
+    header: ({ column }) => (
+      <DataTableColumnHeader column={column} title="Event Date" />
+    ),
+    cell: ({ row }) => {
+      return (
+        <div className="flex gap-2">
+          <span className="max-w-[200px] truncate font-medium">
+            {row.getValue("startTime")}
+          </span>
+        </div>
+      )
+    },
+  },
+  {
+    accessorKey: "location",
+    header: ({ column }) => (
+      <DataTableColumnHeader column={column} title="Location" />
+    ),
+    cell: ({ row }) => {
+      return (
+        <div className="flex gap-2">
+          <span className="max-w-[200px] truncate font-medium">
+            {row.getValue("location")}
+          </span>
+        </div>
+      )
+    },
+  },
+  {
+    accessorKey: "status",
+    header: ({ column }) => (
+      <DataTableColumnHeader column={column} title="Status" />
+    ),
+    cell: ({ row }) => {
+      return (
+        <div className="flex gap-2">
+          <span className="max-w-[200px] truncate font-medium">
+            {row.getValue("status")}
+          </span>
+        </div>
+      )
+    },
+  },
+  {
+    id: "actions",
+    cell: ({ row }) => <ActionsCell row={row} />, 
+  },
+]

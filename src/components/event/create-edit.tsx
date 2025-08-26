@@ -6,12 +6,12 @@ import z from "zod";
 import { useEffect, useState } from "react";
 import { InputTextField } from "../composable/input/input-text-field";
 import { Button } from "../ui/button";
-import { CodeEditor } from "../composable/input/input-code-editor";
 import { SwitchField } from "../composable/input/switch";
 import { SelectField } from "../composable/select/select-option";
 import { toast } from "sonner";
 import { useRouter } from "next/navigation"
 import { useLoading } from "@/app/admin/(dashboard)/layout";
+import { TextareaField } from "../composable/input/input-textarea-text-field";
 
 const formSchema = z.object({
   name: z
@@ -19,17 +19,25 @@ const formSchema = z.object({
     .min(3, "Name must be at least 3 characters")
     .max(50, "Name must be less than 50 characters"),
   type: z.string().min(1, "Type is required"),
+  owner: z.string().min(1, "Type is required"),
+  bride: z.string().min(1, "Type is required"),
+  groom: z.string().min(1, "Type is required"),
   image: z.string(),
   defaultConfig: z.any(),
   status: z.string(),
-  unique_name: z.string().min(1, "Unique name is required"),
-
+  description: z.string(),
+  userId: z.string(),
+  location: z.string(),
+  latitude: z.string(),
+  longitude: z.string(),
+  startTime: z.string(),
+  endTime: z.string()
 });
 
 type FormData = z.infer<typeof formSchema>;
 
 async function createTemplate(data: FormData) {
-    const res = await fetch("/api/admin/template", {
+    const res = await fetch("/api/admin/event", {
         method: "POST",
         body: JSON.stringify(data),
     });
@@ -41,7 +49,7 @@ async function createTemplate(data: FormData) {
     return res;
 }
 async function updateTemplate(id: string, data: FormData) {
-    const res = await fetch(`/api/admin/template/${id}`,{
+    const res = await fetch(`/api/admin/event/${id}`,{
         method: "PUT",
         body: JSON.stringify(data),
     });
@@ -53,7 +61,7 @@ async function updateTemplate(id: string, data: FormData) {
     return res;
 }
 async function getEditTemplate(id: string) {
-    const res = await fetch(`/api/admin/template/${id}`,{
+    const res = await fetch(`/api/admin/event/${id}`,{
         method: "GET",
         headers: {
             "Content-Type": "application/json",
@@ -73,11 +81,19 @@ export function CreateEditForm({ id}: {id?: string}) {
         resolver: zodResolver(formSchema),
         defaultValues: {
             name: "",
-            type: "",
+            type: "wedding",
             image: "",
-            defaultConfig: "",
             status: "",
-            unique_name: "",
+            description: "",
+            userId: "",
+            location: "",
+            latitude: "",
+            longitude: "",
+            startTime: "",
+            endTime: "",
+            owner: "",
+            bride: "",
+            groom: "",
         }
     });
     useEffect(() => {
@@ -104,7 +120,7 @@ export function CreateEditForm({ id}: {id?: string}) {
             const response = await updateTemplate(id, data);
             if(response.ok){
                 const json = await response.json();
-                router.push(`/admin/template/edit/${json?.id}`) 
+                router.push(`/admin/event/edit/${json?.id}`) 
             }
         }else{
             const response = await createTemplate(data);
@@ -112,7 +128,7 @@ export function CreateEditForm({ id}: {id?: string}) {
                 const json = await response.json();
                 form.reset();
                 toast.success("Create Template successfully");
-                router.push(`/admin/template/edit/${json?.id}`) 
+                router.push(`/admin/event/edit/${json?.id}`) 
             }
         }
         setLoading(false);
@@ -120,24 +136,44 @@ export function CreateEditForm({ id}: {id?: string}) {
     return (
         <div className="p-6 border rounded-md  bg-white  mx-auto">
             <div>
-                <h2 className="text-xl font-bold pb-2">{id ? "Edit" : "Create"} Template</h2>
+                <h2 className="text-xl font-bold pb-2">{id ? "Edit" : "Create"} Event</h2>
             </div>
             <form onSubmit={form.handleSubmit(onSubmit)} >
                 <div className="grid grid-cols-2 gap-2">
                     <InputTextField
                         label="Name"
                         name="name"
-                        placeholder="Enter name"
+                        placeholder="រៀបអាពាហ៍ពិពាហ៍ សុវណ្ណ.."
                         form={form}
                         disabled={loading}
                     />
-                    <InputTextField
-                        label="Unique Name"
-                        name="unique_name"
-                        placeholder="Enter unique name"
-                        form={form}
-                        disabled={loading}
-                    />
+                    {form.getValues('type') != "wedding" && (
+                        <InputTextField
+                            label="Owner"
+                            name="owner"
+                            placeholder="សុុវណ្ណ"
+                            form={form}
+                            disabled={loading}
+                        />
+                    )}
+                    {form.getValues('type') === "wedding" && (
+                        <>
+                            <InputTextField
+                                label="Groom"
+                                name="groom"
+                                placeholder="សុុវណ្ណ"
+                                form={form}
+                                disabled={loading}
+                            />
+                            <InputTextField
+                                label="Bride"
+                                name="bride"
+                                placeholder="បុប្ផា"
+                                form={form}
+                                disabled={loading}
+                            />
+                        </>
+                    )}
                     <SelectField
                         label="Choose Template Type"
                         name="type"
@@ -150,6 +186,20 @@ export function CreateEditForm({ id}: {id?: string}) {
                         ]}
                         form={form}
                     />
+                    <TextareaField
+                        label="Description"
+                        name="description"
+                        placeholder="Enter description"
+                        form={form}
+                        disabled={loading}
+                    />
+                    <TextareaField
+                        label="Location"
+                        name="location"
+                        placeholder="Enter location"
+                        form={form}
+                        disabled={loading}
+                    />
                     <SwitchField
                         label="Status"
                         name="status"
@@ -158,21 +208,11 @@ export function CreateEditForm({ id}: {id?: string}) {
                         form={form}
                     />
                 </div>
-                <div className="py-5">
-                    <CodeEditor
-                        language="json"
-                        label="Default Config"
-                        value={JSON.stringify(form.getValues().defaultConfig || {}, null, 2)}
-                        onChange={(value) => {
-                           form.setValue("defaultConfig", JSON.parse(value||''));
-                        }}
-                    />
-                </div>
                 <div className="pt-2 flex gap-2 items-center justify-end">
                     <Button variant='destructive' 
                         type="button"
                         onClick={()=>
-                            router.push("/admin/template")
+                            router.push("/admin/event")
                         }>
                         Cancel
                     </Button>

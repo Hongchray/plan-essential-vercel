@@ -5,7 +5,7 @@ import { columns } from "./components/columns"
 import { DataTable } from "./components/data-table"
 import { useLoading } from "../layout"
 import { useEffect, useState } from "react"
-import { Template } from "./data/schema"
+import { Event } from "./data/schema"
 
 // export const metadata: Metadata = {
 //   title: "Templates",
@@ -15,25 +15,25 @@ import { Template } from "./data/schema"
 // Simulate a database read for tasks.
 async function getTemplates() {
    // get all templates from api
-   const res = await fetch('/api/admin/template',{
+   const res = await fetch('/api/admin/event',{
     method: 'GET',
     headers: {
       'Content-Type': 'application/json',
     },
    })
    const data = await res.json()
-   return data.templates
+   return data.event
 }
 
 export default function TemplatePage() {
   const { setOverlayLoading } = useLoading();
-  const [data, setData] = useState<Template[]>([])
+  const [data, setData] = useState<Event[]>([])
   useEffect(() => {
     async function fetchTemplates() {
       setOverlayLoading(true)
       try {
         const templates = await getTemplates()
-        setData(templates as Template[])
+        setData(templates as Event[])
       } catch (error) {
         console.error("Failed to fetch templates:", error)
         // You might want to show an error message to the user here
