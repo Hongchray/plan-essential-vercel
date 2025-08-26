@@ -15,6 +15,12 @@ model User {
   phone     String?  @unique
   image     String?
   role      String   @default("user")  //admin , user
+
+  otp_code          String?    // store current OTP
+  otp_expires_at    DateTime?  // expiration time of OTP
+  phone_verified    Boolean    @default(false)
+  phone_verified_at DateTime?  // when phone was verified
+
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
   events    Event[]
