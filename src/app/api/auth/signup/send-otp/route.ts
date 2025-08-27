@@ -1,4 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
+import { prisma } from "@/lib/prisma";
 
 export async function POST(req: NextRequest) {
   try {
@@ -7,7 +8,33 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ error: "Phone is required" }, { status: 400 });
     }
 
+    const existingUser = await prisma.user.findUnique({
+      where: { phone },
+    });
+
+    if (existingUser) {
+      return NextResponse.json(
+        { error: "Phone already registered" },
+        { status: 400 }
+      );
+    }
+
     const otp = Math.floor(100000 + Math.random() * 900000).toString();
+    const expiresAt = new Date(Date.now() + 5 * 60 * 1000); // 5 minutes
+
+    // Create or update user with OTP
+    await prisma.user.upsert({
+      where: { phone },
+      update: { otp_code: otp, otp_expires_at: expiresAt },
+      create: {
+        phone,
+        otp_code: otp,
+        otp_expires_at: expiresAt,
+        email: ``,
+        password: "",
+      },
+    });
+
     const message = `Your OTP code is ${otp}.`;
 
     const apiUrl = process.env.PLASGATE_API_URL;
@@ -40,14 +67,19 @@ export async function POST(req: NextRequest) {
     }
 
     if (!response.ok) {
-      console.error("PlasGate error:", data);
       return NextResponse.json(
         { error: "Failed to send OTP", details: data },
         { status: 500 }
       );
     }
 
-    // Save OTP (⚠️ should use DB/Redis in production)
+    if (typeof data === "object" && data.success === false) {
+      return NextResponse.json(
+        { error: "PlasGate rejected request", details: data },
+        { status: 500 }
+      );
+    }
+
     (globalThis as any).otpStore = (globalThis as any).otpStore || {};
     (globalThis as any).otpStore[phone] = {
       otp,
@@ -56,7 +88,7 @@ export async function POST(req: NextRequest) {
 
     return NextResponse.json({ success: true, message: "OTP sent" });
   } catch (error: any) {
-    console.error("Send OTP error:", error);
+    console.error("❌ Send OTP error:", error);
     return NextResponse.json({ error: error.message }, { status: 500 });
   }
 }

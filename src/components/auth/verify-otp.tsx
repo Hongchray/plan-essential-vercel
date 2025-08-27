@@ -6,15 +6,13 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { useSearchParams, useRouter } from "next/navigation";
 import { toast } from "sonner";
-
+import Image from "next/image";
 export default function VerifyOtp() {
   const searchParams = useSearchParams();
   const phone = searchParams.get("phone");
   const router = useRouter();
-
   const [otp, setOtp] = useState<string[]>(new Array(6).fill(""));
   const [isLoading, setIsLoading] = useState(false);
-
   const inputRefs = useRef<(HTMLInputElement | null)[]>([]);
 
   useEffect(() => {
@@ -24,17 +22,13 @@ export default function VerifyOtp() {
   }, []);
 
   const handleChange = (index: number, value: string) => {
-    // Only allow single digit
     if (value.length > 1) return;
-
-    // Only allow numbers
     if (value && !/^\d$/.test(value)) return;
 
     const newOtp = [...otp];
     newOtp[index] = value;
     setOtp(newOtp);
 
-    // Auto-focus next input
     if (value && index < 5) {
       inputRefs.current[index + 1]?.focus();
     }
@@ -43,13 +37,11 @@ export default function VerifyOtp() {
   const handleKeyDown = (index: number, e: React.KeyboardEvent) => {
     if (e.key === "Backspace") {
       if (!otp[index] && index > 0) {
-        // If current input is empty, go to previous and clear it
         const newOtp = [...otp];
         newOtp[index - 1] = "";
         setOtp(newOtp);
         inputRefs.current[index - 1]?.focus();
       } else if (otp[index]) {
-        // Clear current input
         const newOtp = [...otp];
         newOtp[index] = "";
         setOtp(newOtp);
@@ -67,38 +59,46 @@ export default function VerifyOtp() {
       .getData("text")
       .replace(/\D/g, "")
       .slice(0, 6);
-    const newOtp = [...otp];
 
+    const newOtp = [...otp];
     for (let i = 0; i < pastedData.length && i < 6; i++) {
       newOtp[i] = pastedData[i];
     }
-
     setOtp(newOtp);
 
-    // Focus the next empty input or the last input
     const nextEmptyIndex = newOtp.findIndex((digit) => digit === "");
     const focusIndex = nextEmptyIndex === -1 ? 5 : Math.min(nextEmptyIndex, 5);
     inputRefs.current[focusIndex]?.focus();
   };
 
-  const handleVerify = async () => {
+  const handleVerify = async (e: React.FormEvent) => {
+    e.preventDefault();
+
+    if (!otp) return;
+    console.log("OTP array:", otp);
+
+    const otp_code = otp.join(""); // convert ["1","2","3","4","5","6"] => "123456"
+    console.log("OTP code:", otp_code, "Phone:", phone);
+
+    if (!otp_code || !phone) {
+      toast.error("Phone and OTP are required");
+      return;
+    }
     setIsLoading(true);
     try {
-      const otpString = otp.join("");
-
-      const res = await fetch("/api/auth/verify-otp", {
+      const res = await fetch("/api/auth/signup/verify-otp", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ phone, otp: otpString }),
+        body: JSON.stringify({ phone, otp_code }), // now otp_code is correct
       });
-      const data = await res.json();
 
+      const data = await res.json();
       if (!res.ok) throw new Error(data.error);
 
-      toast.success("OTP verified!");
-      router.push("/set-password?phone=" + phone);
-    } catch (error: any) {
-      toast.error(error.message);
+      toast.success("Phone verified successfully!");
+      router.push(`/admin/signup/set-password?phone=${phone}`);
+    } catch (err: any) {
+      toast.error(err.message || "Verification failed");
     } finally {
       setIsLoading(false);
     }
@@ -108,6 +108,18 @@ export default function VerifyOtp() {
 
   return (
     <div className="p-6 max-w-md mx-auto">
+      <div className="flex justify-center items-center pb-5">
+        <Image
+          src="https://focuzsolution.com/logo.png"
+          placeholder="blur"
+          blurDataURL="https://focuzsolution.com/logo.png"
+          priority
+          alt="logo"
+          width={150}
+          height={50}
+          className="py-2"
+        />
+      </div>
       <div className="text-center mb-8">
         <h2 className="text-2xl font-bold mb-2">Verify OTP</h2>
         <p className="text-sm text-muted-foreground">
