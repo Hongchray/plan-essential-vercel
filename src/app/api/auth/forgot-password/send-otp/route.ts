@@ -13,10 +13,12 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ error: "Invalid purpose" }, { status: 400 });
     }
 
-    const user = await prisma.user.findUnique({ where: { phone } });
+    const existingUser = await prisma.user.findUnique({
+      where: { phone },
+    });
 
     // Registration flow: phone must NOT exist
-    if (purpose === "register" && user) {
+    if (purpose === "register" && existingUser) {
       return NextResponse.json(
         { error: "Phone already registered" },
         { status: 400 }
@@ -24,30 +26,15 @@ export async function POST(req: NextRequest) {
     }
 
     // Forgot password flow: phone must exist
-    if (purpose === "forgot" && !user) {
+    if (purpose === "forgot" && !existingUser) {
       return NextResponse.json({ error: "User not found" }, { status: 404 });
     }
 
-    // Check if previous OTP exists and is still valid
-    const now = new Date();
-    if (user?.otp_code && user?.otp_expires_at && user.otp_expires_at > now) {
-      // Optional: prevent spamming OTPs, e.g., only allow resend every 30s
-      const secondsLeft = Math.ceil(
-        (user.otp_expires_at.getTime() - now.getTime()) / 1000
-      );
-      return NextResponse.json(
-        {
-          error: `OTP already sent. Try again in ${secondsLeft} seconds.`,
-        },
-        { status: 429 }
-      );
-    }
-
-    // Generate new OTP
+    // Generate OTP
     const otp = Math.floor(100000 + Math.random() * 900000).toString();
-    const expiresAt = new Date(Date.now() + 2 * 60 * 1000); // 1 min
+    const expiresAt = new Date(Date.now() + 2 * 60 * 1000); // 5 min
 
-    // Upsert OTP
+    // Create or update user OTP
     await prisma.user.upsert({
       where: { phone },
       update: { otp_code: otp, otp_expires_at: expiresAt },
@@ -60,16 +47,16 @@ export async function POST(req: NextRequest) {
       },
     });
 
-    // Send OTP via SMS (PlasGate)
-    const message = `Your verification code for Plan Essential is: ${otp}`;
-
+    // Send OTP via your SMS provider
+    const message = `${otp} is your reset password OTP code.`;
     const apiUrl = process.env.PLASGATE_API_URL;
     const privateKey = process.env.PLASGATE_API_PRIVATE_KEY;
     const xSecret = process.env.PLASGATE_API_X_SECRET;
     const sender = process.env.PLASGATE_SENDER || "PlasGateUAT";
 
-    if (!apiUrl || !privateKey || !xSecret)
+    if (!apiUrl || !privateKey || !xSecret) {
       throw new Error("Missing PlasGate API environment variables");
+    }
 
     const response = await fetch(`${apiUrl}?private_key=${privateKey}`, {
       method: "POST",
@@ -91,7 +78,14 @@ export async function POST(req: NextRequest) {
       );
     }
 
-    return NextResponse.json({ success: true, message: "OTP sent", otp }); // otp for testing
+    // Store OTP in memory for quick verification (optional)
+    (globalThis as any).otpStore = (globalThis as any).otpStore || {};
+    (globalThis as any).otpStore[phone] = {
+      otp,
+      expires: Date.now() + 5 * 60 * 1000,
+    };
+
+    return NextResponse.json({ success: true, message: "OTP sent", otp }); // include OTP for testing only
   } catch (error: any) {
     console.error("❌ Send OTP error:", error);
     return NextResponse.json({ error: error.message }, { status: 500 });

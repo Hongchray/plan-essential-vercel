@@ -66,7 +66,7 @@ export function SignUpForm() {
       const response = await fetch("/api/auth/signup/send-otp", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ phone }),
+        body: JSON.stringify({ phone, purpose: "register" }),
       });
       const data = await response.json();
       if (!response.ok) {
@@ -156,7 +156,10 @@ export function SignUpForm() {
 
             <div className="mt-4 text-center text-sm">
               Already have an account?{" "}
-              <Link href="/admin/login" className="underline underline-offset-4">
+              <Link
+                href="/admin/login"
+                className="underline underline-offset-4"
+              >
                 Login
               </Link>
             </div>

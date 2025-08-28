@@ -15,48 +15,20 @@ export async function POST(req: NextRequest) {
 
     const user = await prisma.user.findUnique({ where: { phone } });
 
-    // Registration flow: phone must NOT exist
-    if (purpose === "register" && user) {
-      return NextResponse.json(
-        { error: "Phone already registered" },
-        { status: 400 }
-      );
-    }
-
-    // Forgot password flow: phone must exist
-    if (purpose === "forgot" && !user) {
+    if (!user) {
       return NextResponse.json({ error: "User not found" }, { status: 404 });
-    }
-
-    // Check if previous OTP exists and is still valid
-    const now = new Date();
-    if (user?.otp_code && user?.otp_expires_at && user.otp_expires_at > now) {
-      // Optional: prevent spamming OTPs, e.g., only allow resend every 30s
-      const secondsLeft = Math.ceil(
-        (user.otp_expires_at.getTime() - now.getTime()) / 1000
-      );
-      return NextResponse.json(
-        {
-          error: `OTP already sent. Try again in ${secondsLeft} seconds.`,
-        },
-        { status: 429 }
-      );
     }
 
     // Generate new OTP
     const otp = Math.floor(100000 + Math.random() * 900000).toString();
-    const expiresAt = new Date(Date.now() + 2 * 60 * 1000); // 1 min
+    const expiresAt = new Date(Date.now() + 2 * 60 * 1000); // 5 min
 
-    // Upsert OTP
-    await prisma.user.upsert({
+    // Update user with new OTP
+    await prisma.user.update({
       where: { phone },
-      update: { otp_code: otp, otp_expires_at: expiresAt },
-      create: {
-        phone,
+      data: {
         otp_code: otp,
         otp_expires_at: expiresAt,
-        email: "",
-        password: "",
       },
     });
 
@@ -68,8 +40,9 @@ export async function POST(req: NextRequest) {
     const xSecret = process.env.PLASGATE_API_X_SECRET;
     const sender = process.env.PLASGATE_SENDER || "PlasGateUAT";
 
-    if (!apiUrl || !privateKey || !xSecret)
+    if (!apiUrl || !privateKey || !xSecret) {
       throw new Error("Missing PlasGate API environment variables");
+    }
 
     const response = await fetch(`${apiUrl}?private_key=${privateKey}`, {
       method: "POST",
@@ -86,14 +59,18 @@ export async function POST(req: NextRequest) {
 
     if (!response.ok || (typeof data === "object" && data.success === false)) {
       return NextResponse.json(
-        { error: "Failed to send OTP", details: data },
+        { error: "Failed to resend OTP", details: data },
         { status: 500 }
       );
     }
 
-    return NextResponse.json({ success: true, message: "OTP sent", otp }); // otp for testing
+    return NextResponse.json({
+      success: true,
+      message: "OTP resent successfully",
+      otp,
+    }); // OTP included for testing
   } catch (error: any) {
-    console.error("❌ Send OTP error:", error);
+    console.error("❌ Resend OTP error:", error);
     return NextResponse.json({ error: error.message }, { status: 500 });
   }
 }

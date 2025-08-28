@@ -19,6 +19,8 @@ import Link from "next/link";
 import { toast } from "sonner";
 import { useRouter } from "next/navigation";
 import { signIn } from "next-auth/react";
+import { PasswordInput } from "@/composables/password-field";
+import { TelegramLoginButton } from "@/components/telegram-login-button"; // Import the new component
 
 // Define validation schema
 const loginSchema = z.object({
@@ -132,26 +134,19 @@ export function LoginForm() {
                 )}
               </div>
               <div className="grid gap-2">
+                <PasswordInput
+                  value={password}
+                  onChange={(e) => setPassword(e.target.value)}
+                  error={errors.password}
+                />
                 <div className="flex items-center">
-                  <Label htmlFor="password">Password</Label>
                   <a
-                    href="#"
+                    href="/admin/forgot-password"
                     className="ml-auto inline-block text-sm underline-offset-4 hover:underline"
                   >
                     Forgot your password?
                   </a>
                 </div>
-                <Input
-                  id="password"
-                  type="password"
-                  value={password}
-                  onChange={(e) => setPassword(e.target.value)}
-                  placeholder="Password"
-                  disabled={isLoading}
-                />
-                {errors.password && (
-                  <p className="text-sm text-red-500">{errors.password}</p>
-                )}
               </div>
               <Button type="submit" className="w-full" disabled={isLoading}>
                 {isLoading && <Loader2 className="animate-spin" />}
@@ -162,16 +157,8 @@ export function LoginForm() {
                   Or
                 </span>
               </div>
-              <Button variant="outline" className="w-full" type="button">
-                <Image
-                  src="/telegram-icon-free-png.webp"
-                  alt="logo"
-                  width={20}
-                  height={20}
-                  className="py-2"
-                />
-                Continue with Telegram
-              </Button>
+              {/* Replace the old button with the new TelegramLoginButton component */}
+              <TelegramLoginButton />
             </div>
             <div className="mt-4 text-center text-sm">
               Don&apos;t have an account?{" "}

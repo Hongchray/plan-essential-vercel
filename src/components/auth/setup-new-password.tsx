@@ -9,12 +9,12 @@ import { Button } from "@/components/ui/button";
 import { toast } from "sonner";
 import { Loader2 } from "lucide-react";
 import Image from "next/image";
-import { PasswordInput } from "@/composables/password-field";
+
+// Zod schema for password validation
 const passwordSchema = z
   .object({
     password: z.string().min(8, "Password must be at least 8 characters"),
     confirm_password: z.string(),
-    name: z.string().optional(),
   })
   .refine((data) => data.password === data.confirm_password, {
     message: "Passwords do not match",
@@ -25,12 +25,11 @@ type PasswordFormData = z.infer<typeof passwordSchema>;
 
 export default function SetPasswordPage() {
   const searchParams = useSearchParams();
-  const phone = searchParams.get("phone");
+  const phone = searchParams.get("phone"); // phone passed via query
   const router = useRouter();
 
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
-  const [name, setName] = useState("");
   const [isLoading, setIsLoading] = useState(false);
   const [errors, setErrors] = useState<
     Partial<PasswordFormData> & { message?: string }
@@ -41,7 +40,6 @@ export default function SetPasswordPage() {
       passwordSchema.parse({
         password,
         confirm_password: confirmPassword,
-        name,
       });
       setErrors({});
       return true;
@@ -69,21 +67,20 @@ export default function SetPasswordPage() {
 
     setIsLoading(true);
     try {
-      const res = await fetch("/api/auth/signup/set-password", {
+      const res = await fetch("/api/auth/set-password", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           phone,
           password,
-          name: name || undefined,
         }),
       });
 
       const data = await res.json();
       if (!res.ok) throw new Error(data.error);
 
-      toast.success("Account created successfully!");
-      router.push("/admin/login");
+      toast.success("Password set successfully!");
+      router.push("/admin/login"); // redirect after success
     } catch (err: any) {
       toast.error(err.message || "Failed to set password");
       setErrors({ message: err.message });
@@ -93,7 +90,7 @@ export default function SetPasswordPage() {
   };
 
   return (
-    <div className="">
+    <div className="max-w-md mx-auto p-6">
       <div className="flex justify-center items-center pb-5">
         <Image
           src="https://focuzsolution.com/logo.png"
@@ -103,7 +100,6 @@ export default function SetPasswordPage() {
           alt="logo"
           width={150}
           height={50}
-          className="py-2"
         />
       </div>
 
@@ -115,31 +111,31 @@ export default function SetPasswordPage() {
         )}
 
         <div className="flex flex-col gap-1">
-          <Label htmlFor="name">Name (optional)</Label>
+          <Label htmlFor="password">Password</Label>
           <Input
-            id="name"
-            placeholder="Your name"
-            value={name}
-            onChange={(e) => setName(e.target.value)}
-          />
-          {errors.name && <p className="text-red-500 text-sm">{errors.name}</p>}
-        </div>
-
-        <div className="flex flex-col gap-1">
-          <PasswordInput
+            id="password"
+            type="password"
+            placeholder="Enter password"
             value={password}
             onChange={(e) => setPassword(e.target.value)}
-            error={errors.password}
           />
+          {errors.password && (
+            <p className="text-red-500 text-sm">{errors.password}</p>
+          )}
         </div>
 
         <div className="flex flex-col gap-1">
-          <PasswordInput
-            label="Confirm password"
+          <Label htmlFor="confirmPassword">Confirm Password</Label>
+          <Input
+            id="confirmPassword"
+            type="password"
+            placeholder="Confirm password"
             value={confirmPassword}
-            onChange={(e) => setConfirmPassword(e.target.value)} // ✅ FIXED
-            error={errors.confirm_password}
+            onChange={(e) => setConfirmPassword(e.target.value)}
           />
+          {errors.confirm_password && (
+            <p className="text-red-500 text-sm">{errors.confirm_password}</p>
+          )}
         </div>
 
         <Button type="submit" disabled={isLoading} className="mt-4 w-full">

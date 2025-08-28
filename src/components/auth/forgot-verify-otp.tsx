@@ -7,8 +7,6 @@ import { Input } from "@/components/ui/input";
 import { useSearchParams, useRouter } from "next/navigation";
 import { toast } from "sonner";
 import Image from "next/image";
-import { Card, CardHeader } from "../ui/card";
-
 export default function VerifyOtp() {
   const searchParams = useSearchParams();
   const phone = searchParams.get("phone");
@@ -16,13 +14,14 @@ export default function VerifyOtp() {
   const [otp, setOtp] = useState<string[]>(new Array(6).fill(""));
   const [isLoading, setIsLoading] = useState(false);
   const inputRefs = useRef<(HTMLInputElement | null)[]>([]);
-  const [countdown, setCountdown] = useState<number>(120);
+  const [countdown, setCountdown] = useState(120);
 
   useEffect(() => {
     if (inputRefs.current[0]) {
       inputRefs.current[0].focus();
     }
   }, []);
+
   useEffect(() => {
     let timer: NodeJS.Timeout;
     if (countdown > 0) {
@@ -96,17 +95,27 @@ export default function VerifyOtp() {
     }
     setIsLoading(true);
     try {
-      const res = await fetch("/api/auth/signup/verify-otp", {
+      const res = await fetch("/api/auth/forgot-password/verify-otp", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ phone, otp_code }), // now otp_code is correct
+        body: JSON.stringify({ phone, otp_code }),
       });
 
-      const data = await res.json();
-      if (!res.ok) throw new Error(data.error);
+      // Read response as text first
+      const text = await res.text();
+
+      // Try parsing JSON safely
+      let data;
+      try {
+        data = JSON.parse(text);
+      } catch {
+        data = { error: text || "Unknown error" };
+      }
+
+      if (!res.ok) throw new Error(data.error || "Verification failed");
 
       toast.success("Phone verified successfully!");
-      router.push(`/admin/signup/set-password?phone=${phone}`);
+      router.push(`/admin/forgot-password/set-password?phone=${phone}`);
     } catch (err: any) {
       toast.error(err.message || "Verification failed");
     } finally {
@@ -118,7 +127,7 @@ export default function VerifyOtp() {
     if (!phone) return;
     setIsLoading(true);
     try {
-      const res = await fetch("/api/auth/signup/resend-otp", {
+      const res = await fetch("/api/auth/forgot-password/resend-otp", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ phone, purpose: "register" }),
@@ -141,75 +150,71 @@ export default function VerifyOtp() {
   const isOtpComplete = otp.every((digit) => digit !== "");
 
   return (
-    <Card>
-      <div className="p-6 max-w-md mx-auto">
-        <div className="flex justify-center items-center pb-5">
-          <Image
-            src="https://focuzsolution.com/logo.png"
-            placeholder="blur"
-            blurDataURL="https://focuzsolution.com/logo.png"
-            priority
-            alt="logo"
-            width={150}
-            height={50}
-            className="py-2"
-          />
-        </div>
-        <div className="text-center mb-8">
-          <h2 className="text-2xl font-bold mb-2">Verify OTP</h2>
-          <p className="text-sm text-muted-foreground">
-            We sent a 6-digit code to {phone}
-          </p>
-        </div>
-
-        <div className="flex justify-center gap-3 mb-6">
-          {otp.map((digit, index) => (
-            <Input
-              key={index}
-              ref={(el) => (inputRefs.current[index] = el)}
-              type="text"
-              inputMode="numeric"
-              maxLength={1}
-              value={digit}
-              onChange={(e) => handleChange(index, e.target.value)}
-              onKeyDown={(e) => handleKeyDown(index, e)}
-              onPaste={handlePaste}
-              className="w-12 h-12 text-center text-lg font-semibold border-2 focus:border-primary"
-              placeholder="0"
-            />
-          ))}
-        </div>
-
-        <Button
-          onClick={handleVerify}
-          disabled={isLoading || !isOtpComplete}
-          className="w-full"
-          size="lg"
-        >
-          {isLoading ? "Verifying..." : "Verify OTP"}
-        </Button>
-
-        <div className="text-center mt-4">
-          <p className="text-sm text-muted-foreground">
-            Didn't receive the code?{" "}
-            <button
-              onClick={handleResend}
-              disabled={isLoading || countdown > 0}
-              className={`text-primary hover:underline bg-transparent p-0 m-0 border-0 cursor-pointer ${
-                isLoading || countdown > 0
-                  ? "opacity-50 pointer-events-none"
-                  : ""
-              }`}
-            >
-              {isLoading
-                ? "Sending..."
-                : countdown > 0
-                ? `Resend OTP in ${countdown}s`
-                : "Resend OTP"}
-            </button>
-          </p>
-        </div>
+    <div className="p-6 max-w-md mx-auto">
+      <div className="flex justify-center items-center pb-5">
+        <Image
+          src="https://focuzsolution.com/logo.png"
+          placeholder="blur"
+          blurDataURL="https://focuzsolution.com/logo.png"
+          priority
+          alt="logo"
+          width={150}
+          height={50}
+          className="py-2"
+        />
       </div>
-    </Card>
+      <div className="text-center mb-8">
+        <h2 className="text-2xl font-bold mb-2">Verify OTP</h2>
+        <p className="text-sm text-muted-foreground">
+          We sent a 6-digit code to {phone}
+        </p>
+      </div>
+
+      <div className="flex justify-center gap-3 mb-6">
+        {otp.map((digit, index) => (
+          <Input
+            key={index}
+            ref={(el) => (inputRefs.current[index] = el)}
+            type="text"
+            inputMode="numeric"
+            maxLength={1}
+            value={digit}
+            onChange={(e) => handleChange(index, e.target.value)}
+            onKeyDown={(e) => handleKeyDown(index, e)}
+            onPaste={handlePaste}
+            className="w-12 h-12 text-center text-lg font-semibold border-2 focus:border-primary"
+            placeholder="0"
+          />
+        ))}
+      </div>
+
+      <Button
+        onClick={handleVerify}
+        disabled={isLoading || !isOtpComplete}
+        className="w-full"
+        size="lg"
+      >
+        {isLoading ? "Verifying..." : "Verify OTP"}
+      </Button>
+
+      <div className="text-center mt-4">
+        <p className="text-sm text-muted-foreground">
+          Didn't receive the code?{" "}
+          <button
+            onClick={handleResend}
+            disabled={isLoading || countdown > 0}
+            className={`text-primary hover:underline bg-transparent p-0 m-0 border-0 cursor-pointer ${
+              isLoading || countdown > 0 ? "opacity-50 pointer-events-none" : ""
+            }`}
+          >
+            {isLoading
+              ? "Sending..."
+              : countdown > 0
+              ? `Resend OTP in ${countdown}s`
+              : "Resend OTP"}
+          </button>
+        </p>
+      </div>
+    </div>
   );
 }

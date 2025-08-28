@@ -6,7 +6,10 @@ const PUBLIC_ADMIN_ROUTES = [
   "/admin/login",
   "/admin/signup",
   "/admin/forgot-password",
-  "/admin/reset-password",
+  "/admin/signup/verify-otp",
+  "/admin/signup/set-password",
+  "/admin/forgot-password/verify-otp",
+  "/admin/forgot-password/set-password",
 ];
 
 function isPublicAdminRoute(pathname: string) {
@@ -15,6 +18,7 @@ function isPublicAdminRoute(pathname: string) {
 
 export function middleware(request: NextRequest) {
   const { pathname } = request.nextUrl;
+  111111;
 
   // Allow all non-admin routes
   if (!pathname.startsWith("/admin")) {
