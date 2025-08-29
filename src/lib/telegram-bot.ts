@@ -100,7 +100,7 @@ async function handleLoginWithToken(
 
     // Check if user already exists with this Telegram ID
     let user = await prisma.user.findUnique({
-      where: { telegram_id: telegramId },
+      where: { telegramId: telegramId },
     });
 
     if (user) {
@@ -231,8 +231,8 @@ async function handleAccountCreation(
         password: crypto.randomBytes(32).toString("hex"), // Random password since they're using Telegram auth
         name:
           `${firstName || ""} ${lastName || ""}`.trim() || `User_${telegramId}`,
-        telegram_id: telegramId,
-        telegram_username: username,
+        telegramId: telegramId,
+        username: username,
         otp_code: otp,
         otp_expires_at: otpExpiresAt,
         phone_verified: false, // They haven't provided phone yet

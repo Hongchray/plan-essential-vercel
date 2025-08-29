@@ -1,7 +1,7 @@
-"use client"
-import { useEffect, useMemo, useState } from "react"
-import { toast } from "sonner"
-import dynamic from "next/dynamic"
+"use client";
+import { useEffect, useMemo, useState } from "react";
+import { toast } from "sonner";
+import dynamic from "next/dynamic";
 
 // Dynamic templates
 const DynamicComponents = {
@@ -9,15 +9,18 @@ const DynamicComponents = {
     loading: () => <LoadingScreen />,
     ssr: false,
   }),
-  WeddingTraditionalTemplate: dynamic(() => import("./wedding/traditional-template"), {
-    loading: () => <LoadingScreen />,
-    ssr: false,
-  }),
+  WeddingTraditionalTemplate: dynamic(
+    () => import("./wedding/traditional-template"),
+    {
+      loading: () => <LoadingScreen />,
+      ssr: false,
+    }
+  ),
   WeddingStyleTemplate: dynamic(() => import("./wedding/style-template"), {
     loading: () => <LoadingScreen />,
     ssr: false,
   }),
-}
+};
 
 function LoadingScreen() {
   return (
@@ -27,32 +30,32 @@ function LoadingScreen() {
         <p className="text-khmer">កំពុងផ្ទុក... (Loading...)</p>
       </div>
     </div>
-  )
+  );
 }
 
 async function getPreviewTemplate(id: string) {
   try {
-    const res = await fetch(`/api/admin/template/${id}`)
-    if (!res.ok) throw new Error("Failed to fetch template")
-    return await res.json()
+    const res = await fetch(`/api/admin/template/${id}`);
+    if (!res.ok) throw new Error("Failed to fetch template");
+    return await res.json();
   } catch {
-    toast.error("Error getting template")
-    return null
+    toast.error("Error getting template");
+    return null;
   }
 }
 
 export default function Preview({ id }: { id: string }) {
-  const [template, setTemplate] = useState<any>(null)
+  const [template, setTemplate] = useState<any>(null);
 
   // Fetch template once
   useEffect(() => {
-    if (!id) return
-    getPreviewTemplate(id).then((data) => data && setTemplate(data))
-  }, [id])
+    if (!id) return;
+    getPreviewTemplate(id).then((data) => data && setTemplate(data));
+  }, [id]);
 
   // Sample data
   if (!template) {
-    return <LoadingScreen />
+    return <LoadingScreen />;
   }
 
   enum TemplateName {
@@ -60,14 +63,21 @@ export default function Preview({ id }: { id: string }) {
     WeddingTraditionalTemplate = "WeddingTraditionalTemplate",
     WeddingStyleTemplate = "WeddingStyleTemplate",
   }
-  
-  const ComponentToRender = DynamicComponents[template.unique_name as TemplateName];
+
+  const ComponentToRender =
+    DynamicComponents[template.unique_name as TemplateName];
 
   return (
     <div className="bg-gradient-to-br from-red-50 to-yellow-50">
       {ComponentToRender && (
-        <ComponentToRender data={{}} />
+        <ComponentToRender
+          data={{
+            groom: template.groom,
+            bride: template.bride,
+            ceremony: template.ceremony,
+          }}
+        />
       )}
     </div>
-  )
+  );
 }
