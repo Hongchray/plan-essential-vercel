@@ -1,0 +1,175 @@
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+model User {
+  id               String   @id @default(cuid())
+  email            String   @unique
+  password         String
+  name             String?
+  username         String?
+  phone            String?  @unique
+  photoUrl         String?
+  role             String   @default("user")
+  otp_code         String?
+  otp_expires_at   DateTime?
+  phone_verified   Boolean  @default(false)
+  phone_verified_at DateTime?
+  telegramId       String?  @unique
+  createdAt        DateTime @default(now())
+  updatedAt        DateTime @updatedAt
+
+  events           Event[]
+
+  @@index([email])
+  @@index([phone])
+  @@index([telegramId])
+}
+
+
+model Event {
+  id        String   @id @default(cuid())
+  name      String
+  owner     String?
+  bride     String?
+  groom     String?
+  description      String?
+  image     String?
+  userId    String 
+  user      User     @relation(fields: [userId], references: [id])
+  status    String
+  type      String  // wedding , housewarming , birthday , anniversary
+  location  String?
+  latitude  String?
+  longitude String?
+  startTime DateTime
+  endTime   DateTime 
+  schedules Schedule[]
+  eventTemplates EventTemplate[]
+  guests    Guest[]
+  tags      Tag[]
+  groups    Group[]
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([userId])
+}
+
+model Schedule {
+  id        String   @id @default(cuid())
+  eventId   String
+  event     Event    @relation(fields: [eventId], references: [id])
+  shifts    Shift[]
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model Shift {
+  id         String   @id @default(cuid())
+  scheduleId String
+  schedule  Schedule @relation(fields: [scheduleId], references: [id])
+  name      String
+  date      DateTime
+  timeLine  Timeline[]
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model Timeline {
+  id        String   @id @default(cuid())
+  shiftId   String
+  shift     Shift    @relation(fields: [shiftId], references: [id])
+  name      String
+  time      String
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model Template {
+  id        String   @id @default(cuid())
+  name      String
+  type      String  // wedding , housewarming , birthday , anniversary
+  image     String?
+  defaultConfig Json?
+  unique_name String @unique  //wedding.basic-template
+  eventTemplates EventTemplate[]
+  createdAt DateTime @default(now())
+  status    String
+  updatedAt DateTime @updatedAt
+}
+
+model EventTemplate {
+  id        String   @id @default(cuid())
+  eventId   String
+  event     Event    @relation(fields: [eventId], references: [id])
+  templateId String
+  template  Template @relation(fields: [templateId], references: [id])
+  config    Json?
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model Guest {
+  id        String   @id @default(cuid())
+  eventId   String
+  event     Event    @relation(fields: [eventId], references: [id])
+  name      String
+  email     String?
+  phone     String?
+  note      String?
+  address   String?
+  tags      GuestTag[]
+  groups GuestGroup[]
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model Tag {
+  id        String   @id @default(cuid())
+  name      String
+  eventId   String
+  event     Event    @relation(fields: [eventId], references: [id])
+  guests    GuestTag[]
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model GuestTag {
+  id        String   @id @default(cuid())
+  guestId   String
+  guest     Guest    @relation(fields: [guestId], references: [id])
+  tagId     String
+  tag       Tag      @relation(fields: [tagId], references: [id])
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model Group {
+  id        String   @id @default(cuid())
+  name      String
+  eventId   String
+  event     Event    @relation(fields: [eventId], references: [id])
+  guests GuestGroup[]
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model GuestGroup {
+  id        String   @id @default(cuid())
+  guestId   String
+  guest     Guest    @relation(fields: [guestId], references: [id])
+  groupId   String
+  group     Group    @relation(fields: [groupId], references: [id], onDelete: Cascade)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+
+
+
+
