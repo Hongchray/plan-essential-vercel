@@ -9,7 +9,7 @@ import { Button } from "@/components/ui/button";
 import { toast } from "sonner";
 import { Loader2 } from "lucide-react";
 import Image from "next/image";
-import { PasswordInput } from "@/composables/password-field";
+import { PasswordInput } from "@/components/composable/password-field";
 const passwordSchema = z
   .object({
     password: z.string().min(8, "Password must be at least 8 characters"),

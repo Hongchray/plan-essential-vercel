@@ -19,7 +19,7 @@ import Link from "next/link";
 import { toast } from "sonner";
 import { useRouter } from "next/navigation";
 import { signIn } from "next-auth/react";
-import { PasswordInput } from "@/composables/password-field";
+import { PasswordInput } from "@/components/composable/password-field";
 import { TelegramLoginButton } from "@/components/telegram-login-button"; // Import the new component
 
 // Define validation schema

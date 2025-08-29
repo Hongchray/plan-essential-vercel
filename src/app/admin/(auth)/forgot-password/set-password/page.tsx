@@ -9,7 +9,7 @@ import { Button } from "@/components/ui/button";
 import { toast } from "sonner";
 import { Loader2 } from "lucide-react";
 import Image from "next/image";
-import { PasswordInput } from "@/composables/password-field";
+import { PasswordInput } from "@/components/composable/password-field";
 // Zod schema for password validation
 const passwordSchema = z
   .object({

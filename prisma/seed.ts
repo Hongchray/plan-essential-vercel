@@ -1,19 +1,17 @@
-
 import { PrismaClient } from "@prisma/client";
 const prisma = new PrismaClient();
 
 async function main() {
-
   const user = await prisma.user.create({
     data: {
       email: "john@example.com",
       password: "hashedpassword", // store hashed password in real app
       name: "John Doe",
       phone: "123456789",
-      image: "https://via.placeholder.com/150",
-      role: "admin"
-    }
-  })
+      photoUrl: "https://via.placeholder.com/150",
+      role: "admin",
+    },
+  });
 
   const weddingTemplate = await prisma.template.create({
     data: {
@@ -25,14 +23,18 @@ async function main() {
         background: "/templates/wedding/bg.jpg",
         colors: { primary: "#e63946", secondary: "#f1faee" },
         sections: [
-          { type: "hero", title: "John & Jane", subtitle: "We're Getting Married!" },
+          {
+            type: "hero",
+            title: "John & Jane",
+            subtitle: "We're Getting Married!",
+          },
           { type: "details", fields: ["date", "time", "location"] },
-          { type: "schedule", fields: ["shifts", "timeline"] }
-        ]
+          { type: "schedule", fields: ["shifts", "timeline"] },
+        ],
       },
-      status: "active"
-    }
-  })
+      status: "active",
+    },
+  });
 
   const birthdayTemplate = await prisma.template.create({
     data: {
@@ -44,14 +46,18 @@ async function main() {
         background: "/templates/wedding/bg.jpg",
         colors: { primary: "#e63946", secondary: "#f1faee" },
         sections: [
-          { type: "hero", title: "John & Jane", subtitle: "We're Getting Married!" },
+          {
+            type: "hero",
+            title: "John & Jane",
+            subtitle: "We're Getting Married!",
+          },
           { type: "details", fields: ["date", "time", "location"] },
-          { type: "schedule", fields: ["shifts", "timeline"] }
-        ]
+          { type: "schedule", fields: ["shifts", "timeline"] },
+        ],
       },
-      status: "active"
-    }
-  })
+      status: "active",
+    },
+  });
 
   const event = await prisma.event.create({
     data: {
@@ -77,9 +83,9 @@ async function main() {
                   timeLine: {
                     create: [
                       { name: "Buddhist Ceremony", time: "08:00 AM" },
-                      { name: "Tea Ceremony", time: "09:30 AM" }
-                    ]
-                  }
+                      { name: "Tea Ceremony", time: "09:30 AM" },
+                    ],
+                  },
                 },
                 {
                   name: "Evening Reception",
@@ -88,14 +94,14 @@ async function main() {
                     create: [
                       { name: "Cocktail Hour", time: "06:00 PM" },
                       { name: "Dinner & Dance", time: "07:30 PM" },
-                      { name: "After Party", time: "10:00 PM" }
-                    ]
-                  }
-                }
-              ]
-            }
-          }
-        ]
+                      { name: "After Party", time: "10:00 PM" },
+                    ],
+                  },
+                },
+              ],
+            },
+          },
+        ],
       },
       eventTemplates: {
         create: {
@@ -104,25 +110,34 @@ async function main() {
             background: "/templates/wedding/bg.jpg",
             colors: { primary: "#e63946", secondary: "#f1faee" },
             sections: [
-              { type: "hero", title: "John & Jane", subtitle: "We're Getting Married!" },
+              {
+                type: "hero",
+                title: "John & Jane",
+                subtitle: "We're Getting Married!",
+              },
               { type: "details", fields: ["date", "time", "location"] },
-              { type: "schedule", fields: ["shifts", "timeline"] }
-            ]
-          }
-        }
-      }
+              { type: "schedule", fields: ["shifts", "timeline"] },
+            ],
+          },
+        },
+      },
     },
-    include: { schedules: true, eventTemplates: true }
-  })
+    include: { schedules: true, eventTemplates: true },
+  });
 
-  console.log("✅ Seeded data successfully:", { user, event, weddingTemplate, birthdayTemplate })
+  console.log("✅ Seeded data successfully:", {
+    user,
+    event,
+    weddingTemplate,
+    birthdayTemplate,
+  });
 }
 
 main()
   .catch((e) => {
-    console.error(e)
-    process.exit(1)
+    console.error(e);
+    process.exit(1);
   })
   .finally(async () => {
-    await prisma.$disconnect()
-  })
+    await prisma.$disconnect();
+  });
