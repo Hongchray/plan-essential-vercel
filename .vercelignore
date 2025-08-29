@@ -27,3 +27,8 @@ Thumbs.db
 # Optional: ignore secrets or local-only scripts
 *.secret.js
 *.secret.ts
+.env
+.env.local
+node_modules/
+.next/
+tests/
