@@ -1,15 +1,15 @@
 "use client"
 import { ColumnDef } from "@tanstack/react-table"
 import { Checkbox } from "@/components/ui/checkbox"
-import { Event } from "../data/schema"
+import { Guest } from "./data/schema"
 import { DataTableColumnHeader } from "./data-table-column-header"
-import Image from "next/image"
 import { Button } from "@/components/ui/button"
-import { EditIcon, EyeIcon, Trash2Icon } from "lucide-react"
+import { EditIcon, Trash2Icon } from "lucide-react"
 import Link from "next/link"
 import { ConfirmDialog } from "@/components/composable/dialog/confirm-dialog"
 import { toast } from "sonner"
 import { useRouter } from "next/navigation"
+import { IconAccessPoint } from "@tabler/icons-react"
 
 const ActionsCell = ({ row }: { row: any }) => {
   const router = useRouter(); 
@@ -34,6 +34,11 @@ const ActionsCell = ({ row }: { row: any }) => {
     <div className="flex gap-2 items-end justify-end">
       <Link href={`/admin/event/edit/${row.original.id}`}>
         <Button size="icon" variant="outline">
+          <IconAccessPoint />
+        </Button>
+      </Link>
+      <Link href={`/admin/event/edit/${row.original.id}`}>
+        <Button size="icon" variant="outline">
           <EditIcon />
         </Button>
       </Link>
@@ -51,7 +56,7 @@ const ActionsCell = ({ row }: { row: any }) => {
   );
 };
 
-export const columns: ColumnDef<Event>[] = [
+export const columns: ColumnDef<Guest>[] = [
   {
     id: "select",
     header: ({ table }) => (
@@ -92,60 +97,30 @@ export const columns: ColumnDef<Event>[] = [
     },
   },
   {
-    accessorKey: "type",
+    accessorKey: "phone",
     header: ({ column }) => (
-      <DataTableColumnHeader column={column} title="Type" />
+      <DataTableColumnHeader column={column} title="Phone" />
     ),
     cell: ({ row }) => {
       return (
         <div className="flex gap-2">
           <span className="max-w-[200px] truncate font-medium">
-            {row.getValue("type")}
+            {row.getValue("phone")}
           </span>
         </div>
       )
     },
   },
   {
-    accessorKey: "startTime",
+    accessorKey: "address",
     header: ({ column }) => (
-      <DataTableColumnHeader column={column} title="Event Date" />
+      <DataTableColumnHeader column={column} title="Address" />
     ),
     cell: ({ row }) => {
       return (
         <div className="flex gap-2">
           <span className="max-w-[200px] truncate font-medium">
-            {row.getValue("startTime")}
-          </span>
-        </div>
-      )
-    },
-  },
-  {
-    accessorKey: "location",
-    header: ({ column }) => (
-      <DataTableColumnHeader column={column} title="Location" />
-    ),
-    cell: ({ row }) => {
-      return (
-        <div className="flex gap-2">
-          <span className="max-w-[200px] truncate font-medium">
-            {row.getValue("location")}
-          </span>
-        </div>
-      )
-    },
-  },
-  {
-    accessorKey: "status",
-    header: ({ column }) => (
-      <DataTableColumnHeader column={column} title="Status" />
-    ),
-    cell: ({ row }) => {
-      return (
-        <div className="flex gap-2">
-          <span className="max-w-[200px] truncate font-medium">
-            {row.getValue("status")}
+            {row.getValue("address")}
           </span>
         </div>
       )

@@ -12,26 +12,27 @@ import { toast } from "sonner";
 import { useRouter } from "next/navigation"
 import { useLoading } from "@/app/admin/(dashboard)/layout";
 import { TextareaField } from "../composable/input/input-textarea-text-field";
+import { DatePickerField } from "../composable/date/date-picker";
+import ImageUpload from "../composable/upload/upload-image";
 
 const formSchema = z.object({
   name: z
     .string()
-    .min(3, "Name must be at least 3 characters")
+    .min(1, "Name is required")
     .max(50, "Name must be less than 50 characters"),
   type: z.string().min(1, "Type is required"),
-  owner: z.string().min(1, "Type is required"),
-  bride: z.string().min(1, "Type is required"),
-  groom: z.string().min(1, "Type is required"),
+  owner: z.string(),
+  bride: z.string().min(1, "Bride is required"),
+  groom: z.string().min(1, "Groom is required"),
   image: z.string(),
-  defaultConfig: z.any(),
   status: z.string(),
   description: z.string(),
   userId: z.string(),
   location: z.string(),
   latitude: z.string(),
   longitude: z.string(),
-  startTime: z.string(),
-  endTime: z.string()
+  startTime: z.coerce.date().optional(),
+  endTime: z.coerce.date().optional(),
 });
 
 type FormData = z.infer<typeof formSchema>;
@@ -89,8 +90,8 @@ export function CreateEditForm({ id}: {id?: string}) {
             location: "",
             latitude: "",
             longitude: "",
-            startTime: "",
-            endTime: "",
+            startTime: undefined,
+            endTime: undefined,
             owner: "",
             bride: "",
             groom: "",
@@ -113,9 +114,6 @@ export function CreateEditForm({ id}: {id?: string}) {
 
     const onSubmit =async (data: FormData)=>{
         setLoading(true);
-        if(typeof data.defaultConfig === "string"){
-            data.defaultConfig =  JSON.parse(data.defaultConfig);
-        }
         if(id){
             const response = await updateTemplate(id, data);
             if(response.ok){
@@ -139,6 +137,14 @@ export function CreateEditForm({ id}: {id?: string}) {
                 <h2 className="text-xl font-bold pb-2">{id ? "Edit" : "Create"} Event</h2>
             </div>
             <form onSubmit={form.handleSubmit(onSubmit)} >
+                <div>
+                    <ImageUpload
+                        label="Cover Image (1920x1080)"
+                        folder="/event/cover"
+                        {...form.register("image")}
+                        value={form.watch("image")}
+                    />
+                </div>
                 <div className="grid grid-cols-2 gap-2">
                     <InputTextField
                         label="Name"
@@ -178,6 +184,7 @@ export function CreateEditForm({ id}: {id?: string}) {
                         label="Choose Template Type"
                         name="type"
                         placeholder="Choose Template Type"
+                        disabled={id!=null}
                         options={[
                             { label: "Wedding", value: "wedding" },
                             { label: "Housewarming", value: "housewarming" },
@@ -199,6 +206,18 @@ export function CreateEditForm({ id}: {id?: string}) {
                         placeholder="Enter location"
                         form={form}
                         disabled={loading}
+                    />
+                    <DatePickerField
+                        label="Event Date"
+                        name="startTime"
+                        placeholder="Select event date"
+                        form={form}
+                    />
+                    <DatePickerField
+                        label="End Date"
+                        name="endTime"
+                        placeholder="Select event date"
+                        form={form}
                     />
                     <SwitchField
                         label="Status"
