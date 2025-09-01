@@ -2,6 +2,7 @@
 
 import { useEffect } from "react";
 import { toast } from "sonner";
+import { signIn } from "next-auth/react";
 
 interface TelegramUser {
   id: number;
@@ -15,23 +16,16 @@ interface TelegramUser {
 
 export default function TelegramLoginButton() {
   useEffect(() => {
-    // Expose Telegram auth handler globally
     (window as any).onTelegramAuth = async (user: TelegramUser) => {
       console.log("Telegram auth callback:", user);
 
       try {
-        const res = await fetch("/api/auth/telegram", {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify(user),
+        // Sign in via NextAuth and let it handle the redirect
+        await signIn("telegram", {
+          redirect: true, // ✅ Let NextAuth handle redirect
+          authData: JSON.stringify(user), // Send Telegram data
+          callbackUrl: "/admin/dashboard", // Redirect after successful login
         });
-
-        if (!res.ok) throw new Error("Failed to authenticate");
-
-        toast.success("Successfully logged in with Telegram!");
-        setTimeout(() => {
-          window.location.href = "/admin/dashboard";
-        }, 1000);
       } catch (err) {
         console.error("Telegram auth error:", err);
         toast.error("Telegram authentication failed");
@@ -52,7 +46,6 @@ export default function TelegramLoginButton() {
       return;
     }
 
-    // Create Telegram login widget script
     const script = document.createElement("script");
     script.src = "https://telegram.org/js/telegram-widget.js?22";
     script.setAttribute("data-telegram-login", botUsername);
@@ -61,7 +54,6 @@ export default function TelegramLoginButton() {
     script.setAttribute("data-request-access", "write");
     script.async = true;
 
-    // Append inside container
     const container = document.getElementById("telegram-login-container");
     if (container) container.appendChild(script);
 
@@ -72,7 +64,6 @@ export default function TelegramLoginButton() {
 
   return (
     <div className="flex justify-center">
-      {/* The Telegram login button will appear here */}
       <div id="telegram-login-container"></div>
     </div>
   );
