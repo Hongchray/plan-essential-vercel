@@ -131,7 +131,8 @@ model Guest {
 
 model Tag {
   id        String   @id @default(cuid())
-  name      String
+  name_en   String
+  name_kh   String
   eventId   String
   event     Event    @relation(fields: [eventId], references: [id])
   guests    GuestTag[]
@@ -151,7 +152,8 @@ model GuestTag {
 
 model Group {
   id        String   @id @default(cuid())
-  name      String
+  name_en   String
+  name_kh   String
   eventId   String
   event     Event    @relation(fields: [eventId], references: [id])
   guests GuestGroup[]
