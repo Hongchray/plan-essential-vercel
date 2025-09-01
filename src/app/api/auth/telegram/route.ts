@@ -29,6 +29,7 @@ export async function POST(req: Request) {
     );
   }
 
+  console.log("Telegram auth data verified:", data);
   // Upsert user by telegramId
   const user = await prisma.user.upsert({
     where: { telegramId: String(data.id) },
