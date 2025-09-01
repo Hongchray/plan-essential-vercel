@@ -21,6 +21,7 @@ export function TelegramLoginButton() {
   const [isLoading, setIsLoading] = useState(false);
 
   const handleTelegramAuth = async (user: TelegramUser) => {
+    console.log("Telegram auth callback triggered:", user);
     setIsLoading(true);
 
     try {
@@ -29,12 +30,17 @@ export function TelegramLoginButton() {
         authData: JSON.stringify(user),
       });
 
+      console.log("SignIn result:", result);
+
       if (result?.error) {
         console.error("Telegram login error:", result.error);
-        toast.error("Telegram authentication failed");
+        toast.error(`Telegram authentication failed: ${result.error}`);
       } else if (result?.ok) {
         toast.success("Successfully logged in with Telegram!");
-        window.location.href = "/admin/dashboard";
+        // Small delay to show success message
+        setTimeout(() => {
+          window.location.href = "/admin/dashboard";
+        }, 1000);
       }
     } catch (error) {
       console.error("Telegram auth error:", error);
@@ -62,9 +68,9 @@ export function TelegramLoginButton() {
     }
 
     // Validate bot username format
-    if (!botUsername.endsWith("_bot")) {
+    if (!botUsername.toLowerCase().endsWith("bot")) {
       toast.error(
-        "Invalid bot username format. Bot username should end with '_bot'"
+        "Invalid bot username format. Bot username should end with 'bot'"
       );
       return;
     }
@@ -74,34 +80,40 @@ export function TelegramLoginButton() {
 
     // Create backdrop
     const backdrop = document.createElement("div");
-    backdrop.style.position = "fixed";
-    backdrop.style.top = "0";
-    backdrop.style.left = "0";
-    backdrop.style.width = "100%";
-    backdrop.style.height = "100%";
-    backdrop.style.backgroundColor = "rgba(0, 0, 0, 0.5)";
-    backdrop.style.zIndex = "9998";
-    backdrop.style.display = "flex";
-    backdrop.style.alignItems = "center";
-    backdrop.style.justifyContent = "center";
+    backdrop.style.cssText = `
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background-color: rgba(0, 0, 0, 0.5);
+      z-index: 9998;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    `;
 
     // Create modal container
     const container = document.createElement("div");
-    container.style.backgroundColor = "white";
-    container.style.padding = "30px";
-    container.style.borderRadius = "12px";
-    container.style.boxShadow = "0 20px 25px -5px rgba(0, 0, 0, 0.1)";
-    container.style.position = "relative";
-    container.style.maxWidth = "400px";
-    container.style.width = "90%";
+    container.style.cssText = `
+      background-color: white;
+      padding: 30px;
+      border-radius: 12px;
+      box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1);
+      position: relative;
+      max-width: 400px;
+      width: 90%;
+    `;
 
     // Create title
     const title = document.createElement("h3");
     title.textContent = "Login with Telegram";
-    title.style.marginBottom = "20px";
-    title.style.fontSize = "18px";
-    title.style.fontWeight = "600";
-    title.style.textAlign = "center";
+    title.style.cssText = `
+      margin-bottom: 20px;
+      font-size: 18px;
+      font-weight: 600;
+      text-align: center;
+    `;
 
     // Create instructions
     const instructions = document.createElement("p");
@@ -111,22 +123,26 @@ export function TelegramLoginButton() {
       2. Click the "Login" button below<br>
       3. You should receive a confirmation message in Telegram
     `;
-    instructions.style.marginBottom = "20px";
-    instructions.style.fontSize = "14px";
-    instructions.style.color = "#666";
-    instructions.style.lineHeight = "1.5";
+    instructions.style.cssText = `
+      margin-bottom: 20px;
+      font-size: 14px;
+      color: #666;
+      line-height: 1.5;
+    `;
 
     // Create close button
     const closeBtn = document.createElement("button");
     closeBtn.innerHTML = "✕";
-    closeBtn.style.position = "absolute";
-    closeBtn.style.top = "15px";
-    closeBtn.style.right = "15px";
-    closeBtn.style.background = "none";
-    closeBtn.style.border = "none";
-    closeBtn.style.fontSize = "20px";
-    closeBtn.style.cursor = "pointer";
-    closeBtn.style.color = "#666";
+    closeBtn.style.cssText = `
+      position: absolute;
+      top: 15px;
+      right: 15px;
+      background: none;
+      border: none;
+      font-size: 20px;
+      cursor: pointer;
+      color: #666;
+    `;
     closeBtn.onclick = () => {
       document.body.removeChild(backdrop);
       setIsLoading(false);
@@ -134,8 +150,10 @@ export function TelegramLoginButton() {
 
     // Create widget container
     const widgetContainer = document.createElement("div");
-    widgetContainer.style.textAlign = "center";
-    widgetContainer.style.marginBottom = "20px";
+    widgetContainer.style.cssText = `
+      text-align: center;
+      margin-bottom: 20px;
+    `;
 
     // Create Telegram widget script
     const script = document.createElement("script");
@@ -153,26 +171,38 @@ export function TelegramLoginButton() {
       setIsLoading(false);
     };
 
+    script.onload = () => {
+      console.log("Telegram widget script loaded successfully");
+    };
+
     // Create fallback link
     const fallbackLink = document.createElement("div");
-    fallbackLink.style.marginTop = "15px";
-    fallbackLink.style.textAlign = "center";
+    fallbackLink.style.cssText = `
+      margin-top: 15px;
+      text-align: center;
+    `;
+
+    const linkText = document.createElement("p");
+    linkText.style.cssText = `
+      font-size: 12px;
+      color: #666;
+      margin: 5px 0;
+    `;
+    linkText.textContent =
+      "If the login button doesn't work, start the bot first:";
 
     const botLink = document.createElement("a");
     botLink.href = `https://t.me/${botUsername}`;
     botLink.target = "_blank";
     botLink.rel = "noopener noreferrer";
     botLink.textContent = `Start @${botUsername}`;
-    botLink.style.color = "#0088cc";
-    botLink.style.textDecoration = "none";
-    botLink.style.fontSize = "14px";
-
-    const linkText = document.createElement("p");
-    linkText.style.fontSize = "12px";
-    linkText.style.color = "#666";
-    linkText.style.marginTop = "5px";
-    linkText.textContent =
-      "If the login button doesn't work, start the bot first:";
+    botLink.style.cssText = `
+      color: #0088cc;
+      text-decoration: none;
+      font-size: 14px;
+      display: inline-block;
+      margin-top: 5px;
+    `;
 
     fallbackLink.appendChild(linkText);
     fallbackLink.appendChild(botLink);
@@ -192,6 +222,7 @@ export function TelegramLoginButton() {
     // Override callback to close modal on success
     const originalCallback = (window as any).onTelegramAuth;
     (window as any).onTelegramAuth = (user: TelegramUser) => {
+      console.log("Closing modal and processing auth");
       document.body.removeChild(backdrop);
       originalCallback(user);
     };
@@ -209,7 +240,7 @@ export function TelegramLoginButton() {
       if (isLoading) {
         setIsLoading(false);
       }
-    }, 10000);
+    }, 15000);
   };
 
   return (
