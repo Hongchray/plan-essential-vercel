@@ -1,50 +1,67 @@
-'use client'
+"use client";
 import { useState } from "react";
 import { columns } from "./guest-table/columns";
 import { DataTable } from "./guest-table/data-table";
 
-export default function TabGuest({guests, setGuests}: {guests: any[], setGuests: (guests: any[]) => void}) {
+export default function TabGuest({
+  guests,
+  setGuests,
+}: {
+  guests: any[];
+  setGuests: (guests: any[]) => void;
+}) {
   // Guest Component
-  const [newGuest, setNewGuest] = useState({ name: '', email: '', group: '', tags: '' });
-    const [filterGroup, setFilterGroup] = useState('all');
+  const [newGuest, setNewGuest] = useState({
+    name: "",
+    email: "",
+    group: "",
+    tags: "",
+  });
+  const [filterGroup, setFilterGroup] = useState("all");
 
-    const groups = ["Groom's side", "Bride's side"];
+  const groups = ["Groom's side", "Bride's side"];
 
-    const addGuest = () => {
-      if (newGuest.name && newGuest.email && newGuest.group) {
-        const tags = newGuest.tags.split(',').map(tag => tag.trim()).filter(tag => tag);
-        setGuests([...guests, {
+  const addGuest = () => {
+    if (newGuest.name && newGuest.email && newGuest.group) {
+      const tags = newGuest.tags
+        .split(",")
+        .map((tag) => tag.trim())
+        .filter((tag) => tag);
+      setGuests([
+        ...guests,
+        {
           id: guests.length + 1,
           name: newGuest.name,
           email: newGuest.email,
           group: newGuest.group,
           tags: tags,
-          status: 'pending',
-          gift: { received: false, item: '', value: 0 }
-        }]);
-        setNewGuest({ name: '', email: '', group: '', tags: '' });
-      }
-    };
+          status: "pending",
+          gift: { received: false, item: "", value: 0 },
+        },
+      ]);
+      setNewGuest({ name: "", email: "", group: "", tags: "" });
+    }
+  };
 
-    const removeGuest = (id) => {
-      setGuests(guests.filter(guest => guest.id !== id));
-    };
+  const removeGuest = (id: any) => {
+    setGuests(guests.filter((guest) => guest.id !== id));
+  };
 
-    const updateStatus = (id, status) => {
-      setGuests(guests.map(guest => 
-        guest.id === id ? { ...guest, status } : guest
-      ));
-    };
-
-    const filteredGuests = guests.filter(guest => 
-      filterGroup === 'all' || guest.group === filterGroup
+  const updateStatus = (id: any, status: any) => {
+    setGuests(
+      guests.map((guest) => (guest.id === id ? { ...guest, status } : guest))
     );
+  };
 
-    return (
-      <div className="space-y-6">
-        <h3 className="text-lg font-semibold mb-4">Guest Management</h3>
-        
-        {/* <div className="bg-slate-50 p-4 rounded-lg mb-6">
+  const filteredGuests = guests.filter(
+    (guest) => filterGroup === "all" || guest.group === filterGroup
+  );
+
+  return (
+    <div className="space-y-6">
+      <h3 className="text-lg font-semibold mb-4">Guest Management</h3>
+
+      {/* <div className="bg-slate-50 p-4 rounded-lg mb-6">
           <h4 className="font-medium mb-3">Add New Guest</h4>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-3 mb-3">
             <input
@@ -89,12 +106,10 @@ export default function TabGuest({guests, setGuests}: {guests: any[], setGuests:
           </button>
         </div> */}
 
-        <div className="space-y-3">  
-           
-            {/* Table guests */}
-            <DataTable data={guests} columns={columns} />
-        </div>
+      <div className="space-y-3">
+        {/* Table guests */}
+        <DataTable data={guests} columns={columns} />
       </div>
-    );
-
+    </div>
+  );
 }
