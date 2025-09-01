@@ -14,7 +14,8 @@ export default async function handler(
     const loginToken = crypto.randomBytes(32).toString("hex");
 
     // 🔥 THIS IS WHERE BOT USERNAME IS NEEDED
-    const botUsername = process.env.TELEGRAM_BOT_USERNAME; // e.g., "myapp_login_bot"
+    const botUsername = process.env.NEXT_PUBLIC_TELEGRAM_BOT_USERNAME; // e.g., "myapp_login_bot"
+    console.log(`Bot Username: ${botUsername}`);
 
     if (!botUsername) {
       return res.status(500).json({ error: "Bot username not configured" });

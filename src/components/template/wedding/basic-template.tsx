@@ -1,37 +1,69 @@
-import { useState } from 'react'
-import Image from 'next/image'
+import { useState } from "react";
 
-export default function KhmerWeddingInvite({ data }) {
-  const [showRSVP, setShowRSVP] = useState(false)
+type KhmerWeddingInviteData = {
+  groom: {
+    name: string;
+    nameEn: string;
+    parents: string;
+  };
+  bride: {
+    name: string;
+    nameEn: string;
+    parents: string;
+  };
+  ceremony: {
+    traditional: {
+      date: string;
+      dateEn: string;
+      time: string;
+      timeEn: string;
+      location: string;
+    };
+    modern: {
+      date: string;
+      dateEn: string;
+      time: string;
+      timeEn: string;
+      location: string;
+    };
+  };
+};
+
+export default function KhmerWeddingInvite({
+  data,
+}: {
+  data: KhmerWeddingInviteData;
+}) {
+  const [showRSVP, setShowRSVP] = useState(false);
   const [rsvpData, setRsvpData] = useState({
-    name: '',
-    attending: '',
+    name: "",
+    attending: "",
     guests: 1,
-    phone: ''
-  })
+    phone: "",
+  });
 
-  const handleRSVPSubmit = (e) => {
-    e.preventDefault()
+  const handleRSVPSubmit = (e: { preventDefault: () => void }) => {
+    e.preventDefault();
     // Handle RSVP submission
-    alert('RSVP បានបញ្ជូនដោយជោគជ័យ! (RSVP sent successfully!)')
-    setShowRSVP(false)
-  }
+    alert("RSVP បានបញ្ជូនដោយជោគជ័យ! (RSVP sent successfully!)");
+    setShowRSVP(false);
+  };
 
   return (
     <div className="max-w-4xl mx-auto">
       <style jsx>{`
-        @import url('https://fonts.googleapis.com/css2?family=Noto+Serif+Khmer:wght@100;200;300;400;500;600;700;800;900&display=swap');
-        
+        @import url("https://fonts.googleapis.com/css2?family=Noto+Serif+Khmer:wght@100;200;300;400;500;600;700;800;900&display=swap");
+
         .khmer-font {
-          font-family: 'Noto Serif Khmer', serif;
+          font-family: "Noto Serif Khmer", serif;
         }
-        
+
         .traditional-border {
           border-image: linear-gradient(45deg, #dc2626, #facc15, #dc2626) 1;
           border-style: solid;
           border-width: 3px;
         }
-        
+
         .lotus-bg {
           background-image: url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23dc2626' fill-opacity='0.05'%3E%3Cpath d='M30 30c0-11.046-8.954-20-20-20s-20 8.954-20 20 8.954 20 20 20 20-8.954 20-20zm0 0c0 11.046 8.954 20 20 20s20-8.954 20-20-8.954-20-20-20-20 8.954-20 20z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E");
         }
@@ -42,12 +74,18 @@ export default function KhmerWeddingInvite({ data }) {
         {/* Header with Traditional Pattern */}
         <div className="bg-gradient-to-r from-red-600 via-red-700 to-yellow-600 text-white text-center py-12 relative overflow-hidden">
           <div className="absolute inset-0 opacity-20">
-            <div className="absolute inset-0 bg-repeat" style={{
-              backgroundImage: "url(\"data:image/svg+xml,%3Csvg width='40' height='40' viewBox='0 0 40 40' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M20 20l-8-8h16l-8 8zm0 0l8-8v16l-8-8zm0 0l8 8H4l8-8zm0 0l-8 8V4l8 8z' fill='%23ffffff' fill-opacity='0.3'/%3E%3C/svg%3E\")"
-            }}></div>
+            <div
+              className="absolute inset-0 bg-repeat"
+              style={{
+                backgroundImage:
+                  "url(\"data:image/svg+xml,%3Csvg width='40' height='40' viewBox='0 0 40 40' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M20 20l-8-8h16l-8 8zm0 0l8-8v16l-8-8zm0 0l8 8H4l8-8zm0 0l-8 8V4l8 8z' fill='%23ffffff' fill-opacity='0.3'/%3E%3C/svg%3E\")",
+              }}
+            ></div>
           </div>
           <div className="relative z-10">
-            <h1 className="khmer-font text-4xl font-bold mb-4">កាតអញ្ជើញមង្គលការ</h1>
+            <h1 className="khmer-font text-4xl font-bold mb-4">
+              កាតអញ្ជើញមង្គលការ
+            </h1>
             <p className="text-xl opacity-90">Wedding Invitation</p>
             <div className="mt-6 text-6xl">💐 🕯️ 💐</div>
           </div>
@@ -59,14 +97,16 @@ export default function KhmerWeddingInvite({ data }) {
             <div className="khmer-font text-3xl md:text-4xl font-bold text-red-700 mb-2">
               {data.groom.name}
             </div>
-            <div className="text-xl text-gray-600 mb-4">{data.groom.nameEn}</div>
-            
+            <div className="text-xl text-gray-600 mb-4">
+              {data.groom.nameEn}
+            </div>
+
             <div className="my-8 flex items-center justify-center">
               <div className="h-1 bg-gradient-to-r from-transparent via-red-400 to-transparent flex-1 max-w-32"></div>
               <span className="mx-4 text-4xl text-yellow-600">❤️</span>
               <div className="h-1 bg-gradient-to-r from-transparent via-red-400 to-transparent flex-1 max-w-32"></div>
             </div>
-            
+
             <div className="khmer-font text-3xl md:text-4xl font-bold text-red-700 mb-2">
               {data.bride.name}
             </div>
@@ -77,13 +117,21 @@ export default function KhmerWeddingInvite({ data }) {
           <div className="bg-red-50 rounded-2xl p-6 mb-8">
             <div className="grid md:grid-cols-2 gap-6">
               <div className="text-center">
-                <h3 className="khmer-font text-xl font-semibold text-red-700 mb-2">ឪពុកម្ដាយកូនប្រុស</h3>
-                <p className="text-sm text-gray-600 mb-2">Parents of the Groom</p>
+                <h3 className="khmer-font text-xl font-semibold text-red-700 mb-2">
+                  ឪពុកម្ដាយកូនប្រុស
+                </h3>
+                <p className="text-sm text-gray-600 mb-2">
+                  Parents of the Groom
+                </p>
                 <p className="khmer-font text-lg">{data.groom.parents}</p>
               </div>
               <div className="text-center">
-                <h3 className="khmer-font text-xl font-semibold text-red-700 mb-2">ឪពុកម្ដាយកូនស្រី</h3>
-                <p className="text-sm text-gray-600 mb-2">Parents of the Bride</p>
+                <h3 className="khmer-font text-xl font-semibold text-red-700 mb-2">
+                  ឪពុកម្ដាយកូនស្រី
+                </h3>
+                <p className="text-sm text-gray-600 mb-2">
+                  Parents of the Bride
+                </p>
                 <p className="khmer-font text-lg">{data.bride.parents}</p>
               </div>
             </div>
@@ -92,14 +140,14 @@ export default function KhmerWeddingInvite({ data }) {
           {/* Invitation Text */}
           <div className="text-center mb-8 bg-yellow-50 rounded-2xl p-6">
             <p className="khmer-font text-xl leading-relaxed text-gray-800 mb-4">
-              សូមអញ្ជើញញាតិមិត្តជាទីស្នេហា មកចូលរួមក្នុងពិធីមង្គលការ 
+              សូមអញ្ជើញញាតិមិត្តជាទីស្នេហា មកចូលរួមក្នុងពិធីមង្គលការ
               របស់យើងខ្ញុំ ដើម្បីធ្វើសាក្សីនៃការចាប់ផ្តើមជីវិតថ្មី
               ក្នុងស្នេហានិងសុភមង្គល
             </p>
             <p className="text-lg text-gray-600 leading-relaxed">
-              We cordially invite you to witness and celebrate 
-              our wedding ceremony as we begin our new journey 
-              together in love and happiness.
+              We cordially invite you to witness and celebrate our wedding
+              ceremony as we begin our new journey together in love and
+              happiness.
             </p>
           </div>
 
@@ -110,27 +158,39 @@ export default function KhmerWeddingInvite({ data }) {
               <h3 className="khmer-font text-2xl font-bold text-red-800 mb-4 text-center">
                 ពិធីប្រពៃណីខ្មែរ
               </h3>
-              <p className="text-center text-gray-700 font-semibold mb-4">Traditional Khmer Ceremony</p>
-              
+              <p className="text-center text-gray-700 font-semibold mb-4">
+                Traditional Khmer Ceremony
+              </p>
+
               <div className="space-y-3">
                 <div className="flex items-center">
                   <span className="text-2xl mr-3">📅</span>
                   <div>
-                    <p className="khmer-font font-semibold">{data.ceremony.traditional.date}</p>
-                    <p className="text-sm text-gray-600">{data.ceremony.traditional.dateEn}</p>
+                    <p className="khmer-font font-semibold">
+                      {data.ceremony.traditional.date}
+                    </p>
+                    <p className="text-sm text-gray-600">
+                      {data.ceremony.traditional.dateEn}
+                    </p>
                   </div>
                 </div>
                 <div className="flex items-center">
                   <span className="text-2xl mr-3">⏰</span>
                   <div>
-                    <p className="khmer-font font-semibold">{data.ceremony.traditional.time}</p>
-                    <p className="text-sm text-gray-600">{data.ceremony.traditional.timeEn}</p>
+                    <p className="khmer-font font-semibold">
+                      {data.ceremony.traditional.time}
+                    </p>
+                    <p className="text-sm text-gray-600">
+                      {data.ceremony.traditional.timeEn}
+                    </p>
                   </div>
                 </div>
                 <div className="flex items-start">
                   <span className="text-2xl mr-3 mt-1">📍</span>
                   <div>
-                    <p className="khmer-font">{data.ceremony.traditional.location}</p>
+                    <p className="khmer-font">
+                      {data.ceremony.traditional.location}
+                    </p>
                     <p className="text-sm text-gray-600">Groom's Family Home</p>
                   </div>
                 </div>
@@ -142,28 +202,42 @@ export default function KhmerWeddingInvite({ data }) {
               <h3 className="khmer-font text-2xl font-bold text-yellow-800 mb-4 text-center">
                 ពិធីសម័យ
               </h3>
-              <p className="text-center text-gray-700 font-semibold mb-4">Modern Reception</p>
-              
+              <p className="text-center text-gray-700 font-semibold mb-4">
+                Modern Reception
+              </p>
+
               <div className="space-y-3">
                 <div className="flex items-center">
                   <span className="text-2xl mr-3">📅</span>
                   <div>
-                    <p className="khmer-font font-semibold">{data.ceremony.modern.date}</p>
-                    <p className="text-sm text-gray-600">{data.ceremony.modern.dateEn}</p>
+                    <p className="khmer-font font-semibold">
+                      {data.ceremony.modern.date}
+                    </p>
+                    <p className="text-sm text-gray-600">
+                      {data.ceremony.modern.dateEn}
+                    </p>
                   </div>
                 </div>
                 <div className="flex items-center">
                   <span className="text-2xl mr-3">⏰</span>
                   <div>
-                    <p className="khmer-font font-semibold">{data.ceremony.modern.time}</p>
-                    <p className="text-sm text-gray-600">{data.ceremony.modern.timeEn}</p>
+                    <p className="khmer-font font-semibold">
+                      {data.ceremony.modern.time}
+                    </p>
+                    <p className="text-sm text-gray-600">
+                      {data.ceremony.modern.timeEn}
+                    </p>
                   </div>
                 </div>
                 <div className="flex items-start">
                   <span className="text-2xl mr-3 mt-1">🏨</span>
                   <div>
-                    <p className="khmer-font">{data.ceremony.modern.location}</p>
-                    <p className="text-sm text-gray-600">Sophea Mongkol Hotel</p>
+                    <p className="khmer-font">
+                      {data.ceremony.modern.location}
+                    </p>
+                    <p className="text-sm text-gray-600">
+                      Sophea Mongkol Hotel
+                    </p>
                   </div>
                 </div>
               </div>
@@ -188,18 +262,26 @@ export default function KhmerWeddingInvite({ data }) {
                       placeholder="ឈ្មោះរបស់អ្នក / Your Name"
                       className="w-full px-4 py-3 rounded-lg border border-gray-300 focus:ring-2 focus:ring-red-500 focus:border-transparent"
                       value={rsvpData.name}
-                      onChange={(e) => setRsvpData({...rsvpData, name: e.target.value})}
+                      onChange={(e) =>
+                        setRsvpData({ ...rsvpData, name: e.target.value })
+                      }
                       required
                     />
                     <select
                       className="w-full px-4 py-3 rounded-lg border border-gray-300 focus:ring-2 focus:ring-red-500 focus:border-transparent"
                       value={rsvpData.attending}
-                      onChange={(e) => setRsvpData({...rsvpData, attending: e.target.value})}
+                      onChange={(e) =>
+                        setRsvpData({ ...rsvpData, attending: e.target.value })
+                      }
                       required
                     >
                       <option value="">មកចូលរួម? / Will you attend?</option>
-                      <option value="yes">បាទ/ចាស មកចូលរួម / Yes, I will attend</option>
-                      <option value="no">សុំទោស មិនអាចមកបាន / Sorry, cannot attend</option>
+                      <option value="yes">
+                        បាទ/ចាស មកចូលរួម / Yes, I will attend
+                      </option>
+                      <option value="no">
+                        សុំទោស មិនអាចមកបាន / Sorry, cannot attend
+                      </option>
                     </select>
                     <input
                       type="number"
@@ -208,14 +290,21 @@ export default function KhmerWeddingInvite({ data }) {
                       max="10"
                       className="w-full px-4 py-3 rounded-lg border border-gray-300 focus:ring-2 focus:ring-red-500 focus:border-transparent"
                       value={rsvpData.guests}
-                      onChange={(e) => setRsvpData({...rsvpData, guests: e.target.value})}
+                      onChange={(e) =>
+                        setRsvpData({
+                          ...rsvpData,
+                          guests: Number(e.target.value),
+                        })
+                      }
                     />
                     <input
                       type="tel"
                       placeholder="លេខទូរស័ព្ទ / Phone Number"
                       className="w-full px-4 py-3 rounded-lg border border-gray-300 focus:ring-2 focus:ring-red-500 focus:border-transparent"
                       value={rsvpData.phone}
-                      onChange={(e) => setRsvpData({...rsvpData, phone: e.target.value})}
+                      onChange={(e) =>
+                        setRsvpData({ ...rsvpData, phone: e.target.value })
+                      }
                     />
                     <button
                       type="submit"
@@ -237,12 +326,10 @@ export default function KhmerWeddingInvite({ data }) {
             <p className="text-gray-600">
               Your presence is the greatest gift we could ask for
             </p>
-            <div className="mt-4 text-3xl">
-              🙏 ❤️ 🙏
-            </div>
+            <div className="mt-4 text-3xl">🙏 ❤️ 🙏</div>
           </div>
         </div>
       </div>
     </div>
-  )
+  );
 }

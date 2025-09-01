@@ -34,7 +34,7 @@ export async function POST(req: Request) {
     where: { id: String(data.id) },
     update: {
       name: data.first_name,
-      image: data.photo_url,
+      photoUrl: data.photo_url,
     },
     create: {
       id: String(data.id),
@@ -42,7 +42,7 @@ export async function POST(req: Request) {
       password: "", // not needed for Telegram login
       name: data.first_name,
       phone: null,
-      image: data.photo_url,
+      photoUrl: data.photo_url,
     },
   });
 

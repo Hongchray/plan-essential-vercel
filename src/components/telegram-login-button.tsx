@@ -59,6 +59,10 @@ export function TelegramLoginButton() {
       return;
     }
 
+    console.log(
+      `Using Bot Username: ${process.env.NEXT_PUBLIC_TELEGRAM_BOT_USERNAME}`
+    );
+
     setIsLoading(true);
 
     // Create backdrop
@@ -115,6 +119,7 @@ export function TelegramLoginButton() {
       "data-telegram-login",
       process.env.NEXT_PUBLIC_TELEGRAM_BOT_USERNAME
     );
+
     script.setAttribute("data-size", "large");
     script.setAttribute("data-onauth", "onTelegramAuth(user)");
     script.setAttribute("data-request-access", "write");

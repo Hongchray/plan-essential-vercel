@@ -13,11 +13,8 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ error: "Invalid purpose" }, { status: 400 });
     }
 
-    const existingUser = await prisma.user.findUnique({
-      where: { phone },
-    });
+    const existingUser = await prisma.user.findUnique({ where: { phone } });
 
-    // Registration flow: phone must NOT exist
     if (purpose === "register" && existingUser) {
       return NextResponse.json(
         { error: "Phone already registered" },
@@ -25,16 +22,13 @@ export async function POST(req: NextRequest) {
       );
     }
 
-    // Forgot password flow: phone must exist
     if (purpose === "forgot" && !existingUser) {
       return NextResponse.json({ error: "User not found" }, { status: 404 });
     }
 
-    // Generate OTP
     const otp = Math.floor(100000 + Math.random() * 900000).toString();
-    const expiresAt = new Date(Date.now() + 2 * 60 * 1000); // 5 min
+    const expiresAt = new Date(Date.now() + 2 * 60 * 1000); // 2 min
 
-    // Create or update user OTP
     await prisma.user.upsert({
       where: { phone },
       update: { otp_code: otp, otp_expires_at: expiresAt },
@@ -47,7 +41,7 @@ export async function POST(req: NextRequest) {
       },
     });
 
-    // Send OTP via your SMS provider
+    // PlasGate API
     const message = `${otp} is your reset password OTP code.`;
     const apiUrl = process.env.PLASGATE_API_URL;
     const privateKey = process.env.PLASGATE_API_PRIVATE_KEY;
@@ -67,25 +61,30 @@ export async function POST(req: NextRequest) {
     let data: any;
     try {
       data = await response.json();
-    } catch {
+    } catch (err) {
       data = await response.text();
+      console.warn("⚠️ Response is not JSON:", data);
     }
 
+    // Detailed logging if OTP send fails
     if (!response.ok || (typeof data === "object" && data.success === false)) {
+      console.error("❌ Failed to send OTP:");
+      console.error("Status:", response.status, response.statusText);
+      console.error("Response body:", data);
       return NextResponse.json(
         { error: "Failed to send OTP", details: data },
         { status: 500 }
       );
     }
 
-    // Store OTP in memory for quick verification (optional)
+    // Optional in-memory store
     (globalThis as any).otpStore = (globalThis as any).otpStore || {};
     (globalThis as any).otpStore[phone] = {
       otp,
       expires: Date.now() + 5 * 60 * 1000,
     };
 
-    return NextResponse.json({ success: true, message: "OTP sent", otp }); // include OTP for testing only
+    return NextResponse.json({ success: true, message: "OTP sent", otp }); // include OTP for testing
   } catch (error: any) {
     console.error("❌ Send OTP error:", error);
     return NextResponse.json({ error: error.message }, { status: 500 });

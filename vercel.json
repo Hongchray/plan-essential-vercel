@@ -1,0 +1,33 @@
+{
+  "version": 2,
+  "builds": [
+    {
+      "src": "package.json",
+      "use": "@vercel/next"
+    }
+  ],
+  "env": {
+    "DATABASE_URL": "postgresql://neondb_owner:npg_BczYM8sj7trZ@ep-weathered-bush-a1qj7e95-pooler.ap-southeast-1.aws.neon.tech/neondb?sslmode=require",
+    "NEXTAUTH_URL": "https://plan-essential-vercel.vercel.app",
+    "NEXTAUTH_SECRET": "IDblej89YNPQ2SOPp7uFKUIYL5Wf2LKLP5rkwFjs/os=",
+    "PLASGATE_API_URL": "https://cloudapi.plasgate.com/rest/send",
+    "PLASGATE_API_PRIVATE_KEY": "DTCR5uNrMFIjTVr1QmDhe__Vzk9BSFf9XmHAWt0TUel_vZPyFkFQgKIOk-OP0uro2fv5h-SDmMucQTeJyk4R5A",
+    "PLASGATE_API_X_SECRET": "$5$rounds=535000$8vo/oPD.IOWw2V8a$VfRQo64bp8cfzinWYKd2ziV8Q1abPY3cbi7UEmKlSw/",
+    "PLASGATE_SENDER": "PlasGateUAT",
+    "TELEGRAM_BOT_TOKEN": "8049727089:AAFeeDN1a1Xu7D66TLeC15yAzlMtKDtOWDg",
+    "NEXT_PUBLIC_TELEGRAM_BOT_USERNAME": "essential_plan_login_bot"
+  },
+  "build": {
+    "env": {
+      "DATABASE_URL": "postgresql://neondb_owner:npg_BczYM8sj7trZ@ep-weathered-bush-a1qj7e95-pooler.ap-southeast-1.aws.neon.tech/neondb?sslmode=require",
+      "NEXTAUTH_URL": "https://plan-essential-vercel.vercel.app",
+      "NEXTAUTH_SECRET": "IDblej89YNPQ2SOPp7uFKUIYL5Wf2LKLP5rkwFjs/os=",
+      "PLASGATE_API_URL": "https://cloudapi.plasgate.com/rest/send",
+      "PLASGATE_API_PRIVATE_KEY": "DTCR5uNrMFIjTVr1QmDhe__Vzk9BSFf9XmHAWt0TUel_vZPyFkFQgKIOk-OP0uro2fv5h-SDmMucQTeJyk4R5A",
+      "PLASGATE_API_X_SECRET": "$5$rounds=535000$8vo/oPD.IOWw2V8a$VfRQo64bp8cfzinWYKd2ziV8Q1abPY3cbi7UEmKlSw/",
+      "PLASGATE_SENDER": "PlasGateUAT",
+      "TELEGRAM_BOT_TOKEN": "8049727089:AAFeeDN1a1Xu7D66TLeC15yAzlMtKDtOWDg",
+      "NEXT_PUBLIC_TELEGRAM_BOT_USERNAME": "essential_plan_login_bot"
+    }
+  }
+}
