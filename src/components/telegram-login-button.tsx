@@ -54,15 +54,22 @@ export function TelegramLoginButton() {
   }, []);
 
   const initTelegramLogin = () => {
-    if (!process.env.NEXT_PUBLIC_TELEGRAM_BOT_USERNAME) {
+    const botUsername = process.env.NEXT_PUBLIC_TELEGRAM_BOT_USERNAME;
+
+    if (!botUsername) {
       toast.error("Telegram bot username not configured");
       return;
     }
 
-    console.log(
-      `Using Bot Username: ${process.env.NEXT_PUBLIC_TELEGRAM_BOT_USERNAME}`
-    );
+    // Validate bot username format
+    if (!botUsername.endsWith("_bot")) {
+      toast.error(
+        "Invalid bot username format. Bot username should end with '_bot'"
+      );
+      return;
+    }
 
+    console.log(`Using Bot Username: ${botUsername}`);
     setIsLoading(true);
 
     // Create backdrop
@@ -96,6 +103,19 @@ export function TelegramLoginButton() {
     title.style.fontWeight = "600";
     title.style.textAlign = "center";
 
+    // Create instructions
+    const instructions = document.createElement("p");
+    instructions.innerHTML = `
+      <strong>Instructions:</strong><br>
+      1. Make sure you have started the bot <strong>@${botUsername}</strong><br>
+      2. Click the "Login" button below<br>
+      3. You should receive a confirmation message in Telegram
+    `;
+    instructions.style.marginBottom = "20px";
+    instructions.style.fontSize = "14px";
+    instructions.style.color = "#666";
+    instructions.style.lineHeight = "1.5";
+
     // Create close button
     const closeBtn = document.createElement("button");
     closeBtn.innerHTML = "✕";
@@ -112,23 +132,60 @@ export function TelegramLoginButton() {
       setIsLoading(false);
     };
 
-    // Create Telegram widget
+    // Create widget container
+    const widgetContainer = document.createElement("div");
+    widgetContainer.style.textAlign = "center";
+    widgetContainer.style.marginBottom = "20px";
+
+    // Create Telegram widget script
     const script = document.createElement("script");
     script.src = "https://telegram.org/js/telegram-widget.js?22";
-    script.setAttribute(
-      "data-telegram-login",
-      process.env.NEXT_PUBLIC_TELEGRAM_BOT_USERNAME
-    );
-
+    script.setAttribute("data-telegram-login", botUsername);
     script.setAttribute("data-size", "large");
     script.setAttribute("data-onauth", "onTelegramAuth(user)");
     script.setAttribute("data-request-access", "write");
     script.async = true;
 
+    // Add error handling for script loading
+    script.onerror = () => {
+      toast.error("Failed to load Telegram widget. Please try again.");
+      document.body.removeChild(backdrop);
+      setIsLoading(false);
+    };
+
+    // Create fallback link
+    const fallbackLink = document.createElement("div");
+    fallbackLink.style.marginTop = "15px";
+    fallbackLink.style.textAlign = "center";
+
+    const botLink = document.createElement("a");
+    botLink.href = `https://t.me/${botUsername}`;
+    botLink.target = "_blank";
+    botLink.rel = "noopener noreferrer";
+    botLink.textContent = `Start @${botUsername}`;
+    botLink.style.color = "#0088cc";
+    botLink.style.textDecoration = "none";
+    botLink.style.fontSize = "14px";
+
+    const linkText = document.createElement("p");
+    linkText.style.fontSize = "12px";
+    linkText.style.color = "#666";
+    linkText.style.marginTop = "5px";
+    linkText.textContent =
+      "If the login button doesn't work, start the bot first:";
+
+    fallbackLink.appendChild(linkText);
+    fallbackLink.appendChild(botLink);
+
     // Assemble modal
     container.appendChild(closeBtn);
     container.appendChild(title);
-    container.appendChild(script);
+    container.appendChild(instructions);
+
+    widgetContainer.appendChild(script);
+    container.appendChild(widgetContainer);
+    container.appendChild(fallbackLink);
+
     backdrop.appendChild(container);
     document.body.appendChild(backdrop);
 
@@ -146,6 +203,13 @@ export function TelegramLoginButton() {
         setIsLoading(false);
       }
     };
+
+    // Set timeout to reset loading state if widget doesn't load
+    setTimeout(() => {
+      if (isLoading) {
+        setIsLoading(false);
+      }
+    }, 10000);
   };
 
   return (
