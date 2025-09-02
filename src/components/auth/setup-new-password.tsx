@@ -87,7 +87,7 @@ export default function SetPasswordPage() {
       if (!res.ok) throw new Error(data.error || "Failed to set password");
 
       toast.success("Password set successfully!");
-      router.push("/admin/login");
+      router.push("/login");
     } catch (err: any) {
       toast.error(err.message || "Failed to set password");
       setErrors({ message: err.message });

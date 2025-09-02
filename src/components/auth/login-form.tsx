@@ -79,7 +79,7 @@ export function LoginForm() {
         setErrors({ message: result.error });
       } else {
         toast.success("Authentication successful");
-        router.push("/admin/dashboard");
+        router.push("/dashboard");
       }
     } catch {
       toast.error("An unexpected error occurred");
@@ -141,7 +141,7 @@ export function LoginForm() {
                 />
                 <div className="flex items-center">
                   <a
-                    href="/admin/forgot-password"
+                    href="/forgot-password"
                     className="ml-auto inline-block text-sm underline-offset-4 hover:underline"
                   >
                     Forgot your password?
@@ -162,10 +162,7 @@ export function LoginForm() {
             </div>
             <div className="mt-4 text-center text-sm">
               Don&apos;t have an account?{" "}
-              <Link
-                href="/admin/signup"
-                className="underline underline-offset-4"
-              >
+              <Link href="/signup" className="underline underline-offset-4">
                 Sign up
               </Link>
             </div>

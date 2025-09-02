@@ -73,7 +73,7 @@ export function SignUpForm() {
         throw new Error(data.error || "Failed to send OTP");
       }
       toast.success("OTP sent successfully!");
-      router.push(`/admin/signup/verify-otp?phone=${phone}`);
+      router.push(`/signup/verify-otp?phone=${phone}`);
 
       // TODO: Navigate to OTP verification step
     } catch (error: unknown) {
@@ -156,10 +156,7 @@ export function SignUpForm() {
 
             <div className="mt-4 text-center text-sm">
               Already have an account?{" "}
-              <Link
-                href="/admin/login"
-                className="underline underline-offset-4"
-              >
+              <Link href="/login" className="underline underline-offset-4">
                 Login
               </Link>
             </div>

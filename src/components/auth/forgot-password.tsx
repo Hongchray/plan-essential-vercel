@@ -26,7 +26,7 @@ export default function ForgotPasswordPage() {
       const data = await res.json();
       if (res.ok) {
         toast.success("OTP code sent to your phone number.");
-        router.push(`/admin/forgot-password/verify-otp?phone=${phone}`);
+        router.push(`/forgot-password/verify-otp?phone=${phone}`);
       } else {
         toast.error(data.error || "Failed to send OTP.");
       }

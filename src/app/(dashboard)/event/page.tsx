@@ -1,6 +1,6 @@
-import { columns } from "./components/columns"
-import { DataTable } from "./components/data-table"
-import { Event } from "./data/schema"
+import { columns } from "./components/columns";
+import { DataTable } from "./components/data-table";
+import { Event } from "./data/schema";
 import { headers } from "next/headers";
 import { IAPIResponse } from "@/interfaces/comon/api-response";
 
@@ -51,5 +51,5 @@ export default async function EventPage({
         serverPagination={true}
       />
     </div>
-  )
+  );
 }

@@ -39,7 +39,7 @@ export function NavUser({
   const { isMobile } = useSidebar();
 
   const handleLogout = () => {
-    signOut({ callbackUrl: "/admin/login" }); // redirect after logout
+    signOut({ callbackUrl: "/login" }); // redirect after logout
   };
 
   return (

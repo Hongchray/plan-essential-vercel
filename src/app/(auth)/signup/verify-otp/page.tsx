@@ -1,4 +1,3 @@
-// src/app/admin/(auth)/signup/verify-otp/page.tsx
 "use client";
 
 import { Suspense } from "react";

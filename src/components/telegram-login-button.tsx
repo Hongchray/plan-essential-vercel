@@ -24,7 +24,7 @@ export default function TelegramLoginButton() {
         await signIn("telegram", {
           redirect: true, // ✅ Let NextAuth handle redirect
           authData: JSON.stringify(user), // Send Telegram data
-          callbackUrl: "/admin/dashboard", // Redirect after successful login
+          callbackUrl: "/dashboard", // Redirect after successful login
         });
       } catch (err) {
         console.error("Telegram auth error:", err);

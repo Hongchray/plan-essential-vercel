@@ -41,7 +41,7 @@ export async function POST(req: NextRequest) {
     // Next step: redirect to set new password
     return NextResponse.json({
       success: true,
-      next: `/admin/forgot-password/set-password?phone=${phone}`,
+      next: `/forgot-password/set-password?phone=${phone}`,
     });
   } catch (error: any) {
     console.error("❌ Forgot Password Verify OTP error:", error);
