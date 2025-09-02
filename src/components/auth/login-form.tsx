@@ -20,7 +20,7 @@ import { toast } from "sonner";
 import { useRouter } from "next/navigation";
 import { signIn } from "next-auth/react";
 import { PasswordInput } from "@/components/composable/password-field";
-import { TelegramLoginButton } from "@/components/telegram-login-button"; // Import the new component
+import TelegramLoginButton from "@/components/telegram-login-button"; // Import the new component
 
 // Define validation schema
 const loginSchema = z.object({

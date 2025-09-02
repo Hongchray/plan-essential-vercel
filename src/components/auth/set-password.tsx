@@ -10,6 +10,8 @@ import { toast } from "sonner";
 import { Loader2 } from "lucide-react";
 import Image from "next/image";
 import { PasswordInput } from "@/components/composable/password-field";
+import { signIn } from "next-auth/react";
+
 const passwordSchema = z
   .object({
     password: z.string().min(8, "Password must be at least 8 characters"),
@@ -83,7 +85,14 @@ export default function SetPasswordPage() {
       if (!res.ok) throw new Error(data.error);
 
       toast.success("Account created successfully!");
-      router.push("/admin/login");
+
+      // Automatically sign in the user after setting password
+      const signInRes = await signIn("credentials", {
+        redirect: true, // Let NextAuth handle the redirect
+        phone,
+        password,
+        callbackUrl: "/admin/dashboard",
+      });
     } catch (err: any) {
       toast.error(err.message || "Failed to set password");
       setErrors({ message: err.message });

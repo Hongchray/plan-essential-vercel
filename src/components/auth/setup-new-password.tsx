@@ -9,7 +9,7 @@ import { Button } from "@/components/ui/button";
 import { toast } from "sonner";
 import { Loader2 } from "lucide-react";
 import Image from "next/image";
-
+import { PasswordInput } from "../composable/password-field";
 // Zod schema for password validation
 const passwordSchema = z
   .object({
@@ -67,20 +67,27 @@ export default function SetPasswordPage() {
 
     setIsLoading(true);
     try {
-      const res = await fetch("/api/auth/set-password", {
+      const res = await fetch("/api/auth/forgot-password/setup-password", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          phone,
-          password,
-        }),
+        body: JSON.stringify({ phone, password }),
       });
 
-      const data = await res.json();
-      if (!res.ok) throw new Error(data.error);
+      // Read body as text first
+      const text = await res.text();
+
+      // Try to parse JSON, fallback to plain text error
+      let data: any;
+      try {
+        data = JSON.parse(text);
+      } catch {
+        data = { error: text };
+      }
+
+      if (!res.ok) throw new Error(data.error || "Failed to set password");
 
       toast.success("Password set successfully!");
-      router.push("/admin/login"); // redirect after success
+      router.push("/admin/login");
     } catch (err: any) {
       toast.error(err.message || "Failed to set password");
       setErrors({ message: err.message });
@@ -111,31 +118,20 @@ export default function SetPasswordPage() {
         )}
 
         <div className="flex flex-col gap-1">
-          <Label htmlFor="password">Password</Label>
-          <Input
-            id="password"
-            type="password"
-            placeholder="Enter password"
+          <PasswordInput
             value={password}
             onChange={(e) => setPassword(e.target.value)}
+            error={errors.password}
           />
-          {errors.password && (
-            <p className="text-red-500 text-sm">{errors.password}</p>
-          )}
         </div>
 
         <div className="flex flex-col gap-1">
-          <Label htmlFor="confirmPassword">Confirm Password</Label>
-          <Input
-            id="confirmPassword"
-            type="password"
-            placeholder="Confirm password"
+          <PasswordInput
+            label="Confirm Password "
             value={confirmPassword}
             onChange={(e) => setConfirmPassword(e.target.value)}
+            error={errors.confirm_password}
           />
-          {errors.confirm_password && (
-            <p className="text-red-500 text-sm">{errors.confirm_password}</p>
-          )}
         </div>
 
         <Button type="submit" disabled={isLoading} className="mt-4 w-full">

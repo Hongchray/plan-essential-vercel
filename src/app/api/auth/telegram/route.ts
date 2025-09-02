@@ -29,23 +29,28 @@ export async function POST(req: Request) {
     );
   }
 
-  // Upsert user in DB
+  console.log("Telegram auth data verified:", data);
+  // Upsert user by telegramId
   const user = await prisma.user.upsert({
-    where: { id: String(data.id) },
+    where: { telegramId: String(data.id) },
     update: {
       name: data.first_name,
-      image: data.photo_url,
+      username: data.username,
+      photoUrl: data.photo_url,
+      updatedAt: new Date(),
     },
     create: {
-      id: String(data.id),
-      email: `${data.id}@telegram.local`, // fake email (Telegram doesn’t give email)
-      password: "", // not needed for Telegram login
+      telegramId: String(data.id),
       name: data.first_name,
-      phone: null,
-      image: data.photo_url,
+      username: data.username,
+      email: `${data.id}@telegram.local`, // placeholder email
+      password: "", // Telegram login, password not required
+      photoUrl: data.photo_url,
+      role: "user",
     },
   });
 
-  // (optional) start a session or JWT here
+  // TODO: Start session / issue JWT here if needed
+
   return NextResponse.json({ success: true, user });
 }
