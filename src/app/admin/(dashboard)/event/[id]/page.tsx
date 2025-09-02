@@ -5,39 +5,52 @@ import TabGift from "@/components/event/show-tabs/gift";
 import TabGuest from "@/components/event/show-tabs/guest";
 import TabTemplate from "@/components/event/show-tabs/template";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
-import { useEffect, useState } from "react";
+import React, { useEffect, useState } from "react";
 import { useRouter } from "next/navigation"
 
-export default function showEvent({params}: {params: {id: string}}) {
+export default function showEvent({
+    params,
+    searchParams
+}: {
+    params: Promise<{ id: string }>;
+    searchParams: Promise<{
+        page?: string;
+        per_page?: number;
+        search?: string;
+        sort?: string;
+        order?: string;
+    }>;
+}) {
+    const param =  React.use(params);
     const router = useRouter()
     const [tab, setTab] = useState("");
     const [guests, setGuests] = useState([
         { 
-        id: 1, 
-        name: 'John Doe', 
-        email: 'john@example.com', 
-        status: 'confirmed', 
-        group: "Groom's side", 
-        tags: ['high school friend', 'college roommate'], 
-        gift: { received: true, item: 'Kitchen Blender', value: 120 } 
+            id: 1, 
+            name: 'John Doe', 
+            email: 'john@example.com', 
+            status: 'confirmed', 
+            group: "Groom's side", 
+            tags: ['high school friend', 'college roommate'], 
+            gift: { received: true, item: 'Kitchen Blender', value: 120 } 
         },
         { 
-        id: 2, 
-        name: 'Jane Smith', 
-        email: 'jane@example.com', 
-        status: 'pending', 
-        group: "Bride's side", 
-        tags: ['work colleague'], 
-        gift: { received: false, item: '', value: 0 } 
+            id: 2, 
+            name: 'Jane Smith', 
+            email: 'jane@example.com', 
+            status: 'pending', 
+            group: "Bride's side", 
+            tags: ['work colleague'], 
+            gift: { received: false, item: '', value: 0 } 
         },
         { 
-        id: 3, 
-        name: 'Bob Johnson', 
-        email: 'bob@example.com', 
-        status: 'declined', 
-        group: "Groom's side", 
-        tags: ['team mate', 'neighbor'], 
-        gift: { received: false, item: '', value: 0 } 
+            id: 3, 
+            name: 'Bob Johnson', 
+            email: 'bob@example.com', 
+            status: 'declined', 
+            group: "Groom's side", 
+            tags: ['team mate', 'neighbor'], 
+            gift: { received: false, item: '', value: 0 } 
         }
     ]);
 
@@ -62,7 +75,7 @@ export default function showEvent({params}: {params: {id: string}}) {
         return () => window.removeEventListener("hashchange", handleHashChange)
     }, [])
 
-    // Update hash when tab changes
+    // // Update hash when tab changes
     const handleChange = (value: string) => {
         setTab(value)
         router.push(`#${value}`) 
@@ -84,22 +97,22 @@ export default function showEvent({params}: {params: {id: string}}) {
                 </TabsContent>
                 <TabsContent value="guests">
                     <div>
-                        <TabGuest guests={guests} setGuests={setGuests} />
+                        <TabGuest paramId={param.id} searchParams={searchParams} />
                     </div>
                 </TabsContent>
                 <TabsContent value="expense">
                     <div>
-                        <TabExpense expenses={expenses} setExpenses={setExpenses} />
+                        {/* <TabExpense expenses={expenses} setExpenses={setExpenses} /> */}
                     </div>
                 </TabsContent>
                 <TabsContent value="gifts">
                     <div>
-                        <TabGift guests={guests} setGuests={setGuests} expenses={expenses} setExpenses={setExpenses} />
+                        {/* <TabGift guests={guests} setGuests={setGuests} expenses={expenses} setExpenses={setExpenses} /> */}
                     </div>
                 </TabsContent>
                 <TabsContent value="template">
                     <div>
-                        <TabTemplate guests={guests} setGuests={setGuests} expenses={expenses} setExpenses={setExpenses} />
+                        {/* <TabTemplate guests={guests} setGuests={setGuests} expenses={expenses} setExpenses={setExpenses} /> */}
                     </div>
                 </TabsContent>
             </Tabs>

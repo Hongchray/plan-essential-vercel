@@ -8,10 +8,8 @@ export const guestSchema = z.object({
   phone: z.string(),
   note: z.string().optional(),
   address: z.string().optional(),
-  
   tags: z.array(z.any()).optional(),
   groups: z.array(z.any()).optional(),
-
   createdAt: z.string(),
   updatedAt: z.string(),
 })

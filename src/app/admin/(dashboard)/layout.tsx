@@ -25,6 +25,7 @@ import {
   TableRow,
 } from "@/components/ui/table"
 import { createContext, useContext, useState, ReactNode } from "react"
+import NextTopLoader from "nextjs-toploader";
 // User Data
 const data = {
   user: {
@@ -109,25 +110,13 @@ export default function DashboardLayout({
               </div>
             </div>
           </header>
-          
           <div className="flex flex-1 flex-col gap-4 p-4 pt-0 bg-gray-50 relative">
+            <NextTopLoader color="#F5BABB" showSpinner={false} />
             <SessionProvider>
               <div className="pt-4">
                 {children}
               </div>
             </SessionProvider>
-            
-            {/* Global Loading Overlay */}
-            {isLoading && (
-              <Loading
-                text={loadingText}
-                logo="/logo.png" 
-                logoSize={100}
-                fullScreen={true}
-                overlay={true}
-                className="z-[60]" 
-              />
-            )}
           </div>
         </SidebarInset>
       </SidebarProvider>
