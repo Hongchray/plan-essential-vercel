@@ -95,8 +95,8 @@ export function DataTableToolbar<TData>({
         )}
       </div>
       <div className="flex gap-4">
-        <Link href="/admin/event/create">
-          <Button size="sm" >Add New</Button>
+        <Link href="/event/create">
+          <Button size="sm">Add New</Button>
         </Link>
 
         <DataTableViewOptions table={table} />

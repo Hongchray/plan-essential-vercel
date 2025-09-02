@@ -1,7 +1,11 @@
 import { CreateEditForm } from "@/components/template/create-edit";
-import { useLoading } from "../../../layout";
+import { useLoading } from "@/contexts/LoadingContext";
 
-export default async function CreateTemplate({params,}: {params: Promise<{ id: string }>}) {
+export default async function CreateTemplate({
+  params,
+}: {
+  params: Promise<{ id: string }>;
+}) {
   const { id } = await params;
 
   return (

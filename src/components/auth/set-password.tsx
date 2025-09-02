@@ -91,7 +91,7 @@ export default function SetPasswordPage() {
         redirect: true, // Let NextAuth handle the redirect
         phone,
         password,
-        callbackUrl: "/admin/dashboard",
+        callbackUrl: "/dashboard",
       });
     } catch (err: any) {
       toast.error(err.message || "Failed to set password");

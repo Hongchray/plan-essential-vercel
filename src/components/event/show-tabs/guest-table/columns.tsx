@@ -1,19 +1,19 @@
-"use client"
-import { ColumnDef } from "@tanstack/react-table"
-import { Checkbox } from "@/components/ui/checkbox"
-import { Guest } from "./data/schema"
-import { DataTableColumnHeader } from "./data-table-column-header"
-import { Button } from "@/components/ui/button"
-import { EditIcon, Trash2Icon } from "lucide-react"
-import Link from "next/link"
-import { ConfirmDialog } from "@/components/composable/dialog/confirm-dialog"
-import { toast } from "sonner"
-import { useRouter } from "next/navigation"
-import { IconAccessPoint } from "@tabler/icons-react"
+"use client";
+import { ColumnDef } from "@tanstack/react-table";
+import { Checkbox } from "@/components/ui/checkbox";
+import { Guest } from "./data/schema";
+import { DataTableColumnHeader } from "./data-table-column-header";
+import { Button } from "@/components/ui/button";
+import { EditIcon, Trash2Icon } from "lucide-react";
+import Link from "next/link";
+import { ConfirmDialog } from "@/components/composable/dialog/confirm-dialog";
+import { toast } from "sonner";
+import { useRouter } from "next/navigation";
+import { IconAccessPoint } from "@tabler/icons-react";
 
 const ActionsCell = ({ row }: { row: any }) => {
-  const router = useRouter(); 
-  
+  const router = useRouter();
+
   const deleteEvent = async (id: string) => {
     try {
       const res = await fetch(`/api/admin/event/${id}`, {
@@ -32,12 +32,12 @@ const ActionsCell = ({ row }: { row: any }) => {
 
   return (
     <div className="flex gap-2 items-end justify-end">
-      <Link href={`/admin/event/edit/${row.original.id}`}>
+      <Link href={`/event/edit/${row.original.id}`}>
         <Button size="icon" variant="outline">
           <IconAccessPoint />
         </Button>
       </Link>
-      <Link href={`/admin/event/edit/${row.original.id}`}>
+      <Link href={`/event/edit/${row.original.id}`}>
         <Button size="icon" variant="outline">
           <EditIcon />
         </Button>
@@ -90,10 +90,12 @@ export const columns: ColumnDef<Guest>[] = [
       return (
         <div className="flex gap-2">
           <span className="max-w-[200px] truncate font-medium text-primary underline">
-            <Link href={`/admin/event/${row.original.id}`}>{row.getValue("name")}</Link>
+            <Link href={`/event/${row.original.id}`}>
+              {row.getValue("name")}
+            </Link>
           </span>
         </div>
-      )
+      );
     },
   },
   {
@@ -108,7 +110,7 @@ export const columns: ColumnDef<Guest>[] = [
             {row.getValue("phone")}
           </span>
         </div>
-      )
+      );
     },
   },
   {
@@ -123,11 +125,11 @@ export const columns: ColumnDef<Guest>[] = [
             {row.getValue("address")}
           </span>
         </div>
-      )
+      );
     },
   },
   {
     id: "actions",
-    cell: ({ row }) => <ActionsCell row={row} />, 
+    cell: ({ row }) => <ActionsCell row={row} />,
   },
-]
+];

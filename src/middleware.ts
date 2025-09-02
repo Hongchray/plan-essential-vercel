@@ -3,13 +3,13 @@ import type { NextRequest } from "next/server";
 
 // List all public admin routes here
 const PUBLIC_ADMIN_ROUTES = [
-  "/admin/login",
-  "/admin/signup",
-  "/admin/forgot-password",
-  "/admin/signup/verify-otp",
-  "/admin/signup/set-password",
-  "/admin/forgot-password/verify-otp",
-  "/admin/forgot-password/set-password",
+  "/login",
+  "/signup",
+  "/forgot-password",
+  "/signup/verify-otp",
+  "/signup/set-password",
+  "/forgot-password/verify-otp",
+  "/forgot-password/set-password",
 ];
 
 function isPublicAdminRoute(pathname: string) {
@@ -35,12 +35,12 @@ export function middleware(request: NextRequest) {
     request.cookies.get("__Secure-next-auth.session-token")?.value;
 
   if (!token) {
-    return NextResponse.redirect(new URL("/admin/login", request.url));
+    return NextResponse.redirect(new URL("/login", request.url));
   }
 
   return NextResponse.next();
 }
 
 export const config = {
-  matcher: ["/admin/:path*"],
+  matcher: ["/:path*"],
 };

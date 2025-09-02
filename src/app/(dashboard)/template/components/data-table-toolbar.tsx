@@ -1,25 +1,25 @@
-"use client"
+"use client";
 
-import { Table } from "@tanstack/react-table"
-import { X } from "lucide-react"
+import { Table } from "@tanstack/react-table";
+import { X } from "lucide-react";
 
-import { Button } from "@/components/ui/button"
-import { Input } from "@/components/ui/input"
-import { DataTableViewOptions } from "./data-table-view-options"
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { DataTableViewOptions } from "./data-table-view-options";
 
-import { priorities, statuses } from "../data/data"
-import { DataTableFacetedFilter } from "./data-table-faceted-filter"
-import { CreateEditForm } from "@/components/store/create-edit"
-import Link from "next/link"
+import { priorities, statuses } from "../data/data";
+import { DataTableFacetedFilter } from "./data-table-faceted-filter";
+import { CreateEditForm } from "@/components/store/create-edit";
+import Link from "next/link";
 
 interface DataTableToolbarProps<TData> {
-  table: Table<TData>
+  table: Table<TData>;
 }
 
 export function DataTableToolbar<TData>({
   table,
 }: DataTableToolbarProps<TData>) {
-  const isFiltered = table.getState().columnFilters.length > 0
+  const isFiltered = table.getState().columnFilters.length > 0;
 
   return (
     <div className="flex items-center justify-between">
@@ -59,11 +59,11 @@ export function DataTableToolbar<TData>({
       </div>
       <div className="flex items-center gap-2">
         {/* <CreateEditForm /> */}
-        <Link href="/admin/template/create">
-          <Button size="sm" >Add New</Button>
+        <Link href="/template/create">
+          <Button size="sm">Add New</Button>
         </Link>
         <DataTableViewOptions table={table} />
       </div>
     </div>
-  )
+  );
 }

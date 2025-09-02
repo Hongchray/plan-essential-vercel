@@ -1,17 +1,23 @@
-"use client"
-import * as React from "react"
-import { NavUser } from "@/components/nav-user"
+"use client";
+import * as React from "react";
+import { NavUser } from "@/components/nav-user";
 import {
   Sidebar,
   SidebarContent,
   SidebarFooter,
   SidebarHeader,
   SidebarRail,
-} from "@/components/ui/sidebar"
-import { NavMainBasic } from "./nav-main-basic"
-import { IconListDetails,IconPackage,IconHome,IconBuildingStore, IconSettings } from "@tabler/icons-react"
-import { GalleryVerticalEnd } from "lucide-react"
-import { LogoApp } from "./logo-app"
+} from "@/components/ui/sidebar";
+import { NavMainBasic } from "./nav-main-basic";
+import {
+  IconListDetails,
+  IconPackage,
+  IconHome,
+  IconBuildingStore,
+  IconSettings,
+} from "@tabler/icons-react";
+import { GalleryVerticalEnd } from "lucide-react";
+import { LogoApp } from "./logo-app";
 
 // This is sample data.
 const data = {
@@ -30,37 +36,37 @@ const data = {
   navMain: [
     {
       title: "Dashboard",
-      url: "/admin/dashboard",
+      url: "/dashboard",
       icon: IconHome,
     },
     {
       title: "Users",
-      url: "/admin/user",
+      url: "/user",
       icon: IconBuildingStore,
     },
     {
       title: "Event",
-      url: "/admin/event",
+      url: "/event",
       icon: IconListDetails,
     },
     {
       title: "Template",
-      url: "/admin/template",
+      url: "/template",
       icon: IconPackage,
     },
     {
       title: "Setting",
       url: "#",
-      icon: IconSettings
+      icon: IconSettings,
     },
   ],
-}
+};
 
 export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
   return (
-    <Sidebar collapsible="icon" {...props} >
+    <Sidebar collapsible="icon" {...props}>
       <SidebarHeader>
-        <LogoApp/>
+        <LogoApp />
       </SidebarHeader>
       <SidebarContent>
         <NavMainBasic items={data.navMain} />
@@ -70,5 +76,5 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
       </SidebarFooter>
       <SidebarRail />
     </Sidebar>
-  )
+  );
 }

@@ -115,7 +115,7 @@ export default function VerifyOtp() {
       if (!res.ok) throw new Error(data.error || "Verification failed");
 
       toast.success("Phone verified successfully!");
-      router.push(`/admin/forgot-password/set-password?phone=${phone}`);
+      router.push(`/forgot-password/set-password?phone=${phone}`);
     } catch (err: any) {
       toast.error(err.message || "Verification failed");
     } finally {

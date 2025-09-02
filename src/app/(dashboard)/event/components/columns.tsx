@@ -1,47 +1,38 @@
-"use client"
-
-import { ColumnDef } from "@tanstack/react-table"
-import { Badge } from "@/components/ui/badge"
-import { Checkbox } from "@/components/ui/checkbox"
-import { Template } from "../data/schema"
-import { DataTableColumnHeader } from "./data-table-column-header"
-import { DataTableRowActions } from "./data-table-row-actions"
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
-import Image from "next/image"
-import { Button } from "@/components/ui/button"
-import { DeleteIcon, EditIcon, EyeIcon, Trash2Icon } from "lucide-react"
-import Link from "next/link"
-import { ConfirmDialog } from "@/components/composable/dialog/confirm-dialog"
-import { toast } from "sonner"
-import { useRouter } from "next/navigation"
+"use client";
+import { ColumnDef } from "@tanstack/react-table";
+import { Checkbox } from "@/components/ui/checkbox";
+import { Event } from "../data/schema";
+import { DataTableColumnHeader } from "./data-table-column-header";
+import Image from "next/image";
+import { Button } from "@/components/ui/button";
+import { EditIcon, EyeIcon, Trash2Icon } from "lucide-react";
+import Link from "next/link";
+import { ConfirmDialog } from "@/components/composable/dialog/confirm-dialog";
+import { toast } from "sonner";
+import { useRouter } from "next/navigation";
 
 const ActionsCell = ({ row }: { row: any }) => {
-  const router = useRouter(); 
-  
-  const deleteTemplate = async (id: string) => {
+  const router = useRouter();
+
+  const deleteEvent = async (id: string) => {
     try {
-      const res = await fetch(`/api/admin/template/${id}`, {
+      const res = await fetch(`admin/event/${id}`, {
         method: "DELETE",
       });
       if (res.ok) {
-        toast.success("Delete Template successfully");
+        toast.success("Delete Event successfully");
         router.refresh();
       } else {
-        toast.error("Error deleting template");
+        toast.error("Error deleting Event");
       }
     } catch (error) {
-      toast.error("Error deleting template");
+      toast.error("Error deleting Event");
     }
   };
 
   return (
     <div className="flex gap-2 items-end justify-end">
-      <Link href={`/preview/${row.original.id}`}>
-        <Button size="icon" variant="outline">
-          <EyeIcon />
-        </Button>
-      </Link>
-      <Link href={`/admin/template/edit/${row.original.id}`}>
+      <Link href={`/event/edit/${row.original.id}`}>
         <Button size="icon" variant="outline">
           <EditIcon />
         </Button>
@@ -54,13 +45,13 @@ const ActionsCell = ({ row }: { row: any }) => {
         }
         title="Delete this file?"
         description="This will permanently remove the file."
-        onConfirm={() => deleteTemplate(row.original.id)}
+        onConfirm={() => deleteEvent(row.original.id)}
       />
     </div>
   );
 };
 
-export const columns: ColumnDef<Template>[] = [
+export const columns: ColumnDef<Event>[] = [
   {
     id: "select",
     header: ({ table }) => (
@@ -84,26 +75,6 @@ export const columns: ColumnDef<Template>[] = [
     ),
     enableSorting: false,
     enableHiding: false,
-  },  
-  {
-    accessorKey: "image",
-    enableSorting: false,
-    header: ({ column }) => (
-      <DataTableColumnHeader column={column} title="Image" />
-    ),
-    cell: ({ row }) => {
-      if (row.getValue("image")) {
-        return (
-          <Image
-            src={row.getValue("image")}
-            width={50}
-            height={50}
-            alt="Picture of the author"
-            className="rounded"
-          />
-        )
-      }
-    }
   },
   {
     accessorKey: "name",
@@ -113,11 +84,13 @@ export const columns: ColumnDef<Template>[] = [
     cell: ({ row }) => {
       return (
         <div className="flex gap-2">
-          <span className="max-w-[200px] truncate font-medium">
-            {row.getValue("name")}
+          <span className="max-w-[200px] truncate font-medium text-primary underline">
+            <Link href={`/event/${row.original.id}`}>
+              {row.getValue("name")}
+            </Link>
           </span>
         </div>
-      )
+      );
     },
   },
   {
@@ -132,7 +105,37 @@ export const columns: ColumnDef<Template>[] = [
             {row.getValue("type")}
           </span>
         </div>
-      )
+      );
+    },
+  },
+  {
+    accessorKey: "startTime",
+    header: ({ column }) => (
+      <DataTableColumnHeader column={column} title="Event Date" />
+    ),
+    cell: ({ row }) => {
+      return (
+        <div className="flex gap-2">
+          <span className="max-w-[200px] truncate font-medium">
+            {row.getValue("startTime")}
+          </span>
+        </div>
+      );
+    },
+  },
+  {
+    accessorKey: "location",
+    header: ({ column }) => (
+      <DataTableColumnHeader column={column} title="Location" />
+    ),
+    cell: ({ row }) => {
+      return (
+        <div className="flex gap-2">
+          <span className="max-w-[200px] truncate font-medium">
+            {row.getValue("location")}
+          </span>
+        </div>
+      );
     },
   },
   {
@@ -147,11 +150,11 @@ export const columns: ColumnDef<Template>[] = [
             {row.getValue("status")}
           </span>
         </div>
-      )
+      );
     },
   },
   {
     id: "actions",
-    cell: ({ row }) => <ActionsCell row={row} />, 
+    cell: ({ row }) => <ActionsCell row={row} />,
   },
-]
+];
