@@ -1,54 +1,57 @@
-"use client";
-
-import { Metadata } from "next";
 import { columns } from "./components/columns";
 import { DataTable } from "./components/data-table";
-import { useLoading } from "@/contexts/LoadingContext";
-import { useEffect, useState } from "react";
 import { Template } from "./data/schema";
+import { headers } from "next/headers";
+import { IAPIResponse } from "@/interfaces/comon/api-response";
 
-// export const metadata: Metadata = {
-//   title: "Templates",
-//   description: "Manage all templates",
-// }
+async function getData(
+  page: number = 1,
+  pageSize: number = 10,
+  search: string = "",
+  sort: string = "",
+  order: string = ""
+) {
+  const response = await fetch(
+    `${process.env.NEXTAUTH_URL}/api/admin/template?page=${page}&per_page=${pageSize}&search=${search}&sort=${sort}&order=${order}`,
+    {
+      method: "GET",
+      headers: new Headers(await headers()),
+    }
+  );
 
-// Simulate a database read for tasks.
-async function getTemplates() {
-  // get all templates from api
-  const res = await fetch("/api/admin/template", {
-    method: "GET",
-    headers: {
-      "Content-Type": "application/json",
-    },
-  });
-  const data = await res.json();
-  return data.templates;
+  const result: IAPIResponse<Template> = await response.json();
+  return result;
 }
 
-export default function TemplatePage() {
-  const { setOverlayLoading } = useLoading();
-  const [data, setData] = useState<Template[]>([]);
-  useEffect(() => {
-    async function fetchTemplates() {
-      setOverlayLoading(true);
-      try {
-        const templates = await getTemplates();
-        setData(templates as Template[]);
-      } catch (error) {
-        console.error("Failed to fetch templates:", error);
-        // You might want to show an error message to the user here
-      } finally {
-        setOverlayLoading(false);
-      }
-    }
+export default async function Page({
+  searchParams,
+}: {
+  searchParams: Promise<{
+    page?: string;
+    per_page?: number;
+    search?: string;
+    sort?: string;
+    order?: string;
+  }>;
+}) {
+  const params = await searchParams;
+  const page = Number(params.page) || 1;
+  const search = params.search || "";
+  const sort = params.sort || "";
+  const order = params.order || "";
+  const pageSize = params.per_page ?? 10;
 
-    fetchTemplates();
-  }, []);
+  const { data, meta } = await getData(page, pageSize, search, sort, order);
+
   return (
-    <>
-      <div className="h-full flex-1 flex-col gap-2 p-4">
-        <DataTable data={data} columns={columns} />
-      </div>
-    </>
+    <div className="h-full flex-1 flex-col gap-2 p-4">
+      <DataTable
+        data={data}
+        columns={columns}
+        pageCount={meta?.pageCount ?? 1}
+        total={meta.total}
+        serverPagination={true}
+      />
+    </div>
   );
 }

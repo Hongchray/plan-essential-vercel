@@ -1,17 +1,37 @@
-"use client"
+"use client";
 
-import { ColumnDef } from "@tanstack/react-table"
+import { ColumnDef } from "@tanstack/react-table";
 
-import { Badge } from "@/components/ui/badge"
-import { Checkbox } from "@/components/ui/checkbox"
+import { Badge } from "@/components/ui/badge";
+import { Checkbox } from "@/components/ui/checkbox";
 
-import { labels, priorities, statuses } from "../data/data"
-import { Store } from "../data/schema"
-import { DataTableColumnHeader } from "./data-table-column-header"
-import { DataTableRowActions } from "./data-table-row-actions"
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
+import { labels, priorities, statuses } from "../data/data";
+import { User } from "../data/schema";
+import { DataTableColumnHeader } from "./data-table-column-header";
+import { DataTableRowActions } from "./data-table-row-actions";
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import { useRouter } from "next/navigation";
+import { toast } from "sonner";
+import Link from "next/link";
+import { Button } from "@/components/ui/button";
+import { EditIcon, EyeIcon, Trash2Icon } from "lucide-react";
+import { ConfirmDialog } from "@/components/composable/dialog/confirm-dialog";
 
-export const columns: ColumnDef<Store>[] = [
+const ActionsCell = ({ row }: { row: any }) => {
+  const router = useRouter();
+
+  return (
+    <div className="flex gap-2 items-end justify-end">
+      <Link href={`/user/${row.original.id}`}>
+        <Button size="icon" variant="outline">
+          <EyeIcon />
+        </Button>
+      </Link>
+    </div>
+  );
+};
+
+export const columns: ColumnDef<User>[] = [
   {
     id: "select",
     header: ({ table }) => (
@@ -39,21 +59,21 @@ export const columns: ColumnDef<Store>[] = [
 
   //logo
   {
-    accessorKey: "logo",
-    enableSorting:false,
+    accessorKey: "photoUrl",
+    enableSorting: false,
     header: ({ column }) => (
       <DataTableColumnHeader column={column} title="Logo" />
     ),
-    cell: ({row}) =>{
+    cell: ({ row }) => {
       return (
-         <Avatar>
-          <AvatarImage src={row.getValue("logo")} alt="@shadcn" />
+        <Avatar>
+          <AvatarImage src={row.getValue("photoUrl")} alt="@shadcn" />
           <AvatarFallback>CN</AvatarFallback>
         </Avatar>
-      )
-    }
+      );
+    },
   },
-  
+
   {
     accessorKey: "name",
     header: ({ column }) => (
@@ -66,7 +86,7 @@ export const columns: ColumnDef<Store>[] = [
             {row.getValue("name")}
           </span>
         </div>
-      )
+      );
     },
   },
   {
@@ -81,53 +101,99 @@ export const columns: ColumnDef<Store>[] = [
             {row.getValue("phone")}
           </span>
         </div>
-      )
+      );
     },
   },
   {
-    accessorKey: "address",
+    accessorKey: "email",
     header: ({ column }) => (
-      <DataTableColumnHeader column={column} title="Address" />
+      <DataTableColumnHeader column={column} title="Email" />
     ),
     cell: ({ row }) => {
       return (
         <div className="flex gap-2">
           <span className="max-w-[200px] truncate font-medium">
-            {row.getValue("address")}
+            {row.getValue("email")}
           </span>
         </div>
-      )
+      );
     },
   },
   {
-    accessorKey: "status",
+    accessorKey: "role",
     header: ({ column }) => (
-      <DataTableColumnHeader column={column} title="Status" />
+      <DataTableColumnHeader column={column} title="Role" />
     ),
     cell: ({ row }) => {
-      const status = statuses.find(
-        (status) => status.value === row.getValue("status")
-      )
-
-      if (!status) {
-        return null
-      }
-
       return (
-        <div className="flex w-[100px] items-center gap-2">
-          {status.icon && (
-            <status.icon className="text-muted-foreground size-4" />
-          )}
-          <span>{status.label}</span>
+        <div className="flex gap-2">
+          <span className="max-w-[200px] truncate font-medium">
+            {row.getValue("role")}
+          </span>
         </div>
-      )
-    },
-    filterFn: (row, id, value) => {
-      return value.includes(row.getValue(id))
+      );
     },
   },
   {
-    id: "actions",
-    cell: ({ row }) => <DataTableRowActions row={row} />,
+    accessorKey: "telegramId", // column key
+    enableSorting: false,
+    header: ({ column }) => (
+      <DataTableColumnHeader column={column} title="Login As" />
+    ),
+    cell: ({ row }) => {
+      const telegramId = row.getValue<string>("telegramId");
+
+      // If telegramId exists, user logged in via Telegram, else via Phone
+      const displayValue = telegramId
+        ? "Logged in via Telegram"
+        : "Logged in via Phone";
+
+      return <span>{displayValue}</span>;
+    },
+    filterFn: (row, id, value) => {
+      const telegramId = row.getValue<string>("telegramId");
+      const displayValue = telegramId
+        ? "Logged in via Telegram"
+        : "Logged in via Phone";
+
+      return displayValue
+        .toLowerCase()
+        .includes((value as string).toLowerCase());
+    },
   },
-]
+  {
+    accessorKey: "updatedAt",
+    header: ({ column }) => (
+      <DataTableColumnHeader column={column} title="Updated At" />
+    ),
+    cell: ({ row }) => {
+      return (
+        <div className="flex gap-2">
+          <span className="max-w-[200px] truncate font-medium">
+            {row.getValue("updatedAt")}
+          </span>
+        </div>
+      );
+    },
+  },
+  {
+    accessorKey: "createdAt",
+    header: ({ column }) => (
+      <DataTableColumnHeader column={column} title="Created At" />
+    ),
+    cell: ({ row }) => {
+      return (
+        <div className="flex gap-2">
+          <span className="max-w-[200px] truncate font-medium">
+            {row.getValue("createdAt")}
+          </span>
+        </div>
+      );
+    },
+  },
+
+  {
+    id: "actions",
+    cell: ({ row }) => <ActionsCell row={row} />,
+  },
+];

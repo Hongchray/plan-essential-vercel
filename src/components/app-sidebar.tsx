@@ -18,61 +18,42 @@ import {
 } from "@tabler/icons-react";
 import { GalleryVerticalEnd } from "lucide-react";
 import { LogoApp } from "./logo-app";
+import { useSession } from "next-auth/react";
 
-// This is sample data.
-const data = {
-  user: {
-    name: "shadcn",
-    email: "m@example.com",
-    avatar: "/avatars/shadcn.jpg",
-  },
-  teams: [
-    {
-      name: "Store Name",
-      logo: GalleryVerticalEnd,
-      plan: "Free",
-    },
-  ],
-  navMain: [
-    {
-      title: "Dashboard",
-      url: "/dashboard",
-      icon: IconHome,
-    },
-    {
-      title: "Users",
-      url: "/user",
-      icon: IconBuildingStore,
-    },
-    {
-      title: "Event",
-      url: "/event",
-      icon: IconListDetails,
-    },
-    {
-      title: "Template",
-      url: "/template",
-      icon: IconPackage,
-    },
-    {
-      title: "Setting",
-      url: "#",
-      icon: IconSettings,
-    },
-  ],
-};
+// Sample navigation data
+const navMain = [
+  { title: "Dashboard", url: "/dashboard", icon: IconHome },
+  { title: "Users", url: "/user", icon: IconBuildingStore },
+  { title: "Event", url: "/event", icon: IconListDetails },
+  { title: "Template", url: "/template", icon: IconPackage },
+  { title: "Setting", url: "#", icon: IconSettings },
+];
+
+// Sample teams (optional)
+const teams = [{ name: "Store Name", logo: GalleryVerticalEnd, plan: "Free" }];
 
 export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
+  const { data: session, status } = useSession();
+
+  // If user is not logged in, you can show a default user or empty
+  const user = session?.user || {
+    name: "Guest",
+    email: "guest@example.com",
+    photoUrl: "/avatars/default.png", // default avatar
+  };
+
   return (
     <Sidebar collapsible="icon" {...props}>
       <SidebarHeader>
         <LogoApp />
       </SidebarHeader>
       <SidebarContent>
-        <NavMainBasic items={data.navMain} />
+        <NavMainBasic items={navMain} />
       </SidebarContent>
       <SidebarFooter>
-        <NavUser user={data.user} />
+        <SidebarFooter>
+          <NavUser />
+        </SidebarFooter>
       </SidebarFooter>
       <SidebarRail />
     </Sidebar>

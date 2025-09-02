@@ -4,27 +4,42 @@ import CredentialsProvider from "next-auth/providers/credentials";
 import { compare } from "bcryptjs";
 import crypto from "crypto";
 
-// Extend NextAuth types to include custom user/session properties
+// Extend NextAuth types to include all user fields
 declare module "next-auth" {
   interface Session {
     user: {
       id: string;
-      role: string;
-      phone: string;
-      telegramId?: string;
       name?: string | null;
       email?: string | null;
-      image?: string | null;
+      username?: string | null;
+      photoUrl?: string | null;
+      phone?: string | null;
+      role: string;
+      telegramId?: string | null;
+      otp_code?: string | null;
+      otp_expires_at?: Date | null;
+      phone_verified?: boolean;
+      phone_verified_at?: Date | null;
+      createdAt?: Date;
+      updatedAt?: Date;
     };
   }
+
   interface User {
     id: string;
-    role: string;
-    phone: string;
-    telegramId: string;
     name?: string | null;
     email?: string | null;
-    image?: string | null;
+    username?: string | null;
+    photoUrl?: string | null;
+    phone?: string | null;
+    role: string;
+    telegramId?: string | null;
+    otp_code?: string | null;
+    otp_expires_at?: Date | null;
+    phone_verified?: boolean;
+    phone_verified_at?: Date | null;
+    createdAt?: Date;
+    updatedAt?: Date;
   }
 }
 
@@ -41,6 +56,7 @@ function verifyTelegramAuth(authData: any, botToken: string): boolean {
     .createHmac("sha256", secretKey)
     .update(dataCheckString)
     .digest("hex");
+
   return hmac === hash;
 }
 
@@ -59,17 +75,25 @@ export const authOptions: AuthOptions = {
         });
         if (!user) return null;
         if (!(await compare(credentials.password, user.password))) return null;
+
         return {
           id: user.id,
           email: user.email ?? "",
-          name: user.name ?? "",
-          phone: user.phone ?? "",
+          name: user.name ?? null,
+          username: user.username ?? null,
+          photoUrl: user.photoUrl ?? null,
+          phone: user.phone ?? null,
           role: user.role,
-          telegramId: user.telegramId ?? "",
+          telegramId: user.telegramId ?? null,
+          otp_code: user.otp_code ?? null,
+          otp_expires_at: user.otp_expires_at ?? null,
+          phone_verified: user.phone_verified,
+          phone_verified_at: user.phone_verified_at ?? null,
+          createdAt: user.createdAt,
+          updatedAt: user.updatedAt,
         };
       },
     }),
-    // Telegram Authentication Provider
     CredentialsProvider({
       id: "telegram",
       name: "Telegram",
@@ -77,129 +101,117 @@ export const authOptions: AuthOptions = {
         authData: { label: "Auth Data", type: "text" },
       },
       async authorize(credentials) {
-        try {
-          if (!credentials?.authData) {
-            console.error("No auth data provided");
-            return null;
-          }
+        if (!credentials?.authData) return null;
+        const authData = JSON.parse(credentials.authData);
+        const botToken = process.env.TELEGRAM_BOT_TOKEN;
+        if (!botToken) return null;
+        if (!verifyTelegramAuth(authData, botToken)) return null;
 
-          const authData = JSON.parse(credentials.authData);
-          console.log("Received Telegram auth data:", authData);
+        const telegramId = authData.id.toString();
+        const firstName = authData.first_name;
+        const lastName = authData.last_name || "";
+        const username = authData.username ?? null;
+        const photoUrl = authData.photo_url ?? null;
 
-          // Verify auth data integrity
-          const botToken = process.env.TELEGRAM_BOT_TOKEN;
-          if (!botToken) {
-            console.error("TELEGRAM_BOT_TOKEN is not configured");
-            return null;
-          }
+        let user = await prisma.user.findUnique({ where: { telegramId } });
 
-          if (!verifyTelegramAuth(authData, botToken)) {
-            console.error("Telegram auth verification failed");
-            return null;
-          }
-
-          // Check if auth is not too old (within 1 hour)
-          const authTime = authData.auth_date * 1000; // Convert to milliseconds
-          const now = Date.now();
-          const oneHour = 60 * 60 * 1000;
-
-          if (now - authTime > oneHour) {
-            console.error("Telegram auth data is too old");
-            return null;
-          }
-
-          const telegramId = authData.id.toString();
-          const firstName = authData.first_name;
-          const lastName = authData.last_name || "";
-          const username = authData.username;
-          const photoUrl = authData.photo_url;
-
-          // Check if user exists by Telegram ID
-          let user = await prisma.user.findUnique({
+        if (user) {
+          const updatedUser = await prisma.user.update({
             where: { telegramId },
+            data: {
+              name: `${firstName} ${lastName}`.trim(),
+              username,
+              photoUrl,
+              updatedAt: new Date(),
+            },
           });
 
-          if (user) {
-            // Update user info if changed
-            const updatedUser = await prisma.user.update({
-              where: { telegramId },
-              data: {
-                name: `${firstName} ${lastName}`.trim(),
-                username: username,
-                photoUrl: photoUrl,
-                updatedAt: new Date(),
-              },
-            });
+          return {
+            id: updatedUser.id,
+            email: updatedUser.email ?? "",
+            name: updatedUser.name ?? null,
+            username: updatedUser.username ?? null,
+            photoUrl: updatedUser.photoUrl ?? null,
+            phone: updatedUser.phone ?? null,
+            role: updatedUser.role,
+            telegramId: updatedUser.telegramId ?? null,
+            otp_code: updatedUser.otp_code ?? null,
+            otp_expires_at: updatedUser.otp_expires_at ?? null,
+            phone_verified: updatedUser.phone_verified,
+            phone_verified_at: updatedUser.phone_verified_at ?? null,
+            createdAt: updatedUser.createdAt,
+            updatedAt: updatedUser.updatedAt,
+          };
+        } else {
+          const newUser = await prisma.user.create({
+            data: {
+              telegramId,
+              email: ``,
+              password: crypto.randomBytes(32).toString("hex"),
+              name: `${firstName} ${lastName}`.trim(),
+              username,
+              photoUrl,
+              role: "user",
+              phone_verified: false,
+            },
+          });
 
-            return {
-              id: updatedUser.id,
-              email: updatedUser.email ?? "",
-              name: updatedUser.name ?? "",
-              phone: updatedUser.phone ?? "",
-              role: updatedUser.role,
-              telegramId: updatedUser.telegramId ?? "",
-            };
-          } else {
-            // Create new user
-            const newUser = await prisma.user.create({
-              data: {
-                telegramId,
-                email: `telegram_${telegramId}@temp.com`, // Temporary email
-                password: crypto.randomBytes(32).toString("hex"), // Random password
-                name: `${firstName} ${lastName}`.trim(),
-                username: username,
-                photoUrl: photoUrl,
-                role: "user",
-                phone_verified: false,
-              },
-            });
-
-            return {
-              id: newUser.id,
-              email: newUser.email ?? "",
-              name: newUser.name ?? "",
-              phone: newUser.phone ?? "",
-              role: newUser.role,
-              telegramId: newUser.telegramId ?? "",
-            };
-          }
-        } catch (error) {
-          console.error("Telegram authentication error:", error);
-          return null;
+          return {
+            id: newUser.id,
+            email: newUser.email ?? "",
+            name: newUser.name ?? null,
+            username: newUser.username ?? null,
+            photoUrl: newUser.photoUrl ?? null,
+            phone: newUser.phone ?? null,
+            role: newUser.role,
+            telegramId: newUser.telegramId ?? null,
+            otp_code: newUser.otp_code ?? null,
+            otp_expires_at: newUser.otp_expires_at ?? null,
+            phone_verified: newUser.phone_verified,
+            phone_verified_at: newUser.phone_verified_at ?? null,
+            createdAt: newUser.createdAt,
+            updatedAt: newUser.updatedAt,
+          };
         }
       },
     }),
   ],
   pages: {
     signIn: "/login",
-    error: "/login", // Redirect to login on error
+    error: "/login",
   },
   session: {
     strategy: "jwt",
-    maxAge: 30 * 24 * 60 * 60, // 30 days
+    maxAge: 30 * 24 * 60 * 60,
   },
   callbacks: {
     async jwt({ token, user }) {
-      if (user) {
-        token.role = user.role;
-        token.phone = user.phone;
-        token.telegramId = user.telegramId;
-      }
+      if (user) Object.assign(token, user);
       return token;
     },
     async session({ session, token }) {
       if (token) {
-        session.user.id = token.sub!;
-        session.user.role = token.role as string;
-        session.user.phone = token.phone as string;
-        session.user.telegramId = token.telegramId as string;
+        session.user = {
+          id: token.id as string,
+          email: token.email as string | null,
+          name: token.name as string | null,
+          username: token.username as string | null,
+          photoUrl: token.photoUrl as string | null,
+          phone: token.phone as string | null,
+          role: token.role as string,
+          telegramId: token.telegramId as string | null,
+          otp_code: token.otp_code as string | null,
+          otp_expires_at: token.otp_expires_at as Date | null,
+          phone_verified: token.phone_verified as boolean,
+          phone_verified_at: token.phone_verified_at as Date | null,
+          createdAt: token.createdAt as Date,
+          updatedAt: token.updatedAt as Date,
+        };
       }
       return session;
     },
     async redirect({ url, baseUrl }) {
-      // Allows relative callback URLs
       if (url.startsWith("/")) return `${baseUrl}${url}`;
-      // Allows callback URLs on the same origin
       else if (new URL(url).origin === baseUrl) return url;
       return baseUrl;
     },

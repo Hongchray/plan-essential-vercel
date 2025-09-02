@@ -5,29 +5,29 @@ import TabExpense from "@/components/event/show-tabs/expense";
 import TabGift from "@/components/event/show-tabs/gift";
 import TabGuest from "@/components/event/show-tabs/guest";
 import TabTemplate from "@/components/event/show-tabs/template";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import React, { useEffect, useState } from "react";
-import { useRouter } from "next/navigation"
+import { useRouter } from "next/navigation";
 import { Guest } from "@/components/event/show-tabs/guest-table/data/schema";
 
 export default function showEvent({
-    params,
-    searchParams
+  params,
+  searchParams,
 }: {
-    params: Promise<{ id: string }>;
-    searchParams: Promise<{
-        page?: string;
-        per_page?: number;
-        search?: string;
-        sort?: string;
-        order?: string;
-    }>;
+  params: Promise<{ id: string }>;
+  searchParams: Promise<{
+    page?: string;
+    per_page?: number;
+    search?: string;
+    sort?: string;
+    order?: string;
+  }>;
 }) {
-    const param =  React.use(params);
-    const router = useRouter()
-    const [tab, setTab] = useState("");
+  const param = React.use(params);
+  const router = useRouter();
+  const [tab, setTab] = useState("");
 
-    const [guests, setGuests] = useState<any[]>([
+  const [guests, setGuests] = useState<any[]>([
     {
       id: 1,
       name: "John Doe",
@@ -115,57 +115,56 @@ export default function showEvent({
     return () => window.removeEventListener("hashchange", handleHashChange);
   }, []);
 
+  type Expense = {
+    id: number;
+    category: string;
+    description: string;
+    amount: number;
+    date: string;
+    paid: boolean;
+  };
 
-    type Expense = {
-      id: number;
-      category: string;
-      description: string;
-      amount: number;
-      date: string;
-      paid: boolean;
-    };
-
-    // // Update hash when tab changes
-    const handleChange = (value: string) => {
-        setTab(value)
-        router.push(`#${value}`) 
-    }
-    return (
-        <div className="p-6 border rounded-md  bg-white  mx-auto">
-            <Tabs  className="" value={tab} onValueChange={handleChange}>
-                <TabsList>
-                    <TabsTrigger value="dashboard">Dashboard</TabsTrigger>
-                    <TabsTrigger value="guests">Guests</TabsTrigger>
-                    <TabsTrigger value="expense">Expense</TabsTrigger>
-                    <TabsTrigger value="gifts">Wedding Gifts</TabsTrigger>
-                    <TabsTrigger value="template">Invite's Template </TabsTrigger>
-                </TabsList>
-                <TabsContent value="dashboard">
-                    <div>
-                       <TabDashboard guests={guests} expenses={expenses} />
-                    </div>
-                </TabsContent>
-                <TabsContent value="guests">
-                    <div>
-                        <TabGuest paramId={param.id} searchParams={searchParams} />
-                    </div>
-                </TabsContent>
-                <TabsContent value="expense">
-                    <div>
-                        {/* <TabExpense expenses={expenses} setExpenses={setExpenses} /> */}
-                    </div>
-                </TabsContent>
-                <TabsContent value="gifts">
-                    <div>
-                        {/* <TabGift guests={guests} setGuests={setGuests} expenses={expenses} setExpenses={setExpenses} /> */}
-                    </div>
-                </TabsContent>
-                <TabsContent value="template">
-                    <div>
-                        {/* <TabTemplate guests={guests} setGuests={setGuests} expenses={expenses} setExpenses={setExpenses} /> */}
-                    </div>
-                </TabsContent>
-            </Tabs>
-        </div>
-    )
+  // // Update hash when tab changes
+  const handleChange = (value: string) => {
+    setTab(value);
+    router.push(`#${value}`);
+  };
+  return (
+    <div className="p-6 border rounded-md  bg-white  mx-auto">
+      <Tabs className="" value={tab} onValueChange={handleChange}>
+        <TabsList>
+          <TabsTrigger value="dashboard">Dashboard</TabsTrigger>
+          <TabsTrigger value="guests">Guests</TabsTrigger>
+          <TabsTrigger value="expense">Expense</TabsTrigger>
+          <TabsTrigger value="gifts">Wedding Gifts</TabsTrigger>
+          <TabsTrigger value="template">Invite's Template </TabsTrigger>
+        </TabsList>
+        <TabsContent value="dashboard">
+          <div>
+            <TabDashboard guests={guests} expenses={expenses} />
+          </div>
+        </TabsContent>
+        <TabsContent value="guests">
+          <div>
+            <TabGuest paramId={param.id} searchParams={searchParams} />
+          </div>
+        </TabsContent>
+        <TabsContent value="expense">
+          <div>
+            {/* <TabExpense expenses={expenses} setExpenses={setExpenses} /> */}
+          </div>
+        </TabsContent>
+        <TabsContent value="gifts">
+          <div>
+            {/* <TabGift guests={guests} setGuests={setGuests} expenses={expenses} setExpenses={setExpenses} /> */}
+          </div>
+        </TabsContent>
+        <TabsContent value="template">
+          <div>
+            {/* <TabTemplate guests={guests} setGuests={setGuests} expenses={expenses} setExpenses={setExpenses} /> */}
+          </div>
+        </TabsContent>
+      </Tabs>
+    </div>
+  );
 }

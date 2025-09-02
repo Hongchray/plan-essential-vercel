@@ -11,7 +11,7 @@ import { SwitchField } from "../composable/input/switch";
 import { SelectField } from "../composable/select/select-option";
 import { toast } from "sonner";
 import { useRouter } from "next/navigation";
-import { useLoading } from "@/contexts/LoadingContext";
+import { useLoading } from "@/hooks/LoadingContext";
 
 const formSchema = z.object({
   name: z

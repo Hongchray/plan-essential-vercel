@@ -1,19 +1,21 @@
 "use client";
 
 import { ColumnDef } from "@tanstack/react-table";
+
 import { Badge } from "@/components/ui/badge";
 import { Checkbox } from "@/components/ui/checkbox";
+
+import { labels, priorities, statuses } from "../data/data";
 import { Template } from "../data/schema";
 import { DataTableColumnHeader } from "./data-table-column-header";
 import { DataTableRowActions } from "./data-table-row-actions";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import Image from "next/image";
-import { Button } from "@/components/ui/button";
-import { DeleteIcon, EditIcon, EyeIcon, Trash2Icon } from "lucide-react";
-import Link from "next/link";
-import { ConfirmDialog } from "@/components/composable/dialog/confirm-dialog";
-import { toast } from "sonner";
 import { useRouter } from "next/navigation";
+import { toast } from "sonner";
+import Link from "next/link";
+import { Button } from "@/components/ui/button";
+import { EditIcon, Trash2Icon, EyeIcon } from "lucide-react";
+import { ConfirmDialog } from "@/components/composable/dialog/confirm-dialog";
 
 const ActionsCell = ({ row }: { row: any }) => {
   const router = useRouter();
@@ -59,7 +61,6 @@ const ActionsCell = ({ row }: { row: any }) => {
     </div>
   );
 };
-
 export const columns: ColumnDef<Template>[] = [
   {
     id: "select",
@@ -85,6 +86,7 @@ export const columns: ColumnDef<Template>[] = [
     enableSorting: false,
     enableHiding: false,
   },
+
   {
     accessorKey: "image",
     enableSorting: false,
@@ -92,17 +94,12 @@ export const columns: ColumnDef<Template>[] = [
       <DataTableColumnHeader column={column} title="Image" />
     ),
     cell: ({ row }) => {
-      if (row.getValue("image")) {
-        return (
-          <Image
-            src={row.getValue("image")}
-            width={50}
-            height={50}
-            alt="Picture of the author"
-            className="rounded"
-          />
-        );
-      }
+      return (
+        <Avatar>
+          <AvatarImage src={row.getValue("image")} alt="@shadcn" />
+          <AvatarFallback>CN</AvatarFallback>
+        </Avatar>
+      );
     },
   },
   {
@@ -150,6 +147,38 @@ export const columns: ColumnDef<Template>[] = [
       );
     },
   },
+
+  {
+    accessorKey: "updatedAt",
+    header: ({ column }) => (
+      <DataTableColumnHeader column={column} title="Updated At" />
+    ),
+    cell: ({ row }) => {
+      return (
+        <div className="flex gap-2">
+          <span className="max-w-[200px] truncate font-medium">
+            {row.getValue("updatedAt")}
+          </span>
+        </div>
+      );
+    },
+  },
+  {
+    accessorKey: "createdAt",
+    header: ({ column }) => (
+      <DataTableColumnHeader column={column} title="Created At" />
+    ),
+    cell: ({ row }) => {
+      return (
+        <div className="flex gap-2">
+          <span className="max-w-[200px] truncate font-medium">
+            {row.getValue("createdAt")}
+          </span>
+        </div>
+      );
+    },
+  },
+
   {
     id: "actions",
     cell: ({ row }) => <ActionsCell row={row} />,
