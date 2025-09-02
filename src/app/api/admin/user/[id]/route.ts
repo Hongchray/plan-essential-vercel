@@ -1,18 +1,12 @@
 import { NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
 
-export async function GET(
-  request: Request,
-  { params }: { params: { id: string } }
-) {
-  const { id } = params;
+export async function GET(req: Request, context: any) {
+  const { id } = context.params; // just access params here
 
-  // Fetch user with related events
   const user = await prisma.user.findUnique({
     where: { id },
-    include: {
-      events: true,
-    },
+    include: { events: true },
   });
 
   if (!user) {
