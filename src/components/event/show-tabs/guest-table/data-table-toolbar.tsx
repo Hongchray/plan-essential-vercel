@@ -96,7 +96,7 @@ export function DataTableToolbar<TData>({
         )}
       </div>
       <div className="flex gap-4">
-        <CreateEditForm/>
+        <CreateEditForm />
         <DataTableViewOptions table={table} />
       </div>
     </div>

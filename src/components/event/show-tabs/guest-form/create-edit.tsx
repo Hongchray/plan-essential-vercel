@@ -111,7 +111,7 @@ export function CreateEditForm({ defaultValues }: { defaultValues?: GuestFormDat
                 <div>
                     <div className="flex justify-between items-center pt-2">
                         <Label>Groups</Label>
-                        <ManageGroupForm/>
+                        <ManageGroupForm />
                     </div>
                     <MultiSelect
                         label=""

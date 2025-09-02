@@ -21,6 +21,8 @@ import { MultiSelect } from "@/components/composable/select/muliple-select-optio
 import { Label } from "@/components/ui/label"
 import { PlusIcon, Settings } from "lucide-react"
 import { Separator } from "@/components/ui/separator"
+import { useParams } from "next/navigation"
+import { Group } from "@/interfaces/group"
 const guestFormSchema = z.object({
     id: z.string().uuid().optional(),
     eventId: z.string().uuid().optional(),
@@ -30,7 +32,9 @@ const guestFormSchema = z.object({
 
 type GuestFormData = z.infer<typeof guestFormSchema>
 
-export function ManageGroupForm({ defaultValues }: { defaultValues?: GuestFormData }) {
+export function ManageGroupForm() {
+    const params = useParams();
+    const id = params.id;
     const form = useForm<GuestFormData>({
         resolver: zodResolver(guestFormSchema),
         defaultValues:{
@@ -41,28 +45,38 @@ export function ManageGroupForm({ defaultValues }: { defaultValues?: GuestFormDa
 
     const [loading, setLoading] = useState(false)
     const [dialogOpen, setDialogOpen] = useState(false)
-
-    const onSubmit = (values: GuestFormData) => {
+    
+    const onSubmit = async (values: GuestFormData) => {
         setLoading(true)
-
-        setTimeout(() => {
-        setLoading(false)
-        setDialogOpen(false)
-        form.reset()
-        }, 1000)
+   
+        await createGroup(values).then((data) => {
+            getGroup();
+            setLoading(false)
+            form.reset()
+        });
     }
-    const groupsList = [
-        { value: "groom", label: "Groom's side" },
-        { value: "bride", label: "Bride's side" },
-    ];
-    const tagsList = [
-        { value: "high_school_friend", label: "High School Friend" },
-        { value: "college_friend", label: "College Friend" },
-        { value: "friend", label: "Friend" },
-        { value: "teamwork", label: "Teamwork" },
-        { value: "relative", label: "Relative" },
-        { value: "others", label: "Others" },
-    ];
+    const [groups, setGroups] = useState<Group[]>([])
+
+    const createGroup = async (values: GuestFormData) => {
+        const res = await fetch(`/api/admin/event/${id}/group`, {
+            method: "POST",
+            body: JSON.stringify(values),
+        })
+        const data = await res.json()
+        return data;
+    }
+    const getGroup = async () => {
+        const res = await fetch(`/api/admin/event/${id}/group`)
+        const data = await res.json();
+        //check lang
+        if(data){
+          setGroups(data)
+        }
+        return data;
+    }
+    useEffect(() => {
+        getGroup();
+    }, [id])
     return (
     <>
       <button
@@ -83,6 +97,17 @@ export function ManageGroupForm({ defaultValues }: { defaultValues?: GuestFormDa
                 <InputTextField label="Name (English)" name="name_en" placeholder="Enter name" form={form} disabled={loading} />
                 <InputTextField label="Name (Khmer)" name="name_kh" placeholder="Enter name" form={form} disabled={loading} />
                 <Button size="sm"><PlusIcon></PlusIcon> Add Group </Button>
+            </div>
+            <div className="p-2 border border-gray-300 rounded-md">
+                <div className="pb-2 font-semibold">List of Groups</div>
+                {
+                  groups.map(group => (
+                    <div key={group.id} className="flex justify-between items-center">
+                      <div>{group.name_en}</div>
+                      <div>{group.name_kh}</div>
+                    </div>
+                  ))
+                }
             </div>
             <DialogFooter>
               <div className="flex gap-2 justify-end pt-2">
