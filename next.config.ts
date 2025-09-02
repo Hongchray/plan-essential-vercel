@@ -6,16 +6,7 @@ const nextConfig: NextConfig = {
     ignoreDuringBuilds: true,
   },
   images: {
-    remotePatterns: [
-      {
-        protocol: "https",
-        hostname: "theapka.com",
-      },
-      {
-        protocol: "https",
-        hostname: "focuzsolution.com",
-      },
-    ],
+     unoptimized: true,
   },
 };
 
