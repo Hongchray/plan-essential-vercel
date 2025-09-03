@@ -1,7 +1,7 @@
 import { NextResponse } from "next/server";
 import type { NextRequest } from "next/server";
 
-// List all public admin routes here
+// Public admin routes (no login required)
 const PUBLIC_ADMIN_ROUTES = [
   "/login",
   "/signup",
@@ -18,29 +18,34 @@ function isPublicAdminRoute(pathname: string) {
 
 export function middleware(request: NextRequest) {
   const { pathname } = request.nextUrl;
-  111111;
 
-  // Allow all non-admin routes
-  if (!pathname.startsWith("/admin")) {
-    return NextResponse.next();
+  // 1️⃣ Always ensure we have a NEXT_LOCALE cookie
+  const locale = request.cookies.get("NEXT_LOCALE")?.value || "en";
+  const response = NextResponse.next();
+
+  if (!request.cookies.has("NEXT_LOCALE")) {
+    response.cookies.set("NEXT_LOCALE", locale, {
+      path: "/",
+      maxAge: 60 * 60 * 24 * 30,
+    });
   }
 
-  // Allow public admin routes
-  if (isPublicAdminRoute(pathname)) {
-    return NextResponse.next();
+  // 2️⃣ Protect /admin routes
+  if (pathname.startsWith("/admin")) {
+    if (!isPublicAdminRoute(pathname)) {
+      const token =
+        request.cookies.get("next-auth.session-token")?.value ||
+        request.cookies.get("__Secure-next-auth.session-token")?.value;
+
+      if (!token) {
+        return NextResponse.redirect(new URL("/login", request.url));
+      }
+    }
   }
 
-  const token =
-    request.cookies.get("next-auth.session-token")?.value ||
-    request.cookies.get("__Secure-next-auth.session-token")?.value;
-
-  if (!token) {
-    return NextResponse.redirect(new URL("/login", request.url));
-  }
-
-  return NextResponse.next();
+  return response;
 }
 
 export const config = {
-  matcher: ["/:path*"],
+  matcher: ["/((?!_next|api|favicon.ico).*)"], // apply everywhere except static/api
 };

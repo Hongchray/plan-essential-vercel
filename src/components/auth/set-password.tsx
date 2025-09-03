@@ -11,6 +11,8 @@ import { Loader2 } from "lucide-react";
 import Image from "next/image";
 import { PasswordInput } from "@/components/composable/password-field";
 import { signIn } from "next-auth/react";
+import { useTranslation } from "react-i18next";
+import { useEffect } from "react";
 
 const passwordSchema = z
   .object({
@@ -29,7 +31,7 @@ export default function SetPasswordPage() {
   const searchParams = useSearchParams();
   const phone = searchParams.get("phone");
   const router = useRouter();
-
+  const { t } = useTranslation("common");
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
   const [name, setName] = useState("");
@@ -37,6 +39,34 @@ export default function SetPasswordPage() {
   const [errors, setErrors] = useState<
     Partial<PasswordFormData> & { message?: string }
   >({});
+  const [mounted, setMounted] = useState(false);
+  useEffect(() => {
+    setMounted(true);
+  }, []);
+
+  if (!mounted) return null;
+
+  const passwordSchema = z
+    .object({
+      password: z
+        .string()
+        .min(8, { message: t("setup_password.error_password_too_short") })
+        .regex(/[a-z]/, {
+          message: t("setup_password.error_password_missing_lowercase"),
+        })
+        .regex(/[A-Z]/, {
+          message: t("setup_password.error_password_missing_uppercase"),
+        })
+        .regex(/[0-9]/, {
+          message: t("setup_password.error_password_missing_number"),
+        }),
+      confirm_password: z.string(),
+      name: z.string().optional(),
+    })
+    .refine((data) => data.password === data.confirm_password, {
+      message: t("setup_password.error_passwords_not_match"),
+      path: ["confirm_password"],
+    });
 
   const validateForm = (): boolean => {
     try {
@@ -51,8 +81,9 @@ export default function SetPasswordPage() {
       if (err instanceof z.ZodError) {
         const fieldErrors: Partial<PasswordFormData> = {};
         err.errors.forEach((e) => {
-          if (e.path[0])
+          if (e.path[0]) {
             fieldErrors[e.path[0] as keyof PasswordFormData] = e.message;
+          }
         });
         setErrors(fieldErrors);
       }
@@ -84,8 +115,9 @@ export default function SetPasswordPage() {
       const data = await res.json();
       if (!res.ok) throw new Error(data.error);
 
-      toast.success("Account created successfully!");
-
+      toast.success(
+        t(data.message || "setup_password.success_account_created")
+      );
       // Automatically sign in the user after setting password
       const signInRes = await signIn("credentials", {
         redirect: true, // Let NextAuth handle the redirect
@@ -109,50 +141,58 @@ export default function SetPasswordPage() {
           placeholder="blur"
           blurDataURL="https://focuzsolution.com/logo.png"
           priority
-          alt="logo"
+          alt={t("setup_password.logo_alt")} // Translated alt text
           width={150}
           height={50}
           className="py-2"
         />
       </div>
 
-      <h2 className="text-2xl font-bold mb-4 text-center">Set Your Password</h2>
+      <h2 className="text-2xl font-bold mb-4 text-center">
+        {t("setup_password.set_password_title")}
+      </h2>
 
       <form onSubmit={handleSubmit} className="flex flex-col gap-4">
         {errors.message && (
-          <p className="text-red-500 text-sm">{errors.message}</p>
+          <p className="text-red-500 text-sm">{t(errors.message)}</p> // Assumes errors.message is a translation key
         )}
 
         <div className="flex flex-col gap-1">
-          <Label htmlFor="name">Name (optional)</Label>
+          <Label htmlFor="name">{t("setup_password.name_label")}</Label>
           <Input
             id="name"
-            placeholder="Your name"
+            placeholder={t("setup_password.name_placeholder")}
             value={name}
             onChange={(e) => setName(e.target.value)}
           />
-          {errors.name && <p className="text-red-500 text-sm">{errors.name}</p>}
+          {errors.name && (
+            <p className="text-red-500 text-sm">{t(errors.name)}</p>
+          )}{" "}
         </div>
 
         <div className="flex flex-col gap-1">
           <PasswordInput
             value={password}
             onChange={(e) => setPassword(e.target.value)}
-            error={errors.password}
+            error={errors.password && t(errors.password)} // Translate error if present
           />
         </div>
 
         <div className="flex flex-col gap-1">
           <PasswordInput
-            label="Confirm password"
+            label={t("setup_password.confirm_password_label")}
             value={confirmPassword}
-            onChange={(e) => setConfirmPassword(e.target.value)} // ✅ FIXED
-            error={errors.confirm_password}
+            onChange={(e) => setConfirmPassword(e.target.value)}
+            error={errors.confirm_password && t(errors.confirm_password)} // Translate error if present
           />
         </div>
 
         <Button type="submit" disabled={isLoading} className="mt-4 w-full">
-          {isLoading ? <Loader2 className="animate-spin" /> : "Set Password"}
+          {isLoading ? (
+            <Loader2 className="animate-spin" />
+          ) : (
+            t("setup_password.set_password_button")
+          )}
         </Button>
       </form>
     </div>

@@ -1,6 +1,7 @@
 "use client";
 import { useState, useRef, useEffect } from "react";
 import type React from "react";
+import { useTranslation } from "react-i18next";
 
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -17,12 +18,14 @@ export default function VerifyOtp() {
   const [isLoading, setIsLoading] = useState(false);
   const inputRefs = useRef<(HTMLInputElement | null)[]>([]);
   const [countdown, setCountdown] = useState<number>(120);
+  const { t } = useTranslation("common");
 
   useEffect(() => {
     if (inputRefs.current[0]) {
       inputRefs.current[0].focus();
     }
   }, []);
+
   useEffect(() => {
     let timer: NodeJS.Timeout;
     if (countdown > 0) {
@@ -84,38 +87,43 @@ export default function VerifyOtp() {
   const handleVerify = async (e: React.FormEvent) => {
     e.preventDefault();
 
-    if (!otp) return;
-    console.log("OTP array:", otp);
-
-    const otp_code = otp.join(""); // convert ["1","2","3","4","5","6"] => "123456"
-    console.log("OTP code:", otp_code, "Phone:", phone);
-
+    const otp_code = otp.join("");
     if (!otp_code || !phone) {
-      toast.error("Phone and OTP are required");
+      toast.error(t("error_phone_otp_required"));
       return;
     }
+
     setIsLoading(true);
     try {
       const res = await fetch("/api/auth/signup/verify-otp", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ phone, otp_code }), // now otp_code is correct
+        body: JSON.stringify({ phone, otp_code }),
       });
 
       const data = await res.json();
-      if (!res.ok) throw new Error(data.error);
+      if (!res.ok) {
+        // Translate the API's error key
+        throw new Error(t(data.error || "otp_verification.error_server"));
+      }
 
-      toast.success("Phone verified successfully!");
+      toast.success(
+        t(data.message || "otp_verification.success_phone_verified")
+      );
       router.push(`/signup/set-password?phone=${phone}`);
     } catch (err: any) {
-      toast.error(err.message || "Verification failed");
+      toast.error(t(err.message || "otp_verification.error_server"));
     } finally {
       setIsLoading(false);
     }
   };
 
   const handleResend = async () => {
-    if (!phone) return;
+    if (!phone) {
+      toast.error(t("otp_verification.error_phone_required"));
+      return;
+    }
+
     setIsLoading(true);
     try {
       const res = await fetch("/api/auth/signup/resend-otp", {
@@ -125,14 +133,17 @@ export default function VerifyOtp() {
       });
 
       const data = await res.json();
-      if (!res.ok) throw new Error(data.error || "Failed to resend OTP");
+      if (!res.ok)
+        throw new Error(
+          data.error || t("otp_verification.error_resend_otp_failed")
+        );
 
-      toast.success("A new OTP has been sent to your phone.");
-      setOtp(new Array(6).fill("")); // reset input fields
+      toast.success(t("otp_verification.success_otp_resent"));
+      setOtp(new Array(6).fill(""));
       inputRefs.current[0]?.focus();
-      setCountdown(120); // reset countdown after resend
+      setCountdown(120);
     } catch (err: any) {
-      toast.error(err.message || "Could not resend OTP");
+      toast.error(err.message || t("otp_verification.error_resend_otp_failed"));
     } finally {
       setIsLoading(false);
     }
@@ -146,24 +157,24 @@ export default function VerifyOtp() {
         <div className="flex justify-center items-center pb-5">
           <Image
             src="https://focuzsolution.com/logo.png"
-            placeholder="blur"
-            blurDataURL="https://focuzsolution.com/logo.png"
-            priority
             alt="logo"
             width={150}
             height={50}
             className="py-2"
           />
         </div>
+
         <div className="text-center mb-8">
-          <h2 className="text-2xl font-bold mb-2">Verify OTP</h2>
+          <h2 className="text-2xl font-bold mb-2">
+            {t("otp_verification.verify_otp")}
+          </h2>
           <p className="text-sm text-muted-foreground">
-            We sent a 6-digit code to {phone}
+            {t("otp_verification.otp_sent_to")} {phone}
           </p>
         </div>
 
         <div className="flex justify-center gap-3 mb-6">
-          {otp.map((digit, index) => (
+          {otp.map((digit: string, index: number) => (
             <Input
               key={index}
               ref={(el) => {
@@ -188,12 +199,14 @@ export default function VerifyOtp() {
           className="w-full"
           size="lg"
         >
-          {isLoading ? "Verifying..." : "Verify OTP"}
+          {isLoading
+            ? t("otp_verification.verifying")
+            : t("otp_verification.verify_otp")}
         </Button>
 
         <div className="text-center mt-4">
           <p className="text-sm text-muted-foreground">
-            Didn't receive the code?{" "}
+            {t("otp_verification.didnt_receive_code")}{" "}
             <button
               onClick={handleResend}
               disabled={isLoading || countdown > 0}
@@ -204,10 +217,10 @@ export default function VerifyOtp() {
               }`}
             >
               {isLoading
-                ? "Sending..."
+                ? t("sending")
                 : countdown > 0
-                ? `Resend OTP in ${countdown}s`
-                : "Resend OTP"}
+                ? t("otp_verification.resend_in", { seconds: countdown })
+                : t("otp_verification.resend_otp")}
             </button>
           </p>
         </div>

@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
 import { Toaster } from "@/components/ui/sonner";
+import { LocaleFontProvider } from "@/components/locale-font-provider";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -23,12 +24,26 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en">
+    <html>
+      <head>
+        {/* English font */}
+        <link
+          href="https://fonts.googleapis.com/css2?family=Inter:wght@400;700&display=swap"
+          rel="stylesheet"
+        />
+        {/* Khmer font */}
+        <link
+          href="https://fonts.googleapis.com/css2?family=Kantumruy+Pro:ital,wght@0,100..700;1,100..700&display=swap"
+          rel="stylesheet"
+        />
+      </head>
       <body
         className={`${geistSans.variable} ${geistMono.variable} antialiased`}
       >
-        <Toaster position="top-center" />
+        <LocaleFontProvider>
+          <Toaster position="top-center" />
           {children}
+        </LocaleFontProvider>
       </body>
     </html>
   );

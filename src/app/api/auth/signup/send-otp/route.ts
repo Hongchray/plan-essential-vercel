@@ -1,51 +1,55 @@
 import { NextRequest, NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
+import { z } from "zod";
+
+const sendOtpSchema = z.object({
+  phone: z
+    .string()
+    .min(1, { message: "signup.error_phone_required" })
+    .regex(/^\d{8,15}$/, { message: "signup.error_invalid_phone" }),
+  purpose: z.enum(["register", "forgot"], {
+    message: "signup.error_invalid_purpose",
+  }),
+});
 
 export async function POST(req: NextRequest) {
   try {
-    const { phone, purpose } = await req.json();
-
-    if (!phone) {
-      return NextResponse.json({ error: "Phone is required" }, { status: 400 });
-    }
-
-    if (!purpose || !["register", "forgot"].includes(purpose)) {
-      return NextResponse.json({ error: "Invalid purpose" }, { status: 400 });
-    }
+    const body = await req.json();
+    const { phone, purpose } = sendOtpSchema.parse(body);
 
     const user = await prisma.user.findUnique({ where: { phone } });
 
     // Registration flow: phone must NOT exist
     if (purpose === "register" && user) {
       return NextResponse.json(
-        { error: "Phone already registered" },
+        { error: "signup.error_phone_already_registered" },
         { status: 400 }
       );
     }
 
     // Forgot password flow: phone must exist
     if (purpose === "forgot" && !user) {
-      return NextResponse.json({ error: "User not found" }, { status: 404 });
+      return NextResponse.json(
+        { error: "signup.error_user_not_found" },
+        { status: 404 }
+      );
     }
 
     // Check if previous OTP exists and is still valid
     const now = new Date();
     if (user?.otp_code && user?.otp_expires_at && user.otp_expires_at > now) {
-      // Optional: prevent spamming OTPs, e.g., only allow resend every 30s
       const secondsLeft = Math.ceil(
         (user.otp_expires_at.getTime() - now.getTime()) / 1000
       );
       return NextResponse.json(
-        {
-          error: `OTP already sent. Try again in ${secondsLeft} seconds.`,
-        },
+        { error: `signup.error_otp_already_sent_${secondsLeft}` },
         { status: 429 }
       );
     }
 
     // Generate new OTP
     const otp = Math.floor(100000 + Math.random() * 900000).toString();
-    const expiresAt = new Date(Date.now() + 2 * 60 * 1000); // 1 min
+    const expiresAt = new Date(Date.now() + 2 * 60 * 1000); // 2 min
 
     // Upsert OTP
     await prisma.user.upsert({
@@ -68,8 +72,9 @@ export async function POST(req: NextRequest) {
     const xSecret = process.env.PLASGATE_API_X_SECRET;
     const sender = process.env.PLASGATE_SENDER || "PlasGateUAT";
 
-    if (!apiUrl || !privateKey || !xSecret)
-      throw new Error("Missing PlasGate API environment variables");
+    if (!apiUrl || !privateKey || !xSecret) {
+      throw new Error("signup.error_missing_plasgate_config");
+    }
 
     const response = await fetch(`${apiUrl}?private_key=${privateKey}`, {
       method: "POST",
@@ -86,14 +91,24 @@ export async function POST(req: NextRequest) {
 
     if (!response.ok || (typeof data === "object" && data.success === false)) {
       return NextResponse.json(
-        { error: "Failed to send OTP", details: data },
+        { error: "signup.error_failed_to_send_otp", details: data },
         { status: 500 }
       );
     }
 
-    return NextResponse.json({ success: true, message: "OTP sent", otp }); // otp for testing
+    return NextResponse.json({
+      success: true,
+      message: "signup.success_otp_sent",
+      otp, // For testing only; remove in production
+    });
   } catch (error: any) {
     console.error("❌ Send OTP error:", error);
-    return NextResponse.json({ error: error.message }, { status: 500 });
+    if (error instanceof z.ZodError) {
+      return NextResponse.json(
+        { error: error.errors[0].message },
+        { status: 400 }
+      );
+    }
+    return NextResponse.json({ error: "signup.error_server" }, { status: 500 });
   }
 }

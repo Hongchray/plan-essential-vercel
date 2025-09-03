@@ -1,60 +1,58 @@
 "use client";
+
 import * as React from "react";
-import { NavUser } from "@/components/nav-user";
+import { useTranslation } from "react-i18next";
 import {
   Sidebar,
   SidebarContent,
-  SidebarFooter,
   SidebarHeader,
+  SidebarFooter,
   SidebarRail,
 } from "@/components/ui/sidebar";
 import { NavMainBasic } from "./nav-main-basic";
+import { LogoApp } from "./logo-app";
+
 import {
-  IconListDetails,
-  IconPackage,
   IconHome,
   IconBuildingStore,
+  IconListDetails,
+  IconPackage,
   IconSettings,
 } from "@tabler/icons-react";
-import { GalleryVerticalEnd } from "lucide-react";
-import { LogoApp } from "./logo-app";
-import { useSession } from "next-auth/react";
 
-// Sample navigation data
-const navMain = [
-  { title: "Dashboard", url: "/dashboard", icon: IconHome },
-  { title: "Users", url: "/user", icon: IconBuildingStore },
-  { title: "Event", url: "/event", icon: IconListDetails },
-  { title: "Template", url: "/template", icon: IconPackage },
-  { title: "Setting", url: "#", icon: IconSettings },
-];
+export function AppSidebar(props: React.ComponentProps<typeof Sidebar>) {
+  const { t } = useTranslation("common");
+  interface NavItem {
+    title: string;
+    url: string;
+    icon?: React.ComponentType;
+  }
+  const [navMain, setNavMain] = React.useState<NavItem[]>([]);
 
-// Sample teams (optional)
-const teams = [{ name: "Store Name", logo: GalleryVerticalEnd, plan: "Free" }];
+  React.useEffect(() => {
+    setNavMain([
+      { title: t("navbar.dashboard"), url: "/dashboard", icon: IconHome },
+      { title: t("navbar.users"), url: "/user", icon: IconBuildingStore },
+      { title: t("navbar.event"), url: "/event", icon: IconListDetails },
+      { title: t("navbar.template"), url: "/template", icon: IconPackage },
+      { title: t("navbar.setting"), url: "#", icon: IconSettings },
+    ]);
+  }, [t]);
 
-export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
-  const { data: session, status } = useSession();
-
-  // If user is not logged in, you can show a default user or empty
-  const user = session?.user || {
-    name: "Guest",
-    email: "guest@example.com",
-    photoUrl: "/avatars/default.png", // default avatar
-  };
+  if (!navMain.length) return null; // wait until mounted
 
   return (
     <Sidebar collapsible="icon" {...props}>
       <SidebarHeader>
         <LogoApp />
       </SidebarHeader>
+
       <SidebarContent>
         <NavMainBasic items={navMain} />
       </SidebarContent>
-      <SidebarFooter>
-        <SidebarFooter>
-          <NavUser />
-        </SidebarFooter>
-      </SidebarFooter>
+
+      <SidebarFooter>{/* Footer content */}</SidebarFooter>
+
       <SidebarRail />
     </Sidebar>
   );
