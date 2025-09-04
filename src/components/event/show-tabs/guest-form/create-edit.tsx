@@ -2,7 +2,7 @@
 
 import { useForm } from "react-hook-form"
 import { InputTextField } from "@/components/composable/input/input-text-field"
-import { useState, useEffect } from "react"
+import { useState, useEffect, useMemo, useCallback } from "react"
 import { SubmitButton } from "@/components/composable/button/submit-button"
 import {
   Dialog,
@@ -19,32 +19,40 @@ import { zodResolver } from "@hookform/resolvers/zod"
 import { TextareaField } from "@/components/composable/input/input-textarea-text-field"
 import { MultiSelect } from "@/components/composable/select/muliple-select-option";
 import { Label } from "@/components/ui/label"
-import { Settings } from "lucide-react"
 import { Separator } from "@/components/ui/separator"
 import { ManageGroupForm } from "./manage-group"
+import { ManageTagForm } from "./manage-tag"
+import { Group } from "@/interfaces/group"
+import { Tag } from "@/interfaces/tag"
+import { useParams, useRouter } from "next/navigation"
+import { EditIcon } from "lucide-react"
+import ImageUpload from "@/components/composable/upload/upload-image"
 const guestFormSchema = z.object({
-    id: z.string().uuid().optional(),
-    eventId: z.string().uuid().optional(),
-    name: z.string().min(3).max(50),
-    email: z.string().email().optional(),
-    phone: z.string().min(3).max(50),
-    note: z.string().optional(),
-    address: z.string().optional(),
-    tags: z.array(z.string()).optional(),
-    groups: z.array(z.string()).optional(),
+    image: z.string().nullable().optional(),
+    name: z.string().min(1, { message: "Name is required" }),
+    email: z.string().nullable().optional(),
+    phone: z.string().min(1, { message: "Phone number is required" }).max(50),
+    note: z.string().nullable().optional(),
+    address: z.string().nullable().optional(),
+    tags: z.array(z.string()).nullable().optional(),
+    groups: z.array(z.string()).nullable().optional(),
 })
 
 type GuestFormData = z.infer<typeof guestFormSchema>
 
-export function CreateEditForm({ defaultValues }: { defaultValues?: GuestFormData }) {
+export function CreateEditForm({id}: {id: string}) {
+    const params = useParams();
+    const eventId = params.id;
+
     const form = useForm<GuestFormData>({
         resolver: zodResolver(guestFormSchema),
-        defaultValues: defaultValues || {
+        defaultValues: {
             name: "",
             phone: "",
             email: "",
             note: "",
             address: "",
+            image: "",
             tags: [],
             groups: [],
         },
@@ -53,41 +61,119 @@ export function CreateEditForm({ defaultValues }: { defaultValues?: GuestFormDat
     const [loading, setLoading] = useState(false)
     const [dialogOpen, setDialogOpen] = useState(false)
 
-    const onSubmit = (values: GuestFormData) => {
-        setLoading(true)
+    const [tagList, setTagList] = useState<Tag[]>([]);
+    const [groupList, setGroupList] = useState<Group[]>([]);
+    const router = useRouter();
 
-        setTimeout(() => {
+    //edit 
+    const editGuest = useCallback(async()=>{
+      setLoading(true)
+      const res = await fetch(`/api/admin/event/${eventId}/guest/${id}`)
+      const data = await res.json();
+      if(data){
+        form.reset(data)
+      }
+      setLoading(false)
+      return data;
+    },[id])
+
+    const getTag = useCallback(async () => {
+        setLoading(true)
+        const res = await fetch(`/api/admin/event/${eventId}/tag`)
+        const data = await res.json();
+        if(data){
+          setTagList(data)
+        }
+        setLoading(false)
+        return data;
+    },[])
+
+    const getGroup = useCallback(async () => {
+        setLoading(true)
+        const res = await fetch(`/api/admin/event/${eventId}/group`)
+        const data = await res.json();
+        if(data){
+          setGroupList(data)
+        }
+        setLoading(false)
+        return data;
+    },[])
+
+    const onSubmit =async (values: GuestFormData) => {
+        setLoading(true)
+        if(id){
+          await fetch(`/api/admin/event/${eventId}/guest/${id}`, {
+            method: "PUT",
+            body: JSON.stringify(values),
+          })
+        } else {
+          await fetch(`/api/admin/event/${eventId}/guest`, {
+            method: "POST",
+            body: JSON.stringify(values),
+          })
+        }
         setLoading(false)
         setDialogOpen(false)
-        form.reset()
-        }, 1000)
+        form.reset();
+        router.refresh()
     }
-    const groupsList = [
-        { value: "groom", label: "Groom's side" },
-        { value: "bride", label: "Bride's side" },
-    ];
-    const tagsList = [
-        { value: "high_school_friend", label: "High School Friend" },
-        { value: "college_friend", label: "College Friend" },
-        { value: "friend", label: "Friend" },
-        { value: "teamwork", label: "Teamwork" },
-        { value: "relative", label: "Relative" },
-        { value: "others", label: "Others" },
-    ];
+    const groupOptions = useMemo(
+      () =>
+        groupList.map(group => ({
+          label: `${group.name_en} (${group.name_kh})`,
+          value: group.id,
+        })),
+      [groupList]
+    );
+    const tagOptions = useMemo(
+      () =>
+        tagList.map(tag => ({
+          label: `${tag.name_en} (${tag.name_kh})`,
+          value: tag.id,
+        })),
+      [tagList]
+    );
+    useEffect(() => {
+      if(dialogOpen){
+        getTag()
+        getGroup()
+      }
+    }, [dialogOpen]);
+
+    useEffect(() => {
+      if(id && dialogOpen){
+        editGuest();
+      }
+    }, [dialogOpen]);
+
     return (
     <>
-      <Button size="sm" onClick={() => setDialogOpen(true)}>
-        Add New
-      </Button>
-
+    {
+      id ? (
+        <Button size="icon" variant="outline"  onClick={() => setDialogOpen(true)}>
+          <EditIcon />
+        </Button>
+      ) : (
+          <Button size="sm" onClick={() => setDialogOpen(true)}>
+          Add New
+        </Button>
+      )
+    }
       <Dialog open={dialogOpen} onOpenChange={setDialogOpen} modal>
         <DialogContent className="sm:max-w-5xl">
           <DialogHeader>
-            <DialogTitle>{defaultValues ? "Edit Guest" : "Add New Guest"}</DialogTitle>
+            <DialogTitle>{id ? "Edit Guest" : "Add New Guest"}</DialogTitle>
             <DialogDescription>Fill in guest details below</DialogDescription>
           </DialogHeader>
-
           <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
+            <div>
+              <ImageUpload
+                label="Photo"
+                folder="/event/guest"
+                {...form.register("image")}
+                value={form.watch("image")??''}
+              />
+            </div>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <InputTextField label="Name" name="name" placeholder="Enter name" form={form} disabled={loading} />
                 <InputTextField label="Phone" name="phone" placeholder="Enter phone" form={form} disabled={loading} />
@@ -115,7 +201,7 @@ export function CreateEditForm({ defaultValues }: { defaultValues?: GuestFormDat
                     </div>
                     <MultiSelect
                         label=""
-                        options={groupsList}
+                        options={groupOptions}
                         form={form}
                         name="groups"
                         placeholder="Enter groups"
@@ -124,17 +210,11 @@ export function CreateEditForm({ defaultValues }: { defaultValues?: GuestFormDat
                 <div>
                     <div className="flex justify-between items-center pt-2">
                         <Label>Tags</Label>
-                        <button
-                          type="button"
-                          className="text-blue-500 hover:text-blue-700 text-sm flex items-center gap-1 cursor-pointer"
-                        >
-                            <Settings className="h-4 w-4" />
-                            Manage tags
-                        </button>
+                        <ManageTagForm/>
                     </div>
                     <MultiSelect
                         label=""
-                        options={tagsList}
+                        options={tagOptions}
                         form={form}
                         name="tags"
                         hideSelectAll={false}
@@ -150,11 +230,12 @@ export function CreateEditForm({ defaultValues }: { defaultValues?: GuestFormDat
                   onClick={() => {
                     form.reset()
                     setDialogOpen(false)
+                    router.refresh()
                   }}
                 >
                   Cancel
                 </Button>
-                <SubmitButton loading={loading} entityId={defaultValues?.id} />
+                <SubmitButton loading={loading} entityId={id} />
               </div>
             </DialogFooter>
           </form>

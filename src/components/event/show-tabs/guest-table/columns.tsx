@@ -1,7 +1,7 @@
 "use client";
 import { ColumnDef } from "@tanstack/react-table";
 import { Checkbox } from "@/components/ui/checkbox";
-import { Guest } from "./data/schema";
+import { Guest } from "@/interfaces/guest";
 import { DataTableColumnHeader } from "./data-table-column-header";
 import { Button } from "@/components/ui/button";
 import { EditIcon, Trash2Icon } from "lucide-react";
@@ -10,47 +10,41 @@ import { ConfirmDialog } from "@/components/composable/dialog/confirm-dialog";
 import { toast } from "sonner";
 import { useRouter } from "next/navigation";
 import { IconAccessPoint } from "@tabler/icons-react";
+import { Badge } from "@/components/ui/badge";
+import { CreateEditForm } from "../guest-form/create-edit";
+import Image from "next/image";
 
 const ActionsCell = ({ row }: { row: any }) => {
   const router = useRouter();
 
-  const deleteEvent = async (id: string) => {
+  const deleteEvent = async (eventId: string, id: string) => {
     try {
-      const res = await fetch(`/api/admin/event/${id}`, {
+      const res = await fetch(`/api/admin/event/${eventId}/guest/${id}`, {
         method: "DELETE",
       });
       if (res.ok) {
-        toast.success("Delete Event successfully");
+        toast.success("Delete guest successfully");
         router.refresh();
       } else {
-        toast.error("Error deleting Event");
+        toast.error("Error deleting guest");
       }
     } catch (error) {
-      toast.error("Error deleting Event");
+      toast.error("Error deleting guest");
     }
   };
 
   return (
     <div className="flex gap-2 items-end justify-end">
-      <Link href={`/event/edit/${row.original.id}`}>
-        <Button size="icon" variant="outline">
-          <IconAccessPoint />
-        </Button>
-      </Link>
-      <Link href={`/event/edit/${row.original.id}`}>
-        <Button size="icon" variant="outline">
-          <EditIcon />
-        </Button>
-      </Link>
+      <CreateEditForm id={row.original.id} />
       <ConfirmDialog
         trigger={
           <Button size="icon" variant="destructive">
             <Trash2Icon />
           </Button>
         }
-        title="Delete this file?"
-        description="This will permanently remove the file."
-        onConfirm={() => deleteEvent(row.original.id)}
+        title="Delete this guest?"
+        description="This will permanently remove the guest."
+        onConfirm={() => deleteEvent(row.original.eventId, row.original.id)}
       />
     </div>
   );
@@ -81,6 +75,26 @@ export const columns: ColumnDef<Guest>[] = [
     enableSorting: false,
     enableHiding: false,
   },
+   {
+    accessorKey: "image",
+    enableSorting: false,
+    header: ({ column }) => (
+      <DataTableColumnHeader column={column} title="Image" />
+    ),
+    cell: ({ row }) => {
+      if (row.getValue("image")) {
+        return (
+          <Image
+            src={row.getValue("image")}
+            width={50}
+            height={50}
+            alt="Picture of the author"
+            className="rounded"
+          />
+        );
+      }
+    },
+  },
   {
     accessorKey: "name",
     header: ({ column }) => (
@@ -89,10 +103,10 @@ export const columns: ColumnDef<Guest>[] = [
     cell: ({ row }) => {
       return (
         <div className="flex gap-2">
-          <span className="max-w-[200px] truncate font-medium text-primary underline">
-            <Link href={`/event/${row.original.id}`}>
+          <span className="max-w-[350px] truncate text-primary font-medium">
+            {/* <Link href={`/event/${row.original.id}`}> */}
               {row.getValue("name")}
-            </Link>
+            {/* </Link> */}
           </span>
         </div>
       );
@@ -100,13 +114,11 @@ export const columns: ColumnDef<Guest>[] = [
   },
   {
     accessorKey: "phone",
-    header: ({ column }) => (
-      <DataTableColumnHeader column={column} title="Phone" />
-    ),
+    header: 'Phone',
     cell: ({ row }) => {
       return (
         <div className="flex gap-2">
-          <span className="max-w-[200px] truncate font-medium">
+          <span className="max-w-[200px] truncate">
             {row.getValue("phone")}
           </span>
         </div>
@@ -115,14 +127,68 @@ export const columns: ColumnDef<Guest>[] = [
   },
   {
     accessorKey: "address",
-    header: ({ column }) => (
-      <DataTableColumnHeader column={column} title="Address" />
-    ),
+    header: 'Address',
     cell: ({ row }) => {
       return (
         <div className="flex gap-2">
-          <span className="max-w-[200px] truncate font-medium">
+          <span className="max-w-[300px] truncate ">
             {row.getValue("address")}
+          </span>
+        </div>
+      );
+    },
+  },
+  {
+    accessorKey: "guestGroup",
+    header: "Groups",
+    cell: ({ row }) => {
+      return (
+        <div className="flex gap-2">
+          <span className=" truncate flex gap-2">
+            {row.original?.guestGroup?.map((group: any) => (
+              <span key={group.id} className="">
+                 <Badge variant="destructive" className="">   {group.group?.name_en} ({group.group?.name_kh})</Badge>
+              </span>
+            ))}
+          </span>
+        </div>
+      );
+    },
+  },
+  {
+    accessorKey: "guestTag",
+    header: "Tags",
+    cell: ({ row }) => {
+      return (
+        <div className="flex gap-2">
+          <span className=" truncate  flex gap-2">
+            {row.original?.guestTag?.map((tag: any) => (
+              <span key={tag.id} className="">
+                 <Badge variant="secondary" className="">   {tag.tag?.name_en} ({tag.tag?.name_kh})</Badge>
+              </span>
+            ))}
+          </span>
+        </div>
+      );
+    },
+  },
+  {
+    accessorKey: "status",
+    header: "Status",
+    cell: ({ row }) => {
+      return (
+        <div className="flex gap-2">
+          <span className=" truncate  flex gap-2">
+              <span className="">
+                 <Badge variant={row.original.status === "pending"
+                      ? "secondary"
+                      : row.original.status === "confirmed"
+                      ? "default"
+                      : row.original.status === "rejected"
+                      ? "destructive"
+                      : "default"
+                      } className="capitalize"> {row.original.status}</Badge>
+              </span>
           </span>
         </div>
       );

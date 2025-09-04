@@ -10,6 +10,8 @@ import Link from "next/link";
 import { ConfirmDialog } from "@/components/composable/dialog/confirm-dialog";
 import { toast } from "sonner";
 import { useRouter } from "next/navigation";
+import { formatDateCustom } from "@/utils/date";
+import { Badge } from "@/components/ui/badge";
 
 const ActionsCell = ({ row }: { row: any }) => {
   const router = useRouter();
@@ -101,7 +103,7 @@ export const columns: ColumnDef<Event>[] = [
     cell: ({ row }) => {
       return (
         <div className="flex gap-2">
-          <span className="max-w-[200px] truncate font-medium">
+          <span className="max-w-[200px] truncate font-medium capitalize">
             {row.getValue("type")}
           </span>
         </div>
@@ -117,7 +119,7 @@ export const columns: ColumnDef<Event>[] = [
       return (
         <div className="flex gap-2">
           <span className="max-w-[200px] truncate font-medium">
-            {row.getValue("startTime")}
+            {formatDateCustom(row.getValue("startTime"), "DD/MM/YYYY") }
           </span>
         </div>
       );
@@ -162,7 +164,9 @@ export const columns: ColumnDef<Event>[] = [
       return (
         <div className="flex gap-2">
           <span className="max-w-[200px] truncate font-medium">
-            {row.getValue("status")}
+            <Badge variant={row.getValue("status") === "active" ? "default" : "destructive"}>
+              <span className="capitalize">{row.getValue("status")}</span>
+            </Badge>
           </span>
         </div>
       );

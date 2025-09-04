@@ -23,9 +23,8 @@ model User {
   telegramId       String?  @unique
   createdAt        DateTime @default(now())
   updatedAt        DateTime @updatedAt
-
   events           Event[]
-
+  
   @@index([email])
   @@index([phone])
   @@index([telegramId])
@@ -54,6 +53,7 @@ model Event {
   guests    Guest[]
   tags      Tag[]
   groups    Group[]
+  expenses  Expense[]
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
@@ -123,10 +123,14 @@ model Guest {
   phone     String?
   note      String?
   address   String?
-  tags      GuestTag[]
-  groups GuestGroup[]
+  image     String?
+  status    String? @default("pending") //pending, confirmed, rejected
+  wishing_note String?
+  number_of_guests Int?
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
+  guestTag GuestTag[]
+  guestGroup GuestGroup[]
 }
 
 model Tag {
@@ -135,9 +139,9 @@ model Tag {
   name_kh   String
   eventId   String
   event     Event    @relation(fields: [eventId], references: [id])
-  guests    GuestTag[]
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
+  guestTag GuestTag[]
 }
 
 model GuestTag {
@@ -156,9 +160,9 @@ model Group {
   name_kh   String
   eventId   String
   event     Event    @relation(fields: [eventId], references: [id])
-  guests GuestGroup[]
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
+  guestGroup GuestGroup[]
 }
 
 model GuestGroup {
@@ -167,6 +171,19 @@ model GuestGroup {
   guest     Guest    @relation(fields: [guestId], references: [id])
   groupId   String
   group     Group    @relation(fields: [groupId], references: [id], onDelete: Cascade)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+//Expense
+model Expense {
+  id        String   @id @default(cuid())
+  eventId   String
+  event     Event    @relation(fields: [eventId], references: [id])
+  name      String
+  description String?
+  budget_amount    Float @default(0)
+  actual_amount    Float @default(0)
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 }
