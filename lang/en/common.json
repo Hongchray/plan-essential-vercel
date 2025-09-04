@@ -17,7 +17,7 @@
     "dont_have_account": "Don't have an account?",
     "sign_up": "Sign up",
     "login_success": "Authentication successful",
-    "login_error": "An unexpected error occurred",
+    "login_error": "Your phone or password is incorrect",
     "phone_required": "Phone is required",
     "password_required": "Password is required",
     "password_min_length": "Password must be at least 8 characters long",
@@ -30,6 +30,7 @@
     "or": "Or",
     "phone": "Phone",
     "login": "Login",
+    "version": "Version",
     "register_account": "Register Account",
     "register_description": "Secure and easy access to your account.",
     "enter_phone": "Enter your phone number",
@@ -45,6 +46,7 @@
     "error_missing_plasgate_config": "Missing PlasGate API configuration",
     "error_failed_to_send_otp": "Failed to send OTP",
     "success_otp_sent": "OTP sent successfully!",
+
     "error_server": "An unexpected error occurred"
   },
   "otp_verification": {
@@ -95,7 +97,9 @@
     "password_label": "Password",
     "enter_confirm_password": "Confirm your password",
     "enter_name": "Enter your name",
-    "submitting": "Submitting..."
+    "submitting": "Submitting...",
+    "password_setup_success": "Password setup successful! You can now log in.",
+    "passeord_setup_error": "Failed to set password. Please try again."
   },
 
   "component": {

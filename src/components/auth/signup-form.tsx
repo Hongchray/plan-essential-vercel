@@ -180,7 +180,7 @@ export function SignUpForm() {
       </Card>
       <div className="text-center py-2">
         <span className="text-muted-foreground text-sm text-center">
-          {t("signup.version")} 1.0.0
+          {t("signup.version")} {process.env.NEXT_PUBLIC_APP_VERSION}
         </span>
       </div>
     </div>
