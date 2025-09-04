@@ -5,23 +5,23 @@ import TabExpense from "@/components/event/show-tabs/expense";
 import TabGift from "@/components/event/show-tabs/gift";
 import TabGuest from "@/components/event/show-tabs/guest";
 import TabTemplate from "@/components/event/show-tabs/template";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import React, { useEffect, useState } from "react";
 import { useRouter } from "next/navigation"
 import { Gift, LayoutDashboard, Mail, Receipt, Users } from "lucide-react";
 
 export default function showEvent({
-    params,
-    searchParams
+  params,
+  searchParams,
 }: {
-    params: Promise<{ id: string }>;
-    searchParams: Promise<{
-        page?: string;
-        per_page?: number;
-        search?: string;
-        sort?: string;
-        order?: string;
-    }>;
+  params: Promise<{ id: string }>;
+  searchParams: Promise<{
+    page?: string;
+    per_page?: number;
+    search?: string;
+    sort?: string;
+    order?: string;
+  }>;
 }) {
   const param =  React.use(params);
   const router = useRouter()

@@ -1,9 +1,9 @@
-"use client"
+"use client";
 
-import { Row } from "@tanstack/react-table"
-import { MoreHorizontal } from "lucide-react"
+import { Row } from "@tanstack/react-table";
+import { MoreHorizontal } from "lucide-react";
 
-import { Button } from "@/components/ui/button"
+import { Button } from "@/components/ui/button";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -16,19 +16,16 @@ import {
   DropdownMenuSubContent,
   DropdownMenuSubTrigger,
   DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu"
-
-import { labels } from "../data/data"
-import { storeSchema } from "../data/schema"
+} from "@/components/ui/dropdown-menu";
 
 interface DataTableRowActionsProps<TData> {
-  row: Row<TData>
+  row: Row<TData>;
 }
 
 export function DataTableRowActions<TData>({
   row,
 }: DataTableRowActionsProps<TData>) {
-  const task = storeSchema.parse(row.original)
+  const task = row.original;
 
   return (
     <DropdownMenu>
@@ -42,29 +39,6 @@ export function DataTableRowActions<TData>({
           <span className="sr-only">Open menu</span>
         </Button>
       </DropdownMenuTrigger>
-      <DropdownMenuContent align="end" className="w-[160px]">
-        <DropdownMenuItem>Edit</DropdownMenuItem>
-        <DropdownMenuItem>Make a copy</DropdownMenuItem>
-        <DropdownMenuItem>Favorite</DropdownMenuItem>
-        <DropdownMenuSeparator />
-        <DropdownMenuSub>
-          <DropdownMenuSubTrigger>Labels</DropdownMenuSubTrigger>
-          <DropdownMenuSubContent>
-            <DropdownMenuRadioGroup value={task.name}>
-              {labels.map((label) => (
-                <DropdownMenuRadioItem key={label.value} value={label.value}>
-                  {label.label}
-                </DropdownMenuRadioItem>
-              ))}
-            </DropdownMenuRadioGroup>
-          </DropdownMenuSubContent>
-        </DropdownMenuSub>
-        <DropdownMenuSeparator />
-        <DropdownMenuItem variant="destructive">
-          Delete
-          <DropdownMenuShortcut>⌘⌫</DropdownMenuShortcut>
-        </DropdownMenuItem>
-      </DropdownMenuContent>
     </DropdownMenu>
-  )
+  );
 }

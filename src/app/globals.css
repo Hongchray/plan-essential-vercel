@@ -1,8 +1,15 @@
 @import "tailwindcss";
 @import "tw-animate-css";
 
-@custom-variant dark (&:is(.dark *));
+@cust: root {
+  --font-en: "Inter", sans-serif;
+  --font-km: "Kantumruy Pro", sans-serif;
+}
 
+/* Default font */
+html {
+  font-family: var(--font-en);
+}
 @theme inline {
   --color-background: var(--background);
   --color-foreground: var(--foreground);

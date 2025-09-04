@@ -1,97 +1,71 @@
 "use client";
+
+import { useTranslation } from "react-i18next";
 import { AppSidebar } from "@/components/app-sidebar";
 import { NavUser } from "@/components/nav-user";
-import {
-  Breadcrumb,
-  BreadcrumbItem,
-  BreadcrumbLink,
-  BreadcrumbList,
-  BreadcrumbPage,
-  BreadcrumbSeparator,
-} from "@/components/ui/breadcrumb";
 import { Separator } from "@/components/ui/separator";
 import {
   SidebarInset,
   SidebarProvider,
   SidebarTrigger,
 } from "@/components/ui/sidebar";
-import {
-  Table,
-  TableBody,
-  TableCaption,
-  TableCell,
-  TableHead,
-  TableHeader,
-  TableRow,
-} from "@/components/ui/table";
 import NextTopLoader from "nextjs-toploader";
-import { SessionProvider } from "next-auth/react";
-import { Loading } from "@/components/composable/loading/loading";
-import { LoadingProvider } from "@/contexts/LoadingContext";
+import { SessionProvider, useSession } from "next-auth/react";
+import { LoadingProvider } from "@/hooks/LoadingContext";
+import LanguageSwitcher from "@/components/language-switcher";
+import { LocaleFontProvider } from "@/components/locale-font-provider";
 
-// User Data
-const data = {
-  user: {
-    name: "shadcn",
-    email: "m@example.com",
-    avatar: "/avatars/shadcn.jpg",
-  },
-};
+function DashboardHeader() {
+  const { data: session, status } = useSession();
+  const { t } = useTranslation("common");
+
+  const user = session?.user;
+
+  if (status === "loading") return null;
+
+  return (
+    <header className="border-b z-50 bg-background sticky top-0 flex h-16 shrink-0 items-center gap-2">
+      <div className="flex items-center gap-2 justify-between w-full px-4">
+        <div className="flex items-center gap-2">
+          <SidebarTrigger className="-ml-1" />
+          <Separator orientation="vertical" className="mr-2 h-4" />
+        </div>
+        <div className="flex items-center gap-2">
+          {user ? (
+            <>
+              <LanguageSwitcher />
+              <NavUser />
+            </>
+          ) : (
+            <span>{t("not_signed_in")}</span>
+          )}
+        </div>
+      </div>
+    </header>
+  );
+}
 
 export default function DashboardLayout({
   children,
-}: Readonly<{
+}: {
   children: React.ReactNode;
-}>) {
+}) {
   return (
-    <LoadingProvider>
-      <SidebarProvider>
-        <AppSidebar />
-        <SidebarInset>
-          <header className="border-b z-50 bg-background sticky top-0 flex h-16 shrink-0 items-center gap-2 transition-[width,height] ease-linear group-has-data-[collapsible=icon]/sidebar-wrapper:h-12">
-            <div className="flex items-center gap-2 justify-between w-full">
-              {/* Breadcrumb */}
-              <div className="flex items-center gap-2 px-4">
-                <SidebarTrigger className="-ml-1" />
-                <Separator
-                  orientation="vertical"
-                  className="mr-2 data-[orientation=vertical]:h-4"
-                />
-                <Breadcrumb>
-                  {/* <BreadcrumbList>
-                    {breadcrumbItems.map((item, index) => (
-                      <div key={index} className="flex items-center">
-                        <BreadcrumbItem className={index === 0 ? "hidden md:block" : ""}>
-                          {item.isCurrentPage ? (
-                            <BreadcrumbPage>{item.label}</BreadcrumbPage>
-                          ) : (
-                            <BreadcrumbLink href={item.href || "#"}>
-                              {item.label}
-                            </BreadcrumbLink>
-                          )}
-                        </BreadcrumbItem>
-                        {index < breadcrumbItems.length - 1 && (
-                          <BreadcrumbSeparator className="hidden md:block ml-2 mr-2" />
-                        )}
-                      </div>
-                    ))}
-                  </BreadcrumbList> */}
-                </Breadcrumb>
+    <LocaleFontProvider>
+      <LoadingProvider>
+        <SessionProvider>
+          <SidebarProvider>
+            <AppSidebar />
+            <SidebarInset>
+              <DashboardHeader />
+              <div className="flex flex-1 flex-col gap-4 p-4 pt-0 bg-gray-50 relative">
+                <NextTopLoader color="#F5BABB" showSpinner={false} />
+                <div className="pt-4">{children}</div>
               </div>
-              {/* User Nav */}
-              <div className="flex items-center gap-2 px-4">
-                <NavUser user={data.user} />
-              </div>
-            </div>
-          </header>
-          <div className="flex flex-1 flex-col gap-4 p-4 pt-0 bg-gray-50 relative">
-            <NextTopLoader color="#F5BABB" showSpinner={false} />
-            <SessionProvider>
-              <div className="pt-4">{children}</div>
-            </SessionProvider>
-          </div>
-        </SidebarInset>
-      </SidebarProvider>
-    </LoadingProvider>
+            </SidebarInset>
+          </SidebarProvider>
+        </SessionProvider>
+      </LoadingProvider>
+    </LocaleFontProvider>
   );
 }

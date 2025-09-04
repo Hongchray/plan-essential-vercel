@@ -1,5 +1,5 @@
 import { CreateEditForm } from "@/components/template/create-edit";
-import { useLoading } from "@/contexts/LoadingContext";
+import { useLoading } from "@/hooks/LoadingContext";
 
 export default async function CreateTemplate({
   params,

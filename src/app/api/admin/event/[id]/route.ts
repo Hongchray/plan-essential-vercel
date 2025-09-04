@@ -1,7 +1,10 @@
-import { NextRequest, NextResponse } from 'next/server'
-import { prisma } from '@/lib/prisma'
+import { NextRequest, NextResponse } from "next/server";
+import { prisma } from "@/lib/prisma";
 
-export async function GET(req: NextRequest, context: { params: Promise<{ id: string }> }) {
+export async function GET(
+  req: NextRequest,
+  context: { params: Promise<{ id: string }> }
+) {
   const { id } = await context.params;
   const event = await prisma.event.findUnique({
     where: { id },
@@ -14,7 +17,10 @@ export async function GET(req: NextRequest, context: { params: Promise<{ id: str
   }
 }
 
-export async function PUT(req: NextRequest, context: { params: Promise<{ id: string }> }) {
+export async function PUT(
+  req: NextRequest,
+  context: { params: Promise<{ id: string }> }
+) {
   const { id } = await context.params;
   const data = await req.json();
   const event = await prisma.event.update({
@@ -29,7 +35,10 @@ export async function PUT(req: NextRequest, context: { params: Promise<{ id: str
   }
 }
 
-export async function DELETE(req: NextRequest, context: { params: Promise<{ id: string }> }) {
+export async function DELETE(
+  req: NextRequest,
+  context: { params: Promise<{ id: string }> }
+) {
   const { id } = await context.params;
   const event = await prisma.event.delete({
     where: { id },
@@ -66,7 +75,7 @@ export async function DELETE(req: NextRequest, context: { params: Promise<{ id: 
         eventId: id,
       },
     });
-    
+
     return NextResponse.json(event, { status: 200 });
   } else {
     return NextResponse.json({ message: "event not found" }, { status: 404 });

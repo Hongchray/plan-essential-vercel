@@ -17,23 +17,36 @@ import Image from "next/image";
 import Link from "next/link";
 import { toast } from "sonner";
 import { useRouter } from "next/navigation";
-
-const signUpSchema = z.object({
-  phone: z
-    .string()
-    .min(1, "Phone is required")
-    .regex(/^[0-9]{8,15}$/, "Please enter a valid phone number"),
-});
-
-type SignUpFormData = z.infer<typeof signUpSchema>;
+import { useTranslation } from "react-i18next";
+import TelegramLoginButton from "@/components/telegram-login-button";
+import { useEffect } from "react";
+type SignUpFormData = {
+  phone: string;
+};
 
 export function SignUpForm() {
   const router = useRouter();
   const [phone, setPhone] = useState("");
   const [isLoading, setIsLoading] = useState(false);
+  const { t } = useTranslation("common");
+  const [mounted, setMounted] = useState(false);
+
   const [errors, setErrors] = useState<
     Partial<SignUpFormData> & { message?: string }
   >({});
+
+  const signUpSchema = z.object({
+    phone: z
+      .string()
+      .min(1, { message: t("signup.error_phone_required") })
+      .regex(/^\d{8,15}$/, { message: t("signup.error_invalid_phone") }),
+  });
+
+  useEffect(() => {
+    setMounted(true);
+  }, []);
+
+  if (!mounted) return null;
 
   const validateForm = (): boolean => {
     try {
@@ -62,7 +75,6 @@ export function SignUpForm() {
     }
     setIsLoading(true);
     try {
-      // API request to send OTP
       const response = await fetch("/api/auth/signup/send-otp", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
@@ -70,19 +82,25 @@ export function SignUpForm() {
       });
       const data = await response.json();
       if (!response.ok) {
-        throw new Error(data.error || "Failed to send OTP");
+        // Handle dynamic OTP already sent error
+        if (data.error.includes("signup.error_otp_already_sent")) {
+          throw new Error(
+            t("signup.error_otp_already_sent", {
+              seconds: data.error.split("_").pop(),
+            })
+          );
+        }
+        throw new Error(t(data.error || "signup.error_failed_to_send_otp"));
       }
-      toast.success("OTP sent successfully!");
+      toast.success(t(data.message || "signup.success_otp_sent"));
       router.push(`/signup/verify-otp?phone=${phone}`);
-
-      // TODO: Navigate to OTP verification step
     } catch (error: unknown) {
       if (error instanceof Error) {
-        toast.error(error.message);
+        toast.error(t(error.message || "signup.error_server"));
         setErrors({ message: error.message });
       } else {
-        toast.error("An unexpected error occurred");
-        setErrors({ message: "An unexpected error occurred" });
+        toast.error(t("signup.error_server"));
+        setErrors({ message: t("signup.error_server") });
       }
     } finally {
       setIsLoading(false);
@@ -100,10 +118,10 @@ export function SignUpForm() {
             height={50}
             className="py-2"
           />
-          <CardTitle className="text-xl">Register Account</CardTitle>
-          <CardDescription>
-            Secure and easy access to your account.
-          </CardDescription>
+          <CardTitle className="text-xl">
+            {t("signup.register_account")}
+          </CardTitle>
+          <CardDescription>{t("signup.register_description")}</CardDescription>
         </CardHeader>
         <CardContent>
           <form onSubmit={handleSubmit}>
@@ -118,10 +136,10 @@ export function SignUpForm() {
             )}
             <div className="flex flex-col gap-6">
               <div className="grid gap-2">
-                <Label htmlFor="phone">Phone</Label>
+                <Label htmlFor="phone">{t("signup.phone")}</Label>
                 <Input
                   id="phone"
-                  placeholder="Enter your phone number"
+                  placeholder={t("signup.enter_phone")}
                   value={phone}
                   onChange={(e) => setPhone(e.target.value)}
                   disabled={isLoading}
@@ -132,32 +150,29 @@ export function SignUpForm() {
               </div>
 
               <Button type="submit" className="w-full" disabled={isLoading}>
-                {isLoading && <Loader2 className="animate-spin" />}
-                {isLoading ? "Sending OTP..." : "Sign Up"}
+                {isLoading ? (
+                  <>
+                    <Loader2 className="animate-spin" />{" "}
+                    {t("signup.sending_otp")}
+                  </>
+                ) : (
+                  t("signup.sign_up")
+                )}
               </Button>
 
               <div className="relative text-center text-sm after:absolute after:inset-0 after:top-1/2 after:z-0 after:flex after:items-center after:border-t after:border-border">
                 <span className="relative z-10 bg-background px-2 text-muted-foreground">
-                  Or
+                  {t("signup.or")}
                 </span>
               </div>
 
-              <Button variant="outline" className="w-full" type="button">
-                <Image
-                  src="/telegram-icon-free-png.webp"
-                  alt="telegram"
-                  width={20}
-                  height={20}
-                  className="py-2"
-                />
-                Continue with Telegram
-              </Button>
+              <TelegramLoginButton />
             </div>
 
             <div className="mt-4 text-center text-sm">
-              Already have an account?{" "}
+              {t("signup.already_have_account")}{" "}
               <Link href="/login" className="underline underline-offset-4">
-                Login
+                {t("signup.login")}
               </Link>
             </div>
           </form>
@@ -165,7 +180,7 @@ export function SignUpForm() {
       </Card>
       <div className="text-center py-2">
         <span className="text-muted-foreground text-sm text-center">
-          Version 1.0.0
+          {t("signup.version")} 1.0.0
         </span>
       </div>
     </div>
