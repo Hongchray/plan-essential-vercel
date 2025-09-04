@@ -139,5 +139,26 @@
     "error_failed_to_send_otp": "ការផ្ញើ OTP បរាជ័យ",
     "error_missing_env": "ការកំណត់ម៉ាស៊ីនមេមិនពេញលេញ",
     "error_generic": "មានបញ្ហាអ្វីមួយ។ សូមព្យាយាមម្តងទៀត។"
+  },
+
+  "dashboard": {
+    "totalUsers": "អ្នកប្រើសរុប",
+    "fromLastMonth": "ពីខែមុន",
+    "totalTemplates": "ទម្រង់សរុប",
+    "noTemplates": "មិនមានទម្រង់នៅឡើយ",
+    "templates": "ទម្រង់",
+    "totalEvents": "ព្រឹត្តិការណ៍សរុប",
+    "readyToStart": "រៀបចំចាប់ផ្តើមចំណូល",
+    "events": "ព្រឹត្តិការណ៍",
+    "userGrowth": "ការលូតលាស់អ្នកប្រើ",
+    "monthlyUserTrends": "និន្នាការចុះឈ្មោះប្រចាំខែ",
+    "weeklyActivity": "សកម្មភាពប្រចាំសប្តាហ៍",
+    "weeklyEvents": "ព្រឹត្តិការណ៍ដែលបានកំណត់សម្រាប់សប្តាហ៍នេះ",
+    "upcomingEvents": "ព្រឹត្តិការណ៍កំពុងមកដល់",
+    "manageEvents": "គ្រប់គ្រង និងតាមដានព្រឹត្តិការណ៍របស់អ្នក",
+    "eventName": "ឈ្មោះព្រឹត្តិការណ៍",
+    "userName": "ឈ្មោះអ្នកប្រើ",
+    "eventDate": "កាលបរិច្ឆេទព្រឹត្តិការណ៍",
+    "eventLocation": "ទីតាំងព្រឹត្តិការណ៍"
   }
 }

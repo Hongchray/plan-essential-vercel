@@ -111,13 +111,28 @@ export const columns: ColumnDef<Event>[] = [
   {
     accessorKey: "startTime",
     header: ({ column }) => (
-      <DataTableColumnHeader column={column} title="Event Date" />
+      <DataTableColumnHeader column={column} title="Start Date" />
     ),
     cell: ({ row }) => {
       return (
         <div className="flex gap-2">
           <span className="max-w-[200px] truncate font-medium">
             {row.getValue("startTime")}
+          </span>
+        </div>
+      );
+    },
+  },
+  {
+    accessorKey: "endTime",
+    header: ({ column }) => (
+      <DataTableColumnHeader column={column} title="End Date" />
+    ),
+    cell: ({ row }) => {
+      return (
+        <div className="flex gap-2">
+          <span className="max-w-[200px] truncate font-medium">
+            {row.getValue("endTime")}
           </span>
         </div>
       );

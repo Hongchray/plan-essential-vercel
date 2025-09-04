@@ -141,5 +141,26 @@
     "error_failed_to_send_otp": "Failed to send OTP",
     "error_missing_env": "Server configuration is incomplete",
     "error_generic": "Something went wrong. Please try again."
+  },
+
+  "dashboard": {
+    "totalUsers": "Total Users",
+    "fromLastMonth": "from last month",
+    "totalTemplates": "Total Templates",
+    "noTemplates": "No templates created yet",
+    "templates": "Templates",
+    "totalEvents": "Total Events",
+    "readyToStart": "Ready to start earning",
+    "events": "Events",
+    "userGrowth": "User Growth",
+    "monthlyUserTrends": "Monthly user registration trends",
+    "weeklyActivity": "Weekly Activity",
+    "weeklyEvents": "Events scheduled this week",
+    "upcomingEvents": "Upcoming Events",
+    "manageEvents": "Manage and track your scheduled events",
+    "eventName": "Event Name",
+    "userName": "User Name",
+    "eventDate": "Event Date",
+    "eventLocation": "Event Location"
   }
 }
