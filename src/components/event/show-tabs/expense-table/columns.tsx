@@ -106,7 +106,7 @@ export const columns: ColumnDef<Expense>[] = [
     cell: ({ row }) => {
       return (
         <div className="flex gap-2">
-          <span className="max-w-[350px] truncate text-primary font-medium">
+          <span className="max-w-[350px] truncate">
               {currencyFormatters.usd(row.getValue("budget_amount")??0)}
           </span>
         </div>
@@ -119,7 +119,7 @@ export const columns: ColumnDef<Expense>[] = [
     cell: ({ row }) => {
       return (
         <div className="flex gap-2">
-          <span className="max-w-[350px] truncate text-primary font-medium">
+          <span className="max-w-[350px] truncate ">
               {currencyFormatters.usd(row.getValue("actual_amount")??0)}
           </span>
         </div>

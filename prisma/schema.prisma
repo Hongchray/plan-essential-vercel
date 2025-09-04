@@ -124,6 +124,9 @@ model Guest {
   note      String?
   address   String?
   image     String?
+  status    String? @default("pending") //pending, confirmed, rejected
+  wishing_note String?
+  number_of_guests Int?
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
   guestTag GuestTag[]

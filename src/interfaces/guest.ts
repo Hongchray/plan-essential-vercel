@@ -1,5 +1,6 @@
 import { Tag } from "@/interfaces/tag";
 import { Group } from "@/interfaces/group";
+import { GuestStatus } from "@/enums/guests";
 
 export interface Guest {
   id: string;
@@ -9,11 +10,14 @@ export interface Guest {
   phone?: string;
   note?: string;
   address?: string;
-  createdAt: string; 
-  updatedAt: string; 
   guestTag?: GuestTag[];       
   guestGroup?: GuestGroup[];   
   image?: string;
+  status?: GuestStatus;
+  wishing_note?: string;
+  number_of_guests?: number;
+  createdAt: string; 
+  updatedAt: string; 
 }
 
 export interface GuestTag {

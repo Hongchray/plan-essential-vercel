@@ -173,6 +173,28 @@ export const columns: ColumnDef<Guest>[] = [
     },
   },
   {
+    accessorKey: "status",
+    header: "Status",
+    cell: ({ row }) => {
+      return (
+        <div className="flex gap-2">
+          <span className=" truncate  flex gap-2">
+              <span className="">
+                 <Badge variant={row.original.status === "pending"
+                      ? "secondary"
+                      : row.original.status === "confirmed"
+                      ? "default"
+                      : row.original.status === "rejected"
+                      ? "destructive"
+                      : "default"
+                      } className="capitalize"> {row.original.status}</Badge>
+              </span>
+          </span>
+        </div>
+      );
+    },
+  },
+  {
     id: "actions",
     cell: ({ row }) => <ActionsCell row={row} />,
   },
