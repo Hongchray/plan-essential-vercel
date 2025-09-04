@@ -9,7 +9,7 @@ export async function GET( req: NextRequest, context: { params: Promise<{ id: st
     const sort = searchParams.get("sort") || "createdAt";
     const order = searchParams.get("order") || "desc";
     try {
-        const total = await prisma.guest.count({
+        const total = await prisma.expense.count({
             where: {
                 eventId: id,
                 OR: [
@@ -18,16 +18,12 @@ export async function GET( req: NextRequest, context: { params: Promise<{ id: st
             },
         });
 
-        const data = await prisma.guest.findMany({
+        const data = await prisma.expense.findMany({
             where: {
                 eventId: id,
                 OR: [
                     { name: { contains: search, mode: "insensitive" } },
                 ],
-            },
-            include: {
-                guestTag: { include: { tag: true } },
-                guestGroup: { include: { group: true } },
             },
             skip: (page - 1) * per_page,
             take: per_page,
@@ -63,37 +59,18 @@ export async function POST(
 ) {
   const { id } = await context.params;
   const data = await req.json();
-
   try {
-    const response = await prisma.guest.create({
+    const response = await prisma.expense.create({
       data: {
         name: data.name,
-        email: data.email,
-        phone: data.phone,
-        note: data.note,
-        address: data.address,
-        image: data.image,
+        budget_amount: data.budget_amount,
+        actual_amount: data.actual_amount,
+        description: data.description,
         eventId: id,
-        guestTag: {
-          create: data.tags.map((tagId: string) => ({
-            tag: { connect: { id: tagId } },
-          })),
-        },
-        guestGroup: {
-          create: data.groups.map((groupId: string) => ({
-            group: { connect: { id: groupId } },
-          })),
-        },
-      },
-      include: {
-        guestTag: { include: { tag: true } },
-        guestGroup: { include: { group: true } },
       },
     });
-
     return NextResponse.json(response, { status: 200 });
   } catch (error) {
-    console.error(error); // 👈 log to debug
     return NextResponse.json(
       {
         message: "Internal server error",

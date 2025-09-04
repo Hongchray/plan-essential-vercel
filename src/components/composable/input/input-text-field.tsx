@@ -10,6 +10,7 @@ interface InputFieldProps {
   form: UseFormReturn<any>
   disabled?: boolean
   type?: string
+  step?: number
 }
 
 export function InputTextField({
@@ -19,6 +20,7 @@ export function InputTextField({
   form,
   disabled = false,
   type = "text",
+  step = 0.1
 }: InputFieldProps) {
   const {
     register,
@@ -35,6 +37,7 @@ export function InputTextField({
       <Input
         id={name}
         type={type}
+        step={step}
         placeholder={placeholder}
         disabled={disabled}
         {...register(name)}

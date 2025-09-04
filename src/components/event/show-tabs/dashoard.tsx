@@ -3,17 +3,17 @@ import { PieChart, Pie, Cell, BarChart, Bar, XAxis, YAxis, CartesianGrid, Respon
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { ChartContainer, ChartTooltip, ChartTooltipContent } from "@/components/ui/chart"
 
-export default function TabDashboard({ guests = [], expenses = [] }: { guests?: any[]; expenses?: any[] }) {
+export default function TabDashboard() {
   // Dashboard Component
-  const confirmedGuests = guests.filter((g) => g.status === "confirmed").length
-  const pendingGuests = guests.filter((g) => g.status === "pending").length
-  const declinedGuests = guests.filter((g) => g.status === "declined").length
+  const confirmedGuests = 3
+  const pendingGuests = 2
+  const declinedGuests = 1
 
-  const giftsReceived = guests.filter((g) => g.gift?.received).length
-  const totalGiftValue = guests.filter((g) => g.gift?.received).reduce((sum, g) => sum + (g.gift?.value || 0), 0)
+  const giftsReceived = 0
+  const totalGiftValue = 100
 
-  const totalExpenses = expenses.reduce((sum, e) => sum + e.amount, 0)
-  const paidExpenses = expenses.filter((e) => e.paid).reduce((sum, e) => sum + e.amount, 0)
+  const totalExpenses = 10
+  const paidExpenses = 20
   const unpaidExpenses = totalExpenses - paidExpenses
 
   const netAmount = totalGiftValue - totalExpenses
@@ -30,30 +30,6 @@ export default function TabDashboard({ guests = [], expenses = [] }: { guests?: 
     { category: "Outstanding", amount: unpaidExpenses, color: "#f97316" },
   ]
 
-  const expenseBreakdown = expenses.reduce(
-    (acc, expense) => {
-      const category = expense.category || "Other"
-      acc[category] = (acc[category] || 0) + expense.amount
-      return acc
-    },
-    {} as Record<string, number>,
-  )
-
-  const expenseChartData = Object.entries(expenseBreakdown).map(([category, amount]) => ({
-    category,
-    amount: amount as number,
-  }))
-
-  if (guests.length === 0 && expenses.length === 0) {
-    return (
-      <div className="space-y-6">
-        <h3 className="text-lg font-semibold mb-4">Wedding Dashboard</h3>
-        <div className="text-center py-8 text-gray-500">
-          No data available. Please add guests and expenses to see your dashboard.
-        </div>
-      </div>
-    )
-  }
 
   return (
     <div className="space-y-6">
@@ -61,7 +37,7 @@ export default function TabDashboard({ guests = [], expenses = [] }: { guests?: 
 
       <div className="grid grid-cols-1 md:grid-cols-4 gap-4 mb-6">
         <div className="bg-blue-50 p-4 rounded-lg">
-          <div className="text-2xl font-bold text-blue-600">{guests.length}</div>
+          <div className="text-2xl font-bold text-blue-600">{1}</div>
           <div className="text-sm text-blue-800">Total Guests</div>
         </div>
         <div className="bg-green-50 p-4 rounded-lg">
@@ -78,7 +54,7 @@ export default function TabDashboard({ guests = [], expenses = [] }: { guests?: 
         </div>
       </div>
 
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-6">
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 mb-6">
         <Card>
           <CardHeader>
             <CardTitle>Guest Status Distribution</CardTitle>
@@ -91,7 +67,7 @@ export default function TabDashboard({ guests = [], expenses = [] }: { guests?: 
                 pending: { label: "Pending", color: "#f59e0b" },
                 declined: { label: "Declined", color: "#ef4444" },
               }}
-              className="h-[300px]"
+              className="h-[200px]"
             >
               <ResponsiveContainer width="100%" height="100%">
                 <PieChart>
@@ -120,12 +96,12 @@ export default function TabDashboard({ guests = [], expenses = [] }: { guests?: 
             <CardTitle>Financial Overview</CardTitle>
             <CardDescription>Income vs expenses breakdown</CardDescription>
           </CardHeader>
-          <CardContent>
+          <CardContent className="overflow-auto">
             <ChartContainer
               config={{
                 amount: { label: "Amount ($)", color: "#3b82f6" },
               }}
-              className="h-[300px]"
+              className="h-[200px]"
             >
               <ResponsiveContainer width="100%" height="100%">
                 <BarChart data={financialData} margin={{ top: 20, right: 30, left: 20, bottom: 5 }}>
@@ -143,35 +119,31 @@ export default function TabDashboard({ guests = [], expenses = [] }: { guests?: 
             </ChartContainer>
           </CardContent>
         </Card>
-      </div>
-
-      {expenseChartData.length > 0 && (
-        <Card className="mb-6">
+        <Card>
           <CardHeader>
             <CardTitle>Expense Categories</CardTitle>
             <CardDescription>Spending breakdown by category</CardDescription>
           </CardHeader>
-          <CardContent>
-            <ChartContainer
+          <CardContent className="overflow-auto">
+            {/* <ChartContainer
               config={{
                 amount: { label: "Amount ($)", color: "#8b5cf6" },
               }}
-              className="h-[300px]"
-            >
-              <ResponsiveContainer width="100%" height="100%">
-                <BarChart data={expenseChartData} margin={{ top: 20, right: 30, left: 20, bottom: 5 }}>
+              className="h-[200px]"
+            > */}
+              {/* <ResponsiveContainer width="100%" height="100%"> */}
+                {/* <BarChart data={} margin={{ top: 20, right: 30, left: 20, bottom: 5 }}>
                   <CartesianGrid strokeDasharray="3 3" />
                   <XAxis dataKey="category" />
                   <YAxis />
                   <ChartTooltip content={<ChartTooltipContent />} />
                   <Bar dataKey="amount" fill="#8b5cf6" />
-                </BarChart>
-              </ResponsiveContainer>
-            </ChartContainer>
+                </BarChart> */}
+              {/* </ResponsiveContainer> */}
+            {/* </ChartContainer> */}
           </CardContent>
         </Card>
-      )}
-
+      </div>
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
         <div className="bg-white p-4 border rounded-lg">
           <h4 className="font-semibold mb-3">Financial Overview</h4>

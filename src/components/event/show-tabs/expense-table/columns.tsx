@@ -1,35 +1,32 @@
 "use client";
 import { ColumnDef } from "@tanstack/react-table";
 import { Checkbox } from "@/components/ui/checkbox";
-import { Guest } from "@/interfaces/guest";
+import { Expense } from "@/interfaces/expense";
 import { DataTableColumnHeader } from "./data-table-column-header";
 import { Button } from "@/components/ui/button";
-import { EditIcon, Trash2Icon } from "lucide-react";
-import Link from "next/link";
+import { Trash2Icon } from "lucide-react";
 import { ConfirmDialog } from "@/components/composable/dialog/confirm-dialog";
 import { toast } from "sonner";
 import { useRouter } from "next/navigation";
-import { IconAccessPoint } from "@tabler/icons-react";
-import { Badge } from "@/components/ui/badge";
-import { CreateEditForm } from "../guest-form/create-edit";
-import Image from "next/image";
+import { CreateEditForm } from "../expense-form/create-edit";
+import { currencyFormatters } from "@/utils/currency";
 
 const ActionsCell = ({ row }: { row: any }) => {
   const router = useRouter();
 
   const deleteEvent = async (eventId: string, id: string) => {
     try {
-      const res = await fetch(`/api/admin/event/${eventId}/guest/${id}`, {
+      const res = await fetch(`/api/admin/event/${eventId}/expense/${id}`, {
         method: "DELETE",
       });
       if (res.ok) {
-        toast.success("Delete guest successfully");
+        toast.success("Delete expense successfully");
         router.refresh();
       } else {
-        toast.error("Error deleting guest");
+        toast.error("Error deleting expense");
       }
     } catch (error) {
-      toast.error("Error deleting guest");
+      toast.error("Error deleting expense");
     }
   };
 
@@ -42,15 +39,15 @@ const ActionsCell = ({ row }: { row: any }) => {
             <Trash2Icon />
           </Button>
         }
-        title="Delete this guest?"
-        description="This will permanently remove the guest."
+        title="Delete this expense?"
+        description="This will permanently remove the expense."
         onConfirm={() => deleteEvent(row.original.eventId, row.original.id)}
       />
     </div>
   );
 };
 
-export const columns: ColumnDef<Guest>[] = [
+export const columns: ColumnDef<Expense>[] = [
   {
     id: "select",
     header: ({ table }) => (
@@ -75,26 +72,6 @@ export const columns: ColumnDef<Guest>[] = [
     enableSorting: false,
     enableHiding: false,
   },
-   {
-    accessorKey: "image",
-    enableSorting: false,
-    header: ({ column }) => (
-      <DataTableColumnHeader column={column} title="Image" />
-    ),
-    cell: ({ row }) => {
-      if (row.getValue("image")) {
-        return (
-          <Image
-            src={row.getValue("image")}
-            width={50}
-            height={50}
-            alt="Picture of the author"
-            className="rounded"
-          />
-        );
-      }
-    },
-  },
   {
     accessorKey: "name",
     header: ({ column }) => (
@@ -104,69 +81,46 @@ export const columns: ColumnDef<Guest>[] = [
       return (
         <div className="flex gap-2">
           <span className="max-w-[350px] truncate text-primary font-medium">
-            {/* <Link href={`/event/${row.original.id}`}> */}
               {row.getValue("name")}
-            {/* </Link> */}
           </span>
         </div>
       );
     },
   },
   {
-    accessorKey: "phone",
-    header: 'Phone',
-    cell: ({ row }) => {
-      return (
-        <div className="flex gap-2">
-          <span className="max-w-[200px] truncate">
-            {row.getValue("phone")}
-          </span>
-        </div>
-      );
-    },
-  },
-  {
-    accessorKey: "address",
-    header: 'Address',
+    accessorKey: "description",
+    header: "Description",
     cell: ({ row }) => {
       return (
         <div className="flex gap-2">
           <span className="max-w-[300px] truncate ">
-            {row.getValue("address")}
+            {row.getValue("description")}
           </span>
         </div>
       );
     },
   },
   {
-    accessorKey: "guestGroup",
-    header: "Groups",
+    accessorKey: "budget_amount",
+    header: "Budget Amount",
     cell: ({ row }) => {
       return (
         <div className="flex gap-2">
-          <span className=" truncate flex gap-2">
-            {row.original?.guestGroup?.map((group: any) => (
-              <span key={group.id} className="">
-                 <Badge variant="destructive" className="">   {group.group?.name_en} ({group.group?.name_kh})</Badge>
-              </span>
-            ))}
+          <span className="max-w-[350px] truncate text-primary font-medium">
+              {currencyFormatters.usd(row.getValue("budget_amount")??0)}
           </span>
         </div>
       );
     },
   },
   {
-    accessorKey: "guestTag",
-    header: "Tags",
+    accessorKey: "actual_amount",
+    header: "Actual Amount",
     cell: ({ row }) => {
       return (
         <div className="flex gap-2">
-          <span className=" truncate  flex gap-2">
-            {row.original?.guestTag?.map((tag: any) => (
-              <span key={tag.id} className="">
-                 <Badge variant="secondary" className="">   {tag.tag?.name_en} ({tag.tag?.name_kh})</Badge>
-              </span>
-            ))}
+          <span className="max-w-[350px] truncate text-primary font-medium">
+              {currencyFormatters.usd(row.getValue("actual_amount")??0)}
           </span>
         </div>
       );

@@ -3,7 +3,7 @@ import { useEffect, useState } from "react";
 import { columns } from "./guest-table/columns";
 import { DataTable } from "./guest-table/data-table";
 import { IAPIResponse } from "@/interfaces/comon/api-response";
-import { Guest } from "./guest-table/data/schema";
+import { Guest } from "@/interfaces/guest";
 
 async function getData(
   id: string,

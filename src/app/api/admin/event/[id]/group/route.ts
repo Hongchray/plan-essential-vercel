@@ -32,15 +32,3 @@ export async function POST(req: NextRequest, context: { params: Promise<{ id: st
     }
 }
 
-export async function DELETE(req: NextRequest, context: { params: Promise<{ id: string }> }) {
-    const { id } = await context.params;
-    const group = await prisma.group.delete({
-        where: { id },
-    });
-
-    if (group) {
-        return NextResponse.json(group, { status: 200 });
-    } else {
-        return NextResponse.json({ message: "group not found" }, { status: 404 });
-    }
-}

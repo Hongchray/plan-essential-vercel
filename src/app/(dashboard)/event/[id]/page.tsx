@@ -8,7 +8,7 @@ import TabTemplate from "@/components/event/show-tabs/template";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import React, { useEffect, useState } from "react";
 import { useRouter } from "next/navigation"
-import { Guest } from "@/components/event/show-tabs/guest-table/data/schema";
+import { Gift, LayoutDashboard, Mail, Receipt, Users } from "lucide-react";
 
 export default function showEvent({
     params,
@@ -23,83 +23,9 @@ export default function showEvent({
         order?: string;
     }>;
 }) {
-    const param =  React.use(params);
-    const router = useRouter()
-    const [tab, setTab] = useState("");
-
-    const [guests, setGuests] = useState<any[]>([
-    {
-      id: 1,
-      name: "John Doe",
-      email: "john@example.com",
-      status: "confirmed",
-      group: "Groom's side",
-      tags: ["high school friend", "college roommate"],
-      gift: { received: true, item: "Kitchen Blender", value: 120 },
-    },
-    {
-      id: 2,
-      name: "Jane Smith",
-      email: "jane@example.com",
-      status: "pending",
-      group: "Bride's side",
-      tags: ["work colleague"],
-      gift: { received: false, item: "", value: 0 },
-    },
-    {
-      id: 3,
-      name: "Bob Johnson",
-      email: "bob@example.com",
-      status: "declined",
-      group: "Groom's side",
-      tags: ["team mate", "neighbor"],
-      gift: { received: false, item: "", value: 0 },
-    },
-  ]);
-
-  const [expenses, setExpenses] = useState<Expense[]>([
-    {
-      id: 1,
-      category: "Venue",
-      description: "Wedding venue booking",
-      amount: 5000,
-      date: "2024-01-15",
-      paid: true,
-    },
-    {
-      id: 2,
-      category: "Catering",
-      description: "Wedding dinner for 100 guests",
-      amount: 3500,
-      date: "2024-02-01",
-      paid: true,
-    },
-    {
-      id: 3,
-      category: "Photography",
-      description: "Wedding photographer",
-      amount: 1200,
-      date: "2024-03-01",
-      paid: false,
-    },
-    {
-      id: 4,
-      category: "Flowers",
-      description: "Bridal bouquet and decorations",
-      amount: 800,
-      date: "2024-03-15",
-      paid: false,
-    },
-    {
-      id: 5,
-      category: "Music",
-      description: "DJ and sound system",
-      amount: 600,
-      date: "2024-04-01",
-      paid: false,
-    },
-  ]);
-
+  const param =  React.use(params);
+  const router = useRouter()
+  const [tab, setTab] = useState("");
   // Set default tab from hash or dashboard
   useEffect(() => {
     const hash = window.location.hash.replace("#", "");
@@ -115,34 +41,84 @@ export default function showEvent({
     return () => window.removeEventListener("hashchange", handleHashChange);
   }, []);
 
-
-    type Expense = {
-      id: number;
-      category: string;
-      description: string;
-      amount: number;
-      date: string;
-      paid: boolean;
-    };
-
     // // Update hash when tab changes
     const handleChange = (value: string) => {
         setTab(value)
-        router.push(`#${value}`) 
+        router.replace(`/event/${param.id}#${value}`)
     }
     return (
         <div className="p-6 border rounded-md  bg-white  mx-auto">
             <Tabs  className="" value={tab} onValueChange={handleChange}>
-                <TabsList>
-                    <TabsTrigger value="dashboard">Dashboard</TabsTrigger>
-                    <TabsTrigger value="guests">Guests</TabsTrigger>
-                    <TabsTrigger value="expense">Expense</TabsTrigger>
-                    <TabsTrigger value="gifts">Wedding Gifts</TabsTrigger>
-                    <TabsTrigger value="template">Invite's Template </TabsTrigger>
+                <TabsList className="h-full p-2 gap-2">
+                    <TabsTrigger
+                      value="dashboard"
+                      className="flex flex-col gap-1 py-3 px-2 transition-all duration-300 ease-in-out hover:bg-background/80 data-[state=active]:bg-background data-[state=active]:shadow-sm data-[state=active]:scale-105"
+                    >
+                      <LayoutDashboard
+                        className={`h-4 w-4 transition-all duration-300 ${tab === "dashboard" ? "text-primary scale-110" : "text-muted-foreground"}`}
+                      />
+                      <span
+                        className={`text-xs transition-all duration-300 ${tab === "dashboard" ? "text-primary font-medium" : "text-muted-foreground"}`}
+                      >
+                        Dashboard
+                      </span>
+                    </TabsTrigger>
+                    <TabsTrigger
+                      value="guests"
+                      className="flex flex-col gap-1 py-3 px-2 transition-all duration-300 ease-in-out hover:bg-background/80 data-[state=active]:bg-background data-[state=active]:shadow-sm data-[state=active]:scale-105"
+                    >
+                      <Users
+                        className={`h-4 w-4 transition-all duration-300 ${tab === "guests" ? "text-primary scale-110" : "text-muted-foreground"}`}
+                      />
+                      <span
+                        className={`text-xs transition-all duration-300 ${tab === "guests" ? "text-primary font-medium" : "text-muted-foreground"}`}
+                      >
+                        Guests
+                      </span>
+                    </TabsTrigger>
+                    <TabsTrigger
+                      value="expense"
+                      className="flex flex-col gap-1 py-3 px-2 transition-all duration-300 ease-in-out hover:bg-background/80 data-[state=active]:bg-background data-[state=active]:shadow-sm data-[state=active]:scale-105"
+                    >
+                      <Receipt
+                        className={`h-4 w-4 transition-all duration-300 ${tab === "expense" ? "text-primary scale-110" : "text-muted-foreground"}`}
+                      />
+                      <span
+                        className={`text-xs transition-all duration-300 ${tab === "expense" ? "text-primary font-medium" : "text-muted-foreground"}`}
+                      >
+                        Expense
+                      </span>
+                    </TabsTrigger>
+                    <TabsTrigger
+                      value="gifts"
+                      className="flex flex-col gap-1 py-3 px-2 transition-all duration-300 ease-in-out hover:bg-background/80 data-[state=active]:bg-background data-[state=active]:shadow-sm data-[state=active]:scale-105"
+                    >
+                      <Gift
+                        className={`h-4 w-4 transition-all duration-300 ${tab === "gifts" ? "text-primary scale-110" : "text-muted-foreground"}`}
+                      />
+                      <span
+                        className={`text-xs transition-all duration-300 ${tab === "gifts" ? "text-primary font-medium" : "text-muted-foreground"}`}
+                      >
+                        Wedding Gifts
+                      </span>
+                    </TabsTrigger>
+                    <TabsTrigger
+                      value="template"
+                      className="flex flex-col gap-1 py-3 px-2 transition-all duration-300 ease-in-out hover:bg-background/80 data-[state=active]:bg-background data-[state=active]:shadow-sm data-[state=active]:scale-105"
+                    >
+                      <Mail
+                        className={`h-4 w-4 transition-all duration-300 ${tab === "template" ? "text-primary scale-110" : "text-muted-foreground"}`}
+                      />
+                      <span
+                        className={`text-xs transition-all duration-300 ${tab === "template" ? "text-primary font-medium" : "text-muted-foreground"}`}
+                      >
+                        Invite's Template
+                      </span>
+                    </TabsTrigger>
                 </TabsList>
                 <TabsContent value="dashboard">
                     <div>
-                       <TabDashboard guests={guests} expenses={expenses} />
+                       <TabDashboard />
                     </div>
                 </TabsContent>
                 <TabsContent value="guests">
@@ -152,7 +128,7 @@ export default function showEvent({
                 </TabsContent>
                 <TabsContent value="expense">
                     <div>
-                        {/* <TabExpense expenses={expenses} setExpenses={setExpenses} /> */}
+                        <TabExpense paramId={param.id} searchParams={searchParams} />
                     </div>
                 </TabsContent>
                 <TabsContent value="gifts">
