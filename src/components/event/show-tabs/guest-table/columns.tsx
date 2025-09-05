@@ -60,7 +60,7 @@ const ActionsCell = ({ row }: { row: any }) => {
     }
   }
   const [copied, setCopied] = useState(false);
-  const invLink = "http://localhost:3000/event/cmerywzn00004ulfm1icx5ipq#guests";
+  const invLink = "http://localhost:3000/preview/cmerywzjq0001ulfmu7ahau2o";
 
   const handleCopy = async () => {
     try {
