@@ -149,7 +149,7 @@ export const columns: ColumnDef<Event>[] = [
       return (
         <div className="flex gap-2">
           <span className="max-w-[200px] truncate font-medium">
-            <Badge variant={row.getValue("status") === "active" ? "default" : "destructive"}>
+            <Badge variant={row.getValue("status") === "active" ? "default" : "outline"}>
               <span className="capitalize">{row.getValue("status")}</span>
             </Badge>
           </span>

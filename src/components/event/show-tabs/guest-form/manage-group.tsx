@@ -112,7 +112,7 @@ export function ManageGroupForm() {
         <button
           type="button"
           onClick={() => setDialogOpen(true)}
-          className="text-blue-500 hover:text-blue-700 text-sm flex items-center gap-1 cursor-pointer border border-dashed rounded-md p-1 border-blue-200"
+          className="text-rose-500 hover:text-rose-700 text-sm flex items-center gap-1 cursor-pointer border border-dashed rounded-md p-1 border-rose-200"
           >
             <Settings className="h-4 w-4" />
             Manage Groups
@@ -187,7 +187,7 @@ export function ManageGroupForm() {
               <DialogFooter>
                 <div className="flex gap-2 justify-end pt-2">
                   <Button
-                    variant="destructive"
+                    variant="outline"
                     type="button"
                     onClick={() => {
                       form.reset()
