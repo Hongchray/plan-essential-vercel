@@ -16,30 +16,34 @@ async function getData(
     {
       method: "GET",
       headers: new Headers(await headers()),
+      cache: "no-store", // optional: always fetch fresh
     }
   );
+
+  if (!response.ok) {
+    throw new Error("Failed to fetch templates");
+  }
 
   const result: IAPIResponse<Template> = await response.json();
   return result;
 }
 
-export default async function Page({
+export default async function TemplatePage({
   searchParams,
 }: {
-  searchParams: Promise<{
+  searchParams?: {
     page?: string;
-    per_page?: number;
+    per_page?: string;
     search?: string;
     sort?: string;
     order?: string;
-  }>;
+  };
 }) {
-  const params = await searchParams;
-  const page = Number(params.page) || 1;
-  const search = params.search || "";
-  const sort = params.sort || "";
-  const order = params.order || "";
-  const pageSize = params.per_page ?? 10;
+  const page = Number(searchParams?.page) || 1;
+  const pageSize = Number(searchParams?.per_page) || 10;
+  const search = searchParams?.search || "";
+  const sort = searchParams?.sort || "";
+  const order = searchParams?.order || "";
 
   const { data, meta } = await getData(page, pageSize, search, sort, order);
 
@@ -49,7 +53,7 @@ export default async function Page({
         data={data}
         columns={columns}
         pageCount={meta?.pageCount ?? 1}
-        total={meta.total}
+        total={meta?.total ?? 0}
         serverPagination={true}
       />
     </div>

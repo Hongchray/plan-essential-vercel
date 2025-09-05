@@ -202,9 +202,6 @@ async function getUpcomingEventsRaw() {
       guests: true, // optional, include related guests if needed
     },
   });
-
-  console.log("Ebgfvhgcnerhcb", events);
-
   // Map to frontend-friendly format
   return events.map((e) => ({
     id: e.id,

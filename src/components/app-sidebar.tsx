@@ -20,13 +20,16 @@ import {
   IconSettings,
 } from "@tabler/icons-react";
 import { NavUser } from "./nav-user";
+
 export function AppSidebar(props: React.ComponentProps<typeof Sidebar>) {
   const { t } = useTranslation("common");
+
   interface NavItem {
     title: string;
     url: string;
     icon?: React.ComponentType;
   }
+
   const [navMain, setNavMain] = React.useState<NavItem[]>([]);
 
   React.useEffect(() => {
@@ -42,7 +45,7 @@ export function AppSidebar(props: React.ComponentProps<typeof Sidebar>) {
   if (!navMain.length) return null; // wait until mounted
 
   return (
-    <Sidebar collapsible="icon" {...props}>
+    <Sidebar collapsible="icon" className="z-50" {...props}>
       <SidebarHeader>
         <LogoApp />
       </SidebarHeader>

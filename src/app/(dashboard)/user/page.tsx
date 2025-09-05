@@ -23,7 +23,7 @@ async function getData(
   return result;
 }
 
-export default async function StorePage({
+export default async function userPage({
   searchParams,
 }: {
   searchParams: Promise<{

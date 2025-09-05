@@ -1,8 +1,8 @@
 import { NextResponse } from "next/server";
 import type { NextRequest } from "next/server";
+import { getToken } from "next-auth/jwt";
 
-// Public admin routes (no login required)
-const PUBLIC_ADMIN_ROUTES = [
+const PUBLIC_ROUTES = [
   "/login",
   "/signup",
   "/forgot-password",
@@ -12,17 +12,16 @@ const PUBLIC_ADMIN_ROUTES = [
   "/forgot-password/set-password",
 ];
 
-function isPublicAdminRoute(pathname: string) {
-  return PUBLIC_ADMIN_ROUTES.some((route) => pathname === route);
+function isPublicRoute(pathname: string) {
+  return PUBLIC_ROUTES.includes(pathname);
 }
 
-export function middleware(request: NextRequest) {
+export async function middleware(request: NextRequest) {
   const { pathname } = request.nextUrl;
 
-  // 1️⃣ Always ensure we have a NEXT_LOCALE cookie
+  // 1️⃣ Always set NEXT_LOCALE cookie
   const locale = request.cookies.get("NEXT_LOCALE")?.value || "en";
   const response = NextResponse.next();
-
   if (!request.cookies.has("NEXT_LOCALE")) {
     response.cookies.set("NEXT_LOCALE", locale, {
       path: "/",
@@ -30,16 +29,15 @@ export function middleware(request: NextRequest) {
     });
   }
 
-  // 2️⃣ Protect /admin routes
-  if (pathname.startsWith("/admin")) {
-    if (!isPublicAdminRoute(pathname)) {
-      const token =
-        request.cookies.get("next-auth.session-token")?.value ||
-        request.cookies.get("__Secure-next-auth.session-token")?.value;
+  // 2️⃣ Protect everything except PUBLIC_ROUTES
+  if (!isPublicRoute(pathname)) {
+    const token = await getToken({
+      req: request,
+      secret: process.env.NEXTAUTH_SECRET,
+    });
 
-      if (!token) {
-        return NextResponse.redirect(new URL("/login", request.url));
-      }
+    if (!token) {
+      return NextResponse.redirect(new URL("/login", request.url));
     }
   }
 
