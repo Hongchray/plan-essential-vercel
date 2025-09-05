@@ -2,13 +2,18 @@
 @import "tw-animate-css";
 
 @cust: root {
-  --font-en: "Inter", sans-serif;
-  --font-km: "Kantumruy Pro", sans-serif;
+  --font-en: "Inter", "Kantumruy Pro", sans-serif;
+  --font-km: "Kantumruy Pro", "Inter", sans-serif;
 }
 
 /* Default font */
-html {
-  font-family: var(--font-en);
+html[lang="en"] {
+  font-family: "Inter", "Kantumruy Pro", sans-serif;
+}
+
+/* Khmer */
+html[lang="km"] {
+  font-family: "Kantumruy Pro", "Inter", sans-serif;
 }
 @theme inline {
   --color-background: var(--background);

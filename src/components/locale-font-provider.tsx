@@ -10,9 +10,11 @@ export function LocaleFontProvider({
   useEffect(() => {
     const locale = i18n.language; // en or km
     if (locale === "km") {
-      document.documentElement.style.fontFamily = "'Kantumruy Pro', sans-serif";
+      document.documentElement.style.fontFamily =
+        "'Kantumruy Pro', 'Inter', sans-serif";
     } else {
-      document.documentElement.style.fontFamily = "'Inter', sans-serif";
+      document.documentElement.style.fontFamily =
+        "'Inter', 'Kantumruy Pro', sans-serif";
     }
   }, []);
 

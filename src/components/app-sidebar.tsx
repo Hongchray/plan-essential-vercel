@@ -19,7 +19,7 @@ import {
   IconPackage,
   IconSettings,
 } from "@tabler/icons-react";
-
+import { NavUser } from "./nav-user";
 export function AppSidebar(props: React.ComponentProps<typeof Sidebar>) {
   const { t } = useTranslation("common");
   interface NavItem {
@@ -51,7 +51,9 @@ export function AppSidebar(props: React.ComponentProps<typeof Sidebar>) {
         <NavMainBasic items={navMain} />
       </SidebarContent>
 
-      <SidebarFooter>{/* Footer content */}</SidebarFooter>
+      <SidebarFooter>
+        <NavUser />
+      </SidebarFooter>
 
       <SidebarRail />
     </Sidebar>

@@ -10,6 +10,8 @@ import { toast } from "sonner";
 import { Loader2 } from "lucide-react";
 import Image from "next/image";
 import { PasswordInput } from "../composable/password-field";
+import { useTranslation } from "react-i18next";
+
 // Zod schema for password validation
 const passwordSchema = z
   .object({
@@ -27,6 +29,7 @@ export default function SetPasswordPage() {
   const searchParams = useSearchParams();
   const phone = searchParams.get("phone"); // phone passed via query
   const router = useRouter();
+  const { t } = useTranslation("common");
 
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
@@ -86,10 +89,10 @@ export default function SetPasswordPage() {
 
       if (!res.ok) throw new Error(data.error || "Failed to set password");
 
-      toast.success("Password set successfully!");
+      toast.success(t("setup_password.password_setup_success"));
       router.push("/login");
     } catch (err: any) {
-      toast.error(err.message || "Failed to set password");
+      toast.error(err.message || t("setup_password.passeord_setup_error"));
       setErrors({ message: err.message });
     } finally {
       setIsLoading(false);
