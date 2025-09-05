@@ -156,17 +156,18 @@ export default function VerifyOtp() {
 
   return (
     <div className="p-6 max-w-md mx-auto">
-      <div className="flex justify-center items-center pb-5">
+      <div className="flex gap-2 items-center">
         <Image
-          src="https://focuzsolution.com/logo.png"
+          src="https://planessential.com/logo.png"
           placeholder="blur"
-          blurDataURL="https://focuzsolution.com/logo.png"
+          blurDataURL="https://planessential.com/logo.png"
           priority
-          alt="logo"
-          width={150}
+          alt={t("login.logo_alt")}
           height={50}
+          width={50}
           className="py-2"
         />
+        <h3 className="text-2xl font-bold text-rose-700">plan essential</h3>
       </div>
 
       <div className="text-center mb-8">
