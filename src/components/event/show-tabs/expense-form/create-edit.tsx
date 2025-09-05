@@ -121,7 +121,7 @@ export function CreateEditForm({id}: {id: string}) {
             <DialogFooter>
               <div className="flex gap-2 justify-end pt-2">
                 <Button
-                  variant="destructive"
+                  variant="outline"
                   type="button"
                   onClick={() => {
                     form.reset()

@@ -231,7 +231,7 @@ export function CreateEditForm({ id }: { id?: string }) {
         </div>
         <div className="pt-2 flex gap-2 items-center justify-end">
           <Button
-            variant="destructive"
+            variant="outline"
             type="button"
             onClick={() => router.push("/event")}
           >

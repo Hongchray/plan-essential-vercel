@@ -181,11 +181,11 @@ export const columns: ColumnDef<Guest>[] = [
           <span className=" truncate  flex gap-2">
               <span className="">
                  <Badge variant={row.original.status === "pending"
-                      ? "secondary"
+                      ? "outline"
                       : row.original.status === "confirmed"
                       ? "default"
                       : row.original.status === "rejected"
-                      ? "destructive"
+                      ? "secondary"
                       : "default"
                       } className="capitalize"> {row.original.status}</Badge>
               </span>
