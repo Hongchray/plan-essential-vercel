@@ -59,7 +59,7 @@ export default function DashboardLayout({
             <SidebarInset>
               <DashboardHeader />
               <div className="flex flex-1 flex-col gap-4 p-4 pt-0 bg-gray-50 relative">
-                <NextTopLoader color="#F5BABB" showSpinner={false} />
+                <NextTopLoader color="#dd1d49" showSpinner={false} />
                 <div className="pt-4">{children}</div>
               </div>
             </SidebarInset>

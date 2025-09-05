@@ -18,7 +18,7 @@ export const metadata: Metadata = {
   title: "Plan Essential - Online Invitation",
   description: "",
   icons: {
-    icon: "/logo.png",
+    icon: "/favicon.ico",
   },
 };
 export default function RootLayout({ children }: { children: React.ReactNode }) {

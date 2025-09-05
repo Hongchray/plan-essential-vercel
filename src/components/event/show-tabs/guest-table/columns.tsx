@@ -4,7 +4,7 @@ import { Checkbox } from "@/components/ui/checkbox";
 import { Guest } from "@/interfaces/guest";
 import { DataTableColumnHeader } from "./data-table-column-header";
 import { Button } from "@/components/ui/button";
-import { EditIcon, Trash2Icon } from "lucide-react";
+import { Check, CheckCheck, Copy, EditIcon, Send, Trash2Icon } from "lucide-react";
 import Link from "next/link";
 import { ConfirmDialog } from "@/components/composable/dialog/confirm-dialog";
 import { toast } from "sonner";
@@ -13,6 +13,18 @@ import { IconAccessPoint } from "@tabler/icons-react";
 import { Badge } from "@/components/ui/badge";
 import { CreateEditForm } from "../guest-form/create-edit";
 import Image from "next/image";
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipTrigger,
+} from "@/components/ui/tooltip"
+import {
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
+} from "@/components/ui/popover"
+import { Input } from "@/components/ui/input";
+import { useState } from "react";
 
 const ActionsCell = ({ row }: { row: any }) => {
   const router = useRouter();
@@ -32,14 +44,106 @@ const ActionsCell = ({ row }: { row: any }) => {
       toast.error("Error deleting guest");
     }
   };
+  const inviteLink = async(id: string) =>{
+    try {
+      const res = await fetch(`/api/admin/event/${row.original.eventId}/guest/${id}/invite`, {
+        method: "PUT",
+      });
+      if (res.ok) {
+        toast.success("Invite guest successfully");
+        router.refresh();
+      } else {
+        toast.error("Error inviting guest");
+      }
+    } catch (error) {
+      toast.error("Error inviting guest");
+    }
+  }
+  const [copied, setCopied] = useState(false);
+  const invLink = "http://localhost:3000/event/cmerywzn00004ulfm1icx5ipq#guests";
 
+  const handleCopy = async () => {
+    try {
+      await navigator.clipboard.writeText(invLink);
+      setCopied(true);
+      setTimeout(() => setCopied(false), 2000); // Reset after 2 seconds
+    } catch (err) {
+      // Fallback for older browsers
+      const textArea = document.createElement('textarea');
+      textArea.value = invLink;
+      document.body.appendChild(textArea);
+      textArea.select();
+      document.execCommand('copy');
+      document.body.removeChild(textArea);
+      setCopied(true);
+      setTimeout(() => setCopied(false), 2000);
+    }
+  };
   return (
     <div className="flex gap-2 items-end justify-end">
-      <CreateEditForm id={row.original.id} />
+      <Tooltip>
+        <TooltipTrigger>
+            <Popover>
+              <PopoverTrigger>
+                {!row.original.is_invited ? (
+                  <Button size="icon" variant="outline" onClick={(()=>inviteLink(row.original.id))}>
+                    <Send />
+                  </Button>
+                ) : (
+                  <Button size="icon" variant="default" >
+                    <CheckCheck />
+                  </Button>
+                )}
+              </PopoverTrigger>
+              <PopoverContent>
+                  <div className="p-4 max-w-md mx-auto">
+                  <p className="pb-2 text-gray-700 font-medium">Invite link</p>
+                  <div className="flex gap-2 items-center">
+                    <input 
+                      type="text"
+                      value={invLink}
+                      readOnly
+                      className="flex-1 px-3 py-2 border border-gray-300 rounded-md bg-gray-50 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+                    />
+                    <button
+                      onClick={handleCopy}
+                      className={`p-2 rounded-md transition-colors ${
+                        copied 
+                          ? 'bg-green-100 text-green-600' 
+                          : 'bg-gray-100 text-gray-600 hover:bg-gray-200'
+                      }`}
+                      title={copied ? "Copied!" : "Copy to clipboard"}
+                    >
+                      {copied ? <Check size={16} /> : <Copy size={16} />}
+                    </button>
+                  </div>
+                  {copied && (
+                    <p className="text-sm text-green-600 mt-1">Link copied to clipboard!</p>
+                  )}
+                </div>
+              </PopoverContent>
+            </Popover>
+  
+        </TooltipTrigger>
+        <TooltipContent>
+           {!row.original.is_invited ?
+          <p>Invite</p> :
+          <p>invited</p>
+          }
+        </TooltipContent>
+      </Tooltip>
+      <Tooltip>
+        <TooltipTrigger>
+          <CreateEditForm id={row.original.id} />
+        </TooltipTrigger>
+        <TooltipContent>
+          <p>Edit guest</p>
+        </TooltipContent>
+      </Tooltip>
       <ConfirmDialog
         trigger={
-          <Button size="icon" variant="destructive">
-            <Trash2Icon />
+          <Button size="icon" variant="outline" className="border-red-500">
+            <Trash2Icon className="text-red-700"/>
           </Button>
         }
         title="Delete this guest?"
@@ -147,7 +251,7 @@ export const columns: ColumnDef<Guest>[] = [
           <span className=" truncate flex gap-2">
             {row.original?.guestGroup?.map((group: any) => (
               <span key={group.id} className="">
-                 <Badge variant="destructive" className="">   {group.group?.name_en} ({group.group?.name_kh})</Badge>
+                 <Badge variant="default" className="">   {group.group?.name_en} ({group.group?.name_kh})</Badge>
               </span>
             ))}
           </span>
