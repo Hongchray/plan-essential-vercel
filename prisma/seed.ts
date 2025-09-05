@@ -1,15 +1,31 @@
 import { PrismaClient } from "@prisma/client";
 const prisma = new PrismaClient();
+import bcrypt from "bcrypt";
 
 async function main() {
+  const hashedPassword = await bcrypt.hash("Password123", 10);
   const user = await prisma.user.create({
     data: {
       email: "john@example.com",
-      password: "hashedpassword", // store hashed password in real app
+      password: hashedPassword, // store hashed password in real app
       name: "John Doe",
       phone: "123456789",
       photoUrl: "https://via.placeholder.com/150",
       role: "admin",
+    },
+  });
+
+  // Seed first user (admin)
+  await prisma.user.upsert({
+    where: { email: "admin@example.com" },
+    update: {}, // do nothing if exists
+    create: {
+      email: "admin@example.com",
+      password: hashedPassword,
+      name: "Admin User",
+      phone: "0976168988",
+      photoUrl: "https://via.placeholder.com/150",
+      role: "user",
     },
   });
 

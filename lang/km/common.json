@@ -3,7 +3,7 @@
     "dashboard": "ផ្ទាំងគ្រប់គ្រង",
     "users": "អ្នកប្រើប្រាស់",
     "event": "ព្រឹត្តិការណ៍",
-    "template": "គំរូ",
+    "template": "ទម្រង់គំរូ",
     "setting": "ការកំណត់"
   },
   "login": {
@@ -144,13 +144,13 @@
   "dashboard": {
     "totalUsers": "អ្នកប្រើសរុប",
     "fromLastMonth": "ពីខែមុន",
-    "totalTemplates": "ទម្រង់សរុប",
-    "noTemplates": "មិនមានទម្រង់នៅឡើយ",
-    "templates": "ទម្រង់",
+    "totalTemplates": "ទម្រង់គំរូសរុប",
+    "noTemplates": "មិនមានទម្រង់គំរូនៅឡើយ",
+    "templates": "ទម្រង់គំរូ",
     "totalEvents": "ព្រឹត្តិការណ៍សរុប",
     "readyToStart": "រៀបចំចាប់ផ្តើមចំណូល",
     "events": "ព្រឹត្តិការណ៍",
-    "userGrowth": "ការលូតលាស់អ្នកប្រើ",
+    "userGrowth": "កំណើនអ្នកប្រើ",
     "monthlyUserTrends": "និន្នាការចុះឈ្មោះប្រចាំខែ",
     "weeklyActivity": "សកម្មភាពប្រចាំសប្តាហ៍",
     "weeklyEvents": "ព្រឹត្តិការណ៍ដែលបានកំណត់សម្រាប់សប្តាហ៍នេះ",
