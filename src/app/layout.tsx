@@ -15,8 +15,11 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "Plan Essential App",
+  title: "Plan Essential - Online Invitation",
   description: "",
+  icons: {
+    icon: "/logo.png",
+  },
 };
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
