@@ -21,8 +21,8 @@ export function LogoApp() {
               <Image
                 src="/logo.png"
                 alt="Logo"
-                width={30}
-                height={30}
+                width={34}
+                height={34}
                 className="mr-0.5"
               />{" "}
               <span className="text-base font-semibold text-primary">plan essential</span>
