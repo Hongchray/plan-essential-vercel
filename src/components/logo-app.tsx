@@ -21,11 +21,11 @@ export function LogoApp() {
               <Image
                 src="/logo.png"
                 alt="Logo"
-                width={20}
-                height={20}
-                className="mr-1"
+                width={30}
+                height={30}
+                className="mr-0.5"
               />{" "}
-              <span className="text-base font-semibold ">Plan Essential</span>
+              <span className="text-base font-semibold text-primary">plan essential</span>
             </Link>
           </SidebarMenuButton>
         </SidebarMenuItem>
