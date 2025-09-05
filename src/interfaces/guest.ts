@@ -16,6 +16,7 @@ export interface Guest {
   status?: GuestStatus;
   wishing_note?: string;
   number_of_guests?: number;
+  is_invited?: boolean;
   createdAt: string; 
   updatedAt: string; 
 }
