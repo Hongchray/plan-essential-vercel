@@ -54,6 +54,7 @@ model Event {
   tags      Tag[]
   groups    Group[]
   expenses  Expense[]
+  gifts Gift[]
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
@@ -132,6 +133,7 @@ model Guest {
   updatedAt DateTime @updatedAt
   guestTag GuestTag[]
   guestGroup GuestGroup[]
+  gifts Gift[]
 }
 
 model Tag {
@@ -185,6 +187,20 @@ model Expense {
   description String?
   budget_amount    Float @default(0)
   actual_amount    Float @default(0)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model Gift {
+  id        String   @id @default(cuid())
+  eventId   String
+  event     Event    @relation(fields: [eventId], references: [id])
+  guestId   String
+  guest     Guest    @relation(fields: [guestId], references: [id])
+  note      String?
+  payment_type  String
+  currency_type String
+  amount    Float
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 }

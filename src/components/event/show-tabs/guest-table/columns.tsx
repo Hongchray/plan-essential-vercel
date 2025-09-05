@@ -66,9 +66,10 @@ const ActionsCell = ({ row }: { row: any }) => {
     try {
       await navigator.clipboard.writeText(invLink);
       setCopied(true);
-      setTimeout(() => setCopied(false), 2000); // Reset after 2 seconds
+      await inviteLink(row.original.id)
+      setTimeout(() => setCopied(false), 2000); 
     } catch (err) {
-      // Fallback for older browsers
+      
       const textArea = document.createElement('textarea');
       textArea.value = invLink;
       document.body.appendChild(textArea);
@@ -81,60 +82,62 @@ const ActionsCell = ({ row }: { row: any }) => {
   };
   return (
     <div className="flex gap-2 items-end justify-end">
+      <Popover>
+        <Tooltip>
+          <TooltipTrigger asChild>
+            <PopoverTrigger asChild>
+              {!row.original.is_invited ? (
+                <Button size="icon" variant="outline">
+                  <Send />
+                </Button>
+              ) : (
+                <Button size="icon" variant="default">
+                  <CheckCheck />
+                </Button>
+              )}
+            </PopoverTrigger>
+          </TooltipTrigger>
+          <TooltipContent>
+            {!row.original.is_invited ? (
+              <p>Invite</p>
+            ) : (
+              <p>Invited</p>
+            )}
+          </TooltipContent>
+        </Tooltip>
+        <PopoverContent>
+          <div className="p-4 max-w-md mx-auto">
+            <p className="pb-2 text-gray-700 font-medium">Invite link</p>
+            <div className="flex gap-2 items-center">
+              <input 
+                type="text"
+                value={invLink}
+                readOnly
+                className="flex-1 px-3 py-2 border border-gray-300 rounded-md bg-gray-50 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+              />
+              <button
+                onClick={handleCopy}
+                className={`p-2 rounded-md transition-colors ${
+                  copied 
+                    ? 'bg-green-100 text-green-600' 
+                    : 'bg-gray-100 text-gray-600 hover:bg-gray-200'
+                }`}
+                title={copied ? "Copied!" : "Copy to clipboard"}
+              >
+                {copied ? <Check size={16} /> : <Copy size={16} />}
+              </button>
+            </div>
+            {copied && (
+              <p className="text-sm text-green-600 mt-1">Link copied to clipboard!</p>
+            )}
+          </div>
+        </PopoverContent>
+      </Popover>
       <Tooltip>
-        <TooltipTrigger>
-            <Popover>
-              <PopoverTrigger>
-                {!row.original.is_invited ? (
-                  <Button size="icon" variant="outline" onClick={(()=>inviteLink(row.original.id))}>
-                    <Send />
-                  </Button>
-                ) : (
-                  <Button size="icon" variant="default" >
-                    <CheckCheck />
-                  </Button>
-                )}
-              </PopoverTrigger>
-              <PopoverContent>
-                  <div className="p-4 max-w-md mx-auto">
-                  <p className="pb-2 text-gray-700 font-medium">Invite link</p>
-                  <div className="flex gap-2 items-center">
-                    <input 
-                      type="text"
-                      value={invLink}
-                      readOnly
-                      className="flex-1 px-3 py-2 border border-gray-300 rounded-md bg-gray-50 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
-                    />
-                    <button
-                      onClick={handleCopy}
-                      className={`p-2 rounded-md transition-colors ${
-                        copied 
-                          ? 'bg-green-100 text-green-600' 
-                          : 'bg-gray-100 text-gray-600 hover:bg-gray-200'
-                      }`}
-                      title={copied ? "Copied!" : "Copy to clipboard"}
-                    >
-                      {copied ? <Check size={16} /> : <Copy size={16} />}
-                    </button>
-                  </div>
-                  {copied && (
-                    <p className="text-sm text-green-600 mt-1">Link copied to clipboard!</p>
-                  )}
-                </div>
-              </PopoverContent>
-            </Popover>
-  
-        </TooltipTrigger>
-        <TooltipContent>
-           {!row.original.is_invited ?
-          <p>Invite</p> :
-          <p>invited</p>
-          }
-        </TooltipContent>
-      </Tooltip>
-      <Tooltip>
-        <TooltipTrigger>
-          <CreateEditForm id={row.original.id} />
+        <TooltipTrigger asChild>
+          <div>
+            <CreateEditForm id={row.original.id} />
+          </div>
         </TooltipTrigger>
         <TooltipContent>
           <p>Edit guest</p>
@@ -251,7 +254,7 @@ export const columns: ColumnDef<Guest>[] = [
           <span className=" truncate flex gap-2">
             {row.original?.guestGroup?.map((group: any) => (
               <span key={group.id} className="">
-                 <Badge variant="default" className="">   {group.group?.name_en} ({group.group?.name_kh})</Badge>
+                 <Badge variant="default" className="">   {group.group?.name_kh}</Badge>
               </span>
             ))}
           </span>
@@ -268,7 +271,7 @@ export const columns: ColumnDef<Guest>[] = [
           <span className=" truncate  flex gap-2">
             {row.original?.guestTag?.map((tag: any) => (
               <span key={tag.id} className="">
-                 <Badge variant="secondary" className="">   {tag.tag?.name_en} ({tag.tag?.name_kh})</Badge>
+                 <Badge variant="secondary" className="">   {tag.tag?.name_kh}</Badge>
               </span>
             ))}
           </span>
