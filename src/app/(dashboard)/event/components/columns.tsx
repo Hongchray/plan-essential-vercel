@@ -18,7 +18,7 @@ const ActionsCell = ({ row }: { row: any }) => {
 
   const deleteEvent = async (id: string) => {
     try {
-      const res = await fetch(`admin/event/${id}`, {
+      const res = await fetch(`/api/admin/event/${id}`, {
         method: "DELETE",
       });
       if (res.ok) {
@@ -125,21 +125,21 @@ export const columns: ColumnDef<Event>[] = [
       );
     },
   },
-  {
-    accessorKey: "endTime",
-    header: ({ column }) => (
-      <DataTableColumnHeader column={column} title="End Date" />
-    ),
-    cell: ({ row }) => {
-      return (
-        <div className="flex gap-2">
-          <span className="max-w-[200px] truncate font-medium">
-            {row.getValue("endTime")}
-          </span>
-        </div>
-      );
-    },
-  },
+  // {
+  //   accessorKey: "endTime",
+  //   header: ({ column }) => (
+  //     <DataTableColumnHeader column={column} title="End Date" />
+  //   ),
+  //   cell: ({ row }) => {
+  //     return (
+  //       <div className="flex gap-2">
+  //         <span className="max-w-[200px] truncate font-medium">
+  //           {row.getValue("endTime")}
+  //         </span>
+  //       </div>
+  //     );
+  //   },
+  // },
   {
     accessorKey: "location",
     header: ({ column }) => (

@@ -24,7 +24,7 @@ export default function LanguageSwitcher() {
 
   const languages = [
     { code: "en", name: "English", flag: "🇺🇸" },
-    { code: "km", name: "ខ្មែរ", flag: "🇰🇭" },
+    { code: "km", name: "ភាសាខ្មែរ", flag: "🇰🇭" },
   ];
 
   const currentLanguage =
@@ -36,17 +36,17 @@ export default function LanguageSwitcher() {
         <Button
           variant="outline"
           size="sm"
-          className="flex items-center gap-2 min-w-[120px] justify-start bg-transparent"
+          className="flex items-center gap-2 bg-transparent cursor-pointer"
         >
           <Globe className="h-4 w-4" />
-          <span className="hidden sm:inline">{currentLanguage.flag}</span>
+          {/* <span className="hidden sm:inline">{currentLanguage.flag}</span> */}
           <span className="hidden md:inline">{currentLanguage.name}</span>
           <span className="md:hidden">
             {currentLanguage.code.toUpperCase()}
           </span>
         </Button>
       </DropdownMenuTrigger>
-      <DropdownMenuContent align="end" className="w-48">
+      <DropdownMenuContent align="end">
         {languages.map((language) => (
           <DropdownMenuItem
             key={language.code}

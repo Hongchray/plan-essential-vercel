@@ -33,7 +33,7 @@ export default async function TemplatePage({
 }: {
   searchParams?: {
     page?: string;
-    per_page?: number;
+    per_page?: string;
     search?: string;
     sort?: string;
     order?: string;
