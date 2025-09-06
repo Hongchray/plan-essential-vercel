@@ -23,7 +23,7 @@
     "password_min_length": "Password must be at least 8 characters long",
     "version": "Version",
     "enter_password": "Enter password",
-    "phone_placeholder": "e.g. 0123456789"
+    "phone_placeholder": "0123456789"
   },
   "signup": {
     "sign_up": "Sign Up",
@@ -129,7 +129,7 @@
     "forgot_password_title": "Forgot Password",
     "forgot_password_description": "Enter your phone number to receive a verification code.",
     "phone_label": "Phone Number",
-    "phone_placeholder": "e.g. 0123456789",
+    "phone_placeholder": "0123456789",
     "sending_button": "Sending...",
     "send_verification_button": "Send Verification Code",
     "error_invalid_phone": "Please enter a valid phone number",
