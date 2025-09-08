@@ -16,7 +16,7 @@ async function getData(
     {
       method: "GET",
       headers: new Headers(await headers()),
-      cache: "no-store", // optional: always fetch fresh
+      cache: "no-store",
     }
   );
 
@@ -31,19 +31,22 @@ async function getData(
 export default async function TemplatePage({
   searchParams,
 }: {
-  searchParams?: {
+  searchParams?: Promise<{
     page?: string;
     per_page?: string;
     search?: string;
     sort?: string;
     order?: string;
-  };
+  }>;
 }) {
-  const page = Number(searchParams?.page) || 1;
-  const pageSize = Number(searchParams?.per_page) || 10;
-  const search = searchParams?.search || "";
-  const sort = searchParams?.sort || "";
-  const order = searchParams?.order || "";
+  // ✅ await because searchParams is a Promise
+  const params = (await searchParams) ?? {};
+
+  const page = Number(params.page) || 1;
+  const pageSize = Number(params.per_page) || 10;
+  const search = params.search || "";
+  const sort = params.sort || "";
+  const order = params.order || "";
 
   const { data, meta } = await getData(page, pageSize, search, sort, order);
 
