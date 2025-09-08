@@ -52,10 +52,13 @@ export function NavUser() {
               <Avatar className="h-8 w-8 rounded-lg">
                 <AvatarImage
                   src={user.photoUrl ?? undefined}
-                  alt={user.name ?? undefined}
+                  alt={user.name ?? "User"}
                 />
-                <AvatarFallback className="rounded-lg">CN</AvatarFallback>
+                <AvatarFallback className="rounded-lg">
+                  {user.name ? user.name.charAt(0).toUpperCase() : "?"}
+                </AvatarFallback>
               </Avatar>
+
               <div className="grid flex-1 text-left text-sm leading-tight">
                 <span className=" font-medium">{user.name}</span>
                 <span className=" text-xs">{user.phone}</span>

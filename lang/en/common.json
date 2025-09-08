@@ -162,5 +162,11 @@
     "userName": "User Name",
     "eventDate": "Event Date",
     "eventLocation": "Event Location"
+  },
+  "EventPage": {
+    "welcomeTitle": "Welcome! We're glad to have you here.",
+    "welcomeSubtitle": "Explore your events below or create a new one to get started.",
+    "view": "View",
+    "edit": "Edit"
   }
 }
