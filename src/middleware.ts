@@ -11,6 +11,7 @@ const PUBLIC_ROUTES = [
   "/forgot-password/verify-otp",
   "/forgot-password/set-password",
   "/error/403",
+  "/preview",
 ];
 
 function isPublicRoute(pathname: string) {
