@@ -7,7 +7,7 @@
     }
   ],
   "env": {
-    "DATABASE_URL": "postgresql://neondb_owner:npg_BczYM8sj7trZ@ep-weathered-bush-a1qj7e95-pooler.ap-southeast-1.aws.neon.tech/neondb?sslmode=require",
+    "DATABASE_URL": "postgres://neondb_owner:npg_dxwyaZS67blf@ep-falling-dawn-a1wpuqfd-pooler.ap-southeast-1.aws.neon.tech/neondb?sslmode=require",
     "NEXTAUTH_URL": "https://plan-essential-vercel.vercel.app",
     "NEXTAUTH_SECRET": "IDblej89YNPQ2SOPp7uFKUIYL5Wf2LKLP5rkwFjs/os=",
     "PLASGATE_API_URL": "https://cloudapi.plasgate.com/rest/send",
@@ -19,7 +19,7 @@
   },
   "build": {
     "env": {
-      "DATABASE_URL": "postgresql://neondb_owner:npg_BczYM8sj7trZ@ep-weathered-bush-a1qj7e95-pooler.ap-southeast-1.aws.neon.tech/neondb?sslmode=require",
+      "DATABASE_URL": "postgres://neondb_owner:npg_dxwyaZS67blf@ep-falling-dawn-a1wpuqfd-pooler.ap-southeast-1.aws.neon.tech/neondb?sslmode=require",
       "NEXTAUTH_URL": "https://plan-essential-vercel.vercel.app",
       "NEXTAUTH_SECRET": "IDblej89YNPQ2SOPp7uFKUIYL5Wf2LKLP5rkwFjs/os=",
       "PLASGATE_API_URL": "https://cloudapi.plasgate.com/rest/send",
