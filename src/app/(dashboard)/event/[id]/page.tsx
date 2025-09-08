@@ -138,7 +138,7 @@ export default function showEvent({
             </TabsContent>
             <TabsContent value="template">
                 <div>
-                    <TabTemplate />
+                    <TabTemplate  id="cmerywzlw0002ulfmcv2l2xqk" />
                 </div>
             </TabsContent>
           </Tabs>

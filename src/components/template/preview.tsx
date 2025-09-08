@@ -20,6 +20,10 @@ const DynamicComponents = {
     loading: () => <LoadingScreen />,
     ssr: false,
   }),
+  WeddingSimpleTemplate: dynamic(() => import("./wedding/simple-template"), {
+    loading: () => <LoadingScreen />,
+    ssr: false,
+  }),
 };
 
 function LoadingScreen() {
@@ -62,6 +66,7 @@ export default function Preview({ id }: { id: string }) {
     WeddingBasicTemplete = "WeddingBasicTemplete",
     WeddingTraditionalTemplate = "WeddingTraditionalTemplate",
     WeddingStyleTemplate = "WeddingStyleTemplate",
+    WeddingSimpleTemplate = "WeddingSimpleTemplate",
   }
 
   const ComponentToRender =
@@ -71,6 +76,7 @@ export default function Preview({ id }: { id: string }) {
     <div className="bg-gradient-to-br from-red-50 to-yellow-50">
       {ComponentToRender && (
         <ComponentToRender
+          config={template.defaultConfig}
           data={{
             groom: template.groom,
             bride: template.bride,

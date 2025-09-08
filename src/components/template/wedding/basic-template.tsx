@@ -31,8 +31,10 @@ type KhmerWeddingInviteData = {
 
 export default function KhmerWeddingInvite({
   data,
+  config,
 }: {
   data: KhmerWeddingInviteData;
+  config: any;
 }) {
   const [showRSVP, setShowRSVP] = useState(false);
   const [rsvpData, setRsvpData] = useState({
