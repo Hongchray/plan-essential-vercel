@@ -48,20 +48,6 @@ export default function TabDashboard({ eventId }: { eventId: string }) {
   if (loading) return <p>Loading...</p>;
   if (!event) return <p>No event found.</p>;
 
-  // Dashboard Component
-  const confirmedGuests = 3;
-  const pendingGuests = 2;
-  const declinedGuests = 1;
-
-  const giftsReceived = 0;
-  const totalGiftValue = 100;
-
-  const totalExpenses = 10;
-  const paidExpenses = 20;
-  const unpaidExpenses = totalExpenses - paidExpenses;
-
-  const netAmount = totalGiftValue - totalExpenses;
-
   const financialData = [
     {
       category: "Gift Income",
@@ -261,13 +247,15 @@ export default function TabDashboard({ eventId }: { eventId: string }) {
             <hr className="my-2" />
             <div className="flex justify-between text-lg">
               <span
-                className={netAmount >= 0 ? "text-green-600" : "text-red-600"}
+                className={
+                  event.netAmount >= 0 ? "text-green-600" : "text-red-600"
+                }
               >
                 Net Amount:
               </span>
               <span
                 className={`font-bold ${
-                  netAmount >= 0 ? "text-green-600" : "text-red-600"
+                  event.netAmount >= 0 ? "text-green-600" : "text-red-600"
                 }`}
               >
                 {event.netAmount.toFixed(2)}$

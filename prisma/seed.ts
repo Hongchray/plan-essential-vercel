@@ -17,7 +17,7 @@ async function main() {
         name: "Admin User",
         phone: "0976168988",
         photoUrl: "https://via.placeholder.com/150",
-        role: "user",
+        role: "admin",
       },
     });
   }
