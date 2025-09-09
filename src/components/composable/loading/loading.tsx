@@ -1,205 +1,187 @@
-"use client"
+import { LoaderIcon, Loader2 } from "lucide-react";
 
-import { Loader2 } from "lucide-react"
-import { cn } from "@/lib/utils"
+import { cn } from "@/lib/utils";
 
 interface LoadingProps {
-  logo?: string
-  logoSize?: number
-  size?: "sm" | "md" | "lg" | "xl"
-  variant?: "spinner" | "dots" | "pulse" | "skeleton"
-  text?: string
-  fullScreen?: boolean
-  overlay?: boolean
-  className?: string
+  size?: "sm" | "md" | "lg";
+  variant?: "default" | "minimal" | "pulse" | "dots" | "circle";
+  message?: string;
+  className?: string;
 }
 
-export function Loading({
-  logo,
-  logoSize = 80,
+export const Loading = ({
   size = "md",
-  variant = "spinner",
-  text = 'Loading...',
-  fullScreen = false,
-  overlay = false,
-  className
-}: LoadingProps) {
+  variant = "default",
+  message = "Loading...",
+  className,
+}: LoadingProps) => {
   const sizeClasses = {
-    sm: "w-4 h-4",
-    md: "w-6 h-6",
-    lg: "w-8 h-8",
-    xl: "w-12 h-12"
+    sm: "h-16",
+    md: "h-32",
+    lg: "h-48",
+  };
+
+  const iconSizes = {
+    sm: "h-4 w-4",
+    md: "h-5 w-5",
+    lg: "h-8 w-8",
+  };
+
+  if (variant === "minimal") {
+    return (
+      <div
+        className={cn(
+          "flex items-center justify-center",
+          sizeClasses[size],
+          className
+        )}
+      >
+        <LoaderIcon
+          className={cn(iconSizes[size], "animate-spin text-muted-foreground")}
+        />
+      </div>
+    );
   }
 
-  const textSizeClasses = {
-    sm: "text-sm",
-    md: "text-base",
-    lg: "text-lg", 
-    xl: "text-xl"
-  }
-
-  const containerClasses = cn(
-    "flex flex-col items-center justify-center gap-3",
-    fullScreen && "fixed inset-0 z-50",
-    overlay && "bg-white/50 backdrop-blur-xs",
-    !fullScreen && "p-8",
-    className
-  )
-
-  const renderVariant = () => {
-    switch (variant) {
-      case "spinner":
-        return (
-          <Loader2 className={cn("animate-spin text-primary", sizeClasses[size])} />
-        )
-      
-      case "dots":
-        return (
-          <div className="flex space-x-1">
-            <div className={cn("bg-primary rounded-full animate-bounce", 
-              size === "sm" ? "w-2 h-2" : 
-              size === "md" ? "w-3 h-3" :
-              size === "lg" ? "w-4 h-4" : "w-5 h-5"
-            )} style={{ animationDelay: "0ms" }} />
-            <div className={cn("bg-primary rounded-full animate-bounce", 
-              size === "sm" ? "w-2 h-2" : 
-              size === "md" ? "w-3 h-3" :
-              size === "lg" ? "w-4 h-4" : "w-5 h-5"
-            )} style={{ animationDelay: "150ms" }} />
-            <div className={cn("bg-primary rounded-full animate-bounce", 
-              size === "sm" ? "w-2 h-2" : 
-              size === "md" ? "w-3 h-3" :
-              size === "lg" ? "w-4 h-4" : "w-5 h-5"
-            )} style={{ animationDelay: "300ms" }} />
-          </div>
-        )
-      
-      case "pulse":
-        return (
-          <div className={cn("bg-primary rounded-full animate-pulse", sizeClasses[size])} />
-        )
-      
-      case "skeleton":
-        return (
-          <div className="space-y-3">
-            <div className={cn("bg-gray-200 rounded animate-pulse", 
-              size === "sm" ? "h-3 w-24" :
-              size === "md" ? "h-4 w-32" :
-              size === "lg" ? "h-5 w-40" : "h-6 w-48"
-            )} />
-            <div className={cn("bg-gray-200 rounded animate-pulse", 
-              size === "sm" ? "h-3 w-20" :
-              size === "md" ? "h-4 w-28" :
-              size === "lg" ? "h-5 w-36" : "h-6 w-44"
-            )} />
-            <div className={cn("bg-gray-200 rounded animate-pulse", 
-              size === "sm" ? "h-3 w-16" :
-              size === "md" ? "h-4 w-24" :
-              size === "lg" ? "h-5 w-32" : "h-6 w-40"
-            )} />
-          </div>
-        )
-      
-      default:
-        return <Loader2 className={cn("animate-spin text-primary", sizeClasses[size])} />
-    }
-  }
-
-  return (
-    <div className={containerClasses}>
-      {renderVariant()}
-      {text && (
-        <p className={cn("text-muted-foreground animate-pulse", textSizeClasses[size])}>
-          {text}
-        </p>
-      )}
-    </div>
-  )
-}
-
-// Page Loading Component
-export function PageLoading({ 
-  text = "Loading...", 
-  className 
-}: { 
-  text?: string
-  className?: string 
-}) {
-  return (
-    <Loading
-      logo="/logo.png"
-      logoSize={80}
-      size="lg"
-      variant="spinner"
-      text={text}
-      fullScreen={true}
-      overlay={true}
-      className={className}
-    />
-  )
-}
-
-// Card Loading Component
-export function CardLoading({ 
-  text,
-  className 
-}: { 
-  text?: string
-  className?: string 
-}) {
-  return (
-    <div className={cn("border rounded-lg p-8", className)}>
-      <Loading
-        size="md"
-        variant="skeleton"
-        text={text}
-      />
-    </div>
-  )
-}
-
-// Button Loading Component
-export function ButtonLoading({ 
-  text = "Loading...",
-  size = "sm",
-  className 
-}: { 
-  text?: string
-  size?: "sm" | "md"
-  className?: string 
-}) {
-  return (
-    <div className={cn("flex items-center gap-2", className)}>
-      <Loader2 className={cn("animate-spin", 
-        size === "sm" ? "w-4 h-4" : "w-5 h-5"
-      )} />
-      <span className={size === "sm" ? "text-sm" : "text-base"}>{text}</span>
-    </div>
-  )
-}
-
-// Table Loading Component
-export function TableLoading({ 
-  rows = 5,
-  columns = 4,
-  className 
-}: { 
-  rows?: number
-  columns?: number
-  className?: string 
-}) {
-  return (
-    <div className={cn("space-y-3", className)}>
-      {Array.from({ length: rows }).map((_, i) => (
-        <div key={i} className="flex space-x-4">
-          {Array.from({ length: columns }).map((_, j) => (
+  if (variant === "pulse") {
+    return (
+      <div
+        className={cn(
+          "flex items-center justify-center",
+          sizeClasses[size],
+          className
+        )}
+      >
+        <div className="flex items-center gap-3">
+          <div className="relative">
             <div
-              key={j}
-              className="h-4 bg-gray-200 rounded animate-pulse flex-1"
+              className={cn(
+                "rounded-full bg-primary/20 animate-ping",
+                size === "sm"
+                  ? "h-8 w-8"
+                  : size === "md"
+                  ? "h-10 w-10"
+                  : "h-12 w-12"
+              )}
             />
-          ))}
+            <LoaderIcon
+              className={cn(
+                iconSizes[size],
+                "absolute inset-0 m-auto animate-spin text-primary"
+              )}
+            />
+          </div>
+          <span className="text-sm font-medium text-muted-foreground animate-pulse">
+            {message}
+          </span>
         </div>
-      ))}
+      </div>
+    );
+  }
+
+  if (variant === "dots") {
+    return (
+      <div
+        className={cn(
+          "flex items-center justify-center",
+          sizeClasses[size],
+          className
+        )}
+      >
+        <div className="flex items-center gap-3">
+          <div className="flex gap-1">
+            {[0, 1, 2].map((i) => (
+              <div
+                key={i}
+                className={cn(
+                  "rounded-full bg-primary animate-bounce",
+                  size === "sm"
+                    ? "h-2 w-2"
+                    : size === "md"
+                    ? "h-3 w-3"
+                    : "h-4 w-4"
+                )}
+                style={{
+                  animationDelay: `${i * 0.1}s`,
+                  animationDuration: "0.6s",
+                }}
+              />
+            ))}
+          </div>
+          <span className="text-sm font-medium text-muted-foreground">
+            {message}
+          </span>
+        </div>
+      </div>
+    );
+  }
+
+  if (variant === "circle") {
+    return (
+      <div
+        className={cn(
+          "flex items-center justify-center",
+          sizeClasses[size],
+          className
+        )}
+      >
+        <div className="flex items-center gap-3">
+          <div className="relative">
+            <div
+              className={cn(
+                "rounded-full bg-primary/20 animate-ping",
+                size === "sm"
+                  ? "h-8 w-8"
+                  : size === "md"
+                  ? "h-10 w-10"
+                  : "h-12 w-12"
+              )}
+            />
+            <Loader2
+              className={cn(
+                iconSizes[size],
+                "absolute inset-0 m-auto animate-spin text-primary"
+              )}
+            />
+          </div>
+          <span className="text-sm font-medium text-muted-foreground animate-pulse">
+            {message}
+          </span>
+        </div>
+      </div>
+    );
+  }
+
+  // Default variant - enhanced version of original
+  return (
+    <div
+      className={cn(
+        "flex items-center justify-center",
+        sizeClasses[size],
+        className
+      )}
+    >
+      <div className="flex flex-col items-center gap-3">
+        <div className="relative">
+          <div className="absolute inset-0 rounded-full bg-primary/10 animate-pulse" />
+          <div className="relative flex items-center justify-center p-3 rounded-full bg-background border border-border/50 shadow-sm">
+            <LoaderIcon
+              className={cn(iconSizes[size], "animate-spin text-primary")}
+            />
+          </div>
+        </div>
+        <div className="text-center">
+          <p className="text-sm font-medium text-foreground">{message}</p>
+          <p className="text-xs text-muted-foreground mt-1">
+            Please wait a moment
+          </p>
+        </div>
+      </div>
     </div>
-  )
-}
+  );
+};
+
+// Keep original component for backward compatibility
+export const Spining = () => {
+  return <Loading />;
+};

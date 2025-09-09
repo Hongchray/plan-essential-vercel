@@ -25,6 +25,7 @@ import {
   ChartTooltipContent,
 } from "@/components/ui/chart";
 import { useEffect, useState } from "react";
+import { Loading } from "@/components/composable/loading/loading";
 export default function TabDashboard({ eventId }: { eventId: string }) {
   const [event, setEvent] = useState<any>(null);
   const [loading, setLoading] = useState(true);
@@ -45,7 +46,7 @@ export default function TabDashboard({ eventId }: { eventId: string }) {
     fetchEvent();
   }, [eventId]);
 
-  if (loading) return <p>Loading...</p>;
+  if (loading) return <Loading variant="circle" size="lg" />;
   if (!event) return <p>No event found.</p>;
 
   const financialData = [

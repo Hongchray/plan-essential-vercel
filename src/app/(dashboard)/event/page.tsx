@@ -1,84 +1,102 @@
 import { columns } from "./components/columns";
 import { DataTable } from "./components/data-table";
 import { Event } from "./data/schema";
-import { headers } from "next/headers";
-import { IAPIResponse } from "@/interfaces/comon/api-response";
 import EventCard from "./components/event-card";
 import CreateEventButton from "./components/create-button";
+import { prisma } from "@/lib/prisma";
+import { getServerSession } from "next-auth";
+import { authOptions } from "@/lib/authOptions";
 
-// Mock function - replace with actual user fetching logic
 async function getCurrentUser() {
-  return { role: "user" }; // or "admin"
+  const session = await getServerSession(authOptions);
+
+  if (!session?.user) return null;
+
+  return {
+    id: session.user.id,
+    role: session.user.role,
+  };
 }
 
-// Fetch events from API
-async function getData(
-  page: number = 1,
-  pageSize: number = 10,
-  search: string = "",
-  sort: string = "",
-  order: string = ""
+async function getEvents(
+  userId: string,
+  role: string,
+  page: number,
+  per_page: number,
+  search: string,
+  sort: string,
+  order: "asc" | "desc"
 ) {
-  const response = await fetch(
-    `${process.env.NEXTAUTH_URL}/api/admin/event?page=${page}&per_page=${pageSize}&search=${search}&sort=${sort}&order=${order}`,
-    {
-      method: "GET",
-      headers: new Headers(await headers()),
-    }
-  );
+  const where: any = {};
 
-  const result: IAPIResponse<Event> = await response.json();
-  return result;
+  if (role !== "admin") where.userId = userId;
+
+  if (search) {
+    where.OR = [
+      { name: { contains: search, mode: "insensitive" } },
+      { description: { contains: search, mode: "insensitive" } },
+    ];
+  }
+
+  const total = await prisma.event.count({ where });
+
+  const data = await prisma.event.findMany({
+    where,
+    skip: (page - 1) * per_page,
+    take: per_page,
+    orderBy: { [sort]: order },
+  });
+
+  // Map Prisma Event to DataTable-friendly type
+  const tableData = data.map((e) => ({
+    ...e,
+
+    createdAt: e.createdAt.toISOString(),
+    updatedAt: e.updatedAt.toISOString(),
+    startTime: e.startTime?.toISOString() || "",
+    endTime: e.endTime?.toISOString() || "",
+    owner: e.owner || "",
+    bride: e.bride || "",
+    groom: e.groom || "",
+    image: e.image || "",
+  }));
+
+  return {
+    data: tableData,
+    meta: { total, page, per_page, pageCount: Math.ceil(total / per_page) },
+  };
 }
-
-// Define type for searchParams - now as a Promise
-type EventPageSearchParams = {
-  page?: string;
-  per_page?: string;
-  search?: string;
-  sort?: string;
-  order?: string;
-};
 
 export default async function EventPage({
   searchParams,
 }: {
-  searchParams?: Promise<EventPageSearchParams>;
+  searchParams?: any;
 }) {
-  // Await the searchParams Promise
-  const resolvedSearchParams = await searchParams;
+  const resolved = await searchParams;
+  const page = Number(resolved?.page) || 1;
+  const per_page = Number(resolved?.per_page) || 10;
+  const search = resolved?.search || "";
+  const sort = resolved?.sort || "createdAt";
+  const order = (resolved?.order as "asc" | "desc") || "desc";
 
-  // Convert searchParams to usable variables
-  const page = Number(resolvedSearchParams?.page) || 1;
-  const pageSize = Number(resolvedSearchParams?.per_page) || 10;
-  const search = resolvedSearchParams?.search || "";
-  const sort = resolvedSearchParams?.sort || "";
-  const order = resolvedSearchParams?.order || "";
-
-  // Fetch current user and events
   const user = await getCurrentUser();
-  const { data, meta } = await getData(page, pageSize, search, sort, order);
+
+  if (!user) return <div>Please log in to view events.</div>;
+
+  const { data, meta } = await getEvents(
+    user.id,
+    user.role,
+    page,
+    per_page,
+    search,
+    sort,
+    order
+  );
 
   return (
     <div className="h-full flex-1 flex-col gap-4 p-4">
-      {/* Welcome Section */}
-      <div className="flex justify-between items-center mb-6">
-        <div>
-          <h1 className="text-2xl font-semibold mb-2 text-rose-700">
-            Welcome! We're glad to have you here.
-          </h1>
-          <p className="text-rose-600">
-            Explore your events below or create a new one to get started.
-          </p>
-        </div>
-        <div className="flex justify-end">
-          <CreateEventButton />
-        </div>
-      </div>
-
-      {/* Event List */}
       {user.role === "admin" ? (
-        <DataTable
+        <DataTable<any, any>
           data={data}
           columns={columns}
           pageCount={meta?.pageCount ?? 1}
@@ -86,10 +104,24 @@ export default async function EventPage({
           serverPagination={true}
         />
       ) : (
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-          {data.map((event) => (
-            <EventCard key={event.id} event={event} />
-          ))}
+        <div>
+          <div className="flex justify-between items-center mb-6">
+            <div>
+              <h1 className="text-2xl font-semibold mb-2 text-rose-700">
+                Welcome! We're glad to have you here.
+              </h1>
+              <p className="text-rose-600">
+                Explore your events below or create a new one to get started.
+              </p>
+            </div>
+            <CreateEventButton />
+          </div>
+
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+            {data.map((event: any) => (
+              <EventCard key={event.id} event={event} />
+            ))}
+          </div>
         </div>
       )}
     </div>

@@ -43,7 +43,7 @@ async function createTemplate(data: FormData) {
     body: JSON.stringify(data),
   });
   if (res.ok) {
-    toast.success("Create Template successfully");
+    toast.success("Create Event successfully");
   } else {
     toast.error("Error create template");
   }
@@ -125,7 +125,7 @@ export function CreateEditForm({ id }: { id?: string }) {
       if (response.ok) {
         const json = await response.json();
         form.reset();
-        toast.success("Create Template successfully");
+        toast.success("Create Event successfully");
         router.push(`/event/edit/${json?.id}`);
       }
     }

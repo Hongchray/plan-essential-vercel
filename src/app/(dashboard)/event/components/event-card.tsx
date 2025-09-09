@@ -3,6 +3,7 @@ import { Event } from "../data/schema";
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import { EyeIcon, PencilIcon } from "lucide-react";
+
 export default function EventCard({ event }: { event: Event }) {
   return (
     <div className="border rounded-lg p-4 shadow hover:shadow-lg transition flex flex-col justify-between">
