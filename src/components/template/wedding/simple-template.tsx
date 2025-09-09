@@ -15,7 +15,7 @@ export default function SimpleTemplate({ config, data }: { config: any, data: an
   return (
     <div className="relative">
       {/* Language Switch Button - Fixed position */}
-      <div className="sticky top-4 left-0 z-50 mr-0">
+      <div className="sticky top-4 right-4 z-50 float-right">
         <button
           onClick={toggleLanguage}
           className="bg-white/90 backdrop-blur-sm border border-gray-200 rounded-lg px-3 py-2 shadow-lg hover:bg-white/95 transition-all duration-200 flex items-center gap-2"
@@ -37,12 +37,10 @@ export default function SimpleTemplate({ config, data }: { config: any, data: an
           </div>
         </button>
       </div>
-
       <div className="space-y-6 max-w-md mx-auto">
-        
         {/* Main Header Card */}
         <div 
-          className="relative h-[600px] bg-cover bg-center flex flex-col justify-start items-center text-center px-6 shadow-lg overflow-hidden"
+          className="relative h-[600px] bg-cover bg-center flex flex-col justify-start items-center text-center px-6 shadow-lg overflow-hidden w-full"
           style={{ 
             backgroundImage: `url(${currentInvitation?.main_background})`,
             backgroundSize: 'cover',
@@ -151,7 +149,7 @@ export default function SimpleTemplate({ config, data }: { config: any, data: an
 
         {/* Event Details Card */}
         <div 
-          className="relative min-h-[500px] bg-cover bg-center shadow-lg overflow-hidden"
+          className="relative min-h-[600px] bg-cover bg-center shadow-lg overflow-hidden"
           style={{ 
             backgroundImage: `url(${currentInvitation?.details_background})`,
             backgroundSize: 'cover',
