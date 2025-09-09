@@ -1,9 +1,10 @@
-'use client'
-import { useEffect, useState } from "react";
+"use client";
+import { useEffect, useState, use } from "react"; // 👈 import use()
 import { columns } from "./guest-table/columns";
 import { DataTable } from "./guest-table/data-table";
 import { IAPIResponse } from "@/interfaces/comon/api-response";
 import { Guest } from "@/interfaces/guest";
+import { Loading } from "@/components/composable/loading/loading";
 
 async function getData(
   id: string,
@@ -15,44 +16,62 @@ async function getData(
 ) {
   const response = await fetch(
     `/api/admin/event/${id}/guest?page=${page}&per_page=${pageSize}&search=${search}&sort=${sort}&order=${order}`,
-    {
-      method: "GET",
-    }
+    { method: "GET" }
   );
   const result: IAPIResponse<Guest> = await response.json();
   return result;
 }
 
-export default function TabGuest({ paramId, searchParams }: { paramId: string; searchParams: any }) {
-  const [data, setData] = useState<Guest[]>([])
-  const [meta, setMeta] = useState({ total: 0, pageCount: 1 })
+export default function TabGuest({
+  paramId,
+  searchParams,
+}: {
+  paramId: string;
+  searchParams: any;
+}) {
+  const params = use(searchParams); // ✅ unwrap safely
+
+  const [data, setData] = useState<Guest[]>([]);
+  const [meta, setMeta] = useState({ total: 0, pageCount: 1 });
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     async function fetchData() {
-      const id = await paramId;
-      const params = await searchParams
-      const page = Number(params.page) || 1
-      const pageSize = params.per_page
-      const search = params.search || ''
-      const sort = params.sort || ''
-      const order = params.order || ''
-      const result = await getData(id, page, pageSize, search, sort, order)
-      setData(result.data)
-      setMeta(result.meta)
+      setLoading(true);
+      try {
+        const id = paramId;
+        const params = await searchParams;
+        const page = Number(params.page) || 1;
+        const pageSize = Number(params.per_page) || 10;
+        const search = params.search || "";
+        const sort = params.sort || "";
+        const order = params.order || "";
+        const result = await getData(id, page, pageSize, search, sort, order);
+        setData(result.data);
+        setMeta(result.meta);
+      } finally {
+        setLoading(false);
+      }
     }
-    fetchData()
-  }, [searchParams])
+    fetchData();
+  }, [paramId, params]);
 
   return (
     <div className="space-y-6">
-      <h3 className="text-lg font-semibold mb-4">Guest Management</h3>
-      <DataTable
-        data={data}
-        columns={columns}
-        pageCount={meta.pageCount}
-        total={meta.total}
-        serverPagination={true}
-      />
+      {loading ? (
+        <Loading variant="circle" message="Loading guests..." size="lg" />
+      ) : (
+        <>
+          <h3 className="text-lg font-semibold mb-4">Guest Management</h3>
+          <DataTable
+            data={data}
+            columns={columns}
+            pageCount={meta.pageCount}
+            total={meta.total}
+            serverPagination={true}
+          />
+        </>
+      )}
     </div>
-  )
+  );
 }

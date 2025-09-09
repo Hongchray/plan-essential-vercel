@@ -5,31 +5,9 @@ import { NextRequest, NextResponse } from "next/server";
 import { getServerSession } from "next-auth"; // if using NextAuth
 import { authOptions } from "@/lib/authOptions"; // your auth config
 export async function POST(req: Request) {
-  const session = await getServerSession(authOptions);
-
-  if (!session?.user) {
-    return new Response(JSON.stringify({ message: "Unauthorized" }), {
-      status: 401,
-    });
-  }
-
-  // session.user contains your user info
-  const userId = session.user.id; // your DB user id
-  const userRole = session.user.role; // if you store role in session
-
-  // Optional: fetch the full user from DB
-  const user = await prisma.user.findUnique({
-    where: { id: userId },
-  });
-
-  if (!user) {
-    return new Response(JSON.stringify({ message: "User not found" }), {
-      status: 404,
-    });
-  }
-
   const data = await req.json();
-
+  //get user id
+  const user = await prisma.user.findFirst();
   const event = await prisma.event.create({
     data: {
       ...data,
@@ -90,6 +68,7 @@ export async function POST(req: Request) {
 
   return NextResponse.json(event, { status: 200 });
 }
+
 export async function GET(req: NextRequest) {
   // Get logged-in user dynamically
   const session = await getServerSession(authOptions);

@@ -144,9 +144,6 @@ export const Loading = ({
               )}
             />
           </div>
-          <span className="text-sm font-medium text-muted-foreground animate-pulse">
-            {message}
-          </span>
         </div>
       </div>
     );
