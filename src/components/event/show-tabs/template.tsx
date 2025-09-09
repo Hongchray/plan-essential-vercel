@@ -10,6 +10,13 @@ import { Button } from "@/components/ui/button";
 import Preview from "@/components/template/preview";
 import { toast } from "sonner";
 import dynamic from "next/dynamic";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select"
 
 // Dynamic templates
 const DynamicComponents = {
@@ -43,10 +50,10 @@ const EditorComponent = {
 
 function LoadingScreen() {
   return (
-    <div className="flex items-center justify-center min-h-screen">
+    <div className="flex items-center justify-center h-full">
       <div className="text-center">
         <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-red-600 mx-auto mb-4"></div>
-        <p className="text-khmer">កំពុងផ្ទុក... (Loading...)</p>
+        <p className="text-khmer">កំពុងផ្ទុក...</p>
       </div>
     </div>
   );
@@ -54,7 +61,7 @@ function LoadingScreen() {
 
 async function getPreviewTemplate(id: string) {
   try {
-    const res = await fetch(`/api/admin/template/${id}`);
+    const res = await fetch(`/api/admin/event/${id}/template`);
     if (!res.ok) throw new Error("Failed to fetch template");
     return await res.json();
   } catch {
@@ -63,27 +70,55 @@ async function getPreviewTemplate(id: string) {
   }
 }
 
-export default function TabTemplate({id}: {id: string}) {
+async function getEvent(id: string) {
+  try {
+    const res = await fetch(`/api/admin/event/${id}`);
+    if (!res.ok) throw new Error("Failed to fetch event");
+    return await res.json();
+  } catch {
+    toast.error("Error getting event");
+    return null;
+  }
+}
+
+export default function TabTemplate({paramId}: {paramId: string}) {
+
   // This is the main state that both editor and preview will use
   const [config, setConfig] = useState<any>({});
   const [template, setTemplate] = useState<any>(null);
   const [isLoading, setIsLoading] = useState(true);
   const [isSaving, setIsSaving] = useState(false);
+  const [eventTemplate, setEventTemplate] = useState<any[]>([]);
 
   // Fetch template once and initialize config
   useEffect(() => {
-    if (!id) return;
+    if (!paramId) return;
     
     setIsLoading(true);
-    getPreviewTemplate(id).then((data) => {
+    getEvent(paramId).then((data)=>{
+      if(data){
+        
+      }
+    })
+    getPreviewTemplate(paramId).then((data) => {
       if (data) {
-        setTemplate(data);
-        // Initialize config with defaultConfig
-        setConfig(data?.defaultConfig || {});
+        setEventTemplate(data);
+        setTemplate(data[0]);
+        setConfig(data[0].config);
       }
       setIsLoading(false);
     });
-  }, [id]);
+  }, [paramId]);
+
+  // Handle template switching
+  const handleTemplateSwitch = (templateId: string) => {
+    const selectedTemplate = eventTemplate.find((item) => item.id === templateId);
+    if (selectedTemplate) {
+      setTemplate(selectedTemplate);
+      setConfig(selectedTemplate.config || {});
+      toast.success(`Switched to ${selectedTemplate.template.name}`);
+    }
+  };
 
   // Save configuration
   const handleSave = async () => {
@@ -91,13 +126,13 @@ export default function TabTemplate({id}: {id: string}) {
     
     setIsSaving(true);
     try {
-      const response = await fetch(`/api/admin/template/${template.id}`, {
+      const response = await fetch(`/api/admin/event/${paramId}/template/${template.id}`, {
         method: 'PUT',
         headers: {
           'Content-Type': 'application/json',
         },
         body: JSON.stringify({
-          defaultConfig: config
+          config: config
         }),
       });
 
@@ -111,6 +146,22 @@ export default function TabTemplate({id}: {id: string}) {
       console.error('Save error:', error);
     } finally {
       setIsSaving(false);
+    }
+  };
+
+  // Reset to default configuration
+  const handleResetDefault = async () => {
+    if (!template?.id) return;
+    
+    try {
+      // You might want to fetch the default config from your API
+      // For now, let's reset to an empty config
+      const defaultConfig = {};
+      setConfig(defaultConfig);
+      toast.success("Reset to default configuration");
+    } catch (error) {
+      toast.error("Failed to reset to default");
+      console.error('Reset error:', error);
     }
   };
 
@@ -150,24 +201,41 @@ export default function TabTemplate({id}: {id: string}) {
     WeddingSimpleTemplateEditor = "WeddingSimpleTemplateEditor",
   }
 
-  const ComponentToRender = DynamicComponents[template.unique_name as TemplateName];
-  const EditorToRender = EditorComponent[`${template.unique_name}Editor` as EditorName];
+  const ComponentToRender = DynamicComponents[template.template.unique_name as TemplateName];
+  const EditorToRender = EditorComponent[`${template.template.unique_name}Editor` as EditorName];
 
   return (
     <div className="space-y-6">
-      <h3 className="text-lg font-semibold mb-4">Wedding Invitation Editor</h3>
-      <div className="h-[750px] border-dashed border-2 rounded">
+      <h3 className="text-lg font-semibold mb-4">My Templates</h3>
+      <div>
+        <Select 
+          value={template.id} 
+          onValueChange={handleTemplateSwitch}
+        >
+          <SelectTrigger className="w-[280px] border-dashed border-2">
+            <SelectValue placeholder="Select a template" />
+          </SelectTrigger>
+          <SelectContent>
+            {eventTemplate.map((item) => (
+              <SelectItem key={item.id} value={item.id}>
+                {item.template.name}
+              </SelectItem>
+            ))}
+          </SelectContent>
+        </Select>
+      </div>
+      <div className="h-[750px] border-dashed border-3 rounded">
         <ResizablePanelGroup direction="horizontal">
           {/* Editor Panel */}
           <ResizablePanel defaultSize={30} minSize={25}>
             <div className="p-2 border-b shadow-md bg-gray-800 text-white h-[50px] flex items-center justify-between rounded-tl">
               <div className="font-bold">Editor</div>
-              <div className=" animate-pulse">
+              <div className="animate-pulse">
                 {Object.keys(config).length > 0 ? "●" : "○"} Live
               </div>
             </div>
             <div className="px-4 py-6 h-[calc(100%-50px)] overflow-y-auto bg-gray-50">
-              {EditorToRender && config ? (
+              {EditorToRender && config !== undefined ? (
                 <EditorToRender
                   config={config}
                   setConfig={setConfig}
@@ -175,6 +243,9 @@ export default function TabTemplate({id}: {id: string}) {
               ) : (
                 <div className="text-center text-gray-500 mt-8">
                   <p>Editor not available for this template</p>
+                  <p className="text-sm mt-2">
+                    Template: {template.template?.unique_name}
+                  </p>
                 </div>
               )}
             </div>
@@ -188,28 +259,38 @@ export default function TabTemplate({id}: {id: string}) {
               <span className="font-bold">Preview Template</span>
               <div className="flex items-center gap-2">
                 <span className="text-xs text-gray-500">
-                  {template.name || template.unique_name}
+                  {template.template?.name || template.template?.unique_name}
                 </span>
-                <Button 
-                  size="sm" 
-                  onClick={handleSave}
-                  disabled={isSaving}
-                  className="bg-blue-600 hover:bg-blue-700"
-                >
-                  {isSaving ? (
-                    <div className="flex items-center gap-2">
-                      <div className="w-3 h-3 border border-white border-t-transparent rounded-full animate-spin"></div>
-                      Saving...
-                    </div>
-                  ) : (
-                    "Save"
-                  )}
-                </Button>
+
+                <div className="flex items-center gap-2">
+                  <Button 
+                    size="sm" 
+                    onClick={handleResetDefault}
+                    variant="outline"
+                    disabled={isSaving}
+                  >
+                    Reset default
+                  </Button>
+                  <Button 
+                    size="sm" 
+                    onClick={handleSave}
+                    disabled={isSaving}
+                  >
+                    {isSaving ? (
+                      <div className="flex items-center gap-2">
+                        <div className="w-3 h-3 border border-white border-t-transparent rounded-full animate-spin"></div>
+                        Saving...
+                      </div>
+                    ) : (
+                      "Save"
+                    )}
+                  </Button>
+                </div>
               </div>
             </div>
             <div className="h-[calc(100%-50px)] overflow-y-auto">
               <div className="bg-gradient-to-br from-red-50 to-yellow-50 min-h-full">
-                {ComponentToRender && config ? (
+                {ComponentToRender && config !== undefined ? (
                   <ComponentToRender
                     config={config}
                     data={{
@@ -221,6 +302,9 @@ export default function TabTemplate({id}: {id: string}) {
                 ) : (
                   <div className="flex items-center justify-center h-full">
                     <p className="text-gray-500">Preview not available</p>
+                    <p className="text-sm text-gray-400 mt-2">
+                      Component: {template.template?.unique_name}
+                    </p>
                   </div>
                 )}
               </div>
@@ -228,11 +312,10 @@ export default function TabTemplate({id}: {id: string}) {
           </ResizablePanel>
         </ResizablePanelGroup>
       </div>
-      
       {/* Status Bar */}
       <div className="flex justify-between items-center text-xs text-gray-500 px-2">
         <div>
-          Template: {template.unique_name} | ID: {template.id}
+          Template: {template.template?.unique_name} | ID: {template.id}
         </div>
         <div>
           Last modified: {new Date().toLocaleTimeString()}
