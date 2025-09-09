@@ -33,7 +33,7 @@ interface DataTableProps<TData, TValue> {
   columns: ColumnDef<TData, TValue>[];
   data: TData[];
   pageCount: number;
-  total:number;
+  total: number;
   serverPagination: boolean;
 }
 
@@ -95,7 +95,7 @@ export function DataTable<TData, TValue>({
         { scroll: false }
       );
     }
-  }, [sorting, router, currentPage ,  pathname, createQueryString]);
+  }, [sorting, router, currentPage, pathname, createQueryString]);
 
   const table = useReactTable({
     data,
@@ -198,7 +198,11 @@ export function DataTable<TData, TValue>({
           </TableBody>
         </Table>
       </div>
-      <DataTablePagination table={table} serverPagination={serverPagination} total={total}/>
+      <DataTablePagination
+        table={table}
+        serverPagination={serverPagination}
+        total={total}
+      />
     </div>
   );
 }

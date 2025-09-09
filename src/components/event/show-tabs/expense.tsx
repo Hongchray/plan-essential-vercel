@@ -1,9 +1,10 @@
-'use client'
+"use client";
 import { useEffect, useState } from "react";
 import { columns } from "./expense-table/columns";
 import { DataTable } from "./expense-table/data-table";
 import { IAPIResponse } from "@/interfaces/comon/api-response";
 import { Expense } from "@/interfaces/expense";
+import { Loading } from "@/components/composable/loading/loading";
 
 async function getData(
   id: string,
@@ -23,36 +24,54 @@ async function getData(
   return result;
 }
 
-export default function TabExpense({ paramId, searchParams }: { paramId: string; searchParams: any }) {
-  const [data, setData] = useState<Expense[]>([])
-  const [meta, setMeta] = useState({ total: 0, pageCount: 1 })
+export default function TabExpense({
+  paramId,
+  searchParams,
+}: {
+  paramId: string;
+  searchParams: any;
+}) {
+  const [data, setData] = useState<Expense[]>([]);
+  const [meta, setMeta] = useState({ total: 0, pageCount: 1 });
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     async function fetchData() {
-      const id = await paramId;
-      const params = await searchParams
-      const page = Number(params.page) || 1
-      const pageSize = params.per_page
-      const search = params.search || ''
-      const sort = params.sort || ''
-      const order = params.order || ''
-      const result = await getData(id, page, pageSize, search, sort, order)
-      setData(result.data)
-      setMeta(result.meta)
+      setLoading(true);
+      try {
+        const id = await paramId;
+        const params = await searchParams;
+        const page = Number(params.page) || 1;
+        const pageSize = params.per_page;
+        const search = params.search || "";
+        const sort = params.sort || "";
+        const order = params.order || "";
+        const result = await getData(id, page, pageSize, search, sort, order);
+        setData(result.data);
+        setMeta(result.meta);
+      } finally {
+        setLoading(false);
+      }
     }
-    fetchData()
-  }, [searchParams])
+    fetchData();
+  }, [searchParams]);
 
   return (
     <div className="space-y-6">
-      <h3 className="text-lg font-semibold mb-4">Expense Management</h3>
-      <DataTable
-        data={data}
-        columns={columns}
-        pageCount={meta.pageCount}
-        total={meta.total}
-        serverPagination={true}
-      />
+      {loading ? (
+        <Loading variant="circle" message="Loading guests..." size="lg" />
+      ) : (
+        <>
+          <h3 className="text-lg font-semibold mb-4">Expense Management</h3>
+          <DataTable
+            data={data}
+            columns={columns}
+            pageCount={meta.pageCount}
+            total={meta.total}
+            serverPagination={true}
+          />
+        </>
+      )}
     </div>
-  )
+  );
 }

@@ -148,7 +148,7 @@ const ImageUpload = React.forwardRef<HTMLInputElement, ImageUploadProps>(
         <div className="w-full h-[150px] aspect-video relative flex items-center justify-center border-2 border-dashed rounded-lg overflow-hidden bg-gray-50">
           {preview ? (
             <Image
-              src={preview}
+              src={preview} // ensure src is not empty
               alt="Preview"
               width={150}
               height={150}

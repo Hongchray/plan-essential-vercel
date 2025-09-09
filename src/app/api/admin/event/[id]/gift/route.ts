@@ -7,15 +7,21 @@ export async function GET(
 ) {
   const { id } = await params; // ✅ await since it's a Promise
   const searchParams = req.nextUrl.searchParams;
-  const page = parseInt(searchParams.get("page") || "1");
-  const per_page = parseInt(searchParams.get("per_page") || "10");
+  const page = parseInt(searchParams.get("page") || "1", 10);
+  const per_page = parseInt(searchParams.get("per_page") || "10", 10);
   const search = searchParams.get("search") || "";
   const sort = searchParams.get("sort") || "createdAt";
   const order = searchParams.get("order") || "desc";
 
   try {
-    const total = await prisma.gift.count({ where: { eventId: id } });
+    // 1️⃣ Get total gifts count and sum of amounts
+    const aggregates = await prisma.gift.aggregate({
+      where: { eventId: id },
+      _count: true, // total gifts
+      _sum: { amount: true }, // sum of gift amounts
+    });
 
+    // 2️⃣ Fetch paginated gifts
     const data = await prisma.gift.findMany({
       where: { eventId: id },
       include: {
@@ -36,10 +42,14 @@ export async function GET(
         message: "Get data successfully",
         data,
         meta: {
-          total,
+          total: aggregates._count, // total gifts
           page,
           per_page,
-          pageCount: Math.ceil(total / per_page),
+          pageCount: Math.ceil((aggregates._count ?? 0) / per_page),
+        },
+        aggregates: {
+          received: aggregates._count ?? 0,
+          value: aggregates._sum.amount ?? 0,
         },
       },
       { status: 200 }

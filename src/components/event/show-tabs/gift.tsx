@@ -1,73 +1,141 @@
 "use client";
 
+import { use } from "react";
 import { useEffect, useState } from "react";
 import { DataTable } from "./gift-table/data-table";
 import { Gift } from "@/interfaces/gift";
 import { IAPIResponse } from "@/interfaces/comon/api-response";
 import { columns } from "./gift-table/columns";
+import { Loading } from "@/components/composable/loading/loading";
+
+interface GiftAggregates {
+  received: number;
+  value: number;
+}
+
+interface GiftResponse extends IAPIResponse<Gift> {
+  aggregates: GiftAggregates;
+}
+
+// Shape of searchParams
+interface SearchParams {
+  page?: string;
+  per_page?: string;
+  search?: string;
+  sort?: string;
+  order?: string;
+}
 
 async function getData(
   id: string,
   page: number = 1,
   pageSize: number = 10,
   search: string = "",
-  sort: string,
-  order: string
-) {
+  sort: string = "createdAt",
+  order: string = "desc"
+): Promise<GiftResponse> {
   const response = await fetch(
-    `/api/admin/event/${id}/gift?page=${page}&per_page=${pageSize}&search=${search}&sort=${sort}&order=${order}`,
-    {
-      method: "GET",
-    }
+    `/api/admin/event/${id}/gift?page=${page}&per_page=${pageSize}&search=${search}&sort=${sort}&order=${order}`
   );
-  const result: IAPIResponse<Gift> = await response.json();
-  return result;
+  if (!response.ok) {
+    const text = await response.text();
+    throw new Error(`Failed to fetch gifts: ${response.status} ${text}`);
+  }
+  return (await response.json()) as GiftResponse;
 }
-export default function TabGift({ paramId, searchParams }: { paramId: string; searchParams: any }) {
-  // Gift Component
-  const [data, setData] = useState<Gift[]>([])
-  const [meta, setMeta] = useState({ total: 0, pageCount: 1 })
+
+export default function TabGift({
+  paramId,
+  searchParams,
+}: {
+  paramId: string;
+  searchParams: any; // comes from Next.js App Router
+}) {
+  const params = use(searchParams) as SearchParams; // 👈 cast unknown to proper type
+
+  const [data, setData] = useState<Gift[]>([]);
+  const [meta, setMeta] = useState({ total: 0, pageCount: 1 });
+  const [aggregates, setAggregates] = useState<GiftAggregates>({
+    received: 0,
+    value: 0,
+  });
+  const [loading, setLoading] = useState(true);
+
   useEffect(() => {
     async function fetchData() {
-      const id = await paramId;
-      const params = await searchParams
-      const page = Number(params.page) || 1
-      const pageSize = params.per_page
-      const search = params.search || ''
-      const sort = params.sort || ''
-      const order = params.order || ''
-      const result = await getData(id, page, pageSize, search, sort, order)
-      setData(result.data)
-      setMeta(result.meta)
+      setLoading(true);
+      try {
+        const page = Number(params.page) || 1;
+        const pageSize = Number(params.per_page) || 10;
+        const search = params.search || "";
+        const sort = params.sort || "createdAt";
+        const order = params.order || "desc";
+
+        const result = await getData(
+          paramId,
+          page,
+          pageSize,
+          search,
+          sort,
+          order
+        );
+        setData(result.data);
+        setMeta(result.meta);
+        setAggregates(result.aggregates);
+      } catch (err) {
+        console.error(err);
+      } finally {
+        setLoading(false);
+      }
     }
-    fetchData()
-  }, [searchParams])
+    fetchData();
+  }, [params, paramId]);
 
   return (
     <div className="space-y-6">
       <h3 className="text-lg font-semibold mb-4">Wedding Gifts</h3>
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
+        {/* Gifts Received */}
         <div className="bg-green-50 p-4 rounded-lg">
-          <div className="text-2xl font-bold text-green-600">
-            {2}
+          <div className="text-2xl font-bold text-green-600 flex items-center justify-center">
+            {loading ? (
+              <Loading variant="minimal" message="" size="sm" />
+            ) : (
+              aggregates.received ?? 0
+            )}
           </div>
-          <div className="text-sm text-green-800">Gifts Received</div>
+          <div className="text-sm text-green-800 text-center">
+            Gifts Received
+          </div>
         </div>
+
+        {/* Total Value */}
         <div className="bg-purple-50 p-4 rounded-lg">
-          <div className="text-2xl font-bold text-purple-600">
-            ${200}
+          <div className="text-2xl font-bold text-purple-600 flex items-center justify-center">
+            {loading ? (
+              <Loading variant="minimal" message="" size="sm" />
+            ) : (
+              `$${aggregates.value ?? 0}`
+            )}
           </div>
-          <div className="text-sm text-purple-800">Total Value</div>
+          <div className="text-sm text-purple-800 text-center">Total Value</div>
         </div>
       </div>
 
-      <DataTable
-        data={data}
-        columns={columns}
-        pageCount={meta.pageCount}
-        total={meta.total}
-        serverPagination={true}
-      />
+      {loading ? (
+        <Loading variant="circle" message="Loading guests..." size="lg" />
+      ) : (
+        <>
+          <h3 className="text-lg font-semibold mb-4">Expense Management</h3>
+          <DataTable
+            data={data}
+            columns={columns}
+            pageCount={meta.pageCount}
+            total={meta.total}
+            serverPagination={true}
+          />
+        </>
+      )}
     </div>
   );
 }
