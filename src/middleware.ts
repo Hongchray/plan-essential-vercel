@@ -13,6 +13,11 @@ const PUBLIC_ROUTES = [
   "/error/403",
   "/preview",
 ];
+function isPublicPath(pathname: string): boolean {
+  return (
+    pathname.startsWith("/preview")
+  );
+}
 
 function isPublicRoute(pathname: string) {
   return PUBLIC_ROUTES.includes(pathname);
@@ -29,6 +34,10 @@ function isEventRoute(pathname: string) {
 export async function middleware(request: NextRequest) {
   const { pathname } = request.nextUrl;
 
+  // Check for public paths
+  if (isPublicPath(request.nextUrl.pathname)) {
+    return NextResponse.next();
+  }
   const locale = request.cookies.get("NEXT_LOCALE")?.value || "en";
   const response = NextResponse.next();
   if (!request.cookies.has("NEXT_LOCALE")) {
