@@ -10,6 +10,7 @@ import { Button } from "@/components/ui/button";
 import { toast } from "sonner";
 import dynamic from "next/dynamic";
 import { Event } from "@/interfaces/event";
+import { Maximize2 } from "lucide-react";
 import {
   Select,
   SelectContent,
