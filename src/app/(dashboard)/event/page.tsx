@@ -6,6 +6,8 @@ import CreateEventButton from "./components/create-button";
 import { prisma } from "@/lib/prisma";
 import { getServerSession } from "next-auth";
 import { authOptions } from "@/lib/authOptions";
+import EventUserView from "./components/event-user-view";
+import { Suspense } from "react";
 
 async function getCurrentUser() {
   const session = await getServerSession(authOptions);
@@ -105,23 +107,9 @@ export default async function EventPage({
         />
       ) : (
         <div>
-          <div className="flex justify-between items-center mb-6">
-            <div>
-              <h1 className="text-2xl font-semibold mb-2 text-rose-700">
-                Welcome! We're glad to have you here.
-              </h1>
-              <p className="text-rose-600">
-                Explore your events below or create a new one to get started.
-              </p>
-            </div>
-            <CreateEventButton />
-          </div>
-
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-            {data.map((event: any) => (
-              <EventCard key={event.id} event={event} />
-            ))}
-          </div>
+          <Suspense fallback={<div>Loading...</div>}>
+            <EventUserView data={data} />
+          </Suspense>
         </div>
       )}
     </div>

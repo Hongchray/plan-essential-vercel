@@ -46,7 +46,12 @@ export default function TabDashboard({ eventId }: { eventId: string }) {
     fetchEvent();
   }, [eventId]);
 
-  if (loading) return <Loading variant="circle" size="lg" />;
+  if (loading)
+    return (
+      <div className="flex items-center justify-center ">
+        <Loading variant="circle" size="lg" />
+      </div>
+    );
   if (!event) return <p>No event found.</p>;
 
   const financialData = [

@@ -9,7 +9,7 @@ const Toaster = ({ ...props }: ToasterProps) => {
   // detect NEXT_LOCALE from cookies
   const locale =
     typeof window !== "undefined"
-      ? document.cookie.match(/NEXT_LOCALE=(\w+)/)?.[1] ?? "en"
+      ? document.cookie.match(/NEXT_LOCALE=(\w+)/)?.[1] ?? "km"
       : "en";
 
   // assign font variable

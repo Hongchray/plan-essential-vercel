@@ -12,11 +12,10 @@ const PUBLIC_ROUTES = [
   "/forgot-password/set-password",
   "/error/403",
   "/preview",
+  "/loading",
 ];
 function isPublicPath(pathname: string): boolean {
-  return (
-    pathname.startsWith("/preview")
-  );
+  return pathname.startsWith("/preview");
 }
 
 function isPublicRoute(pathname: string) {
@@ -38,7 +37,7 @@ export async function middleware(request: NextRequest) {
   if (isPublicPath(request.nextUrl.pathname)) {
     return NextResponse.next();
   }
-  const locale = request.cookies.get("NEXT_LOCALE")?.value || "en";
+  const locale = request.cookies.get("NEXT_LOCALE")?.value || "km";
   const response = NextResponse.next();
   if (!request.cookies.has("NEXT_LOCALE")) {
     response.cookies.set("NEXT_LOCALE", locale, {

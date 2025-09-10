@@ -1,7 +1,8 @@
 import { Loading } from "@/components/composable/loading/loading";
-export default function LoadingPage() {
+
+export default async function EventPage() {
   return (
-    <div className="flex items-center justify-center h-screen bg-white">
+    <div className="h-full flex-1 flex-col gap-4 p-4">
       <Loading variant="circle" size="lg" />
     </div>
   );

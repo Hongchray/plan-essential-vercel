@@ -3,8 +3,10 @@ import { Event } from "../data/schema";
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import { EyeIcon, PencilIcon } from "lucide-react";
+import { useTranslation } from "next-i18next";
 
 export default function EventCard({ event }: { event: Event }) {
+  const { t } = useTranslation("common");
   return (
     <div className="border rounded-lg p-4 shadow hover:shadow-lg transition flex flex-col justify-between">
       <div>
@@ -45,17 +47,17 @@ export default function EventCard({ event }: { event: Event }) {
           <Button
             type="button"
             variant="outline"
-            onClick={() => (window.location.href = `/event/${event.id}`)} // navigate to edit page
+            onClick={() => (window.location.href = `/event/${event.id}`)}
           >
-            View
+            {t("EventPage.view")}
             <EyeIcon />
           </Button>
         </div>
         <div className="mt-4 flex justify-end">
           <Button
-            onClick={() => (window.location.href = `/event/edit/${event.id}`)} // navigate to edit page
+            onClick={() => (window.location.href = `/event/edit/${event.id}`)}
           >
-            Edit
+            {t("EventPage.edit")}
             <PencilIcon />
           </Button>
         </div>
