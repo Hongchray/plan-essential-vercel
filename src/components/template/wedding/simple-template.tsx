@@ -1,7 +1,8 @@
 import { useState } from "react";
-
-export default function SimpleTemplate({ config, data }: { config: any, data: any }) {
+import { Event } from "@/interfaces/event";
+export default function SimpleTemplate({ config, data }: { config: any, data: Event }) {
   const [currentLanguage, setCurrentLanguage] = useState<'kh' | 'en'>('kh');
+  console.log(data)
   
   // Get the current invitation data based on selected language
   const currentInvitation = currentLanguage === 'kh' 
@@ -47,87 +48,91 @@ export default function SimpleTemplate({ config, data }: { config: any, data: an
             backgroundPosition: 'center'
           }}
         >
-          <div className="relative z-10 space-y-2">
-            <h1 
-              className="text-3xl font-bold drop-shadow-lg pt-5"
-              style={{ 
-                color: config?.primaryColor,
-                fontFamily: 'serif',
-                textShadow: '2px 2px 4px rgba(0,0,0,0.7)'
-              }}
-            >
-              {currentInvitation?.main_title}
-            </h1>
-            
-            <div className="flex items-center justify-center gap-2 pt-8">
-              <div 
-                className="text-2xl font-semibold drop-shadow-lg"
-                style={{
+          <div className="relative z-10 space-y-2 flex flex-col justify-around h-full">
+            <div>
+              <h1 
+                className="text-3xl font-bold drop-shadow-lg"
+                style={{ 
                   color: config?.primaryColor,
-                  textShadow: '2px 2px 4px rgba(0,0,0,0.5)'
+                  fontFamily: 'Great Vibes, Moul, sans-serif',
+                  textShadow: '8px 8px 5px rgba(0,0,0,0.8)'
                 }}
               >
-                {currentInvitation?.groom_name}
-              </div>
-              <div 
-                className="text-lg"
-                style={{
-                  color: config?.primaryColor,            
-                  textShadow: '1px 1px 2px rgba(0,0,0,0.7)'
-                }}
-              >
-                <span className="text-sm" style={{fontFamily: 'sans-serif'}}>
-                  {currentLanguage === 'kh' ? 'ជាគូនឹង' : '&'}
-                </span>
-              </div>
-              <div 
-                className="text-2xl font-semibold drop-shadow-lg"
-                style={{
-                  color: config?.primaryColor,
-                  textShadow: '2px 2px 4px rgba(0,0,0,0.5)'
-                }}
-              >
-                {currentInvitation?.bride_name}
+                {currentInvitation?.main_title}
+              </h1>
+              <div className="flex items-center justify-center gap-2 pt-6">
+                  <div 
+                    className="text-3xl font-semibold drop-shadow-lg"
+                    style={{
+                      color: config?.primaryColor,
+                      textShadow: '2px 2px 4px rgba(0,0,0,0.5)',
+                      fontFamily: 'Great Vibes, Kantumruy Pro, sans-serif',
+                    }}
+                  >
+                    {data.groom}
+                  </div>
+                  <div 
+                    className="text-lg"
+                    style={{
+                      color: config?.primaryColor,            
+                      textShadow: '1px 1px 2px rgba(0,0,0,0.7)'
+                    }}
+                  >
+                    <span className="text-md" style={{fontFamily: 'Great Vibes, Kantumruy Pro, sans-serif'}}>
+                      {currentLanguage === 'kh' ? 'ជាគូនឹង' : '&'}
+                    </span>
+                  </div>
+                  <div 
+                    className="text-3xl font-semibold drop-shadow-lg"
+                    style={{
+                      color: config?.primaryColor,
+                      textShadow: '2px 2px 4px rgba(0,0,0,0.5)',
+                      fontFamily: 'Great Vibes, Kantumruy Pro, sans-serif',
+                    }}
+                  >
+                    {data.bride}
+                  </div>
               </div>
             </div>
-            
-            <p 
-              className="text-lg drop-shadow-lg pt-8"
-              style={{
-                color: config?.primaryColor,
-                textShadow: '1px 1px 2px rgba(0,0,0,0.7)'
-              }}
-            >
-              {currentInvitation?.subtitle}
-            </p>
-            
-            <img
-              src="https://theapka.com/storage/templates/chhay/images/frame_1.png"
-              className="h-[50px] mx-auto"
-              alt="Frame 1"
-            />
-            
-            <p 
-              className="text-base drop-shadow-lg"
-              style={{
-                color: config?.primaryColor,
-                textShadow: '1px 1px 2px rgba(0,0,0,0.7)',
-                fontFamily: 'serif',
-              }}
-            >
-              {currentInvitation?.date_time}
-            </p>
-            
-            <p 
-              className="text-base drop-shadow-lg"
-              style={{
-                color: config?.primaryColor,
-                textShadow: '1px 1px 2px rgba(0,0,0,0.7)',
-                fontFamily: 'serif',
-              }}
-            >
-              {currentInvitation?.location}
-            </p>
+            <div className="">
+              <p 
+                className="text-lg drop-shadow-lg pt-8"
+                style={{
+                  color: config?.primaryColor,
+                  textShadow: '1px 1px 2px rgba(0,0,0,0.7)',
+                  fontFamily: 'Great Vibes, Moul, sans-serif',
+
+                }}
+              >
+                {currentInvitation?.subtitle}
+              </p>
+              <img
+                src="https://theapka.com/storage/templates/chhay/images/frame_1.png"
+                className="h-[50px] mx-auto"
+                alt="Frame 1"
+              />
+              <p 
+                className="text-base drop-shadow-lg"
+                style={{
+                  color: config?.primaryColor,
+                  textShadow: '1px 1px 2px rgba(0,0,0,0.7)',
+                  fontFamily: 'Great Vibes, Kantumruy Pro, sans-serif',
+                }}
+              >
+                {currentInvitation?.date_time}
+              </p>
+              
+              <p 
+                className="text-base drop-shadow-lg"
+                style={{
+                  color: config?.primaryColor,
+                  textShadow: '1px 1px 2px rgba(0,0,0,0.7)',
+                  fontFamily: 'Great Vibes, Kantumruy Pro, sans-serif',
+                }}
+              >
+                {currentInvitation?.location}
+              </p>
+            </div>
           </div>
         </div>
 

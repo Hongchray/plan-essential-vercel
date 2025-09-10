@@ -2,24 +2,9 @@
 import { useEffect, useMemo, useState } from "react";
 import { toast } from "sonner";
 import dynamic from "next/dynamic";
-
+import { Event } from "@/interfaces/event"
 // Dynamic templates
 const DynamicComponents = {
-  WeddingBasicTemplete: dynamic(() => import("./wedding/basic-template"), {
-    loading: () => <LoadingScreen />,
-    ssr: false,
-  }),
-  WeddingTraditionalTemplate: dynamic(
-    () => import("./wedding/traditional-template"),
-    {
-      loading: () => <LoadingScreen />,
-      ssr: false,
-    }
-  ),
-  WeddingStyleTemplate: dynamic(() => import("./wedding/style-template"), {
-    loading: () => <LoadingScreen />,
-    ssr: false,
-  }),
   WeddingSimpleTemplate: dynamic(() => import("./wedding/simple-template"), {
     loading: () => <LoadingScreen />,
     ssr: false,
@@ -47,14 +32,26 @@ async function getPreviewTemplate(id: string) {
     return null;
   }
 }
+async function getEvent() {
+  try {
+    const res = await fetch(`/api/admin/event/preview`);
+    if (!res.ok) throw new Error("Failed to fetch invitation");
+    return await res.json();
+  } catch {
+    toast.error("Error getting invitation");
+    return null;
+  }
+}
 
 export default function Preview({ id }: { id: string }) {
   const [template, setTemplate] = useState<any>(null);
+  const [event, setEvent] = useState<Event>({} as Event);
 
   // Fetch template once
   useEffect(() => {
     if (!id) return;
     getPreviewTemplate(id).then((data) => data && setTemplate(data));
+    getEvent().then((data) => data && setEvent(data));
   }, [id]);
 
   // Sample data
@@ -63,9 +60,6 @@ export default function Preview({ id }: { id: string }) {
   }
 
   enum TemplateName {
-    WeddingBasicTemplete = "WeddingBasicTemplete",
-    WeddingTraditionalTemplate = "WeddingTraditionalTemplate",
-    WeddingStyleTemplate = "WeddingStyleTemplate",
     WeddingSimpleTemplate = "WeddingSimpleTemplate",
   }
 
@@ -77,11 +71,7 @@ export default function Preview({ id }: { id: string }) {
       {ComponentToRender && (
         <ComponentToRender
           config={template.defaultConfig}
-          data={{
-            groom: template.groom,
-            bride: template.bride,
-            ceremony: template.ceremony,
-          }}
+          data={event}
         />
       )}
     </div>

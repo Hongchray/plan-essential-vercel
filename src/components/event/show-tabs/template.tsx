@@ -7,9 +7,9 @@ import {
 } from "@/components/ui/resizable";
 import Image from "next/image";
 import { Button } from "@/components/ui/button";
-import Preview from "@/components/template/preview";
 import { toast } from "sonner";
 import dynamic from "next/dynamic";
+import { Event } from "@/interfaces/event";
 import {
   Select,
   SelectContent,
@@ -109,6 +109,8 @@ export default function TabTemplate({ paramId }: { paramId: string }) {
   const [isLoading, setIsLoading] = useState(true);
   const [isSaving, setIsSaving] = useState(false);
   const [eventTemplate, setEventTemplate] = useState<any[]>([]);
+  const [isFullscreenEditor, setIsFullscreenEditor] = useState(false);
+  const [event, setEvent] = useState<Event>({} as Event);
 
   // Fetch template once and initialize config
   useEffect(() => {
@@ -189,7 +191,32 @@ export default function TabTemplate({ paramId }: { paramId: string }) {
     }
   };
 
-  // Auto-save functionality (optional)
+  // Toggle fullscreen editor
+  const toggleFullscreenEditor = () => {
+    setIsFullscreenEditor(!isFullscreenEditor);
+  };
+
+  // Handle escape key to exit fullscreen
+  useEffect(() => {
+    const handleEscapeKey = (event: KeyboardEvent) => {
+      if (event.key === "Escape" && isFullscreenEditor) {
+        setIsFullscreenEditor(false);
+      }
+    };
+
+    if (isFullscreenEditor) {
+      document.addEventListener("keydown", handleEscapeKey);
+      document.body.style.overflow = "hidden";
+    } else {
+      document.body.style.overflow = "unset";
+    }
+
+    return () => {
+      document.removeEventListener("keydown", handleEscapeKey);
+      document.body.style.overflow = "unset";
+    };
+  }, [isFullscreenEditor]);
+
   useEffect(() => {
     if (!template?.id || !config) return;
 
@@ -219,9 +246,6 @@ export default function TabTemplate({ paramId }: { paramId: string }) {
   }
 
   enum TemplateName {
-    WeddingBasicTemplete = "WeddingBasicTemplete",
-    WeddingTraditionalTemplate = "WeddingTraditionalTemplate",
-    WeddingStyleTemplate = "WeddingStyleTemplate",
     WeddingSimpleTemplate = "WeddingSimpleTemplate",
   }
 
@@ -257,8 +281,19 @@ export default function TabTemplate({ paramId }: { paramId: string }) {
           <ResizablePanel defaultSize={30} minSize={25}>
             <div className="p-2 border-b shadow-md bg-gray-800 text-white h-[50px] flex items-center justify-between rounded-tl">
               <div className="font-bold">Editor</div>
-              <div className="animate-pulse">
-                {Object.keys(config).length > 0 ? "●" : "○"} Live
+              <div className="flex items-center gap-2">
+                <div className="animate-pulse">
+                  {Object.keys(config).length > 0 ? "●" : "○"} Live
+                </div>
+                <Button
+                  size="sm"
+                  onClick={toggleFullscreenEditor}
+                  variant="ghost"
+                  className="text-white hover:bg-gray-700 p-1 h-8 w-8"
+                  title="Fullscreen Editor"
+                >
+                  <Maximize2 className="h-4 w-4" />
+                </Button>
               </div>
             </div>
             <div className="px-4 py-6 h-[calc(100%-50px)] overflow-y-auto bg-gray-50">
@@ -311,14 +346,7 @@ export default function TabTemplate({ paramId }: { paramId: string }) {
             <div className="h-[calc(100%-50px)] overflow-y-auto">
               <div className="bg-gradient-to-br from-red-50 to-yellow-50 min-h-full">
                 {ComponentToRender && config !== undefined ? (
-                  <ComponentToRender
-                    config={config}
-                    data={{
-                      groom: template.groom || {},
-                      bride: template.bride || {},
-                      ceremony: template.ceremony || {},
-                    }}
-                  />
+                  <ComponentToRender config={config} data={event} />
                 ) : (
                   <div className="flex items-center justify-center h-full">
                     <p className="text-gray-500">Preview not available</p>
