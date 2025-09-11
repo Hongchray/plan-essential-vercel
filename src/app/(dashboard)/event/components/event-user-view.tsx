@@ -27,7 +27,7 @@ export default function EventUserView({ data }: { data: any[] }) {
         <CreateEventButton />
       </div>
 
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+      <div className="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-4 gap-4">
         {data.map((event) => (
           <EventCard key={event.id} event={event} />
         ))}

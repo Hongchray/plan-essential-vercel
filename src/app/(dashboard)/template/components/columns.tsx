@@ -95,8 +95,8 @@ export const columns: ColumnDef<Template>[] = [
     ),
     cell: ({ row }) => {
       return (
-        <Avatar>
-          <AvatarImage src={row.getValue("image")} alt="@shadcn" />
+        <Avatar className="rounded h-[50px] ">
+          <AvatarImage src={row.getValue("image")} />
           <AvatarFallback>CN</AvatarFallback>
         </Avatar>
       );
