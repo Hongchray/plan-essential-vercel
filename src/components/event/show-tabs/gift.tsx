@@ -94,40 +94,39 @@ export default function TabGift({
   return (
     <div className="space-y-6">
       <h3 className="text-lg font-semibold mb-4">Wedding Gifts</h3>
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
-        {/* Gifts Received */}
-        <div className="bg-green-50 p-4 rounded-lg">
-          <div className="text-2xl font-bold text-green-600 flex items-center justify-center">
-            {loading ? (
-              <Loading variant="minimal" message="" size="sm" />
-            ) : (
-              aggregates.received ?? 0
-            )}
-          </div>
-          <div className="text-sm text-green-800 text-center">
-            Gifts Received
-          </div>
-        </div>
-
-        {/* Total Value */}
-        <div className="bg-purple-50 p-4 rounded-lg">
-          <div className="text-2xl font-bold text-purple-600 flex items-center justify-center">
-            {loading ? (
-              <Loading variant="minimal" message="" size="sm" />
-            ) : (
-              `$${aggregates.value ?? 0}`
-            )}
-          </div>
-          <div className="text-sm text-purple-800 text-center">Total Value</div>
-        </div>
-      </div>
-
       {loading ? (
         <div className="flex items-center justify-center ">
           <Loading variant="circle" size="lg" />
         </div>
       ) : (
         <>
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
+            {/* Gifts Received */}
+            <div className="bg-green-50 p-4 rounded-lg">
+              <div className="text-2xl font-bold text-green-600 flex items-center justify-center">
+                {loading ? (
+                  <Loading variant="minimal" message="" size="sm" />
+                ) : (
+                  aggregates.received ?? 0
+                )}
+              </div>
+              <div className="text-sm text-green-800 text-center">
+                Gifts Received
+              </div>
+            </div>
+
+            {/* Total Value */}
+            <div className="bg-purple-50 p-4 rounded-lg">
+              <div className="text-2xl font-bold text-purple-600 flex items-center justify-center">
+                {loading ? (
+                  <Loading variant="minimal" message="" size="sm" />
+                ) : (
+                  `$${aggregates.value ?? 0}`
+                )}
+              </div>
+              <div className="text-sm text-purple-800 text-center">Total Value</div>
+            </div>
+          </div>
           <h3 className="text-lg font-semibold mb-4">Expense Management</h3>
           <DataTable
             data={data}

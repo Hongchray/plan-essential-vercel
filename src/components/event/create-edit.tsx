@@ -22,7 +22,7 @@ const formSchema = z.object({
     .min(1, "Name is required")
     .max(50, "Name must be less than 50 characters"),
   type: z.string().min(1, "Type is required"),
-  owner: z.string(),
+  owner: z.coerce.string().optional(),
   bride: z.string().min(1, "Bride is required"),
   groom: z.string().min(1, "Groom is required"),
   image: z.string(),
@@ -30,8 +30,8 @@ const formSchema = z.object({
   description: z.string(),
   userId: z.string(),
   location: z.string(),
-  latitude: z.string(),
-  longitude: z.string(),
+  latitude: z.coerce.string().optional(),
+  longitude: z.coerce.string().optional(),
   startTime: z.coerce.date().optional(),
   endTime: z.coerce.date().optional(),
 });
@@ -148,6 +148,15 @@ export function CreateEditForm({ id }: { id?: string }) {
           {id ? t("EventPage.create.edit") : t("EventPage.create.title")}
         </h2>
       </div>
+      {/* {form.formState.errors && (
+        <div className="text-red-500 text-sm">
+          {Object.entries(form.formState.errors).map(([fieldName, error]) => (
+            <div key={fieldName}>
+              <strong>{fieldName}:</strong> {error?.message?.toString()}
+            </div>
+          ))}
+        </div>
+      )} */}
       <form onSubmit={form.handleSubmit(onSubmit)}>
         <div>
           <ImageUpload
@@ -253,7 +262,7 @@ export function CreateEditForm({ id }: { id?: string }) {
           >
             {t("EventPage.create.cancel")}
           </Button>
-          <SubmitButton loading={loading} entityId={id} />;
+          <SubmitButton loading={loading} entityId={id} />
         </div>
       </form>
     </div>

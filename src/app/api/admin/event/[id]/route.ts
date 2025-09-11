@@ -40,7 +40,7 @@ export async function DELETE(
   context: { params: Promise<{ id: string }> }
 ) {
   const { id } = await context.params;
-  const event = await prisma.event.delete({
+  const event = await prisma.event.findUnique({
     where: { id },
   });
 
@@ -57,6 +57,28 @@ export async function DELETE(
         eventId: id,
       },
     });
+
+    await prisma.guestGroup.deleteMany({
+      where: {
+        group: {
+          eventId: id,
+        },
+      },
+    })
+    await prisma.guestTag.deleteMany({
+      where: {
+        tag: {
+          eventId: id,
+        },
+      },
+    })
+
+    await  prisma.guest.deleteMany({
+      where: {
+        eventId: id,
+      },
+    })
+
     //delete event schedules
     await prisma.schedule.deleteMany({
       where: {
@@ -74,6 +96,11 @@ export async function DELETE(
       where: {
         eventId: id,
       },
+    });
+
+    //delete event
+    await prisma.event.delete({
+      where: { id },
     });
 
     return NextResponse.json(event, { status: 200 });
