@@ -102,7 +102,34 @@
   },
   "component": {
     "password": "លេខសម្ងាត់",
-    "enter_password": "បញ្ចូលលេខសម្ងាត់"
+    "enter_password": "បញ្ចូលលេខសម្ងាត់",
+    "button": {
+      "saving": "កំពុងរក្សាទុក...",
+      "saveChanges": "រក្សាទុកការផ្លាស់ប្ដូរ",
+      "create": "បង្កើតថ្មី"
+    },
+    "table": {
+      "asc": "តូចទៅធំ",
+      "desc": "ធំទៅតូច",
+      "hide": "លាក់",
+      "no_results": "រកមិនឃើញលទ្ធផល",
+      "selected_count": "បានជ្រើស {{count}}",
+      "clear_filters": "សំអាត",
+      "total": "សរុប",
+      "records": "កំណត់ត្រា",
+      "rows_per_page": "ទិន្នន័យក្នុងមួយទំព័រ",
+      "page": "ទំព័រ",
+      "of": "នៃ",
+      "first_page": "ទៅទំព័រដំបូង",
+      "prev_page": "ទៅទំព័រមុន",
+      "next_page": "ទៅទំព័របន្ទាប់",
+      "last_page": "ទៅទំព័រចុងក្រោយ",
+      "open_menu": "បើកម៉ឺនុយ",
+      "search_placeholder": "ស្វែងរក ...",
+      "reset": "សម្អាត",
+      "view": "មើល",
+      "toggle_columns": "បិទបង្ហាញជួរ"
+    }
   },
 
   "forgot_password": {
@@ -200,6 +227,145 @@
       "cancel": "បោះបង់",
       "submit": "បង្កើត",
       "update": "កែប្រែ"
+    },
+    "message": {
+      "createSuccess": "បង្កើតព្រឹត្តិការណ៍ដោយជោគជ័យ",
+      "createError": "បង្កើតព្រឹត្តិការណ៍មិនបានសម្រេច",
+      "updateSuccess": "ធ្វើបច្ចុប្បន្នភាពព្រឹត្តិការណ៍ដោយជោគជ័យ",
+      "updateError": "ធ្វើបច្ចុប្បន្នភាពព្រឹត្តិការណ៍មិនបានសម្រេច",
+      "getError": "មិនអាចទាញយកព្រឹត្តិការណ៍បានទេ"
+    }
+  },
+  "event_dashboard": {
+    "tab": {
+      "dashboard": "ផ្ទាំងគ្រប់គ្រង",
+      "guest": "ភ្ញៀវ",
+      "expense": "ចំណាយ",
+      "wedding_gift": "អំណោយ",
+      "invite_template": "គំរូការអញ្ជើញ",
+      "add_template": "បន្ថែមគំរូ"
+    },
+
+    "title": "ផ្ទាំងគ្រប់គ្រងមង្គលការ",
+    "cards": {
+      "total_guests": "ភ្ញៀវសរុប",
+      "confirmed": "បានបញ្ជាក់",
+      "gift_income": "ប្រាក់អំណោយ",
+      "total_expenses_actual": "ចំណាយសរុប (ពិតប្រាកដ)",
+      "total_expenses_budget": "ចំណាយសរុប (ថវិកា)"
+    },
+    "charts": {
+      "guest_status": {
+        "title": "ការបែងចែកស្ថានភាពភ្ញៀវ",
+        "description": "ការឆ្លើយតប RSVP",
+        "confirmed": "បានបញ្ជាក់",
+        "pending": "កំពុងរងចាំ",
+        "declined": "បានបដិសេធ"
+      },
+      "financial_overview": {
+        "title": "ទិដ្ឋភាពហិរញ្ញវត្ថុ",
+        "description": "ប្រាក់ចំណូល និងចំណាយ",
+        "amount": "ចំនួន ($)"
+      },
+      "expense_categories": {
+        "title": "ប្រភេទចំណាយ",
+        "description": "ការបែងចែកចំណាយតាមប្រភេទ"
+      }
+    },
+    "financial_summary": {
+      "title": "ទិដ្ឋភាពហិរញ្ញវត្ថុ",
+      "gift_income": "ប្រាក់អំណោយ",
+      "total_expenses_actual": "ចំណាយសរុប (ពិតប្រាកដ)",
+      "net_amount": "ប្រាក់សុទ្ធ"
+    },
+    "guest_summary": {
+      "title": "ស្ថានភាពភ្ញៀវ",
+      "confirmed": "បានបញ្ជាក់",
+      "pending": "កំពុងរងចាំ",
+      "declined": "បានបដិសេធ",
+      "gifts_received": "អំណោយដែលទទួលបាន"
+    },
+    "guest": {
+      "title": "ការគ្រប់គ្រងភ្ញៀវ",
+      "table": {
+        "image": "រូបភាព",
+        "name": "ឈ្មោះ",
+        "phone": "លេខទូរស័ព្ទ",
+        "address": "អាសយដ្ឋាន",
+        "groups": "ក្រុម",
+        "tags": "ស្លាក",
+        "status": "ស្ថានភាព",
+        "invite": "អញ្ជើញ",
+        "invited": "បានអញ្ជើញ",
+        "invite_link": "តំណអញ្ជើញ",
+        "copy_to_clipboard": "ចម្លងទៅក្ដារតម្បៀតខ្ទាស់",
+        "copied": "បានចម្លង!",
+        "link_copied": "តំណត្រូវបានចម្លងទៅក្ដារតម្បៀតខ្ទាស់!",
+        "edit_guest": "កែសម្រួលភ្ញៀវ",
+        "delete_title": "លុបភ្ញៀវនេះ?",
+        "delete_description": "នេះនឹងលុបភ្ញៀវចេញជាអចិន្ត្រៃយ៍។",
+        "toast": {
+          "delete_success": "លុបភ្ញៀវដោយជោគជ័យ",
+          "delete_error": "មានបញ្ហាក្នុងការលុបភ្ញៀវ",
+          "invite_success": "អញ្ជើញភ្ញៀវដោយជោគជ័យ",
+          "invite_error": "មានបញ្ហាក្នុងការអញ្ជើញភ្ញៀវ"
+        },
+        "select_all": "ជ្រើសរើសទាំងអស់",
+        "select_row": "ជ្រើសរើសជួរដេក",
+        "actions": "សម្មកភាព"
+      }
+    }
+  },
+  "guest_form": {
+    "create_edit": {
+      "add_new": "បន្ថែមថ្មី",
+      "edit_guest": "កែសម្រួលភ្ញៀវ",
+      "add_new_guest": "បន្ថែមភ្ញៀវថ្មី",
+      "fill_guest_details": "បំពេញព័ត៌មានលម្អិតរបស់ភ្ញៀវនៅខាងក្រោម",
+      "photo": "រូបថត",
+      "name": "ឈ្មោះ",
+      "name_placeholder": "បញ្ចូលឈ្មោះ",
+      "phone": "ទូរស័ព្ទ",
+      "phone_placeholder": "បញ្ចូលលេខទូរស័ព្ទ",
+      "note": "កំណត់សំគាល់",
+      "note_placeholder": "បញ្ចូលកំណត់សំគាល់",
+      "address": "អាសយដ្ឋាន",
+      "address_placeholder": "បញ្ចូលអាសយដ្ឋាន",
+      "groups": "ក្រុម",
+      "groups_placeholder": "បញ្ចូលក្រុម",
+      "tags": "ស្លាក",
+      "tags_placeholder": "បញ្ចូលស្លាក",
+      "cancel": "បោះបង់",
+      "manage_groups": "គ្រប់គ្រងក្រុម",
+      "add_group": "បន្ថែមក្រុម",
+      "list_of_groups": "បញ្ជីក្រុម",
+      "delete_group_title": "លុបក្រុមនេះ?",
+      "delete_group_description": "នេះនឹងលុបក្រុមនេះឲ្យបាត់ជាអចិន្រ្តៃយ៍",
+      "manage_tags": "គ្រប់គ្រងស្លាក",
+      "name_en": "ឈ្មោះ (អង់គ្លេស)",
+      "name_en_placeholder": "បញ្ចូលឈ្មោះ",
+      "name_kh": "ឈ្មោះ (ខ្មែរ)",
+      "name_kh_placeholder": "បញ្ចូលឈ្មោះ",
+      "add_tag": "បន្ថែមស្លាក",
+      "list_of_tags": "បញ្ជីស្លាក",
+      "total": "សរុប",
+      "delete_tag_title": "លុបស្លាកនេះ?",
+      "delete_tag_description": "នេះនឹងលុបស្លាកនេះជាអចិន្រ្តៃយ៍"
+    }
+  },
+  "expense": {
+    "table": {
+      "select_all": "ជ្រើសរើសទាំងអស់",
+      "select_row": "ជ្រើសរើសជួរដេក",
+      "name": "ឈ្មោះ",
+      "description": "ការពិពណ៌នា",
+      "budget_amount": "ចំនួនថវិកា",
+      "actual_amount": "ចំនួនពិតប្រាកដ",
+      "actions": "សកម្មភាព",
+      "delete_title": "លុបចំណាយនេះ?",
+      "delete_description": "នេះនឹងលុបចំណាយនេះចោលដោយបចេក",
+      "delete_success": "លុបចំណាយដោយជោគជ័យ",
+      "delete_error": "មានបញ្ហាក្នុងការលុបចំណាយ"
     }
   }
 }

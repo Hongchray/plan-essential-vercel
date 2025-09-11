@@ -38,31 +38,34 @@ const formSchema = z.object({
 
 type FormData = z.infer<typeof formSchema>;
 
-async function createTemplate(data: FormData) {
+// ✅ Helper functions now take `t` as argument
+async function createEvent(data: FormData, t: any) {
   const res = await fetch("/api/admin/event", {
     method: "POST",
     body: JSON.stringify(data),
   });
   if (res.ok) {
-    toast.success("Create Event successfully");
+    toast.success(t("EventPage.message.createSuccess"));
   } else {
-    toast.error("Error create template");
+    toast.error(t("EventPage.message.createError"));
   }
   return res;
 }
-async function updateTemplate(id: string, data: FormData) {
+
+async function updateEvent(id: string, data: FormData, t: any) {
   const res = await fetch(`/api/admin/event/${id}`, {
     method: "PUT",
     body: JSON.stringify(data),
   });
   if (res.ok) {
-    toast.success("Update Template successfully");
+    toast.success(t("EventPage.message.updateSuccess"));
   } else {
-    toast.error("Error update template");
+    toast.error(t("EventPage.message.updateError"));
   }
   return res;
 }
-async function getEditTemplate(id: string) {
+
+async function getEditEvent(id: string, t: any) {
   const res = await fetch(`/api/admin/event/${id}`, {
     method: "GET",
     headers: {
@@ -72,13 +75,15 @@ async function getEditTemplate(id: string) {
   if (res.ok) {
     return res.json();
   } else {
-    toast.error("Error get template");
+    toast.error(t("EventPage.message.getError"));
   }
 }
 
 export function CreateEditForm({ id }: { id?: string }) {
   const { setOverlayLoading } = useLoading();
   const router = useRouter();
+  const { t } = useTranslation("common"); // ✅ use hook inside component
+
   const form = useForm<FormData>({
     resolver: zodResolver(formSchema),
     defaultValues: {
@@ -98,22 +103,22 @@ export function CreateEditForm({ id }: { id?: string }) {
       groom: "",
     },
   });
+
   useEffect(() => {
     const fetchTemplate = async () => {
       if (!id) return;
       setOverlayLoading(true);
 
-      const res = await getEditTemplate(id);
+      const res = await getEditEvent(id, t); // ✅ pass t
       if (res) {
         form.reset(res);
         setOverlayLoading(false);
       }
     };
     fetchTemplate();
-  }, [id, form]);
-  const [loading, setLoading] = useState(false);
-  const { t } = useTranslation("common");
+  }, [id, form, setOverlayLoading, t]);
 
+  const [loading, setLoading] = useState(false);
   const [mounted, setMounted] = useState(false);
 
   useEffect(() => {
@@ -125,17 +130,16 @@ export function CreateEditForm({ id }: { id?: string }) {
   const onSubmit = async (data: FormData) => {
     setLoading(true);
     if (id) {
-      const response = await updateTemplate(id, data);
+      const response = await updateEvent(id, data, t); // ✅ pass t
       if (response.ok) {
         const json = await response.json();
         router.push(`/event/edit/${json?.id}`);
       }
     } else {
-      const response = await createTemplate(data);
+      const response = await createEvent(data, t); // ✅ pass t
       if (response.ok) {
         const json = await response.json();
         form.reset();
-        toast.success("Create Event successfully");
         router.push(`/event/edit/${json?.id}`);
       }
     }
@@ -253,7 +257,7 @@ export function CreateEditForm({ id }: { id?: string }) {
           >
             {t("EventPage.create.cancel")}
           </Button>
-          <SubmitButton loading={loading} entityId={id} />;
+          <SubmitButton loading={loading} entityId={id} />
         </div>
       </form>
     </div>

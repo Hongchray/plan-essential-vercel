@@ -1,6 +1,6 @@
 "use client";
 import { useEffect, useState } from "react";
-import { columns } from "./expense-table/columns";
+import { useExpenseColumns } from "./expense-table/columns";
 import { DataTable } from "./expense-table/data-table";
 import { IAPIResponse } from "@/interfaces/comon/api-response";
 import { Expense } from "@/interfaces/expense";
@@ -34,6 +34,7 @@ export default function TabExpense({
   const [data, setData] = useState<Expense[]>([]);
   const [meta, setMeta] = useState({ total: 0, pageCount: 1 });
   const [loading, setLoading] = useState(true);
+  const columns = useExpenseColumns();
 
   useEffect(() => {
     async function fetchData() {

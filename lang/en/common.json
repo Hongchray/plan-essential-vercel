@@ -104,7 +104,34 @@
 
   "component": {
     "password": "Password",
-    "enter_password": "Enter password"
+    "enter_password": "Enter password",
+    "button": {
+      "saving": "Saving...",
+      "saveChanges": "Save Changes",
+      "create": "Create"
+    },
+    "table": {
+      "asc": "Asc",
+      "desc": "Desc",
+      "hide": "Hide",
+      "no_results": "No results found.",
+      "selected_count": "{{count}} selected",
+      "clear_filters": "Clear filters",
+      "total": "Total",
+      "records": "records",
+      "rows_per_page": "Rows per page",
+      "page": "Page",
+      "of": "of",
+      "first_page": "Go to first page",
+      "prev_page": "Go to previous page",
+      "next_page": "Go to next page",
+      "last_page": "Go to last page",
+      "open_menu": "Open menu",
+      "search_placeholder": "Search ...",
+      "reset": "Reset",
+      "view": "View",
+      "toggle_columns": "Toggle columns"
+    }
   },
 
   "forgot_password": {
@@ -163,6 +190,7 @@
     "eventDate": "Event Date",
     "eventLocation": "Event Location"
   },
+
   "EventPage": {
     "welcomeTitle": "Welcome! We're glad to have you here.",
     "welcomeSubtitle": "Explore your events below or create a new one to get started.",
@@ -201,6 +229,146 @@
       "cancel": "Cancel",
       "submit": "Create",
       "update": "Update"
+    },
+    "message": {
+      "createSuccess": "Event created successfully",
+      "createError": "Failed to create event",
+      "updateSuccess": "Event updated successfully",
+      "updateError": "Failed to update event",
+      "getError": "Failed to load event"
+    }
+  },
+
+  "event_dashboard": {
+    "tab": {
+      "dashboard": "Dashboard",
+      "guest": "Guests",
+      "expense": "Expenses",
+      "wedding_gift": "Wedding Gift",
+      "invite_template": "Invite's Template",
+      "add_template": "Add Template"
+    },
+    "title": "Wedding Dashboard",
+    "cards": {
+      "total_guests": "Total Guests",
+      "confirmed": "Confirmed",
+      "gift_income": "Gift Income",
+      "total_expenses_actual": "Total Expenses Actual",
+      "total_expenses_budget": "Total Expenses Budget"
+    },
+    "charts": {
+      "guest_status": {
+        "title": "Guest Status Distribution",
+        "description": "RSVP responses breakdown",
+        "confirmed": "Confirmed",
+        "pending": "Pending",
+        "declined": "Declined"
+      },
+      "financial_overview": {
+        "title": "Financial Overview",
+        "description": "Income vs expenses breakdown",
+        "amount": "Amount ($)"
+      },
+      "expense_categories": {
+        "title": "Expense Categories",
+        "description": "Spending breakdown by category"
+      }
+    },
+    "financial_summary": {
+      "title": "Financial Overview",
+      "gift_income": "Gift Income",
+      "total_expenses_actual": "Total Expenses (Actual)",
+      "net_amount": "Net Amount"
+    },
+    "guest_summary": {
+      "title": "Guest Status",
+      "confirmed": "Confirmed",
+      "pending": "Pending",
+      "declined": "Declined",
+      "gifts_received": "Gifts Received"
+    },
+    "guest": {
+      "title": "Guest Management",
+      "table": {
+        "image": "Image",
+        "name": "Name",
+        "phone": "Phone",
+        "address": "Address",
+        "groups": "Groups",
+        "tags": "Tags",
+        "status": "Status",
+        "invite": "Invite",
+        "invited": "Invited",
+        "invite_link": "Invite link",
+        "copy_to_clipboard": "Copy to clipboard",
+        "copied": "Copied!",
+        "link_copied": "Link copied to clipboard!",
+        "edit_guest": "Edit guest",
+        "delete_title": "Delete this guest?",
+        "delete_description": "This will permanently remove the guest.",
+        "toast": {
+          "delete_success": "Delete guest successfully",
+          "delete_error": "Error deleting guest",
+          "invite_success": "Invite guest successfully",
+          "invite_error": "Error inviting guest"
+        },
+        "select_all": "Select all",
+        "select_row": "Select row",
+        "actions": "Actions"
+      }
+    }
+  },
+  "guest_form": {
+    "create_edit": {
+      "add_new": "Add New",
+      "edit_guest": "Edit Guest",
+      "add_new_guest": "Add New Guest",
+      "fill_guest_details": "Fill in guest details below",
+      "photo": "Photo",
+      "name": "Name",
+      "name_placeholder": "Enter name",
+      "phone": "Phone",
+      "phone_placeholder": "Enter phone",
+      "note": "Note",
+      "note_placeholder": "Enter note",
+      "address": "Address",
+      "address_placeholder": "Enter address",
+      "groups": "Groups",
+      "groups_placeholder": "Enter groups",
+      "tags": "Tags",
+      "tags_placeholder": "Enter tags",
+      "cancel": "Cancel",
+      "manage_groups": "Manage Groups",
+      "add_group": "Add Group",
+      "list_of_groups": "List of Groups",
+      "delete_group_title": "Delete this group?",
+      "delete_group_description": "This will permanently remove the group",
+      "manage_tags": "Manage Tags",
+      "name_en": "Name (English)",
+      "name_en_placeholder": "Enter name",
+      "name_kh": "Name (Khmer)",
+      "name_kh_placeholder": "Enter name",
+      "add_tag": "Add Tag",
+      "list_of_tags": "List of Tags",
+      "total": "Total",
+      "delete_tag_title": "Delete this tag?",
+      "delete_tag_description": "This will permanently remove the tag"
+    }
+  },
+
+  "expense": {
+    "table": {
+      "select_all": "Select all",
+      "select_row": "Select row",
+      "name": "Name",
+      "description": "Description",
+      "budget_amount": "Budget Amount",
+      "actual_amount": "Actual Amount",
+      "actions": "Actions",
+      "delete_title": "Delete this expense?",
+      "delete_description": "This will permanently remove the expense.",
+      "delete_success": "Expense deleted successfully",
+      "delete_error": "Error deleting expense"
     }
   }
 }

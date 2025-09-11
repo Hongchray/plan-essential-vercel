@@ -6,8 +6,9 @@ import TabGift from "@/components/event/show-tabs/gift";
 import TabGuest from "@/components/event/show-tabs/guest";
 import TabTemplate from "@/components/event/show-tabs/template";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import React, { useEffect, useState, use } from "react";
+import React, { useEffect, useState, use, useTransition } from "react";
 import { useRouter } from "next/navigation";
+import { useTranslation } from "react-i18next";
 import {
   Gift,
   LayoutDashboard,
@@ -17,6 +18,7 @@ import {
   Users,
 } from "lucide-react";
 import TabAddTemplate from "@/components/event/show-tabs/add_template";
+import { ClientOnly } from "@/components/composable/ClientOnly";
 interface EventTabsProps {
   eventId: string;
 }
@@ -35,6 +37,7 @@ export default function ShowEvent({
 }) {
   const router = useRouter();
   const [tab, setTab] = useState("dashboard"); // default tab
+  const { t } = useTranslation("common");
 
   const resolvedParams = use(params);
 
@@ -75,16 +78,20 @@ export default function ShowEvent({
                   : "text-muted-foreground"
               }`}
             />
-            <span
-              className={`text-xs transition-all duration-300 ${
-                tab === "dashboard"
-                  ? "text-primary font-medium"
-                  : "text-muted-foreground"
-              }`}
-            >
-              Dashboard
-            </span>
+
+            <ClientOnly>
+              <span
+                className={`text-xs transition-all duration-300 ${
+                  tab === "dashboard"
+                    ? "text-primary font-medium"
+                    : "text-muted-foreground"
+                }`}
+              >
+                {t("event_dashboard.tab.dashboard")}
+              </span>
+            </ClientOnly>
           </TabsTrigger>
+
           <TabsTrigger
             value="guests"
             className="flex flex-col gap-1 py-3 px-2 transition-all duration-300 ease-in-out hover:bg-background/80 data-[state=active]:bg-background data-[state=active]:shadow-sm data-[state=active]:scale-105"
@@ -96,15 +103,17 @@ export default function ShowEvent({
                   : "text-muted-foreground"
               }`}
             />
-            <span
-              className={`text-xs transition-all duration-300 ${
-                tab === "guests"
-                  ? "text-primary font-medium"
-                  : "text-muted-foreground"
-              }`}
-            >
-              Guests
-            </span>
+            <ClientOnly>
+              <span
+                className={`text-xs transition-all duration-300 ${
+                  tab === "guests"
+                    ? "text-primary font-medium"
+                    : "text-muted-foreground"
+                }`}
+              >
+                {t("event_dashboard.tab.guest")}
+              </span>
+            </ClientOnly>
           </TabsTrigger>
           <TabsTrigger
             value="expense"
@@ -117,15 +126,18 @@ export default function ShowEvent({
                   : "text-muted-foreground"
               }`}
             />
-            <span
-              className={`text-xs transition-all duration-300 ${
-                tab === "expense"
-                  ? "text-primary font-medium"
-                  : "text-muted-foreground"
-              }`}
-            >
-              Expense
-            </span>
+
+            <ClientOnly>
+              <span
+                className={`text-xs transition-all duration-300 ${
+                  tab === "expense"
+                    ? "text-primary font-medium"
+                    : "text-muted-foreground"
+                }`}
+              >
+                {t("event_dashboard.tab.expense")}
+              </span>
+            </ClientOnly>
           </TabsTrigger>
           <TabsTrigger
             value="gifts"
@@ -138,15 +150,17 @@ export default function ShowEvent({
                   : "text-muted-foreground"
               }`}
             />
-            <span
-              className={`text-xs transition-all duration-300 ${
-                tab === "gifts"
-                  ? "text-primary font-medium"
-                  : "text-muted-foreground"
-              }`}
-            >
-              Wedding Gifts
-            </span>
+            <ClientOnly>
+              <span
+                className={`text-xs transition-all duration-300 ${
+                  tab === "gifts"
+                    ? "text-primary font-medium"
+                    : "text-muted-foreground"
+                }`}
+              >
+                {t("event_dashboard.tab.wedding_gift")}
+              </span>
+            </ClientOnly>
           </TabsTrigger>
           <TabsTrigger
             value="template"
@@ -159,15 +173,17 @@ export default function ShowEvent({
                   : "text-muted-foreground"
               }`}
             />
-            <span
-              className={`text-xs transition-all duration-300 ${
-                tab === "template"
-                  ? "text-primary font-medium"
-                  : "text-muted-foreground"
-              }`}
-            >
-              Invite's Template
-            </span>
+            <ClientOnly>
+              <span
+                className={`text-xs transition-all duration-300 ${
+                  tab === "template"
+                    ? "text-primary font-medium"
+                    : "text-muted-foreground"
+                }`}
+              >
+                {t("event_dashboard.tab.invite_template")}
+              </span>
+            </ClientOnly>
           </TabsTrigger>
           <TabsTrigger
             value="addTemplate"
@@ -180,15 +196,17 @@ export default function ShowEvent({
                   : "text-muted-foreground"
               }`}
             />
-            <span
-              className={`text-xs transition-all duration-300 ${
-                tab === "addTemplate"
-                  ? "text-primary font-medium"
-                  : "text-muted-foreground"
-              }`}
-            >
-              Add Template
-            </span>
+            <ClientOnly>
+              <span
+                className={`text-xs transition-all duration-300 ${
+                  tab === "addTemplate"
+                    ? "text-primary font-medium"
+                    : "text-muted-foreground"
+                }`}
+              >
+                {t("event_dashboard.tab.add_template")}
+              </span>
+            </ClientOnly>
           </TabsTrigger>
         </TabsList>
         <TabsContent value="dashboard">

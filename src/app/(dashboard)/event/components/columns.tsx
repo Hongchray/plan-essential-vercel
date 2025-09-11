@@ -34,6 +34,11 @@ const ActionsCell = ({ row }: { row: any }) => {
 
   return (
     <div className="flex gap-2 items-end justify-end">
+      <Link href={`/event/${row.original.id}`}>
+        <Button size="icon" variant="outline">
+          <EyeIcon />
+        </Button>
+      </Link>
       <Link href={`/event/edit/${row.original.id}`}>
         <Button size="icon" variant="outline">
           <EditIcon />
@@ -119,7 +124,7 @@ export const columns: ColumnDef<Event>[] = [
       return (
         <div className="flex gap-2">
           <span className="max-w-[200px] truncate font-medium">
-            {formatDateCustom(row.getValue("startTime"), "DD/MM/YYYY") }
+            {formatDateCustom(row.getValue("startTime"), "DD/MM/YYYY")}
           </span>
         </div>
       );
@@ -164,7 +169,11 @@ export const columns: ColumnDef<Event>[] = [
       return (
         <div className="flex gap-2">
           <span className="max-w-[200px] truncate font-medium">
-            <Badge variant={row.getValue("status") === "active" ? "default" : "outline"}>
+            <Badge
+              variant={
+                row.getValue("status") === "active" ? "default" : "outline"
+              }
+            >
               <span className="capitalize">{row.getValue("status")}</span>
             </Badge>
           </span>

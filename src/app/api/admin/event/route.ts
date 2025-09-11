@@ -6,12 +6,16 @@ import { getServerSession } from "next-auth"; // if using NextAuth
 import { authOptions } from "@/lib/authOptions"; // your auth config
 export async function POST(req: Request) {
   const data = await req.json();
-  //get user id
-  const user = await prisma.user.findFirst();
+  const session = await getServerSession(authOptions);
+
+  if (!session?.user) {
+    throw new Error("Not authenticated");
+  }
+
   const event = await prisma.event.create({
     data: {
       ...data,
-      userId: user?.id,
+      userId: session.user.id,
     },
   });
 

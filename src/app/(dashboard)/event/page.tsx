@@ -8,7 +8,7 @@ import { getServerSession } from "next-auth";
 import { authOptions } from "@/lib/authOptions";
 import EventUserView from "./components/event-user-view";
 import { Suspense } from "react";
-
+import { Loading } from "@/components/composable/loading/loading";
 async function getCurrentUser() {
   const session = await getServerSession(authOptions);
 
@@ -107,9 +107,19 @@ export default async function EventPage({
         />
       ) : (
         <div>
-          <Suspense fallback={<div>Loading...</div>}>
-            <EventUserView data={data} />
-          </Suspense>
+          {data === null ? (
+            <div className="flex items-center justify-center">
+              <Loading variant="circle" size="lg" />
+            </div>
+          ) : data ? (
+            <Suspense>
+              <EventUserView data={data} />
+            </Suspense>
+          ) : (
+            <div className="text-center text-gray-500 p-4">
+              No event data available
+            </div>
+          )}
         </div>
       )}
     </div>
