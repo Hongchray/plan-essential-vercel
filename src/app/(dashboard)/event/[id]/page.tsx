@@ -8,7 +8,15 @@ import TabTemplate from "@/components/event/show-tabs/template";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import React, { useEffect, useState, use } from "react";
 import { useRouter } from "next/navigation";
-import { Gift, LayoutDashboard, Mail, Receipt, Users } from "lucide-react";
+import {
+  Gift,
+  LayoutDashboard,
+  Mail,
+  PlusIcon,
+  Receipt,
+  Users,
+} from "lucide-react";
+import TabAddTemplate from "@/components/event/show-tabs/add_template";
 interface EventTabsProps {
   eventId: string;
 }
@@ -29,7 +37,6 @@ export default function ShowEvent({
   const [tab, setTab] = useState("dashboard"); // default tab
 
   const resolvedParams = use(params);
-  const resolvedSearchParams = use(searchParams);
 
   const eventId = resolvedParams.id;
 
@@ -162,6 +169,27 @@ export default function ShowEvent({
               Invite's Template
             </span>
           </TabsTrigger>
+          <TabsTrigger
+            value="addTemplate"
+            className="flex flex-col gap-1 py-3 px-2 transition-all duration-300 ease-in-out hover:bg-background/80 data-[state=active]:bg-background data-[state=active]:shadow-sm data-[state=active]:scale-105"
+          >
+            <PlusIcon
+              className={`h-4 w-4 transition-all duration-300 ${
+                tab === "addTemplate"
+                  ? "text-primary scale-110"
+                  : "text-muted-foreground"
+              }`}
+            />
+            <span
+              className={`text-xs transition-all duration-300 ${
+                tab === "addTemplate"
+                  ? "text-primary font-medium"
+                  : "text-muted-foreground"
+              }`}
+            >
+              Add Template
+            </span>
+          </TabsTrigger>
         </TabsList>
         <TabsContent value="dashboard">
           <div>
@@ -185,7 +213,12 @@ export default function ShowEvent({
         </TabsContent>
         <TabsContent value="template">
           <div>
-            <TabTemplate  paramId={eventId} />
+            <TabTemplate paramId={eventId} />
+          </div>
+        </TabsContent>
+        <TabsContent value="addTemplate">
+          <div>
+            <TabAddTemplate />
           </div>
         </TabsContent>
       </Tabs>

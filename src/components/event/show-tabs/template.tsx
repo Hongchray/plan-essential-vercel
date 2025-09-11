@@ -4,20 +4,21 @@ import {
   ResizableHandle,
   ResizablePanel,
   ResizablePanelGroup,
-} from "@/components/ui/resizable"
+} from "@/components/ui/resizable";
+import Image from "next/image";
 import { Button } from "@/components/ui/button";
 import { toast } from "sonner";
 import dynamic from "next/dynamic";
 import { Event } from "@/interfaces/event";
+import { Maximize2, Minimize2, X } from "lucide-react";
 import {
   Select,
   SelectContent,
   SelectItem,
   SelectTrigger,
   SelectValue,
-} from "@/components/ui/select"
-import { Maximize2, Minimize2, X } from "lucide-react";
-
+} from "@/components/ui/select";
+import { Loading } from "@/components/composable/loading/loading";
 // Dynamic templates
 const PreviewComponents = {
   WeddingSimpleTemplate: dynamic(() => import("@/components/template/wedding/simple-template"), {
@@ -74,7 +75,8 @@ async function getEvent(id: string) {
   }
 }
 
-export default function TabTemplate({paramId}: {paramId: string}) {
+export default function TabTemplate({ paramId }: { paramId: string }) {
+  // This is the main state that both editor and preview will use
   const [config, setConfig] = useState<any>({});
   const [template, setTemplate] = useState<any>(null);
   const [isLoading, setIsLoading] = useState(true);
@@ -86,13 +88,12 @@ export default function TabTemplate({paramId}: {paramId: string}) {
   // Fetch template once and initialize config
   useEffect(() => {
     if (!paramId) return;
-    
+
     setIsLoading(true);
-    getEvent(paramId).then((data)=>{
-      if(data){
-        setEvent(data);
+    getEvent(paramId).then((data) => {
+      if (data) {
       }
-    })
+    });
     getPreviewTemplate(paramId).then((data) => {
       if (data) {
         setEventTemplate(data);
@@ -105,7 +106,9 @@ export default function TabTemplate({paramId}: {paramId: string}) {
 
   // Handle template switching
   const handleTemplateSwitch = (templateId: string) => {
-    const selectedTemplate = eventTemplate.find((item) => item.id === templateId);
+    const selectedTemplate = eventTemplate.find(
+      (item) => item.id === templateId
+    );
     if (selectedTemplate) {
       setTemplate(selectedTemplate);
       setConfig(selectedTemplate.config || {});
@@ -116,27 +119,30 @@ export default function TabTemplate({paramId}: {paramId: string}) {
   // Save configuration
   const handleSave = async () => {
     if (!template?.id) return;
-    
+
     setIsSaving(true);
     try {
-      const response = await fetch(`/api/admin/event/${paramId}/template/${template.id}`, {
-        method: 'PUT',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-          config: config
-        }),
-      });
+      const response = await fetch(
+        `/api/admin/event/${paramId}/template/${template.id}`,
+        {
+          method: "PUT",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            config: config,
+          }),
+        }
+      );
 
       if (!response.ok) {
-        throw new Error('Failed to save');
+        throw new Error("Failed to save");
       }
 
       toast.success("Template saved successfully!");
     } catch (error) {
       toast.error("Failed to save template");
-      console.error('Save error:', error);
+      console.error("Save error:", error);
     } finally {
       setIsSaving(false);
     }
@@ -145,7 +151,7 @@ export default function TabTemplate({paramId}: {paramId: string}) {
   // Reset to default configuration
   const handleResetDefault = async () => {
     if (!template?.id) return;
-    
+
     try {
       // You might want to fetch the default config from your API
       // For now, let's reset to an empty config
@@ -154,7 +160,7 @@ export default function TabTemplate({paramId}: {paramId: string}) {
       toast.success("Reset to default configuration");
     } catch (error) {
       toast.error("Failed to reset to default");
-      console.error('Reset error:', error);
+      console.error("Reset error:", error);
     }
   };
 
@@ -166,21 +172,21 @@ export default function TabTemplate({paramId}: {paramId: string}) {
   // Handle escape key to exit fullscreen
   useEffect(() => {
     const handleEscapeKey = (event: KeyboardEvent) => {
-      if (event.key === 'Escape' && isFullscreenEditor) {
+      if (event.key === "Escape" && isFullscreenEditor) {
         setIsFullscreenEditor(false);
       }
     };
 
     if (isFullscreenEditor) {
-      document.addEventListener('keydown', handleEscapeKey);
-      document.body.style.overflow = 'hidden';
+      document.addEventListener("keydown", handleEscapeKey);
+      document.body.style.overflow = "hidden";
     } else {
-      document.body.style.overflow = 'unset';
+      document.body.style.overflow = "unset";
     }
 
     return () => {
-      document.removeEventListener('keydown', handleEscapeKey);
-      document.body.style.overflow = 'unset';
+      document.removeEventListener("keydown", handleEscapeKey);
+      document.body.style.overflow = "unset";
     };
   }, [isFullscreenEditor]);
 
@@ -197,7 +203,11 @@ export default function TabTemplate({paramId}: {paramId: string}) {
   }, [config, template?.id]);
 
   if (isLoading) {
-    return <LoadingScreen />;
+    return (
+      <div className="flex items-center justify-center ">
+        <Loading variant="circle" size="lg" />
+      </div>
+    );
   }
 
   if (!template) {
@@ -346,10 +356,7 @@ export default function TabTemplate({paramId}: {paramId: string}) {
     <div className="space-y-6">
       <h3 className="text-lg font-semibold mb-4">My Templates</h3>
       <div>
-        <Select 
-          value={template.id} 
-          onValueChange={handleTemplateSwitch}
-        >
+        <Select value={template.id} onValueChange={handleTemplateSwitch}>
           <SelectTrigger className="w-[280px] border-dashed border-2">
             <SelectValue placeholder="Select a template" />
           </SelectTrigger>
@@ -385,10 +392,7 @@ export default function TabTemplate({paramId}: {paramId: string}) {
             </div>
             <div className="px-4 py-6 h-[calc(100%-50px)] overflow-y-auto bg-gray-50">
               {EditorToRender && config !== undefined ? (
-                <EditorToRender
-                  config={config}
-                  setConfig={setConfig}
-                />
+                <EditorToRender config={config} setConfig={setConfig} />
               ) : (
                 <div className="text-center text-gray-500 mt-8">
                   <p>Editor not available for this template</p>
@@ -399,9 +403,9 @@ export default function TabTemplate({paramId}: {paramId: string}) {
               )}
             </div>
           </ResizablePanel>
-          
+
           <ResizableHandle withHandle />
-          
+
           {/* Preview Panel */}
           <ResizablePanel defaultSize={70} minSize={40}>
             <div className="p-2 border-b shadow h-[50px] flex items-center justify-between bg-white">
@@ -412,19 +416,15 @@ export default function TabTemplate({paramId}: {paramId: string}) {
                 </span>
 
                 <div className="flex items-center gap-2">
-                  <Button 
-                    size="sm" 
+                  <Button
+                    size="sm"
                     onClick={handleResetDefault}
                     variant="outline"
                     disabled={isSaving}
                   >
                     Reset default
                   </Button>
-                  <Button 
-                    size="sm" 
-                    onClick={handleSave}
-                    disabled={isSaving}
-                  >
+                  <Button size="sm" onClick={handleSave} disabled={isSaving}>
                     {isSaving ? (
                       <div className="flex items-center gap-2">
                         <div className="w-3 h-3 border border-white border-t-transparent rounded-full animate-spin"></div>
@@ -440,10 +440,7 @@ export default function TabTemplate({paramId}: {paramId: string}) {
             <div className="h-[calc(100%-50px)] overflow-y-auto">
               <div className="bg-gradient-to-br from-red-50 to-yellow-50 min-h-full">
                 {ComponentToRender && config !== undefined ? (
-                  <ComponentToRender
-                    config={config}
-                    data={event}
-                  />
+                  <ComponentToRender config={config} data={event} />
                 ) : (
                   <div className="flex items-center justify-center h-full">
                     <p className="text-gray-500">Preview not available</p>
@@ -462,9 +459,7 @@ export default function TabTemplate({paramId}: {paramId: string}) {
         <div>
           Template: {template.template?.unique_name} | ID: {template.id}
         </div>
-        <div>
-          Last modified: {new Date().toLocaleTimeString()}
-        </div>
+        <div>Last modified: {new Date().toLocaleTimeString()}</div>
       </div>
     </div>
   );

@@ -113,6 +113,8 @@ model EventTemplate {
   config    Json?
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
+
+  @@unique([eventId, templateId])
 }
 
 model Guest {

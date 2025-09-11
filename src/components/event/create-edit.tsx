@@ -14,6 +14,7 @@ import { useLoading } from "@/hooks/LoadingContext";
 import { TextareaField } from "../composable/input/input-textarea-text-field";
 import { DatePickerField } from "../composable/date/date-picker";
 import ImageUpload from "../composable/upload/upload-image";
+import { useTranslation } from "next-i18next";
 
 const formSchema = z.object({
   name: z
@@ -111,6 +112,15 @@ export function CreateEditForm({ id }: { id?: string }) {
     fetchTemplate();
   }, [id, form]);
   const [loading, setLoading] = useState(false);
+  const { t } = useTranslation("common");
+
+  const [mounted, setMounted] = useState(false);
+
+  useEffect(() => {
+    setMounted(true);
+  }, []);
+
+  if (!mounted) return null;
 
   const onSubmit = async (data: FormData) => {
     setLoading(true);
@@ -132,16 +142,16 @@ export function CreateEditForm({ id }: { id?: string }) {
     setLoading(false);
   };
   return (
-    <div className="p-6 border rounded-md  bg-white  mx-auto">
+    <div className="p-6 border rounded-md bg-white mx-auto">
       <div>
         <h2 className="text-xl font-bold pb-2">
-          {id ? "Edit" : "Create"} Event
+          {id ? t("EventPage.create.edit") : t("EventPage.create.title")}
         </h2>
       </div>
       <form onSubmit={form.handleSubmit(onSubmit)}>
         <div>
           <ImageUpload
-            label="Cover Image (1920x1080)"
+            label={t("EventPage.create.coverImage")}
             folder="/event/cover"
             {...form.register("image")}
             value={form.watch("image")}
@@ -149,17 +159,17 @@ export function CreateEditForm({ id }: { id?: string }) {
         </div>
         <div className="grid grid-cols-2 gap-2">
           <InputTextField
-            label="Name"
+            label={t("EventPage.create.name")}
             name="name"
-            placeholder="រៀបអាពាហ៍ពិពាហ៍ សុវណ្ណ.."
+            placeholder={t("EventPage.create.namePlaceholder")}
             form={form}
             disabled={loading}
           />
           {form.getValues("type") != "wedding" && (
             <InputTextField
-              label="Owner"
+              label={t("EventPage.create.owner")}
               name="owner"
-              placeholder="សុុវណ្ណ"
+              placeholder={t("EventPage.create.ownerPlaceholder")}
               form={form}
               disabled={loading}
             />
@@ -167,62 +177,68 @@ export function CreateEditForm({ id }: { id?: string }) {
           {form.getValues("type") === "wedding" && (
             <>
               <InputTextField
-                label="Groom"
+                label={t("EventPage.create.groom")}
                 name="groom"
-                placeholder="សុុវណ្ណ"
+                placeholder={t("EventPage.create.groomPlaceholder")}
                 form={form}
                 disabled={loading}
               />
               <InputTextField
-                label="Bride"
+                label={t("EventPage.create.bride")}
                 name="bride"
-                placeholder="បុប្ផា"
+                placeholder={t("EventPage.create.bridePlaceholder")}
                 form={form}
                 disabled={loading}
               />
             </>
           )}
           <SelectField
-            label="Choose Template Type"
+            label={t("EventPage.create.type")}
             name="type"
-            placeholder="Choose Template Type"
+            placeholder={t("EventPage.create.typePlaceholder")}
             disabled={id != null}
             options={[
-              { label: "Wedding", value: "wedding" },
-              { label: "Housewarming", value: "housewarming" },
-              { label: "Birthday", value: "birthday" },
-              { label: "Anniversary", value: "anniversary" },
+              { label: t("EventPage.create.wedding"), value: "wedding" },
+              {
+                label: t("EventPage.create.housewarming"),
+                value: "housewarming",
+              },
+              { label: t("EventPage.create.birthday"), value: "birthday" },
+              {
+                label: t("EventPage.create.anniversary"),
+                value: "anniversary",
+              },
             ]}
             form={form}
           />
           <TextareaField
-            label="Description"
+            label={t("EventPage.create.description")}
             name="description"
-            placeholder="Enter description"
+            placeholder={t("EventPage.create.descriptionPlaceholder")}
             form={form}
             disabled={loading}
           />
           <TextareaField
-            label="Location"
+            label={t("EventPage.create.location")}
             name="location"
-            placeholder="Enter location"
+            placeholder={t("EventPage.create.locationPlaceholder")}
             form={form}
             disabled={loading}
           />
           <DatePickerField
-            label="Event Date"
+            label={t("EventPage.create.startDate")}
             name="startTime"
-            placeholder="Select event date"
+            placeholder={t("EventPage.create.startDatePlaceholder")}
             form={form}
           />
           <DatePickerField
-            label="End Date"
+            label={t("EventPage.create.endDate")}
             name="endTime"
-            placeholder="Select event date"
+            placeholder={t("EventPage.create.endDatePlaceholder")}
             form={form}
           />
           <SwitchField
-            label="Status"
+            label={t("EventPage.create.status")}
             name="status"
             trueValue="active"
             falseValue="inactive"
@@ -235,9 +251,9 @@ export function CreateEditForm({ id }: { id?: string }) {
             type="button"
             onClick={() => router.push("/event")}
           >
-            Cancel
+            {t("EventPage.create.cancel")}
           </Button>
-          <SubmitButton loading={loading} entityId={id} />
+          <SubmitButton loading={loading} entityId={id} />;
         </div>
       </form>
     </div>

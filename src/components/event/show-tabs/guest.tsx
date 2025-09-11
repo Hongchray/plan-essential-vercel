@@ -59,7 +59,9 @@ export default function TabGuest({
   return (
     <div className="space-y-6">
       {loading ? (
-        <Loading variant="circle" message="Loading guests..." size="lg" />
+        <div className="flex items-center justify-center ">
+          <Loading variant="circle" size="lg" />
+        </div>
       ) : (
         <>
           <h3 className="text-lg font-semibold mb-4">Guest Management</h3>

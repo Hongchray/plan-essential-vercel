@@ -16,15 +16,15 @@ export const Loading = ({
   className,
 }: LoadingProps) => {
   const sizeClasses = {
-    sm: "h-16",
-    md: "h-32",
-    lg: "h-48",
+    sm: "h-6 w-6", // for small loaders (inline/data loading)
+    md: "h-10 w-10", // medium (between inline and full page)
+    lg: "h-16 w-16", // large (page loading)
   };
 
   const iconSizes = {
-    sm: "h-4 w-4",
-    md: "h-5 w-5",
-    lg: "h-8 w-8",
+    sm: "h-6 w-6",
+    md: "h-10 w-10",
+    lg: "h-16 w-16",
   };
 
   if (variant === "minimal") {
@@ -125,25 +125,21 @@ export const Loading = ({
           className
         )}
       >
-        <div className="flex items-center gap-3">
-          <div className="relative">
-            <div
-              className={cn(
-                "rounded-full bg-primary/20 animate-ping",
-                size === "sm"
-                  ? "h-8 w-8"
-                  : size === "md"
-                  ? "h-10 w-10"
-                  : "h-12 w-12"
-              )}
-            />
-            <Loader2
-              className={cn(
-                iconSizes[size],
-                "absolute inset-0 m-auto animate-spin text-primary"
-              )}
-            />
-          </div>
+        <div className="relative flex items-center justify-center">
+          {/* Ping animation background */}
+          <div
+            className={cn(
+              "rounded-full bg-primary/20 animate-ping",
+              iconSizes[size]
+            )}
+          />
+
+          {/* Use GIF instead of video */}
+          <img
+            src="/image-loading.gif"
+            alt="Loading..."
+            className={cn(iconSizes[size], "absolute inset-0 m-auto")}
+          />
         </div>
       </div>
     );

@@ -39,6 +39,7 @@ import {
 } from "lucide-react";
 import { useEffect, useState } from "react";
 import DataLoading from "../composable/loading/dataloading";
+import { Loading } from "../composable/loading/loading";
 import { useTranslation } from "react-i18next";
 
 interface MonthlyData {
@@ -113,9 +114,14 @@ export default function DashboardPage() {
             <Users className="h-4 w-4 text-orange-600" />
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold text-orange-600">
-              {loading ? <DataLoading size="24px" /> : totalUsers ?? 0}
+            <div className="text-2xl font-bold text-orange-600 flex items-center gap-2">
+              {loading ? (
+                <Loading variant="circle" size="sm" />
+              ) : (
+                <span>{totalUsers ?? 0}</span>
+              )}
             </div>
+
             <div className="flex items-center text-xs text-muted-foreground mt-1">
               <TrendingUp className="mr-1 h-3 w-3 text-green-500" />
               <p
@@ -142,7 +148,11 @@ export default function DashboardPage() {
           </CardHeader>
           <CardContent>
             <div className="text-2xl font-bold text-rose-600">
-              {templates === null ? <DataLoading size="24px" /> : templates}
+              {templates === null ? (
+                <Loading variant="circle" size="sm" />
+              ) : (
+                templates
+              )}
             </div>
             <div className="flex items-center text-xs text-muted-foreground mt-1">
               {templates === 0 ? (
@@ -167,7 +177,11 @@ export default function DashboardPage() {
           </CardHeader>
           <CardContent>
             <div className="text-2xl font-bold text-green-600">
-              {events === null ? <DataLoading size="24px" /> : events}
+              {events === null ? (
+                <Loading variant="circle" size="sm" />
+              ) : (
+                events
+              )}
             </div>
             <div className="flex items-center text-xs text-muted-foreground mt-1">
               {events === 0 ? (
@@ -198,7 +212,7 @@ export default function DashboardPage() {
           <CardContent>
             {loading ? (
               <div className="flex justify-center items-center h-[250px]">
-                <DataLoading size="40px" />
+                <Loading variant="circle" size="md" />
               </div>
             ) : (
               <ChartContainer
@@ -242,7 +256,7 @@ export default function DashboardPage() {
           <CardContent>
             {loading ? (
               <div className="flex justify-center items-center h-[250px]">
-                <DataLoading size="40px" />
+                <Loading variant="circle" size="md" />
               </div>
             ) : (
               <ChartContainer
@@ -284,7 +298,7 @@ export default function DashboardPage() {
         <CardContent>
           {loadingEvents ? (
             <div className="flex justify-center py-10">
-              <DataLoading size="40px" />
+              <Loading variant="circle" size="md" />
             </div>
           ) : (
             <div className="rounded-md border">
