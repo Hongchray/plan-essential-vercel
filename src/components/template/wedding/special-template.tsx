@@ -1,10 +1,14 @@
 import { useEffect, useState } from "react";
 import { Event } from "@/interfaces/event";
 export default function SpecialTemplate({ config, data }: { config: any, data: Event }) {
-  const [currentLanguage, setCurrentLanguage] = useState('kh');
+ const [currentLanguage, setCurrentLanguage] = useState('kh');
   const [scrollY, setScrollY] = useState(0);
+  const [isVisible, setIsVisible] = useState(false);
 
   useEffect(() => {
+    // Trigger entrance animations
+    setTimeout(() => setIsVisible(true), 100);
+
     const handleScroll = () => {
       setScrollY(window.scrollY);
     };
@@ -29,8 +33,38 @@ export default function SpecialTemplate({ config, data }: { config: any, data: E
 
   return (
     <div className="relative">
+      {/* Custom Tailwind animations */}
+      <style jsx>{`
+        @keyframes fadeInUp {
+          from { opacity: 0; transform: translateY(30px); }
+          to { opacity: 1; transform: translateY(0); }
+        }
+        @keyframes fadeInDown {
+          from { opacity: 0; transform: translateY(-30px); }
+          to { opacity: 1; transform: translateY(0); }
+        }
+        @keyframes slideInLeft {
+          from { opacity: 0; transform: translateX(-30px); }
+          to { opacity: 1; transform: translateX(0); }
+        }
+        @keyframes slideInRight {
+          from { opacity: 0; transform: translateX(30px); }
+          to { opacity: 1; transform: translateX(0); }
+        }
+        
+        .animate-fadeInUp { animation: fadeInUp 0.8s ease-out forwards; }
+        .animate-fadeInDown { animation: fadeInDown 0.8s ease-out forwards; }
+        .animate-slideInLeft { animation: slideInLeft 0.8s ease-out forwards; }
+        .animate-slideInRight { animation: slideInRight 0.8s ease-out forwards; }
+        
+        .animation-delay-200 { animation-delay: 0.2s; }
+        .animation-delay-400 { animation-delay: 0.4s; }
+        .animation-delay-600 { animation-delay: 0.6s; }
+        .animation-delay-800 { animation-delay: 0.8s; }
+      `}</style>
+
       {/* Language Switch Button - Fixed position */}
-      <div className="fixed top-4 right-4 z-50">
+      <div className={`fixed top-4 right-4 z-50 ${isVisible ? 'animate-fadeInDown animation-delay-800' : 'opacity-0'}`}>
         <button
           onClick={toggleLanguage}
           className="bg-white/90 backdrop-blur-sm border border-gray-200 rounded-lg px-3 py-2 shadow-lg hover:bg-white/95 transition-all duration-200 flex items-center gap-2"
@@ -54,19 +88,22 @@ export default function SpecialTemplate({ config, data }: { config: any, data: E
       </div>
 
       {/* Main Content with Scroll Effects */}
-      <div className="min-h-[200vh]"> {/* Extended height for scroll effect */}
-        <div className="space-y-6 max-w-xl mx-auto">
+      <div className="min-h-[200vh]">
+        <div className="space-y-6 max-w-2xl mx-auto">
           {/* Main Header Card with Parallax */}
           <div 
-            className="relative bg-cover flex flex-col justify-start items-center text-center overflow-hidden w-full h-screen shadow sticky top-0"
+            className="relative bg-cover flex flex-col justify-start items-center text-center  w-full h-[100vh] shadow top-0"
             style={{
               transform: `translateY(${parallaxOffset}px) scale(${scaleEffect})`,
-              opacity: fadeOpacity
+              opacity: fadeOpacity,
+              backgroundImage: 'url(/template/arts/bg-02.jpg)',
+              backgroundSize: 'cover',
+              backgroundPosition: 'center',
             }}
           >
             {/* Top decorative elements */}
             <div 
-              className="flex justify-between w-full transition-all duration-700 ease-out"
+              className={`flex justify-between w-full transition-all duration-700 ease-out ${isVisible ? 'animate-fadeInDown' : 'opacity-0'}`}
               style={{
                 transform: `translateY(${-scrollY * 0.3}px)`,
                 opacity: Math.max(1 - scrollY / 400, 0)
@@ -100,7 +137,7 @@ export default function SpecialTemplate({ config, data }: { config: any, data: E
                 }}
               >
                 <h1 
-                  className="text-3xl font-bold drop-shadow-lg pt-8 transition-all duration-500"
+                  className={`text-3xl font-bold drop-shadow-lg pt-8 transition-all duration-500 ${isVisible ? 'animate-fadeInUp' : 'opacity-0'}`}
                   style={{ 
                     color: '#99762C',
                     fontFamily: 'Great Vibes, Moul, sans-serif',
@@ -119,7 +156,7 @@ export default function SpecialTemplate({ config, data }: { config: any, data: E
                   }}
                 >
                   <div 
-                    className="text-3xl font-semibold drop-shadow-lg transition-transform duration-500 hover:scale-110"
+                    className={`text-6xl font-semibold drop-shadow-lg transition-transform duration-500 hover:scale-110 ${isVisible ? 'animate-slideInLeft animation-delay-200' : 'opacity-0'}`}
                     style={{
                       color: '#99762C',
                       fontFamily: 'Great Vibes, Kantumruy Pro, sans-serif',
@@ -128,7 +165,7 @@ export default function SpecialTemplate({ config, data }: { config: any, data: E
                     {data.groom}
                   </div>
                   <div 
-                    className="text-lg"
+                    className={`text-lg ${isVisible ? 'animate-fadeInUp animation-delay-400' : 'opacity-0'}`}
                     style={{
                       color: '#99762C',
                       fontFamily: 'Great Vibes, Kantumruy Pro, sans-serif',
@@ -139,7 +176,7 @@ export default function SpecialTemplate({ config, data }: { config: any, data: E
                     </span>
                   </div>
                   <div 
-                    className="text-3xl font-semibold drop-shadow-lg transition-transform duration-500 hover:scale-110"
+                    className={`text-6xl font-semibold drop-shadow-lg transition-transform duration-500 hover:scale-110 ${isVisible ? 'animate-slideInRight animation-delay-200' : 'opacity-0'}`}
                     style={{
                       color: '#99762C',
                       fontFamily: 'Great Vibes, Kantumruy Pro, sans-serif',
@@ -160,12 +197,12 @@ export default function SpecialTemplate({ config, data }: { config: any, data: E
               >
                 <img
                   src="/template/groom_bride/IMG_0864.PNG"
-                  className="max-w-[150px] mx-auto transition-all duration-500 hover:scale-105"
+                  className={`max-w-[150px] mx-auto transition-all duration-500 hover:scale-105 ${isVisible ? 'animate-fadeInUp animation-delay-600' : 'opacity-0'}`}
                   alt="Frame 1"
                 />
                 
                 <p 
-                  className="text-lg drop-shadow-lg pt-8 transition-all duration-500"
+                  className={`text-lg drop-shadow-lg pt-8 transition-all duration-500 ${isVisible ? 'animate-fadeInUp animation-delay-800' : 'opacity-0'}`}
                   style={{
                     color: '#99762C',
                     fontFamily: 'Great Vibes, Moul, sans-serif',
@@ -177,7 +214,7 @@ export default function SpecialTemplate({ config, data }: { config: any, data: E
 
                 <img
                   src="/template/arts/frame_name_1.png"
-                  className="h-[40px] mx-auto text-blend-overlay text-[#99762C] transition-all duration-500"
+                  className={`h-[40px] mx-auto text-blend-overlay text-[#99762C] transition-all duration-500 ${isVisible ? 'animate-fadeInUp animation-delay-800' : 'opacity-0'}`}
                   alt="Frame 1"
                   style={{
                     transform: `rotate(${scrollY * 0.1}deg)`
@@ -185,7 +222,7 @@ export default function SpecialTemplate({ config, data }: { config: any, data: E
                 />
 
                 <p 
-                  className="text-base drop-shadow-lg transition-all duration-500"
+                  className={`text-base drop-shadow-lg transition-all duration-500 ${isVisible ? 'animate-fadeInUp animation-delay-800' : 'opacity-0'}`}
                   style={{
                     color: '#99762C',
                     fontFamily: 'Great Vibes, Kantumruy Pro, sans-serif',
@@ -196,7 +233,7 @@ export default function SpecialTemplate({ config, data }: { config: any, data: E
                 </p>
                 
                 <p 
-                  className="text-base drop-shadow-lg transition-all duration-500"
+                  className={`text-base drop-shadow-lg transition-all duration-500 ${isVisible ? 'animate-fadeInUp animation-delay-800' : 'opacity-0'}`}
                   style={{
                     color: '#99762C',
                     fontFamily: 'Great Vibes, Kantumruy Pro, sans-serif',
@@ -210,7 +247,7 @@ export default function SpecialTemplate({ config, data }: { config: any, data: E
 
             {/* Bottom decorative elements */}
             <div 
-              className="flex justify-between w-full transition-all duration-700 ease-out"
+              className={`flex justify-between w-full transition-all duration-700 ease-out ${isVisible ? 'animate-fadeInUp animation-delay-400' : 'opacity-0'}`}
               style={{
                 transform: `translateY(${scrollY * 0.4}px)`,
                 opacity: Math.max(1 - scrollY / 500, 0)
@@ -240,7 +277,7 @@ export default function SpecialTemplate({ config, data }: { config: any, data: E
         >
           <div className="text-center space-y-4 max-w-md mx-auto px-4">
             <div
-              className="transition-all duration-1000 ease-out"
+              className={`transition-all duration-1000 ease-out ${scrollY > 300 ? 'animate-fadeInUp' : 'opacity-0'}`}
               style={{
                 transform: `translateY(${Math.max(50 - scrollY * 0.1, 0)}px)`,
                 opacity: Math.max((scrollY - 300) / 200, 0)

@@ -7,6 +7,7 @@ import { Check, Plus, Sparkles } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Loading } from "@/components/composable/loading/loading";
+import Link  from "next/link";
 interface Template {
   id: string;
   name: string;
@@ -82,7 +83,7 @@ export default function TabAddTemplate() {
   };
 
   return (
-    <div className="grid grid-cols-1 md:grid-cols-4 lg:grid-cols-6 gap-8 p-6">
+    <div className="grid grid-cols-1 lg:grid-cols-3 xl:grid-cols-4 2xl:grid-cols-6 gap-4 xl:gap-6 p-6">
       {templates.map((tpl) => (
         <div
           key={tpl.id}
@@ -107,7 +108,7 @@ export default function TabAddTemplate() {
           )}
 
           {/* Content */}
-          <div className="flex-1 p-6 flex flex-col">
+          <div className="flex-1 p-2 flex flex-col">
             <div className="flex-1 space-y-3">
               <div className="flex items-start justify-between">
                 <h3 className="font-bold text-lg text-card-foreground leading-tight text-balance">
@@ -123,11 +124,11 @@ export default function TabAddTemplate() {
             </div>
 
             {/* Action Button */}
-            <div className="mt-6">
+            <div className="mt-6 flex gap-2 w-full">
               <Button
                 onClick={() => handleSelectTemplate(tpl.id)}
                 disabled={tpl.added}
-                className={`w-full font-medium transition-all duration-200 ${
+                className={`flex-1 font-medium transition-all duration-200 ${
                   tpl.added
                     ? "bg-muted text-muted-foreground cursor-not-allowed hover:bg-muted"
                     : "bg-primary text-primary-foreground hover:bg-primary/90 shadow-sm hover:shadow-md"
@@ -136,15 +137,21 @@ export default function TabAddTemplate() {
               >
                 {tpl.added ? (
                   <>
-                    <Check className="w-4 h-4 mr-2" />
+                    <Check className="w-4 h-4" />
                     Already Added
                   </>
                 ) : (
                   <>
-                    <Plus className="w-4 h-4 mr-2" />
+                    <Plus className="w-4 h-4" />
                     Select Template
                   </>
                 )}
+              </Button>
+
+              <Button className="flex-none">
+                <Link href={`/preview/${tpl.id}`} target="_blank">
+                  Preview
+                </Link>
               </Button>
             </div>
           </div>

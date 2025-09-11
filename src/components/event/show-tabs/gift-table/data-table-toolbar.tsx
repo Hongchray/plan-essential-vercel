@@ -10,7 +10,7 @@ import { usePathname, useRouter, useSearchParams } from "next/navigation";
 import { useRef, useState } from "react";
 // import { useClientPermissions } from "@/use-cases/use-client-permission";
 import { useEffect } from "react";
-import { CreateEditForm } from "../expense-form/create-edit";
+import { CreateEditForm } from "../gift-form/create-edit";
 
 interface DataTableToolbarProps<TData> {
   table: Table<TData>;
