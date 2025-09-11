@@ -12,6 +12,8 @@ import { SelectField } from "../composable/select/select-option";
 import { toast } from "sonner";
 import { useRouter } from "next/navigation";
 import { useLoading } from "@/hooks/LoadingContext";
+import ImageUpload from "../composable/upload/upload-image";
+import { useTranslation } from "react-i18next";
 
 const formSchema = z.object({
   name: z
@@ -67,6 +69,8 @@ async function getEditTemplate(id: string) {
 
 export function CreateEditForm({ id }: { id?: string }) {
   const { setOverlayLoading } = useLoading();
+  const { t } = useTranslation("common");
+
   const router = useRouter();
   const form = useForm<FormData>({
     resolver: zodResolver(formSchema),
@@ -124,6 +128,14 @@ export function CreateEditForm({ id }: { id?: string }) {
         </h2>
       </div>
       <form onSubmit={form.handleSubmit(onSubmit)}>
+        <div className="py-2">
+          <ImageUpload
+            label={t("EventPage.create.coverImage")}
+            folder="/template/cover"
+            {...form.register("image")}
+            value={form.watch("image")}
+          />
+        </div>
         <div className="grid grid-cols-2 gap-2">
           <InputTextField
             label="Name"
@@ -175,7 +187,7 @@ export function CreateEditForm({ id }: { id?: string }) {
         </div>
         <div className="pt-2 flex gap-2 items-center justify-end">
           <Button
-            variant="destructive"
+            variant="outline"
             type="button"
             onClick={() => router.push("/template")}
           >
