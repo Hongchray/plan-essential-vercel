@@ -24,10 +24,18 @@ const PreviewComponents = {
     loading: () => <LoadingScreen />,
     ssr: false,
   }),
+  WeddingSpecialTemplate: dynamic(() => import("@/components/template/wedding/special-template"), {
+    loading: () => <LoadingScreen />,
+    ssr: false,
+  }),
 };
 
 const EditorComponents = {
   WeddingSimpleTemplateEditor: dynamic(() => import("@/components/template/wedding/simple-template-editor"), {
+    loading: () => <LoadingScreen />,
+    ssr: false,
+  }),
+  WeddingSpecialTemplateEditor: dynamic(() => import("@/components/template/wedding/special-template-editor"), {
     loading: () => <LoadingScreen />,
     ssr: false,
   }),
@@ -202,10 +210,12 @@ export default function TabTemplate({paramId}: {paramId: string}) {
 
   enum TemplateName {
     WeddingSimpleTemplate = "WeddingSimpleTemplate",
+    WeddingSpecialTemplate = "WeddingSpecialTemplate",
   }
 
   enum EditorName {
     WeddingSimpleTemplateEditor = "WeddingSimpleTemplateEditor",
+    WeddingSpecialTemplateEditor = "WeddingSpecialTemplateEditor",
   }
 
   const ComponentToRender = PreviewComponents[template.template.unique_name as TemplateName];
@@ -216,7 +226,7 @@ export default function TabTemplate({paramId}: {paramId: string}) {
     return (
       <div className="fixed inset-0 z-50 bg-white">
         {/* Fullscreen Header */}
-        <div className="h-16 border-b bg-gray-800 text-white flex items-center justify-between px-6">
+        <div className="h-16 bg-gray-800 text-white flex items-center justify-between px-6">
           <div className="flex items-center gap-4">
             <h2 className="text-xl font-bold">Editor - Fullscreen Mode</h2>
             <div className="text-sm text-gray-300">
@@ -295,7 +305,7 @@ export default function TabTemplate({paramId}: {paramId: string}) {
                 {/* Preview Panel */}
                 <ResizablePanel defaultSize={70} minSize={40}>
                   <div className="h-[calc(100vh-80px)] overflow-y-auto">
-                    <div className="bg-gradient-to-br from-red-50 to-yellow-50 min-h-full">
+                    <div className=" min-h-full pb-[50px]">
                       {ComponentToRender && config !== undefined ? (
                         <ComponentToRender
                           config={config}

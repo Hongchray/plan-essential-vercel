@@ -23,7 +23,7 @@ import {
   PencilLine,
   TagIcon,
 } from "lucide-react";
-import { useParams } from "next/navigation";
+import { useParams, useRouter } from "next/navigation";
 import { Tag } from "@/interfaces/tag";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { ConfirmDialog } from "@/components/composable/dialog/confirm-dialog";
@@ -34,7 +34,8 @@ const guestFormSchema = z.object({
 });
 type GuestFormData = z.infer<typeof guestFormSchema>;
 
-export function ManageTagForm() {
+export function ManageTagForm({callBack}: {callBack: () => void}) {
+  const router = useRouter();
   const params = useParams();
   const id = params.id;
   const [editId, setEditId] = useState<string>();
@@ -69,6 +70,7 @@ export function ManageTagForm() {
     setLoading(false);
     setEditId("");
     editForm.reset();
+    callBack()
     return data;
   };
 
@@ -80,6 +82,7 @@ export function ManageTagForm() {
     const data = await res.json();
     getTag();
     setLoading(false);
+    callBack()
     return data;
   };
 
@@ -93,6 +96,7 @@ export function ManageTagForm() {
     getTag();
     setLoading(false);
     form.reset();
+    callBack()
     return data;
   };
 

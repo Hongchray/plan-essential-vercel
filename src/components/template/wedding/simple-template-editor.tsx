@@ -1,12 +1,8 @@
 import ImageUpload from "@/components/composable/upload/upload-image";
 import React, { useState } from "react";
+import { TemplateEditorProps } from "@/interfaces/comon/template-editor-prop";
 
-interface SimpleTemplateEditorProps {
-  config: any;
-  setConfig: React.Dispatch<React.SetStateAction<any>>;
-}
-
-export default function SimpleTemplateEditor({ config, setConfig }: SimpleTemplateEditorProps) {
+export default function SimpleTemplateEditor({ config, setConfig }: TemplateEditorProps) {
   const [currentLanguage, setCurrentLanguage] = useState<'kh' | 'en'>('kh');
 
   // Helper function to update top-level config properties

@@ -23,7 +23,7 @@ import {
   Check,
   PencilLine,
 } from "lucide-react";
-import { useParams } from "next/navigation";
+import { useParams, useRouter } from "next/navigation";
 import { Group } from "@/interfaces/group";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { ConfirmDialog } from "@/components/composable/dialog/confirm-dialog";
@@ -34,13 +34,14 @@ const guestFormSchema = z.object({
 });
 type GuestFormData = z.infer<typeof guestFormSchema>;
 
-export function ManageGroupForm() {
+export function ManageGroupForm({callBack}: {callBack: () => void}) {
   const params = useParams();
   const id = params.id;
   const [editId, setEditId] = useState<string>();
   const [loading, setLoading] = useState(false);
   const [dialogOpen, setDialogOpen] = useState(false);
   const [groups, setGroups] = useState<Group[]>([]);
+  const router = useRouter();
 
   const form = useForm<GuestFormData>({
     resolver: zodResolver(guestFormSchema),
@@ -69,6 +70,7 @@ export function ManageGroupForm() {
     setLoading(false);
     setEditId("");
     editForm.reset();
+    callBack();
     return data;
   };
 
@@ -80,6 +82,7 @@ export function ManageGroupForm() {
     const data = await res.json();
     getGroup();
     setLoading(false);
+    callBack();
     return data;
   };
 
@@ -93,6 +96,7 @@ export function ManageGroupForm() {
     getGroup();
     setLoading(false);
     form.reset();
+    callBack();
     return data;
   };
 

@@ -9,6 +9,10 @@ const DynamicComponents = {
     loading: () => <LoadingScreen />,
     ssr: false,
   }),
+  WeddingSpecialTemplate: dynamic(() => import("./wedding/special-template"), {
+    loading: () => <LoadingScreen />,
+    ssr: false,
+  }),
 };
 
 function LoadingScreen() {
@@ -16,7 +20,7 @@ function LoadingScreen() {
     <div className="flex items-center justify-center min-h-screen">
       <div className="text-center">
         <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-red-600 mx-auto mb-4"></div>
-        <p className="text-khmer">កំពុងផ្ទុក... (Loading...)</p>
+        <p className="text-khmer">កំពុងផ្ទុក...</p>
       </div>
     </div>
   );
@@ -52,7 +56,7 @@ export default function Preview({ id }: { id: string }) {
     if (!id) return;
     getPreviewTemplate(id).then((data) => data && setTemplate(data));
     getEvent().then((data) => data && setEvent(data));
-  }, [id]);
+  }, [id]); 
 
   // Sample data
   if (!template) {
@@ -61,13 +65,14 @@ export default function Preview({ id }: { id: string }) {
 
   enum TemplateName {
     WeddingSimpleTemplate = "WeddingSimpleTemplate",
+    WeddingSpecialTemplate = "WeddingSpecialTemplate",
   }
 
   const ComponentToRender =
     DynamicComponents[template.unique_name as TemplateName];
 
   return (
-    <div className="bg-gradient-to-br from-red-50 to-yellow-50">
+    <div className=" min-h-screen">
       {ComponentToRender && (
         <ComponentToRender
           config={template.defaultConfig}

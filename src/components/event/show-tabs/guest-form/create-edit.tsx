@@ -197,7 +197,7 @@ export function CreateEditForm({id}: {id: string}) {
                 <div>
                     <div className="flex justify-between items-center pt-2">
                         <Label>Groups</Label>
-                        <ManageGroupForm />
+                        <ManageGroupForm callBack={getGroup}/>
                     </div>
                     <MultiSelect
                         label=""
@@ -210,7 +210,7 @@ export function CreateEditForm({id}: {id: string}) {
                 <div>
                     <div className="flex justify-between items-center pt-2">
                         <Label>Tags</Label>
-                        <ManageTagForm/>
+                        <ManageTagForm callBack={getTag}/>
                     </div>
                     <MultiSelect
                         label=""
