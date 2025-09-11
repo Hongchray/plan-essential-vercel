@@ -14,12 +14,20 @@ export async function GET(
   const order = searchParams.get("order") || "desc";
 
   try {
-    // 1️⃣ Get total gifts count and sum of amounts
-    const aggregates = await prisma.gift.aggregate({
-      where: { eventId: id },
-      _count: true, // total gifts
-      _sum: { amount: true }, // sum of gift amounts
-    });
+    const [overall, byCurrency] = await Promise.all([
+      prisma.gift.aggregate({
+        where: { eventId: id },
+        _count: true,
+        _sum: { amount: true },
+      }),
+      prisma.gift.groupBy({
+        by: ['currency_type'],
+        where: { eventId: id },
+        _count: { _all: true },
+        _sum: { amount: true },
+      }),
+    ])
+
 
     // 2️⃣ Fetch paginated gifts
     const data = await prisma.gift.findMany({
@@ -42,14 +50,14 @@ export async function GET(
         message: "Get data successfully",
         data,
         meta: {
-          total: aggregates._count, // total gifts
+          total: overall._count, // total gifts
           page,
           per_page,
-          pageCount: Math.ceil((aggregates._count ?? 0) / per_page),
+          pageCount: Math.ceil((overall._count ?? 0) / per_page),
         },
         aggregates: {
-          received: aggregates._count ?? 0,
-          value: aggregates._sum.amount ?? 0,
+          received: overall._count ?? 0,
+          by_currency: byCurrency,
         },
       },
       { status: 200 }

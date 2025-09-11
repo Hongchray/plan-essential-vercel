@@ -19,13 +19,13 @@ const ActionsCell = ({ row }: { row: any }) => {
         method: "DELETE",
       });
       if (res.ok) {
-        toast.success("Delete expense successfully");
+        toast.success("Delete gift successfully");
         router.refresh();
       } else {
-        toast.error("Error deleting expense");
+        toast.error("Error deleting gift");
       }
     } catch (error) {
-      toast.error("Error deleting expense");
+      toast.error("Error deleting gift");
     }
   };
 
@@ -38,8 +38,8 @@ const ActionsCell = ({ row }: { row: any }) => {
             <Trash2Icon />
           </Button>
         }
-        title="Delete this expense?"
-        description="This will permanently remove the expense."
+        title="Delete this gift?"
+        description="This will permanently remove the gift."
         onConfirm={() => deleteEvent(row.original.eventId, row.original.id)}
       />
     </div>

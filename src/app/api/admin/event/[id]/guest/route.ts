@@ -1,5 +1,6 @@
 import { prisma } from "@/lib/prisma";
 import { NextRequest, NextResponse } from "next/server";
+
 export async function GET( req: NextRequest, context: { params: Promise<{ id: string }> }) {
     const { id } = await context.params;
     const searchParams = req.nextUrl.searchParams;
@@ -8,23 +9,29 @@ export async function GET( req: NextRequest, context: { params: Promise<{ id: st
     const search = searchParams.get("search") || "";
     const sort = searchParams.get("sort") || "createdAt";
     const order = searchParams.get("order") || "desc";
+    
     try {
+        // Build search conditions for multiple fields
+        const searchConditions = search ? {
+            OR: [
+                { name: { contains: search, mode: "insensitive" as const } },
+                { phone: { contains: search, mode: "insensitive" as const } },
+                { address: { contains: search, mode: "insensitive" as const } },
+                { email: { contains: search, mode: "insensitive" as const } }, // Added email for completeness
+            ],
+        } : {};
+
+        const whereClause = {
+            eventId: id,
+            ...searchConditions,
+        };
+
         const total = await prisma.guest.count({
-            where: {
-                eventId: id,
-                OR: [
-                    { name: { contains: search, mode: "insensitive" } },
-                ],
-            },
+            where: whereClause,
         });
 
         const data = await prisma.guest.findMany({
-            where: {
-                eventId: id,
-                OR: [
-                    { name: { contains: search, mode: "insensitive" } },
-                ],
-            },
+            where: whereClause,
             include: {
                 guestTag: { include: { tag: true } },
                 guestGroup: { include: { group: true } },
@@ -56,7 +63,6 @@ export async function GET( req: NextRequest, context: { params: Promise<{ id: st
         );
     }
 }
-
 export async function POST(
   req: NextRequest,
   context: { params: Promise<{ id: string }> }
