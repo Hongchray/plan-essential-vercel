@@ -5,7 +5,7 @@ import { DataTable } from "./expense-table/data-table";
 import { IAPIResponse } from "@/interfaces/comon/api-response";
 import { Expense } from "@/interfaces/expense";
 import { Loading } from "@/components/composable/loading/loading";
-
+import { useTranslation } from "react-i18next";
 async function getData(
   id: string,
   page: number = 1,
@@ -35,7 +35,7 @@ export default function TabExpense({
   const [meta, setMeta] = useState({ total: 0, pageCount: 1 });
   const [loading, setLoading] = useState(true);
   const columns = useExpenseColumns();
-
+  const { t } = useTranslation("common");
   useEffect(() => {
     async function fetchData() {
       setLoading(true);
@@ -65,7 +65,7 @@ export default function TabExpense({
         </div>
       ) : (
         <>
-          <h3 className="text-lg font-semibold mb-4">Expense Management</h3>
+          <h3 className="text-lg font-semibold mb-4">{t("expense.title")}</h3>
           <DataTable
             data={data}
             columns={columns}

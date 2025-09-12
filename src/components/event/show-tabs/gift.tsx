@@ -7,11 +7,12 @@ import { Gift } from "@/interfaces/gift";
 import { IAPIResponse } from "@/interfaces/comon/api-response";
 import { columns } from "./gift-table/columns";
 import { Loading } from "@/components/composable/loading/loading";
-import { currencyFormatters, formatCurrency } from "@/utils/currency";
+import { currencyFormatters } from "@/utils/currency";
+import { useTranslation } from "react-i18next";
 
 interface GiftAggregates {
   received: number;
-  by_currency: any[]
+  by_currency: any[];
 }
 
 interface GiftResponse extends IAPIResponse<Gift> {
@@ -61,6 +62,7 @@ export default function TabGift({
     by_currency: [],
   });
   const [loading, setLoading] = useState(true);
+  const { t } = useTranslation("common");
 
   useEffect(() => {
     async function fetchData() {
@@ -94,7 +96,7 @@ export default function TabGift({
 
   return (
     <div className="space-y-6">
-      <h3 className="text-lg font-semibold mb-4">Wedding Gifts</h3>
+      <h3 className="text-lg font-semibold mb-4">{t("gift.wedding_gifts")}</h3>
       {loading ? (
         <div className="flex items-center justify-center ">
           <Loading variant="circle" size="lg" />
@@ -112,34 +114,41 @@ export default function TabGift({
                 )}
               </div>
               <div className="text-sm text-green-800 ">
-                Gifts Received
+                {t("gift.received")}
               </div>
             </div>
 
-            {/* Total Value */}
+            {/* Total Value (USD) */}
             <div className="bg-purple-50 p-4 rounded-lg">
               <div className="text-2xl font-bold text-purple-600 flex items-center ">
                 {loading ? (
                   <Loading variant="minimal" message="" size="sm" />
                 ) : (
-                  `${currencyFormatters.usd(aggregates?.by_currency[1]?._sum?.amount ?? 0)}`
+                  `${currencyFormatters.usd(
+                    aggregates?.by_currency[1]?._sum?.amount ?? 0
+                  )}`
                 )}
               </div>
-              <div className="text-sm text-purple-800">Total Dolar ($)</div>
+              <div className="text-sm text-purple-800">
+                {t("gift.total_usd")}
+              </div>
             </div>
-            {/* Total Value */}
+
+            {/* Total Value (KHR) */}
             <div className="bg-blue-50 p-4 rounded-lg">
               <div className="text-2xl font-bold text-blue-600 flex items-center ">
                 {loading ? (
                   <Loading variant="minimal" message="" size="sm" />
                 ) : (
-                  `${currencyFormatters.khr(aggregates?.by_currency[0]?._sum?.amount ?? 0)}`
+                  `${currencyFormatters.khr(
+                    aggregates?.by_currency[0]?._sum?.amount ?? 0
+                  )}`
                 )}
               </div>
-              <div className="text-sm text-blue-800">Total Riel(៛)</div>
+              <div className="text-sm text-blue-800">{t("gift.total_khr")}</div>
             </div>
           </div>
-          <h3 className="text-lg font-semibold mb-4">Expense Management</h3>
+          <h3 className="text-lg font-semibold mb-4">{t("gift.title")}</h3>
           <DataTable
             data={data}
             columns={columns}

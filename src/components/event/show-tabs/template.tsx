@@ -18,29 +18,42 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+import { useTranslation } from "react-i18next";
 import { Loading } from "@/components/composable/loading/loading";
 // Dynamic templates
 const PreviewComponents = {
-  WeddingSimpleTemplate: dynamic(() => import("@/components/template/wedding/simple-template"), {
-    loading: () => <LoadingScreen />,
-    ssr: false,
-  }),
-  WeddingSpecialTemplate: dynamic(() => import("@/components/template/wedding/special-template"), {
-    loading: () => <LoadingScreen />,
-    ssr: false,
-  }),
+  WeddingSimpleTemplate: dynamic(
+    () => import("@/components/template/wedding/simple-template"),
+    {
+      loading: () => <LoadingScreen />,
+      ssr: false,
+    }
+  ),
+  WeddingSpecialTemplate: dynamic(
+    () => import("@/components/template/wedding/special-template"),
+    {
+      loading: () => <LoadingScreen />,
+      ssr: false,
+    }
+  ),
 };
 
 const EditorComponents = {
-  WeddingSimpleTemplateEditor: dynamic(() => import("@/components/template/wedding/simple-template-editor"), {
-    loading: () => <LoadingScreen />,
-    ssr: false,
-  }),
-  WeddingSpecialTemplateEditor: dynamic(() => import("@/components/template/wedding/special-template-editor"), {
-    loading: () => <LoadingScreen />,
-    ssr: false,
-  }),
-}
+  WeddingSimpleTemplateEditor: dynamic(
+    () => import("@/components/template/wedding/simple-template-editor"),
+    {
+      loading: () => <LoadingScreen />,
+      ssr: false,
+    }
+  ),
+  WeddingSpecialTemplateEditor: dynamic(
+    () => import("@/components/template/wedding/special-template-editor"),
+    {
+      loading: () => <LoadingScreen />,
+      ssr: false,
+    }
+  ),
+};
 
 function LoadingScreen() {
   return (
@@ -84,6 +97,7 @@ export default function TabTemplate({ paramId }: { paramId: string }) {
   const [eventTemplate, setEventTemplate] = useState<any[]>([]);
   const [isFullscreenEditor, setIsFullscreenEditor] = useState(false);
   const [event, setEvent] = useState<Event>({} as Event);
+  const { t } = useTranslation("common");
 
   // Fetch template once and initialize config
   useEffect(() => {
@@ -112,7 +126,9 @@ export default function TabTemplate({ paramId }: { paramId: string }) {
     if (selectedTemplate) {
       setTemplate(selectedTemplate);
       setConfig(selectedTemplate.config || {});
-      toast.success(`Switched to ${selectedTemplate.template.name}`);
+      toast.success(
+        `${t("templates.switch_to")} ${selectedTemplate.template.name}`
+      );
     }
   };
 
@@ -139,9 +155,9 @@ export default function TabTemplate({ paramId }: { paramId: string }) {
         throw new Error("Failed to save");
       }
 
-      toast.success("Template saved successfully!");
+      toast.success(t("templates.save_success"));
     } catch (error) {
-      toast.error("Failed to save template");
+      toast.error(t("templates.save_failed"));
       console.error("Save error:", error);
     } finally {
       setIsSaving(false);
@@ -157,9 +173,9 @@ export default function TabTemplate({ paramId }: { paramId: string }) {
       // For now, let's reset to an empty config
       const defaultConfig = {};
       setConfig(defaultConfig);
-      toast.success("Reset to default configuration");
+      toast.success(t("templates.reset_success"));
     } catch (error) {
-      toast.error("Failed to reset to default");
+      toast.error(t("templates.reset_failed"));
       console.error("Reset error:", error);
     }
   };
@@ -213,7 +229,7 @@ export default function TabTemplate({ paramId }: { paramId: string }) {
   if (!template) {
     return (
       <div className="flex items-center justify-center min-h-screen">
-        <p className="text-red-500">Template not found</p>
+        <p className="text-red-500">{t("templates.template_not_found")}</p>
       </div>
     );
   }
@@ -228,43 +244,46 @@ export default function TabTemplate({ paramId }: { paramId: string }) {
     WeddingSpecialTemplateEditor = "WeddingSpecialTemplateEditor",
   }
 
-  const ComponentToRender = PreviewComponents[template.template.unique_name as TemplateName];
-  const EditorToRender = EditorComponents[`${template.template.unique_name}Editor` as EditorName];
+  const ComponentToRender =
+    PreviewComponents[template.template.unique_name as TemplateName];
+  const EditorToRender =
+    EditorComponents[`${template.template.unique_name}Editor` as EditorName];
 
-  // Fullscreen Editor Modal
   if (isFullscreenEditor) {
     return (
       <div className="fixed inset-0 z-50 bg-white">
         {/* Fullscreen Header */}
         <div className="h-16 bg-gray-800 text-white flex items-center justify-between px-6">
           <div className="flex items-center gap-4">
-            <h2 className="text-xl font-bold">Editor - Fullscreen Mode</h2>
+            <h2 className="text-xl font-bold">
+              {t("templates.full_screen.title")}
+            </h2>
             <div className="text-sm text-gray-300">
               {template.template?.name || template.template?.unique_name}
             </div>
           </div>
           <div className="flex items-center gap-3">
-            <Button 
-              size="sm" 
+            <Button
+              size="sm"
               onClick={handleResetDefault}
               variant="secondary"
               disabled={isSaving}
             >
-              Reset default
+              {t("templates.full_screen.reset_default")}
             </Button>
-            <Button 
-              size="sm" 
+            <Button
+              size="sm"
               onClick={handleSave}
               disabled={isSaving}
-              variant='default'
+              variant="default"
             >
               {isSaving ? (
                 <div className="flex items-center gap-2">
                   <div className="w-3 h-3 border border-white border-t-transparent rounded-full animate-spin"></div>
-                  Saving...
+                  {t("templates.full_screen.saving")}
                 </div>
               ) : (
-                "Save"
+                t("templates.full_screen.save")
               )}
             </Button>
             <Button
@@ -274,7 +293,7 @@ export default function TabTemplate({ paramId }: { paramId: string }) {
               className="text-gray-300 hover:text-white hover:bg-gray-700"
             >
               <Minimize2 className="h-4 w-4 mr-2" />
-              Exit Fullscreen
+              {t("templates.full_screen.exit_fullscreen")}
             </Button>
             <Button
               size="sm"
@@ -290,49 +309,47 @@ export default function TabTemplate({ paramId }: { paramId: string }) {
         {/* Fullscreen Editor Content */}
         <div className="bg-gray-50">
           <div className=" mx-auto">
-              <ResizablePanelGroup direction="horizontal">
+            <ResizablePanelGroup direction="horizontal">
               {/* Editor Panel */}
               <ResizablePanel defaultSize={30} minSize={25}>
-                  <div className="p-8 h-[calc(100vh-80px)] overflow-y-auto bg-gray-50 mb-8">
-                    {EditorToRender && config !== undefined ? (
-                      <EditorToRender
-                        config={config}
-                        setConfig={setConfig}
-                      />
+                <div className="p-8 h-[calc(100vh-80px)] overflow-y-auto bg-gray-50 mb-8">
+                  {EditorToRender && config !== undefined ? (
+                    <EditorToRender config={config} setConfig={setConfig} />
+                  ) : (
+                    <div className="text-center text-gray-500 mt-8">
+                      <p>{t("templates.full_screen.editor_not_available")}</p>
+                      <p className="text-sm mt-2">
+                        {t("templates.full_screen.template")}:{" "}
+                        {template.template?.unique_name}
+                      </p>
+                    </div>
+                  )}
+                </div>
+              </ResizablePanel>
+
+              <ResizableHandle withHandle />
+
+              {/* Preview Panel */}
+              <ResizablePanel defaultSize={70} minSize={40}>
+                <div className="h-[calc(100vh-80px)] overflow-y-auto">
+                  <div className=" min-h-full pb-[50px]">
+                    {ComponentToRender && config !== undefined ? (
+                      <ComponentToRender config={config} data={event} />
                     ) : (
-                      <div className="text-center text-gray-500 mt-8">
-                        <p>Editor not available for this template</p>
-                        <p className="text-sm mt-2">
-                          Template: {template.template?.unique_name}
+                      <div className="flex items-center justify-center h-full">
+                        <p className="text-gray-500">
+                          {t("templates.full_screen.preview_not_available")}
+                        </p>
+                        <p className="text-sm text-gray-400 mt-2">
+                          {t("templates.full_screen.component")}:{" "}
+                          {template.template?.unique_name}
                         </p>
                       </div>
                     )}
                   </div>
+                </div>
               </ResizablePanel>
-          
-                <ResizableHandle withHandle />
-    
-                {/* Preview Panel */}
-                <ResizablePanel defaultSize={70} minSize={40}>
-                  <div className="h-[calc(100vh-80px)] overflow-y-auto">
-                    <div className=" min-h-full pb-[50px]">
-                      {ComponentToRender && config !== undefined ? (
-                        <ComponentToRender
-                          config={config}
-                          data={event}
-                        />
-                      ) : (
-                        <div className="flex items-center justify-center h-full">
-                          <p className="text-gray-500">Preview not available</p>
-                          <p className="text-sm text-gray-400 mt-2">
-                            Component: {template.template?.unique_name}
-                          </p>
-                        </div>
-                      )}
-                    </div>
-                  </div>
-                </ResizablePanel>
-              </ResizablePanelGroup>
+            </ResizablePanelGroup>
           </div>
         </div>
 
@@ -340,11 +357,15 @@ export default function TabTemplate({ paramId }: { paramId: string }) {
         <div className="absolute bottom-0 left-0 right-0 bg-gray-100 border-t px-6 py-3">
           <div className="flex justify-between items-center text-xs text-gray-500">
             <div>
-              Template: {template.template?.unique_name} | ID: {template.id}
+              {t("templates.full_screen.template")}:{" "}
+              {template.template?.unique_name} | ID: {template.id}
             </div>
             <div className="flex items-center gap-4">
-              <span>Press ESC to exit fullscreen</span>
-              <span>Last modified: {new Date().toLocaleTimeString()}</span>
+              <span>{t("templates.full_screen.press_esc")}</span>
+              <span>
+                {t("templates.full_screen.last_modified")}:{" "}
+                {new Date().toLocaleTimeString()}
+              </span>
             </div>
           </div>
         </div>
@@ -354,11 +375,15 @@ export default function TabTemplate({ paramId }: { paramId: string }) {
 
   return (
     <div className="space-y-6">
-      <h3 className="text-lg font-semibold mb-4">My Templates</h3>
+      <h3 className="text-lg font-semibold mb-4">
+        {t("templates.default_screen.my_templates")}
+      </h3>
       <div>
         <Select value={template.id} onValueChange={handleTemplateSwitch}>
           <SelectTrigger className="w-[280px] border-dashed border-2">
-            <SelectValue placeholder="Select a template" />
+            <SelectValue
+              placeholder={t("templates.default_screen.select_template")}
+            />
           </SelectTrigger>
           <SelectContent>
             {eventTemplate.map((item) => (
@@ -374,17 +399,20 @@ export default function TabTemplate({ paramId }: { paramId: string }) {
           {/* Editor Panel */}
           <ResizablePanel defaultSize={30} minSize={25}>
             <div className="p-2 border-b shadow-md bg-gray-800 text-white h-[50px] flex items-center justify-between rounded-tl">
-              <div className="font-bold">Editor</div>
+              <div className="font-bold">
+                {t("templates.default_screen.editor")}
+              </div>
               <div className="flex items-center gap-2">
                 <div className="animate-pulse">
-                  {Object.keys(config).length > 0 ? "●" : "○"} Live
+                  {Object.keys(config).length > 0 ? "●" : "○"}{" "}
+                  {t("templates.default_screen.live")}
                 </div>
                 <Button
                   size="sm"
                   onClick={toggleFullscreenEditor}
                   variant="ghost"
                   className="text-white hover:bg-gray-700 p-1 h-8 w-8"
-                  title="Fullscreen Editor"
+                  title={t("templates.default_screen.fullscreen_editor")}
                 >
                   <Maximize2 className="h-4 w-4" />
                 </Button>
@@ -395,9 +423,10 @@ export default function TabTemplate({ paramId }: { paramId: string }) {
                 <EditorToRender config={config} setConfig={setConfig} />
               ) : (
                 <div className="text-center text-gray-500 mt-8">
-                  <p>Editor not available for this template</p>
+                  <p>{t("templates.default_screen.editor_not_available")}</p>
                   <p className="text-sm mt-2">
-                    Template: {template.template?.unique_name}
+                    {t("templates.default_screen.template")}:{" "}
+                    {template.template?.unique_name}
                   </p>
                 </div>
               )}
@@ -409,7 +438,9 @@ export default function TabTemplate({ paramId }: { paramId: string }) {
           {/* Preview Panel */}
           <ResizablePanel defaultSize={70} minSize={40}>
             <div className="p-2 border-b shadow h-[50px] flex items-center justify-between bg-white">
-              <span className="font-bold">Preview Template</span>
+              <span className="font-bold">
+                {t("templates.default_screen.preview_template")}
+              </span>
               <div className="flex items-center gap-2">
                 <span className="text-xs text-gray-500">
                   {template.template?.name || template.template?.unique_name}
@@ -422,16 +453,16 @@ export default function TabTemplate({ paramId }: { paramId: string }) {
                     variant="outline"
                     disabled={isSaving}
                   >
-                    Reset default
+                    {t("templates.default_screen.reset_default")}
                   </Button>
                   <Button size="sm" onClick={handleSave} disabled={isSaving}>
                     {isSaving ? (
                       <div className="flex items-center gap-2">
                         <div className="w-3 h-3 border border-white border-t-transparent rounded-full animate-spin"></div>
-                        Saving...
+                        {t("templates.default_screen.saving")}
                       </div>
                     ) : (
-                      "Save"
+                      t("templates.default_screen.save")
                     )}
                   </Button>
                 </div>
@@ -443,9 +474,12 @@ export default function TabTemplate({ paramId }: { paramId: string }) {
                   <ComponentToRender config={config} data={event} />
                 ) : (
                   <div className="flex items-center justify-center h-full">
-                    <p className="text-gray-500">Preview not available</p>
+                    <p className="text-gray-500">
+                      {t("templates.default_screen.preview_not_available")}
+                    </p>
                     <p className="text-sm text-gray-400 mt-2">
-                      Component: {template.template?.unique_name}
+                      {t("templates.default_screen.component")}:{" "}
+                      {template.template?.unique_name}
                     </p>
                   </div>
                 )}
@@ -457,9 +491,13 @@ export default function TabTemplate({ paramId }: { paramId: string }) {
       {/* Status Bar */}
       <div className="flex justify-between items-center text-xs text-gray-500 px-2">
         <div>
-          Template: {template.template?.unique_name} | ID: {template.id}
+          {t("templates.default_screen.template")}:{" "}
+          {template.template?.unique_name} | ID: {template.id}
         </div>
-        <div>Last modified: {new Date().toLocaleTimeString()}</div>
+        <div>
+          {t("templates.default_screen.last_modified")}:{" "}
+          {new Date().toLocaleTimeString()}
+        </div>
       </div>
     </div>
   );

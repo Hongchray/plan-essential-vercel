@@ -6,17 +6,9 @@ import { MoreHorizontal } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import {
   DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuRadioGroup,
-  DropdownMenuRadioItem,
-  DropdownMenuSeparator,
-  DropdownMenuShortcut,
-  DropdownMenuSub,
-  DropdownMenuSubContent,
-  DropdownMenuSubTrigger,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
+import { useTranslation } from "react-i18next";
 
 interface DataTableRowActionsProps<TData> {
   row: Row<TData>;
@@ -25,6 +17,7 @@ interface DataTableRowActionsProps<TData> {
 export function DataTableRowActions<TData>({
   row,
 }: DataTableRowActionsProps<TData>) {
+  const { t } = useTranslation("common");
   const task = row.original;
 
   return (
@@ -36,7 +29,7 @@ export function DataTableRowActions<TData>({
           className="data-[state=open]:bg-muted size-8"
         >
           <MoreHorizontal />
-          <span className="sr-only">Open menu</span>
+          <span className="sr-only">{t("component.table.open_menu")}</span>
         </Button>
       </DropdownMenuTrigger>
     </DropdownMenu>

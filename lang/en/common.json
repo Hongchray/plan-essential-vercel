@@ -131,6 +131,12 @@
       "reset": "Reset",
       "view": "View",
       "toggle_columns": "Toggle columns"
+    },
+    "confirm_dialog": {
+      "title": "Are you sure?",
+      "description": "This action cannot be undone.",
+      "confirm": "Confirm",
+      "cancel": "Cancel"
     }
   },
 
@@ -353,10 +359,16 @@
       "total": "Total",
       "delete_tag_title": "Delete this tag?",
       "delete_tag_description": "This will permanently remove the tag"
+    },
+    "message": {
+      "name_required": "Name is required",
+      "phone_required": "Phone number is required",
+      "phone_max": "Phone number cannot exceed 50 characters"
     }
   },
 
   "expense": {
+    "title": "Expense Management",
     "table": {
       "select_all": "Select all",
       "select_row": "Select row",
@@ -369,6 +381,161 @@
       "delete_description": "This will permanently remove the expense.",
       "delete_success": "Expense deleted successfully",
       "delete_error": "Error deleting expense"
+    },
+    "search_placeholder": "Search ...",
+    "reset": "Reset",
+    "form": {
+      "addNew": "Add New",
+      "editTitle": "Edit Expense",
+      "addTitle": "Add New Expense",
+      "description": "Fill in expense details below",
+      "name": "Name",
+      "name_placeholder": "Enter name",
+      "desc": "Description",
+      "desc_placeholder": "Enter description",
+      "budget": "Budget Amount",
+      "actual": "Actual Amount",
+      "amount_placeholder": "Enter amount",
+      "cancel": "Cancel",
+      "error_name_required": "Name is required",
+      "error_budget_required": "Budget is required"
+    }
+  },
+  "gift": {
+    "wedding_gifts": "Wedding Gifts",
+    "received": "Gifts Received",
+    "total_usd": "Total Dollar ($)",
+    "total_khr": "Total Riel (៛)",
+    "title": "List of Gifts",
+    "table": {
+      "guest_name": "Guest Name",
+      "note": "Note",
+      "payment_type": "Payment Type",
+      "currency_type": "Currency Type",
+      "amount": "Amount",
+      "actions": "Actions",
+      "delete_title": "Delete this gift?",
+      "delete_description": "This will permanently remove the gift.",
+      "delete_success": "Delete gift successfully",
+      "delete_error": "Error deleting gift"
+    },
+    "form": {
+      "addNew": "Add New",
+      "editTitle": "Edit Gift",
+      "addTitle": "Add New Gift",
+      "description": "Fill in gift details below",
+      "guest": "Guest",
+      "guest_placeholder": "Enter guest name",
+      "phone_placeholder": "Enter phone number",
+      "note": "Note",
+      "note_placeholder": "Enter note",
+      "payment_type": "Payment Type",
+      "currency_type": "Currency Type",
+      "amount": "Amount",
+      "amount_placeholder": "Enter amount",
+      "cancel": "Cancel",
+      "error_guest_required": "Guest is required",
+      "error_amount_required": "Amount is required"
+    }
+  },
+  "add_template": {
+    "title": "Add Templates",
+    "no_templates": "No templates found.",
+    "template_added": "Template added successfully!",
+    "template_add_failed": "Failed: {{message}}",
+    "something_wrong": "Something went wrong",
+    "already_added": "Already Added",
+    "select_template": "Select Template",
+    "preview": "Preview",
+    "no_preview": "No Preview"
+  },
+  "templates": {
+    "switch_to": "Switched to",
+    "save_success": "Template saved successfully!",
+    "save_failed": "Failed to save template",
+    "reset_success": "Reset to default configuration!",
+    "reset_failed": "Failed to reset template",
+    "template_not_found": "Template not found!",
+    "full_screen": {
+      "title": "Editor - Fullscreen Mode",
+      "reset_default": "Reset default",
+      "save": "Save",
+      "saving": "Saving...",
+      "exit_fullscreen": "Exit Fullscreen",
+      "editor_not_available": "Editor not available for this template",
+      "preview_not_available": "Preview not available",
+      "template": "Template",
+      "component": "Component",
+      "press_esc": "Press ESC to exit fullscreen",
+      "last_modified": "Last modified"
+    },
+    "default_screen": {
+      "my_templates": "My Templates",
+      "select_template": "Select a template",
+      "editor": "Editor",
+      "live": "Live",
+      "fullscreen_editor": "Fullscreen Editor",
+      "editor_not_available": "Editor not available for this template",
+      "preview_template": "Preview Template",
+      "preview_not_available": "Preview not available",
+      "reset_default": "Reset default",
+      "save": "Save",
+      "saving": "Saving...",
+      "template": "Template",
+      "component": "Component",
+      "last_modified": "Last modified"
+    }
+  },
+
+  "template_editor": {
+    "editing_language": "Editing Language:",
+    "khmer": "ភាសាខ្មែរ",
+    "english": "English",
+    "currently_editing": "Currently editing: {{lang}} version",
+    "theme_settings": "Theme Settings (Global)",
+    "primary_color": "Primary Color",
+    "text_color": "Text Color",
+    "main_header": "Main Header ({{lang}})",
+    "main_title": "Main Title",
+    "groom_name": "Groom Name",
+    "bride_name": "Bride Name",
+    "subtitle": "Subtitle",
+    "date_time": "Date & Time",
+    "main_background_image": "Main Background Image URL",
+    "invitation_message": "Invitation Message ({{lang}})",
+    "message_title": "Message Title",
+    "invitation_message_content": "Invitation Message",
+    "event_details": "Event Details ({{lang}})",
+    "details_title": "Details Title",
+    "ceremony_date": "Ceremony Date",
+    "ceremony_schedule": "Ceremony Schedule",
+    "morning_time": "Morning Time",
+    "morning_desc": "Morning Description",
+    "afternoon_time": "Afternoon Time",
+    "afternoon_desc": "Afternoon Description",
+    "evening_time": "Evening Time",
+    "evening_desc": "Evening Description",
+    "location": "Location",
+    "details_background_image": "Details Background Image URL",
+    "loading_config": "Loading editor configuration..."
+  },
+  "user": {
+    "table": {
+      "select_all": "Select All",
+      "logo": "Logo",
+      "name": "Name",
+      "phone": "Phone",
+      "email": "Email",
+      "role": "Role",
+      "login_as": "Login As",
+      "logged_in_telegram": "Logged in via Telegram",
+      "logged_in_phone": "Logged in via Phone",
+      "updated_at": "Updated At",
+      "created_at": "Created At",
+      "actions": "Actions",
+      "view": "View",
+      "edit": "Edit",
+      "delete": "Delete"
     }
   }
 }

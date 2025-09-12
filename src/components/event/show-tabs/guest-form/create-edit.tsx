@@ -29,24 +29,27 @@ import { EditIcon } from "lucide-react";
 import ImageUpload from "@/components/composable/upload/upload-image";
 import { useTranslation } from "react-i18next";
 
-const guestFormSchema = z.object({
-  image: z.string().nullable().optional(),
-  name: z.string().min(1, { message: "Name is required" }),
-  email: z.string().nullable().optional(),
-  phone: z.string().min(1, { message: "Phone number is required" }).max(50),
-  note: z.string().nullable().optional(),
-  address: z.string().nullable().optional(),
-  tags: z.array(z.string()).nullable().optional(),
-  groups: z.array(z.string()).nullable().optional(),
-});
-
-type GuestFormData = z.infer<typeof guestFormSchema>;
-
 export function CreateEditForm({ id }: { id: string }) {
-  const { t } = useTranslation("common");
+  const { t } = useTranslation("common"); // assuming your translations are in common.json
   const params = useParams();
   const eventId = params.id;
   const router = useRouter();
+
+  const guestFormSchema = z.object({
+    image: z.string().nullable().optional(),
+    name: z.string().min(1, { message: t("guest_form.message.name_required") }),
+    email: z.string().nullable().optional(),
+    phone: z
+      .string()
+      .min(1, { message: t("guest_form.message.phone_required") })
+      .max(50, { message: t("guest_form.message.phone_max") }),
+    note: z.string().nullable().optional(),
+    address: z.string().nullable().optional(),
+    tags: z.array(z.string()).nullable().optional(),
+    groups: z.array(z.string()).nullable().optional(),
+  });
+
+  type GuestFormData = z.infer<typeof guestFormSchema>;
 
   const form = useForm<GuestFormData>({
     resolver: zodResolver(guestFormSchema),

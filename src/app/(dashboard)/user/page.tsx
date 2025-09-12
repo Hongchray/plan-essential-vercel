@@ -1,57 +1,67 @@
-import { columns } from "./components/columns";
+"use client";
+
+import { useUserColumns } from "./components/columns";
 import { DataTable } from "./components/data-table";
 import { User } from "./data/schema";
-import { headers } from "next/headers";
+import { useState, useEffect } from "react";
+import { useSearchParams } from "next/navigation";
 import { IAPIResponse } from "@/interfaces/comon/api-response";
+import { useTranslation } from "react-i18next";
+import { Loading } from "@/components/composable/loading/loading";
 
-async function getData(
-  page: number = 1,
-  pageSize: number = 10,
-  search: string = "",
-  sort: string = "",
-  order: string = ""
-) {
-  const response = await fetch(
-    `${process.env.NEXTAUTH_URL}/api/admin/user?page=${page}&per_page=${pageSize}&search=${search}&sort=${sort}&order=${order}`,
-    {
-      method: "GET",
-      headers: new Headers(await headers()),
+export default function UserPage() {
+  const searchParams = useSearchParams();
+
+  const page = Number(searchParams.get("page")) || 1;
+  const pageSize = Number(searchParams.get("per_page")) || 10;
+  const search = searchParams.get("search") || "";
+  const sort = searchParams.get("sort") || "";
+  const order = searchParams.get("order") || "";
+
+  const [loading, setLoading] = useState(true);
+  const { t } = useTranslation("common");
+
+  const columns = useUserColumns();
+  const [data, setData] = useState<User[]>([]);
+  const [meta, setMeta] = useState<any>({});
+
+  useEffect(() => {
+    async function fetchData() {
+      setLoading(true); // start loading
+      try {
+        const res = await fetch(
+          `/api/admin/user?page=${page}&per_page=${pageSize}&search=${search}&sort=${sort}&order=${order}`
+        );
+        const result: IAPIResponse<User> = await res.json();
+        setData(result.data);
+        setMeta(result.meta);
+      } catch (error) {
+        console.error("Failed to fetch users:", error);
+      } finally {
+        setLoading(false); // stop loading
+      }
     }
-  );
-
-  const result: IAPIResponse<User> = await response.json();
-  return result;
-}
-
-export default async function userPage({
-  searchParams,
-}: {
-  searchParams: Promise<{
-    page?: string;
-    per_page?: number;
-    search?: string;
-    sort?: string;
-    order?: string;
-  }>;
-}) {
-  const params = await searchParams;
-  const page = Number(params.page) || 1;
-  const search = params.search || "";
-  const sort = params.sort || "";
-  const order = params.order || "";
-  const pageSize = params.per_page ?? 10;
-
-  const { data, meta } = await getData(page, pageSize, search, sort, order);
+    fetchData();
+  }, [page, pageSize, search, sort, order]);
 
   return (
-    <div className="h-full flex-1 flex-col gap-2 p-4">
-      <DataTable
-        data={data}
-        columns={columns}
-        pageCount={meta?.pageCount ?? 1}
-        total={meta.total}
-        serverPagination={true}
-      />
+    <div className="space-y-6">
+      {loading ? (
+        <div className="flex items-center justify-center h-64">
+          <Loading variant="circle" size="lg" />
+        </div>
+      ) : (
+        <>
+          <h3 className="text-lg font-semibold mb-4">User Management</h3>
+          <DataTable
+            data={data}
+            columns={columns}
+            pageCount={meta.pageCount}
+            total={meta.total}
+            serverPagination={true}
+          />
+        </>
+      )}
     </div>
   );
 }
