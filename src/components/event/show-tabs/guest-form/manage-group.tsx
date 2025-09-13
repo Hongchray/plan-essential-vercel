@@ -172,7 +172,7 @@ export function ManageGroupForm({callBack}: {callBack: () => void}) {
               </span>
             </div>
             <ScrollArea className="h-[300px] rounded-md p-3">
-              <div className="flex flex-col gap-2 p-1">
+              <div className="flex flex-col gap-2 p-1 w-full">
                 {loading ? (
                   <Spining />
                 ) : groups.length > 0 ? (

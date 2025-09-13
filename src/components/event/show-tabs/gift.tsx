@@ -50,7 +50,7 @@ export default function TabGift({
   searchParams,
 }: {
   paramId: string;
-  searchParams: any; // comes from Next.js App Router
+  searchParams: any; 
 }) {
   const params = use(searchParams) as SearchParams; // 👈 cast unknown to proper type
 

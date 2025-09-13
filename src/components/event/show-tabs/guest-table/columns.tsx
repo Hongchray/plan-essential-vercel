@@ -12,7 +12,7 @@ import { useRouter } from "next/navigation";
 import { IconAccessPoint } from "@tabler/icons-react";
 import { Badge } from "@/components/ui/badge";
 import { CreateEditForm } from "../guest-form/create-edit";
-import Image from "next/image";
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
 import {
   Tooltip,
   TooltipContent,
@@ -25,6 +25,7 @@ import {
 } from "@/components/ui/popover"
 import { Input } from "@/components/ui/input";
 import { useState } from "react";
+import { getAvatarColor, getInitials } from "@/utils/avatar";
 
 const ActionsCell = ({ row }: { row: any }) => {
   const router = useRouter();
@@ -182,38 +183,24 @@ export const columns: ColumnDef<Guest>[] = [
     enableSorting: false,
     enableHiding: false,
   },
-   {
-    accessorKey: "image",
-    enableSorting: false,
-    header: ({ column }) => (
-      <DataTableColumnHeader column={column} title="Image" />
-    ),
-    cell: ({ row }) => {
-      if (row.getValue("image")) {
-        return (
-          <Image
-            src={row.getValue("image")}
-            width={50}
-            height={50}
-            alt="Picture of the author"
-            className="rounded"
-          />
-        );
-      }
-    },
-  },
   {
     accessorKey: "name",
     header: ({ column }) => (
       <DataTableColumnHeader column={column} title="Name" />
     ),
     cell: ({ row }) => {
+      const name: string = row.getValue('name') ??"" ;
+      const { bg, text } = getAvatarColor(name);
       return (
         <div className="flex gap-2">
           <span className="max-w-[350px] truncate text-primary font-medium">
-            {/* <Link href={`/event/${row.original.id}`}> */}
-              {row.getValue("name")}
-            {/* </Link> */}
+              <div className="flex gap-2 items-center">
+                <Avatar>
+                  <AvatarImage src="" />
+                  <AvatarFallback className={`${bg} ${text} font-bold`}>{getInitials(name)}</AvatarFallback>
+                </Avatar>
+                { row.getValue("name") }
+              </div>
           </span>
         </div>
       );
@@ -227,19 +214,6 @@ export const columns: ColumnDef<Guest>[] = [
         <div className="flex gap-2">
           <span className="max-w-[200px] truncate">
             {row.getValue("phone")}
-          </span>
-        </div>
-      );
-    },
-  },
-  {
-    accessorKey: "address",
-    header: 'Address',
-    cell: ({ row }) => {
-      return (
-        <div className="flex gap-2">
-          <span className="max-w-[300px] truncate ">
-            {row.getValue("address")}
           </span>
         </div>
       );
