@@ -308,7 +308,7 @@ export default function TabDashboard({ eventId }: { eventId: string }) {
                 {event.total_expend_actual.toFixed(2)}$
               </span>
             </div>
-            <hr className="my-2" />
+            <div className="my-2 border-t-2 border-dashed"></div>
             <div className="flex justify-between text-lg">
               <span
                 className={
@@ -358,7 +358,7 @@ export default function TabDashboard({ eventId }: { eventId: string }) {
                 {event.guest_summary.declined}
               </span>
             </div>
-            <hr className="my-2" />
+            <div className="my-2 border-t-2 border-dashed"></div>
             <div className="flex items-center justify-between">
               <div className="flex items-center gap-2">
                 <div className="w-3 h-3 bg-purple-400 rounded-full"></div>
