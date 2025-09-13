@@ -175,10 +175,13 @@ export function SignUpForm() {
               <TelegramLoginButton />
             </div>
 
-            <div className="mt-4 text-center text-sm">
+            <div className="mt-4 text-center text-sm flex flex-row gap-2 justify-center">
               {t("signup.already_have_account")}{" "}
-              <Link href="/login" className="underline underline-offset-4">
-                {t("signup.login")}
+              <Link
+                href="/login"
+                className="underline underline-offset-4  decoration-rose-700"
+              >
+                <p className="font-bold text-rose-700">{t("signup.login")}</p>
               </Link>
             </div>
           </form>

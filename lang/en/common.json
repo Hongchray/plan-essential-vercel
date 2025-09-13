@@ -32,7 +32,7 @@
     "login": "Login",
     "version": "Version",
     "register_account": "Register Account",
-    "register_description": "Secure and easy access to your account.",
+    "register_description": "Easily create your account and get started.",
     "enter_phone": "Enter your phone number",
     "sending_otp": "Sending OTP...",
     "continue_with_telegram": "Continue with Telegram",
@@ -137,6 +137,13 @@
       "description": "This action cannot be undone.",
       "confirm": "Confirm",
       "cancel": "Cancel"
+    },
+
+    "upload_image": {
+      "upload": "Upload",
+      "uploading": "Uploading",
+      "success": "Image uploaded successfully",
+      "error": "Failed to upload image"
     }
   },
 
@@ -201,7 +208,10 @@
     "welcomeTitle": "Welcome! We're glad to have you here.",
     "welcomeSubtitle": "Explore your events below or create a new one to get started.",
     "view": "View",
+    "dashboard": "Dashboard",
     "edit": "Edit",
+    "delete": "Delete",
+    "no_description": "You can add some important notes here",
     "welcome": "Welcome! We're glad to have you here.",
     "explore": "Explore your events below or create a new one to get started.",
     "create_button": "Create",
@@ -235,6 +245,17 @@
       "cancel": "Cancel",
       "submit": "Create",
       "update": "Update"
+    },
+    "error": {
+      "nameRequired": "Name is required",
+      "nameMax": "Name must be less than 50 characters",
+      "typeRequired": "Event type is required",
+      "brideRequired": "Bride name is required",
+      "groomRequired": "Groom name is required",
+      "imageRequired": "Cover image is required",
+      "createFailed": "Failed to create event",
+      "updateFailed": "Failed to update event",
+      "getFailed": "Failed to fetch event data"
     },
     "message": {
       "createSuccess": "Event created successfully",

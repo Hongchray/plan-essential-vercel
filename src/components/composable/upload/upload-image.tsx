@@ -2,18 +2,20 @@ import React, { useState, useCallback, useEffect } from "react";
 import { Upload, Image as ImageIcon, Loader2, X } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import Image from "next/image";
-
+import { useTranslation } from "react-i18next";
 interface ImageUploadProps extends React.InputHTMLAttributes<HTMLInputElement> {
   value?: string;
   defaultValue?: string;
   label?: string;
   maxSizeMB?: number;
   folder?: string;
+  type?: string;
 }
 
 const ImageUpload = React.forwardRef<HTMLInputElement, ImageUploadProps>(
   (
     {
+      type,
       onChange,
       value,
       name,
@@ -28,7 +30,7 @@ const ImageUpload = React.forwardRef<HTMLInputElement, ImageUploadProps>(
     const [preview, setPreview] = useState("");
     const [uploading, setUploading] = useState(false);
     const [error, setError] = useState("");
-
+    const { t } = useTranslation("common");
     // Set initial preview from either value or defaultValue
     useEffect(() => {
       if (value) {
@@ -84,7 +86,7 @@ const ImageUpload = React.forwardRef<HTMLInputElement, ImageUploadProps>(
 
           if (!response.ok) {
             throw new Error(
-              data.error || data.details || "Failed to upload image"
+              data.error || data.details || t("component.upload_image.error")
             );
           }
 
@@ -103,9 +105,9 @@ const ImageUpload = React.forwardRef<HTMLInputElement, ImageUploadProps>(
         } catch (err: unknown) {
           // Handle error as an instance of Error
           if (err instanceof Error) {
-            setError(err.message || "Failed to upload image");
+            setError(err.message || t("component.upload_image.error"));
           } else {
-            setError("Failed to upload image");
+            setError(t("component.upload_image.error"));
           }
 
           setPreview("");
@@ -141,9 +143,13 @@ const ImageUpload = React.forwardRef<HTMLInputElement, ImageUploadProps>(
         } as React.ChangeEvent<HTMLInputElement>);
       }
     }, [onChange, name]);
-
+    const isEvent = type === "event";
     return (
-      <div className="flex flex-col items-start gap-4 w-[180px]">
+      <div
+        className={`flex flex-col items-start gap-4 ${
+          isEvent ? "w-[376px] h-[159px]" : "w-[180px]"
+        }`}
+      >
         {/* Preview Area */}
         <div className="w-full h-[150px] aspect-video relative flex items-center justify-center border-2 border-dashed rounded-lg overflow-hidden bg-gray-50">
           {preview ? (
@@ -186,7 +192,9 @@ const ImageUpload = React.forwardRef<HTMLInputElement, ImageUploadProps>(
               {...props}
             />
             <Upload className="h-4 w-4 mr-2" />
-            {uploading ? "Uploading..." : "Upload"}
+            {uploading
+              ? t("component.upload_image.uploading")
+              : t("component.upload_image.upload")}
           </Button>
           <Button
             size="icon"
