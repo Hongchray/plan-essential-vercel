@@ -102,17 +102,17 @@ export function LoginForm() {
       <Card>
         <CardHeader className="flex flex-col items-center">
           <div className="flex gap-2 items-center">
-              <Image
-                src="https://planessential.com/logo.png"
-                placeholder="blur"
-                blurDataURL="https://planessential.com/logo.png"
-                priority
-                alt={t("login.logo_alt")}
-                height={50}
-                width={50}
-                className="py-2"
-              />
-              <h3 className="text-2xl font-bold text-rose-700">plan essential</h3>
+            <Image
+              src="https://planessential.com/logo.png"
+              placeholder="blur"
+              blurDataURL="https://planessential.com/logo.png"
+              priority
+              alt={t("login.logo_alt")}
+              height={50}
+              width={50}
+              className="py-2"
+            />
+            <h3 className="text-2xl font-bold text-rose-700">plan essential</h3>
           </div>
           <CardTitle className="text-xl">{t("login.account")}</CardTitle>
           <CardDescription>{t("login.description")}</CardDescription>
@@ -169,10 +169,13 @@ export function LoginForm() {
               </div>
               <TelegramLoginButton />
             </div>
-            <div className="mt-4 text-center text-sm">
+            <div className="mt-4 text-center text-sm flex flex-row gap-2 justify-center">
               {t("login.dont_have_account")}{" "}
-              <Link href="/signup" className="underline underline-offset-4">
-                {t("login.sign_up")}
+              <Link
+                href="/signup"
+                className="underline underline-offset-4 decoration-rose-700"
+              >
+                <p className="font-bold text-rose-700">{t("login.sign_up")}</p>
               </Link>
             </div>
           </form>

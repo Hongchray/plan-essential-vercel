@@ -2,9 +2,22 @@
 import { Event } from "../data/schema";
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
-import { EyeIcon, PencilIcon } from "lucide-react";
+import {
+  EyeIcon,
+  LayoutDashboard,
+  PencilIcon,
+  Calendar1Icon,
+  MapPin,
+} from "lucide-react";
 import { useTranslation } from "next-i18next";
-
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
+import { formatDate } from "@/utils/date";
+import { TrashIcon, MoreVerticalIcon } from "lucide-react";
 export default function EventCard({ event }: { event: Event }) {
   const { t } = useTranslation("common");
   return (
@@ -18,24 +31,35 @@ export default function EventCard({ event }: { event: Event }) {
           />
         )}
 
-        <h3 className="text-lg font-bold mb-2">{event.name}</h3>
+        <h3 className="text-xl font-bold mb-2 text-[#FDAE33]">{event.name}</h3>
 
         {event.type && (
-          <span className="text-sm font-medium text-blue-600 mb-2 capitalize">
+          <span className="inline-block bg-blue-100 text-blue-800 text-xs font-semibold px-2 py-1 rounded-full mb-2 capitalize">
             {event.type}
           </span>
         )}
 
-        {event.description && (
-          <p className="text-gray-700 mb-2">{event.description}</p>
-        )}
+        <p className="text-gray-700 mb-2">
+          {event.description || t("EventPage.no_description")}
+        </p>
 
         {(event.location || event.startTime || event.endTime) && (
           <div className="text-sm text-gray-500">
-            {event.location && <p>📍 {event.location}</p>}
+            {event.location && (
+              <p>
+                <span className="align-middle">
+                  <MapPin className="w-4 h-4 inline" />
+                </span>{" "}
+                <span className="align-middle">{event.location}</span>
+              </p>
+            )}
             <p>
-              🗓 {new Date(event.startTime).toLocaleDateString()} -{" "}
-              {new Date(event.endTime).toLocaleDateString()}
+              <span className="align-middle">
+                <Calendar1Icon className="w-4 h-4 inline" />
+              </span>{" "}
+              <span className="align-middle">
+                {formatDate(event.startTime)} - {formatDate(event.endTime)}
+              </span>
             </p>
           </div>
         )}
@@ -49,17 +73,46 @@ export default function EventCard({ event }: { event: Event }) {
             variant="outline"
             onClick={() => (window.location.href = `/event/${event.id}`)}
           >
-            {t("EventPage.view")}
-            <EyeIcon />
+            <LayoutDashboard />
+            {t("EventPage.dashboard")}
           </Button>
         </div>
-        <div className="mt-4 flex justify-end">
-          <Button
-            onClick={() => (window.location.href = `/event/edit/${event.id}`)}
-          >
-            {t("EventPage.edit")}
-            <PencilIcon />
-          </Button>
+        <div className="mt-4 flex justify-end ">
+          <DropdownMenu>
+            <DropdownMenuTrigger asChild>
+              <Button
+                variant="outline"
+                className="!bg-gray-200 !border-gray-200 !text-gray-800 hover:!bg-gray-300 hover:!text-gray-900 transition-colors duration-150"
+              >
+                <MoreVerticalIcon className="w-4 h-4" />
+              </Button>
+            </DropdownMenuTrigger>
+
+            <DropdownMenuContent align="end">
+              {/* Edit */}
+              <DropdownMenuItem
+                onClick={() =>
+                  (window.location.href = `/event/edit/${event.id}`)
+                }
+              >
+                <PencilIcon className="w-4 h-4 mr-2" />
+                {t("EventPage.edit")}
+              </DropdownMenuItem>
+
+              {/* Delete */}
+              <DropdownMenuItem
+                onClick={() => {
+                  if (confirm(t("EventPage.deleteConfirm"))) {
+                    // Call your delete API here
+                    console.log("Delete event", event.id);
+                  }
+                }}
+              >
+                <TrashIcon className="w-4 h-4 mr-2 text-red-500" />
+                {t("EventPage.delete")}
+              </DropdownMenuItem>
+            </DropdownMenuContent>
+          </DropdownMenu>
         </div>
       </div>
     </div>
