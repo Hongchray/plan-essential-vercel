@@ -55,7 +55,7 @@ html[lang="km"] {
   --radius-xl: calc(var(--radius) + 4px);
 }
 :root {
-  --radius: 1rem;
+  --radius: 1.2rem;
   --background: oklch(1 0 0);
   --foreground: oklch(0.141 0.005 285.823);
   --card: oklch(1 0 0);

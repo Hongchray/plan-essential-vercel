@@ -213,7 +213,7 @@ export function useGuestColumns(): ColumnDef<Guest>[] {
         const name: string = row.getValue("name")??'';
         const { bg, text } = getAvatarColor(name)
         return(
-          <span className="max-w-[350px] truncate text-primary font-medium">
+          <span className="max-w-[350px] truncate font-medium">
             <div className="flex gap-2 items-center">
                 <Avatar>
                   <AvatarImage src="" />
@@ -229,15 +229,6 @@ export function useGuestColumns(): ColumnDef<Guest>[] {
       header: t("event_dashboard.guest.table.phone"),
       cell: ({ row }) => (
         <span className="max-w-[200px] truncate">{row.getValue("phone")}</span>
-      ),
-    },
-    {
-      accessorKey: "address",
-      header: t("event_dashboard.guest.table.address"),
-      cell: ({ row }) => (
-        <span className="max-w-[300px] truncate">
-          {row.getValue("address")}
-        </span>
       ),
     },
     {

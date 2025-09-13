@@ -32,19 +32,19 @@ export async function GET(
 
     const guestStatusData = [
       {
-        name: "Confirmed",
+        name: "យល់ព្រម",
         value: event.guests.filter((g) => g.status === GuestStatus.CONFIRMED)
           .length,
         color: "#10b981",
       },
       {
-        name: "Pending",
+        name: "មិនទាន់ឆ្លើយតប",
         value: event.guests.filter((g) => g.status === GuestStatus.PENDING)
           .length,
         color: "#f59e0b",
       },
       {
-        name: "Declined",
+        name: "បដិសេធ",
         value: event.guests.filter((g) => g.status === GuestStatus.REJECTED)
           .length,
         color: "#ef4444",

@@ -24,8 +24,8 @@ export function LogoApp() {
                 width={34}
                 height={34}
                 className="mr-0.5"
-              />{" "}
-              <span className="text-base font-semibold text-primary">plan essential</span>
+              />
+              <span className="text-xl font-bold text-primary">plan essential</span>
             </Link>
           </SidebarMenuButton>
         </SidebarMenuItem>

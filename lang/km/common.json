@@ -244,11 +244,11 @@
   },
   "event_dashboard": {
     "tab": {
-      "dashboard": "ផ្ទាំងគ្រប់គ្រង",
-      "guest": "ភ្ញៀវ",
+      "dashboard": "ផ្ទាំងព័ត៌មាន",
+      "guest": "បញ្ជីឈ្មោះភ្ញៀវ",
       "expense": "ចំណាយ",
-      "wedding_gift": "អំណោយ",
-      "invite_template": "គំរូការអញ្ជើញ",
+      "wedding_gift": "កត់ចំណងដៃ",
+      "invite_template": "គម្រូធៀប",
       "add_template": "បន្ថែមគំរូ"
     },
 
@@ -262,30 +262,30 @@
     },
     "charts": {
       "guest_status": {
-        "title": "ការបែងចែកស្ថានភាពភ្ញៀវ",
+        "title": "ក្រាបទិន្នន័យអ្នកចូលរួម",
         "description": "ការឆ្លើយតប RSVP",
         "confirmed": "បានបញ្ជាក់",
         "pending": "កំពុងរងចាំ",
         "declined": "បានបដិសេធ"
       },
       "financial_overview": {
-        "title": "ទិដ្ឋភាពហិរញ្ញវត្ថុ",
+        "title": "ក្រាបទិន្នន័យហិរញ្ញវត្ថុ",
         "description": "ប្រាក់ចំណូល និងចំណាយ",
         "amount": "ចំនួន ($)"
       },
       "expense_categories": {
-        "title": "ប្រភេទចំណាយ",
+        "title": "ក្រាបទិន្នន័យចំណាយ",
         "description": "ការបែងចែកចំណាយតាមប្រភេទ"
       }
     },
     "financial_summary": {
-      "title": "ទិដ្ឋភាពហិរញ្ញវត្ថុ",
+      "title": "ទិដ្ឋភាពទូទៅហិរញ្ញវត្ថុ",
       "gift_income": "ប្រាក់អំណោយ",
       "total_expenses_actual": "ចំណាយសរុប (ពិតប្រាកដ)",
       "net_amount": "ប្រាក់សុទ្ធ"
     },
     "guest_summary": {
-      "title": "ស្ថានភាពភ្ញៀវ",
+      "title": "ស្ថិតិភ្ញៀវ",
       "confirmed": "បានបញ្ជាក់",
       "pending": "កំពុងរងចាំ",
       "declined": "បានបដិសេធ",

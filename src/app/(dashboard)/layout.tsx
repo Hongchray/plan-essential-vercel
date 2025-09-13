@@ -119,7 +119,7 @@ export default function DashboardLayout({
             <SidebarInset>
               <DashboardHeader />
               {/* Fixed main content area with proper overflow handling */}
-              <div className="flex flex-1 flex-col gap-4 p-4 pt-0 bg-gray-50 relative overflow-hidden">
+              <div className="flex flex-1 flex-col gap-4 p-4 pt-0 bg-rose-50 relative overflow-hidden">
                 <NextTopLoader color="#dd1d49" showSpinner={false} />
                 <div className="pt-4 flex-1 overflow-y-auto">{children}</div>
               </div>

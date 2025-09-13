@@ -11,6 +11,7 @@ import {
   ResponsiveContainer,
   Tooltip,
   Legend,
+  LabelList,
 } from "recharts";
 import {
   Card,
@@ -28,6 +29,7 @@ import { useTranslation } from "next-i18next";
 
 import { useEffect, useState } from "react";
 import { Loading } from "@/components/composable/loading/loading";
+import { currencyFormatters } from "@/utils/currency";
 export default function TabDashboard({ eventId }: { eventId: string }) {
   const [event, setEvent] = useState<any>(null);
   const [loading, setLoading] = useState(true);
@@ -59,17 +61,17 @@ export default function TabDashboard({ eventId }: { eventId: string }) {
 
   const financialData = [
     {
-      category: "Gift Income",
+      category: "ចំណងដៃ",
       amount: event.total_gift_income,
       color: "#10b981", // emerald green
     },
     {
-      category: "Expenses Budget",
+      category: "ចំណាយប៉ាន់ស្មាន",
       amount: event.total_expend_budget,
       color: "#f59e0b", // amber / orange
     },
     {
-      category: "Expenses Actual",
+      category: "ចំណាយពិត",
       amount: event.total_expend_actual,
       color: "#ef4444", // red
     },
@@ -100,7 +102,7 @@ export default function TabDashboard({ eventId }: { eventId: string }) {
         </div>
         <div className="bg-purple-50 p-4 rounded-lg">
           <div className="text-2xl font-bold text-purple-600">
-            {event.total_gift_income}$
+            {currencyFormatters.usd(event.total_gift_income)}
           </div>
           <div className="text-sm text-purple-800">
             {t("event_dashboard.cards.gift_income")}
@@ -108,7 +110,7 @@ export default function TabDashboard({ eventId }: { eventId: string }) {
         </div>
         <div className="bg-red-50 p-4 rounded-lg">
           <div className="text-2xl font-bold text-red-600">
-            {event.total_expend_actual || 0}$
+            {currencyFormatters.usd(event.total_expend_actual || 0)}
           </div>
           <div className="text-sm text-red-800">
             {t("event_dashboard.cards.total_expenses_actual")}
@@ -116,7 +118,7 @@ export default function TabDashboard({ eventId }: { eventId: string }) {
         </div>
         <div className="bg-red-50 p-4 rounded-lg">
           <div className="text-2xl font-bold text-red-600">
-            {event.total_expend_budget || 0}$
+            {currencyFormatters.usd(event.total_expend_budget || 0)}
           </div>
           <div className="text-sm text-red-800">
             {t("event_dashboard.cards.total_expenses_budget")}
@@ -127,21 +129,21 @@ export default function TabDashboard({ eventId }: { eventId: string }) {
       {/* Charts */}
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 mb-6">
         {/* Guest Status Distribution */}
-        <Card className="flex flex-col">
+        <Card className="flex flex-col shadow-none">
           <CardHeader>
             <CardTitle className="text-lg">
               {t("event_dashboard.charts.guest_status.title")}
             </CardTitle>
             <CardDescription className="text-sm">
-              {t("event_dashboard.charts.guest_status.description")}
+              {/* {t("event_dashboard.charts.guest_status.description")} */}
             </CardDescription>
           </CardHeader>
           <CardContent className="flex-1 flex items-center justify-center">
             <ChartContainer
               config={{
-                confirmed: { label: "Confirmed", color: "#10b981" },
-                pending: { label: "Pending", color: "#f59e0b" },
-                declined: { label: "Declined", color: "#ef4444" },
+                confirmed: { label: "យល់ព្រម", color: "#10b981" },
+                pending: { label: "មិនទាន់ឆ្លើយតប", color: "#f59e0b" },
+                declined: { label: "បដិសេធ", color: "#ef4444" },
               }}
               className="h-[250px] w-full"
             >
@@ -153,7 +155,7 @@ export default function TabDashboard({ eventId }: { eventId: string }) {
                     cy="50%"
                     labelLine={false}
                     label={({ name, value, percent }) =>
-                      `${name}: ${value} (${(percent * 100).toFixed(0)}%)`
+                      `${name}: ${(percent * 100).toFixed(0)}%`
                     }
                     outerRadius={80}
                     dataKey="value"
@@ -165,6 +167,7 @@ export default function TabDashboard({ eventId }: { eventId: string }) {
                     )}
                   </Pie>
                   <ChartTooltip content={<ChartTooltipContent />} />
+                  <Legend />
                 </PieChart>
               </ResponsiveContainer>
             </ChartContainer>
@@ -172,13 +175,13 @@ export default function TabDashboard({ eventId }: { eventId: string }) {
         </Card>
 
         {/* Financial Overview */}
-        <Card className="flex flex-col">
+        <Card className="flex flex-col shadow-none">
           <CardHeader>
             <CardTitle className="text-lg">
               {t("event_dashboard.charts.financial_overview.title")}
             </CardTitle>
             <CardDescription className="text-sm">
-              {t("event_dashboard.charts.financial_overview.description")}
+              {/* {t("event_dashboard.charts.financial_overview.description")} */}
             </CardDescription>
           </CardHeader>
           <CardContent className="flex-1">
@@ -197,10 +200,27 @@ export default function TabDashboard({ eventId }: { eventId: string }) {
                   <XAxis dataKey="category" />
                   <YAxis />
                   <ChartTooltip content={<ChartTooltipContent />} />
-                  <Bar dataKey="amount" radius={[6, 6, 0, 0]}>
+                 <Legend
+                    verticalAlign="top"
+                    align="center"
+                    payload={financialData.map((item) => ({
+                      value: item.category,
+                      type: "square",
+                      id: item.category,
+                      color: item.color,
+                    }))}
+                  />
+                  <Bar dataKey="amount" radius={[6, 6, 0, 0]} barSize={80}>
                     {financialData.map((entry, index) => (
-                      <Cell key={`cell-${index}`} fill={entry.color} />
+                      <Cell key={`cell-${index}`} fill={entry.color} name={entry.category} />
                     ))}
+                     <LabelList
+                        dataKey="amount"
+                        position="top"
+                        formatter={(value: number) =>
+                          value.toLocaleString() 
+                        }
+                      />
                   </Bar>
                 </BarChart>
               </ResponsiveContainer>
@@ -209,48 +229,58 @@ export default function TabDashboard({ eventId }: { eventId: string }) {
         </Card>
 
         {/* Expense Categories */}
-        <Card className="flex flex-col lg:col-span-1">
+        <Card className="flex flex-col lg:col-span-1 shadow-none">
           <CardHeader>
             <CardTitle className="text-lg">
               {t("event_dashboard.charts.expense_categories.title")}
             </CardTitle>
             <CardDescription className="text-sm">
-              {t("event_dashboard.charts.expense_categories.description")}
+              {/* {t("event_dashboard.charts.expense_categories.description")} */}
             </CardDescription>
           </CardHeader>
-          <CardContent className="flex-1 h-[250px]">
-            <ResponsiveContainer width="100%" height="100%">
-              <PieChart>
-                <Pie
-                  data={event.expenses}
-                  dataKey="actual_amount"
-                  nameKey="name"
-                  cx="50%"
-                  cy="50%"
-                  outerRadius={100}
-                  label
-                >
-                  {event.expenses.map(
-                    (entry: { name: string | undefined }, index: number) => (
-                      <Cell
-                        key={`cell-${index}`}
-                        fill={
-                          [
-                            "#10b981",
-                            "#f59e0b",
-                            "#ef4444",
-                            "#3b82f6",
-                            "#8b5cf6",
-                          ][index % 5]
-                        }
-                      />
-                    )
-                  )}
-                </Pie>
-                <Tooltip />
-                <Legend />
-              </PieChart>
-            </ResponsiveContainer>
+          <CardContent className="flex-1 h-[250px] ">
+            <ChartContainer
+                config={{
+                  amount: { label: "Amount ($)", color: "#3b82f6" },
+                }}
+                className="h-[250px] w-full"
+              >
+              <ResponsiveContainer width="100%" height="100%">
+                <PieChart>
+                  <Pie
+                    data={event.expenses}
+                    dataKey="actual_amount"
+                    nameKey="name"
+                    cx="50%"
+                    cy="50%"
+                    outerRadius={80}
+                    labelLine={false}
+                    label={({ name, value, percent }) =>
+                      `${name}: ${(percent * 100).toFixed(0)}%`
+                    }
+                  >
+                    {event.expenses.map(
+                      (entry: { name: string | undefined }, index: number) => (
+                        <Cell
+                          key={`cell-${index}`}
+                          fill={
+                            [
+                              "#10b981",
+                              "#f59e0b",
+                              "#ef4444",
+                              "#3b82f6",
+                              "#8b5cf6",
+                            ][index % 5]
+                          }
+                        />
+                      )
+                    )}
+                  </Pie>
+                  <ChartTooltip content={<ChartTooltipContent />} />
+                  <Legend />
+                </PieChart>
+              </ResponsiveContainer>
+            </ChartContainer>
           </CardContent>
         </Card>
       </div>

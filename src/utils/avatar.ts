@@ -1,13 +1,13 @@
 // utils/avatar.ts
 const colors = [
-  { bg: "bg-red-500", text: "text-white" },
-  { bg: "bg-blue-500", text: "text-white" },
-  { bg: "bg-green-500", text: "text-white" },
-  { bg: "bg-yellow-500", text: "text-black" },
-  { bg: "bg-purple-500", text: "text-white" },
-  { bg: "bg-pink-500", text: "text-white" },
-  { bg: "bg-indigo-500", text: "text-white" },
-  { bg: "bg-orange-500", text: "text-black" },
+  { bg: "bg-red-100", text: "text-red-600" },
+  { bg: "bg-blue-100", text: "text-blue-600" },
+  { bg: "bg-green-100", text: "text-green-600" },
+  { bg: "bg-yellow-100", text: "text-yellow-600" },
+  { bg: "bg-purple-100", text: "text-purple-600" },
+  { bg: "bg-pink-100", text: "text-pink-600" },
+  { bg: "bg-indigo-100", text: "text-indigo-600" },
+  { bg: "bg-orange-100", text: "text-orange-600" },
 ];
 
 /**
