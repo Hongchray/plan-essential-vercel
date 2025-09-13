@@ -7,10 +7,9 @@ import { Input } from "@/components/ui/input";
 import { DataTableViewOptions } from "./data-table-view-options";
 import Link from "next/link";
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
-import { useRef, useState } from "react";
-// import { useClientPermissions } from "@/use-cases/use-client-permission";
-import { useEffect } from "react";
-import { CreateEditForm } from "../gift-form/create-edit";
+import { useRef, useState, useEffect } from "react";
+import { CreateEditGiftForm } from "../gift-form/create-edit";
+import { useTranslation } from "react-i18next";
 
 interface DataTableToolbarProps<TData> {
   table: Table<TData>;
@@ -21,6 +20,7 @@ export function DataTableToolbar<TData>({
   table,
   serverPagination = false,
 }: DataTableToolbarProps<TData>) {
+  const { t } = useTranslation("common");
   const router = useRouter();
   const pathname = usePathname();
   const searchParams = useSearchParams();
@@ -29,30 +29,22 @@ export function DataTableToolbar<TData>({
   );
   const timeoutRef = useRef<NodeJS.Timeout | null>(null);
 
-  // const { hasPermission } = useClientPermissions();
-
   const [hasCreatePermission, setHasCreatePermission] = useState(false);
-  // useEffect(() => {
-  //   const canCreate = hasPermission("gameCreate");
-  //   setHasCreatePermission(canCreate);
-  // }, [hasPermission]);
 
   const handleSearch = (value: string) => {
     setSearchValue(value);
 
-    // Clear any existing timeout
     if (timeoutRef.current) {
       clearTimeout(timeoutRef.current);
     }
 
-    // Set new timeout
     timeoutRef.current = setTimeout(() => {
       if (serverPagination) {
         const current = new URLSearchParams(Array.from(searchParams.entries()));
 
         if (value) {
           current.set("search", value);
-          current.set("page", "1"); // Reset to first page on new search
+          current.set("page", "1");
         } else {
           current.delete("search");
         }
@@ -62,7 +54,7 @@ export function DataTableToolbar<TData>({
 
         router.push(`${pathname}${query}`, { scroll: false });
       }
-    }, 500); // 500ms delay
+    }, 500);
   };
 
   const handleReset = () => {
@@ -75,11 +67,12 @@ export function DataTableToolbar<TData>({
       router.push(`${pathname}${query}`, { scroll: false });
     }
   };
+
   return (
     <div className="flex items-center justify-between">
       <div className="flex flex-1 items-center space-x-2">
         <Input
-          placeholder="Search ..."
+          placeholder={t("expense.search_placeholder")}
           value={searchValue}
           onChange={(event) => handleSearch(event.target.value)}
           className="h-8 w-[150px] lg:w-[250px]"
@@ -90,13 +83,13 @@ export function DataTableToolbar<TData>({
             onClick={handleReset}
             className="h-8 px-2 lg:px-3"
           >
-            Reset
+            {t("expense.reset")}
             <X className="ml-2 h-4 w-4" />
           </Button>
         )}
       </div>
       <div className="flex gap-4">
-        <CreateEditForm id="" />
+        <CreateEditGiftForm id="" />
         <DataTableViewOptions table={table} />
       </div>
     </div>

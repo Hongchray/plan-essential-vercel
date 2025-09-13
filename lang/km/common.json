@@ -3,7 +3,7 @@
     "dashboard": "ផ្ទាំងគ្រប់គ្រង",
     "users": "អ្នកប្រើប្រាស់",
     "event": "ព្រឹត្តិការណ៍",
-    "template": "ទម្រង់គំរូ",
+    "template": "គម្រូគំរូ",
     "setting": "ការកំណត់"
   },
   "login": {
@@ -102,7 +102,40 @@
   },
   "component": {
     "password": "លេខសម្ងាត់",
-    "enter_password": "បញ្ចូលលេខសម្ងាត់"
+    "enter_password": "បញ្ចូលលេខសម្ងាត់",
+    "button": {
+      "saving": "កំពុងរក្សាទុក...",
+      "saveChanges": "រក្សាទុកការផ្លាស់ប្ដូរ",
+      "create": "បង្កើតថ្មី"
+    },
+    "table": {
+      "asc": "តូចទៅធំ",
+      "desc": "ធំទៅតូច",
+      "hide": "លាក់",
+      "no_results": "រកមិនឃើញលទ្ធផល",
+      "selected_count": "បានជ្រើស {{count}}",
+      "clear_filters": "សំអាត",
+      "total": "សរុប",
+      "records": "កំណត់ត្រា",
+      "rows_per_page": "ទិន្នន័យក្នុងមួយទំព័រ",
+      "page": "ទំព័រ",
+      "of": "នៃ",
+      "first_page": "ទៅទំព័រដំបូង",
+      "prev_page": "ទៅទំព័រមុន",
+      "next_page": "ទៅទំព័របន្ទាប់",
+      "last_page": "ទៅទំព័រចុងក្រោយ",
+      "open_menu": "បើកម៉ឺនុយ",
+      "search_placeholder": "ស្វែងរក ...",
+      "reset": "សម្អាត",
+      "view": "មើល",
+      "toggle_columns": "បិទបង្ហាញជួរ"
+    },
+    "confirm_dialog": {
+      "title": "តើ​អ្នក​ប្រាកដ​ទេ?",
+      "description": "សកម្មភាពនេះមិនអាចត្រឡប់វិញបានទេ។",
+      "confirm": "យល់ព្រម",
+      "cancel": "បោះបង់"
+    }
   },
 
   "forgot_password": {
@@ -144,9 +177,9 @@
   "dashboard": {
     "totalUsers": "អ្នកប្រើសរុប",
     "fromLastMonth": "ពីខែមុន",
-    "totalTemplates": "ទម្រង់គំរូសរុប",
-    "noTemplates": "មិនមានទម្រង់គំរូនៅឡើយ",
-    "templates": "ទម្រង់គំរូ",
+    "totalTemplates": "គម្រូគំរូសរុប",
+    "noTemplates": "មិនមានគម្រូគំរូនៅឡើយ",
+    "templates": "គម្រូគំរូ",
     "totalEvents": "ព្រឹត្តិការណ៍សរុប",
     "readyToStart": "រៀបចំចាប់ផ្តើមចំណូល",
     "events": "ព្រឹត្តិការណ៍",
@@ -200,6 +233,303 @@
       "cancel": "បោះបង់",
       "submit": "បង្កើត",
       "update": "កែប្រែ"
+    },
+    "message": {
+      "createSuccess": "បង្កើតព្រឹត្តិការណ៍ដោយជោគជ័យ",
+      "createError": "បង្កើតព្រឹត្តិការណ៍មិនបានសម្រេច",
+      "updateSuccess": "ធ្វើបច្ចុប្បន្នភាពព្រឹត្តិការណ៍ដោយជោគជ័យ",
+      "updateError": "ធ្វើបច្ចុប្បន្នភាពព្រឹត្តិការណ៍មិនបានសម្រេច",
+      "getError": "មិនអាចទាញយកព្រឹត្តិការណ៍បានទេ"
+    }
+  },
+  "event_dashboard": {
+    "tab": {
+      "dashboard": "ផ្ទាំងគ្រប់គ្រង",
+      "guest": "ភ្ញៀវ",
+      "expense": "ចំណាយ",
+      "wedding_gift": "អំណោយ",
+      "invite_template": "គំរូការអញ្ជើញ",
+      "add_template": "បន្ថែមគំរូ"
+    },
+
+    "title": "ផ្ទាំងគ្រប់គ្រងមង្គលការ",
+    "cards": {
+      "total_guests": "ភ្ញៀវសរុប",
+      "confirmed": "បានបញ្ជាក់",
+      "gift_income": "ប្រាក់អំណោយ",
+      "total_expenses_actual": "ចំណាយសរុប (ពិតប្រាកដ)",
+      "total_expenses_budget": "ចំណាយសរុប (ថវិកា)"
+    },
+    "charts": {
+      "guest_status": {
+        "title": "ការបែងចែកស្ថានភាពភ្ញៀវ",
+        "description": "ការឆ្លើយតប RSVP",
+        "confirmed": "បានបញ្ជាក់",
+        "pending": "កំពុងរងចាំ",
+        "declined": "បានបដិសេធ"
+      },
+      "financial_overview": {
+        "title": "ទិដ្ឋភាពហិរញ្ញវត្ថុ",
+        "description": "ប្រាក់ចំណូល និងចំណាយ",
+        "amount": "ចំនួន ($)"
+      },
+      "expense_categories": {
+        "title": "ប្រភេទចំណាយ",
+        "description": "ការបែងចែកចំណាយតាមប្រភេទ"
+      }
+    },
+    "financial_summary": {
+      "title": "ទិដ្ឋភាពហិរញ្ញវត្ថុ",
+      "gift_income": "ប្រាក់អំណោយ",
+      "total_expenses_actual": "ចំណាយសរុប (ពិតប្រាកដ)",
+      "net_amount": "ប្រាក់សុទ្ធ"
+    },
+    "guest_summary": {
+      "title": "ស្ថានភាពភ្ញៀវ",
+      "confirmed": "បានបញ្ជាក់",
+      "pending": "កំពុងរងចាំ",
+      "declined": "បានបដិសេធ",
+      "gifts_received": "អំណោយដែលទទួលបាន"
+    },
+    "guest": {
+      "title": "ការគ្រប់គ្រងភ្ញៀវ",
+      "table": {
+        "image": "រូបភាព",
+        "name": "ឈ្មោះ",
+        "phone": "លេខទូរស័ព្ទ",
+        "address": "អាសយដ្ឋាន",
+        "groups": "ក្រុម",
+        "tags": "ស្លាក",
+        "status": "ស្ថានភាព",
+        "invite": "អញ្ជើញ",
+        "invited": "បានអញ្ជើញ",
+        "invite_link": "តំណអញ្ជើញ",
+        "copy_to_clipboard": "ចម្លងទៅក្ដារតម្បៀតខ្ទាស់",
+        "copied": "បានចម្លង!",
+        "link_copied": "តំណត្រូវបានចម្លងទៅក្ដារតម្បៀតខ្ទាស់!",
+        "edit_guest": "កែសម្រួលភ្ញៀវ",
+        "delete_title": "លុបភ្ញៀវនេះ?",
+        "delete_description": "នេះនឹងលុបភ្ញៀវចេញជាអចិន្ត្រៃយ៍។",
+        "toast": {
+          "delete_success": "លុបភ្ញៀវដោយជោគជ័យ",
+          "delete_error": "មានបញ្ហាក្នុងការលុបភ្ញៀវ",
+          "invite_success": "អញ្ជើញភ្ញៀវដោយជោគជ័យ",
+          "invite_error": "មានបញ្ហាក្នុងការអញ្ជើញភ្ញៀវ"
+        },
+        "select_all": "ជ្រើសរើសទាំងអស់",
+        "select_row": "ជ្រើសរើសជួរដេក",
+        "actions": "សម្មកភាព"
+      }
+    }
+  },
+  "guest_form": {
+    "create_edit": {
+      "add_new": "បន្ថែមថ្មី",
+      "edit_guest": "កែសម្រួលភ្ញៀវ",
+      "add_new_guest": "បន្ថែមភ្ញៀវថ្មី",
+      "fill_guest_details": "បំពេញព័ត៌មានលម្អិតរបស់ភ្ញៀវនៅខាងក្រោម",
+      "photo": "រូបថត",
+      "name": "ឈ្មោះ",
+      "name_placeholder": "បញ្ចូលឈ្មោះ",
+      "phone": "ទូរស័ព្ទ",
+      "phone_placeholder": "បញ្ចូលលេខទូរស័ព្ទ",
+      "note": "កំណត់សំគាល់",
+      "note_placeholder": "បញ្ចូលកំណត់សំគាល់",
+      "address": "អាសយដ្ឋាន",
+      "address_placeholder": "បញ្ចូលអាសយដ្ឋាន",
+      "groups": "ក្រុម",
+      "groups_placeholder": "បញ្ចូលក្រុម",
+      "tags": "ស្លាក",
+      "tags_placeholder": "បញ្ចូលស្លាក",
+      "cancel": "បោះបង់",
+      "manage_groups": "គ្រប់គ្រងក្រុម",
+      "add_group": "បន្ថែមក្រុម",
+      "list_of_groups": "បញ្ជីក្រុម",
+      "delete_group_title": "លុបក្រុមនេះ?",
+      "delete_group_description": "នេះនឹងលុបក្រុមនេះឲ្យបាត់ជាអចិន្រ្តៃយ៍",
+      "manage_tags": "គ្រប់គ្រងស្លាក",
+      "name_en": "ឈ្មោះ (អង់គ្លេស)",
+      "name_en_placeholder": "បញ្ចូលឈ្មោះ",
+      "name_kh": "ឈ្មោះ (ខ្មែរ)",
+      "name_kh_placeholder": "បញ្ចូលឈ្មោះ",
+      "add_tag": "បន្ថែមស្លាក",
+      "list_of_tags": "បញ្ជីស្លាក",
+      "total": "សរុប",
+      "delete_tag_title": "លុបស្លាកនេះ?",
+      "delete_tag_description": "នេះនឹងលុបស្លាកនេះជាអចិន្រ្តៃយ៍"
+    },
+    "message": {
+      "name_required": "សូមបញ្ចូលឈ្មោះ",
+      "phone_required": "សូមបញ្ចូលលេខទូរស័ព្ទ",
+      "phone_max": "លេខទូរស័ព្ទមិនអាចលើស 50 តួអក្សរ"
+    }
+  },
+  "expense": {
+    "title": "ការគ្រប់គ្រងការចំណាយ",
+    "table": {
+      "select_all": "ជ្រើសរើសទាំងអស់",
+      "select_row": "ជ្រើសរើសជួរដេក",
+      "name": "ឈ្មោះ",
+      "description": "ការពិពណ៌នា",
+      "budget_amount": "ចំនួនថវិកា",
+      "actual_amount": "ចំនួនពិតប្រាកដ",
+      "actions": "សកម្មភាព",
+      "delete_title": "លុបចំណាយនេះ?",
+      "delete_description": "នេះនឹងលុបចំណាយនេះចោលដោយបចេក",
+      "delete_success": "លុបចំណាយដោយជោគជ័យ",
+      "delete_error": "មានបញ្ហាក្នុងការលុបចំណាយ"
+    },
+    "search_placeholder": "ស្វែងរក ...",
+    "reset": "សម្អាត",
+    "form": {
+      "addNew": "បន្ថែមថ្មី",
+      "editTitle": "កែប្រែចំណាយ",
+      "addTitle": "បន្ថែមចំណាយថ្មី",
+      "description": "បំពេញព័ត៌មានចំណាយខាងក្រោម",
+      "name": "ឈ្មោះ",
+      "name_placeholder": "បញ្ចូលឈ្មោះ",
+      "desc": "សេចក្ដីពិពណ៌នា",
+      "desc_placeholder": "បញ្ចូលសេចក្ដីពិពណ៌នា",
+      "budget": "ថវិកា",
+      "actual": "ចំណាយពិតប្រាកដ",
+      "amount_placeholder": "បញ្ចូលចំនួន",
+      "cancel": "បោះបង់",
+      "error_name_required": "ឈ្មោះត្រូវបានទាមទារ",
+      "error_budget_required": "ចំនួនថវិការត្រូវបានទាមទា"
+    }
+  },
+  "gift": {
+    "wedding_gifts": "អំណោយអាពាហ៍ពិពាហ៍",
+    "received": "អំណោយបានទទួល",
+    "total_usd": "សរុប ដុល្លារ ($)",
+    "total_khr": "សរុប រៀល (៛)",
+    "title": "បញ្ជីអំណោយ",
+    "table": {
+      "guest_name": "ឈ្មោះភ្ញៀវ",
+      "note": "កំណត់ចំណាំ",
+      "payment_type": "ប្រភេទការទូទាត់",
+      "currency_type": "ប្រភេទរូបិយប័ណ្ណ",
+      "amount": "ចំនួនទឹកប្រាក់",
+      "actions": "សកម្មភាព",
+      "delete_title": "លុបអំណោយនេះ?",
+      "delete_description": "វានឹងលុបអំណោយនេះចោលអចិន្រ្តៃយ៍។",
+      "delete_success": "លុបអំណោយបានជោគជ័យ",
+      "delete_error": "មានបញ្ហាក្នុងការលុបអំណោយ"
+    },
+    "form": {
+      "addNew": "បន្ថែមថ្មី",
+      "editTitle": "កែប្រែអំណោយ",
+      "addTitle": "បន្ថែមអំណោយថ្មី",
+      "description": "បំពេញព័ត៌មានអំពីអំណោយខាងក្រោម",
+      "guest": "ភ្ញៀវ",
+      "guest_placeholder": "បញ្ចូលឈ្មោះភ្ញៀវ",
+      "phone_placeholder": "បញ្ចូលលេខទូរស័ព្ទ",
+      "note": "កំណត់ចំណាំ",
+      "note_placeholder": "បញ្ចូលកំណត់ចំណាំ",
+      "payment_type": "ប្រភេទទូទាត់",
+      "currency_type": "ប្រភេទរូបិយប័ណ្ណ",
+      "amount": "ចំនួនទឹកប្រាក់",
+      "amount_placeholder": "បញ្ចូលចំនួនទឹកប្រាក់",
+      "cancel": "បោះបង់",
+      "error_guest_required": "ត្រូវការជ្រើសរើសភ្ញៀវ",
+      "error_amount_required": "ត្រូវការចំនួនទឹកប្រាក់"
+    }
+  },
+  "add_template": {
+    "title": "បន្ថែមគម្រូ",
+    "no_templates": "មិនមានគម្រូណា",
+    "template_added": "បានបន្ថែមគម្រូដោយជោគជ័យ!",
+    "template_add_failed": "បរាជ័យ: {{message}}",
+    "something_wrong": "មានបញ្ហាអ្វីមួយកើតឡើង",
+    "already_added": "បានបន្ថែមរួចហើយ",
+    "select_template": "ជ្រើសរើស",
+    "preview": "មើល",
+    "no_preview": "មិនមានការមើលមុន"
+  },
+  "templates": {
+    "switch_to": "បានប្តូរទៅ",
+    "save_success": "បានរក្សាទុកគំរូដោយជោគជ័យ!",
+    "save_failed": "បានបរាជ័យក្នុងការរក្សាទុកគំរូ",
+    "full_screen": {
+      "title": "កម្មវិធីកែសម្រួល - មើលពេញអេក្រង់",
+      "reset_default": "កំណត់ឡើងវិញតាមលំនាំដើម",
+      "save": "រក្សាទុក",
+      "saving": "កំពុងរក្សាទុក...",
+      "exit_fullscreen": "ចាកចេញពីមើលពេញអេក្រង់",
+      "editor_not_available": "មិនមានកម្មវិធីកែសម្រួលសម្រាប់គំរូនេះទេ",
+      "preview_not_available": "មិនមានការមើលជាមុនទេ",
+      "template": "គំរូ",
+      "component": "សមាសភាគ",
+      "press_esc": "ចុច ESC ដើម្បីចាកចេញពីមើលពេញអេក្រង់",
+      "last_modified": "បានកែប្រែចុងក្រោយ"
+    },
+    "default_screen": {
+      "my_templates": "គំរូរបស់ខ្ញុំ",
+      "select_template": "ជ្រើសរើសគំរូ",
+      "editor": "កម្មវិធីកែសម្រួល",
+      "live": "មើលផ្ទាល់",
+      "fullscreen_editor": "កម្មវិធីកែសម្រួលពេញអេក្រង់",
+      "editor_not_available": "មិនមានកម្មវិធីកែសម្រួលសម្រាប់គំរូនេះទេ",
+      "preview_template": "មើលគំរូជាមុន",
+      "preview_not_available": "មិនមានការមើលជាមុនទេ",
+      "reset_default": "កំណត់ឡើងវិញតាមលំនាំដើម",
+      "save": "រក្សាទុក",
+      "saving": "កំពុងរក្សាទុក...",
+      "template": "គំរូ",
+      "component": "សមាសភាគ",
+      "last_modified": "បានកែប្រែចុងក្រោយ"
+    }
+  },
+
+  "template_editor": {
+    "editing_language": "កំពុងកែសម្រួលភាសា៖",
+    "khmer": "ភាសាខ្មែរ",
+    "english": "អង់គ្លេស",
+    "currently_editing": "កំពុងកែសម្រួល៖ ជំនាន់ {{lang}}",
+    "theme_settings": "ការកំណត់ស្លាបពណ៌ (ទូទៅ)",
+    "primary_color": "ពណ៌សំខាន់",
+    "text_color": "ពណ៌អក្សរ",
+    "main_header": "ក្បាលមេ ({{lang}})",
+    "main_title": "ចំណងជើងមេ",
+    "groom_name": "ឈ្មោះប្រពន្ធ",
+    "bride_name": "ឈ្មោះអញ្ញើញ",
+    "subtitle": "ចំណងជើងរង",
+    "date_time": "កាលបរិច្ឆេទ និងម៉ោង",
+    "main_background_image": "URL រូបភាពផ្ទៃខាងក្រោមមេ",
+    "invitation_message": "សារអញ្ជើញ ({{lang}})",
+    "message_title": "ចំណងជើងសារ",
+    "invitation_message_content": "សារអញ្ជើញ",
+    "event_details": "ព័ត៌មានពិធី ({{lang}})",
+    "details_title": "ចំណងជើងព័ត៌មាន",
+    "ceremony_date": "កាលបរិច្ឆេទពិធី",
+    "ceremony_schedule": "កាលវិភាគពិធី",
+    "morning_time": "ម៉ោងព្រឹក",
+    "morning_desc": "សេចក្ដីពិពណ៌នាព្រឹក",
+    "afternoon_time": "ម៉ោងរសៀល",
+    "afternoon_desc": "សេចក្ដីពិពណ៌នារសៀល",
+    "evening_time": "ម៉ោងល្ងាច",
+    "evening_desc": "សេចក្ដីពិពណ៌នាល្ងាច",
+    "location": "ទីតាំង",
+    "details_background_image": "URL រូបភាពផ្ទៃខាងក្រោមព័ត៌មាន",
+    "loading_config": "កំពុងផ្ទុកការកំណត់កម្មវិធីកែសម្រួល..."
+  },
+  "user": {
+    "table": {
+      "select_all": "ជ្រើសរើសទាំងអស់",
+      "logo": "រូប",
+      "name": "ឈ្មោះ",
+      "phone": "ទូរស័ព្ទ",
+      "email": "អ៊ីមែល",
+      "role": "តួនាទី",
+      "login_as": "ចូលជាមួយ",
+      "logged_in_telegram": "បានចូលតាម Telegram",
+      "logged_in_phone": "បានចូលតាមទូរស័ព្ទ",
+      "updated_at": "បានកែសម្រួលនៅ",
+      "created_at": "បានបង្កើតនៅ",
+      "actions": "សកម្មភាព",
+      "view": "មើល",
+      "edit": "កែសម្រួល",
+      "delete": "លុប"
     }
   }
 }

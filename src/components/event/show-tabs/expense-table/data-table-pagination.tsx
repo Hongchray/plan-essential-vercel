@@ -1,3 +1,5 @@
+"use client";
+
 import { Table } from "@tanstack/react-table";
 import {
   ChevronLeft,
@@ -16,10 +18,11 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+import { useTranslation } from "react-i18next";
 
 interface DataTablePaginationProps<TData> {
   table: Table<TData>;
-  total:number;
+  total: number;
   serverPagination?: boolean;
 }
 
@@ -28,33 +31,26 @@ export function DataTablePagination<TData>({
   total,
   serverPagination = false,
 }: DataTablePaginationProps<TData>) {
+  const { t } = useTranslation("common");
   const router = useRouter();
   const pathname = usePathname();
   const searchParams = useSearchParams();
 
-  // Create query string helper
   const createQueryString = useCallback(
     (params: Record<string, string | number | null>) => {
       const current = new URLSearchParams(Array.from(searchParams.entries()));
-
       for (const [key, value] of Object.entries(params)) {
-        if (value === null) {
-          current.delete(key);
-        } else {
-          current.set(key, String(value));
-        }
+        if (value === null) current.delete(key);
+        else current.set(key, String(value));
       }
-
       return current.toString();
     },
     [searchParams]
   );
 
-  // Handle per page change for server-side pagination
   const handlePerPageChange = (value: string) => {
     const newSize = Number(value);
     if (serverPagination) {
-      // Reset to page 1 when changing page size
       router.push(
         `${pathname}?${createQueryString({
           page: 1,
@@ -67,27 +63,24 @@ export function DataTablePagination<TData>({
     }
   };
 
-  // Get current per_page from URL or default to 10
   const currentPerPage = Number(searchParams.get("per_page")) || 10;
 
   return (
     <div className="flex items-center justify-between px-2">
-      {/* <div className="flex-1 text-sm text-muted-foreground">
-        {table.getFilteredSelectedRowModel().rows.length} of{" "}
-        {table.getFilteredRowModel().rows.length} row(s) selected.
-      </div> */}
       <div className="flex-1 text-sm text-muted-foreground">
         <p>
-          Total:{" "}
+          {t("component.table.total")}:{" "}
           <span className="font-bold text-primary">
-            {total} records
-          </span>{" "}
-          .
+            {total} {t("component.table.records")}
+          </span>
         </p>
       </div>
+
       <div className="flex items-center space-x-6 lg:space-x-8">
         <div className="flex items-center space-x-2">
-          <p className="text-sm font-medium">Rows per page</p>
+          <p className="text-sm font-medium">
+            {t("component.table.rows_per_page")}
+          </p>
           <Select
             value={`${currentPerPage}`}
             onValueChange={handlePerPageChange}
@@ -104,28 +97,30 @@ export function DataTablePagination<TData>({
             </SelectContent>
           </Select>
         </div>
+
         <div className="flex w-[100px] items-center justify-center text-sm font-medium">
-          Page {table.getState().pagination.pageIndex + 1} of{" "}
+          {t("component.table.page")}{" "}
+          {table.getState().pagination.pageIndex + 1} {t("component.table.of")}{" "}
           {table.getPageCount()}
         </div>
+
         <div className="flex items-center space-x-2">
           <Button
             variant="outline"
             className="hidden h-8 w-8 p-0 lg:flex"
             onClick={() => {
-              if (serverPagination) {
+              if (serverPagination)
                 router.push(`${pathname}?${createQueryString({ page: 1 })}`, {
                   scroll: false,
                 });
-              } else {
-                table.setPageIndex(0);
-              }
+              else table.setPageIndex(0);
             }}
             disabled={!table.getCanPreviousPage()}
           >
-            <span className="sr-only">Go to first page</span>
+            <span className="sr-only">{t("component.table.first_page")}</span>
             <ChevronsLeft />
           </Button>
+
           <Button
             variant="outline"
             className="h-8 w-8 p-0"
@@ -138,15 +133,14 @@ export function DataTablePagination<TData>({
                   })}`,
                   { scroll: false }
                 );
-              } else {
-                table.previousPage();
-              }
+              } else table.previousPage();
             }}
             disabled={!table.getCanPreviousPage()}
           >
-            <span className="sr-only">Go to previous page</span>
+            <span className="sr-only">{t("component.table.prev_page")}</span>
             <ChevronLeft />
           </Button>
+
           <Button
             variant="outline"
             className="h-8 w-8 p-0"
@@ -154,38 +148,33 @@ export function DataTablePagination<TData>({
               if (serverPagination) {
                 const currentPage = Number(searchParams.get("page")) || 1;
                 router.push(
-                  `${pathname}?${createQueryString({
-                    page: currentPage + 1,
-                  })}`,
+                  `${pathname}?${createQueryString({ page: currentPage + 1 })}`,
                   { scroll: false }
                 );
-              } else {
-                table.nextPage();
-              }
+              } else table.nextPage();
             }}
             disabled={!table.getCanNextPage()}
           >
-            <span className="sr-only">Go to next page</span>
+            <span className="sr-only">{t("component.table.next_page")}</span>
             <ChevronRight />
           </Button>
+
           <Button
             variant="outline"
             className="hidden h-8 w-8 p-0 lg:flex"
             onClick={() => {
-              if (serverPagination) {
+              if (serverPagination)
                 router.push(
                   `${pathname}?${createQueryString({
                     page: table.getPageCount(),
                   })}`,
                   { scroll: false }
                 );
-              } else {
-                table.setPageIndex(table.getPageCount() - 1);
-              }
+              else table.setPageIndex(table.getPageCount() - 1);
             }}
             disabled={!table.getCanNextPage()}
           >
-            <span className="sr-only">Go to last page</span>
+            <span className="sr-only">{t("component.table.last_page")}</span>
             <ChevronsRight />
           </Button>
         </div>

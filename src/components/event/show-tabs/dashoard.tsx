@@ -24,11 +24,14 @@ import {
   ChartTooltip,
   ChartTooltipContent,
 } from "@/components/ui/chart";
+import { useTranslation } from "next-i18next";
+
 import { useEffect, useState } from "react";
 import { Loading } from "@/components/composable/loading/loading";
 export default function TabDashboard({ eventId }: { eventId: string }) {
   const [event, setEvent] = useState<any>(null);
   const [loading, setLoading] = useState(true);
+  const { t } = useTranslation("common"); // ✅ use hook inside component
 
   useEffect(() => {
     async function fetchEvent() {
@@ -74,48 +77,63 @@ export default function TabDashboard({ eventId }: { eventId: string }) {
 
   return (
     <div className="space-y-6">
-      <h3 className="text-lg font-semibold mb-4">Wedding Dashboard </h3>
+      <h3 className="text-lg font-semibold mb-4">
+        {t("event_dashboard.title")}
+      </h3>
 
       <div className="grid grid-cols-1 md:grid-cols-5 gap-4 mb-6">
         <div className="bg-blue-50 p-4 rounded-lg">
           <div className="text-2xl font-bold text-blue-600">
             {event.total_guest}
           </div>
-          <div className="text-sm text-blue-800">Total Guests</div>
+          <div className="text-sm text-blue-800">
+            {t("event_dashboard.cards.total_guests")}
+          </div>
         </div>
         <div className="bg-green-50 p-4 rounded-lg">
           <div className="text-2xl font-bold text-green-600">
             {event.total_confirmed}
           </div>
-          <div className="text-sm text-green-800">Confirmed</div>
+          <div className="text-sm text-green-800">
+            {t("event_dashboard.cards.confirmed")}
+          </div>
         </div>
         <div className="bg-purple-50 p-4 rounded-lg">
           <div className="text-2xl font-bold text-purple-600">
             {event.total_gift_income}$
           </div>
-          <div className="text-sm text-purple-800">Gift Income</div>
+          <div className="text-sm text-purple-800">
+            {t("event_dashboard.cards.gift_income")}
+          </div>
         </div>
         <div className="bg-red-50 p-4 rounded-lg">
           <div className="text-2xl font-bold text-red-600">
             {event.total_expend_actual || 0}$
           </div>
-          <div className="text-sm text-red-800">Total Expenses Actual</div>
+          <div className="text-sm text-red-800">
+            {t("event_dashboard.cards.total_expenses_actual")}
+          </div>
         </div>
         <div className="bg-red-50 p-4 rounded-lg">
           <div className="text-2xl font-bold text-red-600">
             {event.total_expend_budget || 0}$
           </div>
-          <div className="text-sm text-red-800">Total Expenses Budget</div>
+          <div className="text-sm text-red-800">
+            {t("event_dashboard.cards.total_expenses_budget")}
+          </div>
         </div>
       </div>
 
+      {/* Charts */}
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 mb-6">
         {/* Guest Status Distribution */}
         <Card className="flex flex-col">
           <CardHeader>
-            <CardTitle className="text-lg">Guest Status Distribution</CardTitle>
+            <CardTitle className="text-lg">
+              {t("event_dashboard.charts.guest_status.title")}
+            </CardTitle>
             <CardDescription className="text-sm">
-              RSVP responses breakdown
+              {t("event_dashboard.charts.guest_status.description")}
             </CardDescription>
           </CardHeader>
           <CardContent className="flex-1 flex items-center justify-center">
@@ -156,9 +174,11 @@ export default function TabDashboard({ eventId }: { eventId: string }) {
         {/* Financial Overview */}
         <Card className="flex flex-col">
           <CardHeader>
-            <CardTitle className="text-lg">Financial Overview</CardTitle>
+            <CardTitle className="text-lg">
+              {t("event_dashboard.charts.financial_overview.title")}
+            </CardTitle>
             <CardDescription className="text-sm">
-              Income vs expenses breakdown
+              {t("event_dashboard.charts.financial_overview.description")}
             </CardDescription>
           </CardHeader>
           <CardContent className="flex-1">
@@ -191,9 +211,11 @@ export default function TabDashboard({ eventId }: { eventId: string }) {
         {/* Expense Categories */}
         <Card className="flex flex-col lg:col-span-1">
           <CardHeader>
-            <CardTitle className="text-lg">Expense Categories</CardTitle>
+            <CardTitle className="text-lg">
+              {t("event_dashboard.charts.expense_categories.title")}
+            </CardTitle>
             <CardDescription className="text-sm">
-              Spending breakdown by category
+              {t("event_dashboard.charts.expense_categories.description")}
             </CardDescription>
           </CardHeader>
           <CardContent className="flex-1 h-[250px]">
@@ -233,23 +255,29 @@ export default function TabDashboard({ eventId }: { eventId: string }) {
         </Card>
       </div>
 
+      {/* Financial & Guest Summary */}
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
         <div className="bg-white p-4 border rounded-lg">
-          <h4 className="font-semibold mb-3">Financial Overview</h4>
+          <h4 className="font-semibold mb-3">
+            {t("event_dashboard.financial_summary.title")}
+          </h4>
           <div className="space-y-2">
             <div className="flex justify-between">
-              <span className="text-green-600">Gift Income:</span>
+              <span className="text-green-600">
+                {t("event_dashboard.financial_summary.gift_income")}
+              </span>
               <span className="font-medium text-green-600">
                 {event.total_gift_income.toFixed(2)}$
               </span>
             </div>
             <div className="flex justify-between">
-              <span className="text-red-600">Total Expenses (Actual):</span>
+              <span className="text-red-600">
+                {t("event_dashboard.financial_summary.total_expenses_actual")}
+              </span>
               <span className="font-medium text-red-600">
                 {event.total_expend_actual.toFixed(2)}$
               </span>
             </div>
-
             <hr className="my-2" />
             <div className="flex justify-between text-lg">
               <span
@@ -257,7 +285,7 @@ export default function TabDashboard({ eventId }: { eventId: string }) {
                   event.netAmount >= 0 ? "text-green-600" : "text-red-600"
                 }
               >
-                Net Amount:
+                {t("event_dashboard.financial_summary.net_amount")}
               </span>
               <span
                 className={`font-bold ${
@@ -271,12 +299,14 @@ export default function TabDashboard({ eventId }: { eventId: string }) {
         </div>
 
         <div className="bg-white p-4 border rounded-lg">
-          <h4 className="font-semibold mb-3">Guest Status</h4>
+          <h4 className="font-semibold mb-3">
+            {t("event_dashboard.guest_summary.title")}
+          </h4>
           <div className="space-y-3">
             <div className="flex items-center justify-between">
               <div className="flex items-center gap-2">
                 <div className="w-3 h-3 bg-green-400 rounded-full"></div>
-                <span>Confirmed</span>
+                <span>{t("event_dashboard.guest_summary.confirmed")}</span>
               </div>
               <span className="font-medium">
                 {event.guest_summary.confirmed}
@@ -285,14 +315,14 @@ export default function TabDashboard({ eventId }: { eventId: string }) {
             <div className="flex items-center justify-between">
               <div className="flex items-center gap-2">
                 <div className="w-3 h-3 bg-yellow-400 rounded-full"></div>
-                <span>Pending</span>
+                <span>{t("event_dashboard.guest_summary.pending")}</span>
               </div>
               <span className="font-medium">{event.guest_summary.pending}</span>
             </div>
             <div className="flex items-center justify-between">
               <div className="flex items-center gap-2">
                 <div className="w-3 h-3 bg-red-400 rounded-full"></div>
-                <span>Declined</span>
+                <span>{t("event_dashboard.guest_summary.declined")}</span>
               </div>
               <span className="font-medium">
                 {event.guest_summary.declined}
@@ -302,7 +332,7 @@ export default function TabDashboard({ eventId }: { eventId: string }) {
             <div className="flex items-center justify-between">
               <div className="flex items-center gap-2">
                 <div className="w-3 h-3 bg-purple-400 rounded-full"></div>
-                <span>Gifts Received</span>
+                <span>{t("event_dashboard.guest_summary.gifts_received")}</span>
               </div>
               <span className="font-medium">{event.total_gift}</span>
             </div>

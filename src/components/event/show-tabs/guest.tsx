@@ -1,10 +1,11 @@
 "use client";
 import { useEffect, useState, use } from "react"; // 👈 import use()
-import { columns } from "./guest-table/columns";
+import { useGuestColumns } from "./guest-table/columns";
 import { DataTable } from "./guest-table/data-table";
 import { IAPIResponse } from "@/interfaces/comon/api-response";
 import { Guest } from "@/interfaces/guest";
 import { Loading } from "@/components/composable/loading/loading";
+import { useTranslation } from "react-i18next";
 
 async function getData(
   id: string,
@@ -30,10 +31,11 @@ export default function TabGuest({
   searchParams: any;
 }) {
   const params = use(searchParams); // ✅ unwrap safely
-
+  const columns = useGuestColumns();
   const [data, setData] = useState<Guest[]>([]);
   const [meta, setMeta] = useState({ total: 0, pageCount: 1 });
   const [loading, setLoading] = useState(true);
+  const { t } = useTranslation("common");
 
   useEffect(() => {
     async function fetchData() {
@@ -64,7 +66,9 @@ export default function TabGuest({
         </div>
       ) : (
         <>
-          <h3 className="text-lg font-semibold mb-4">Guest Management</h3>
+          <h3 className="text-lg font-semibold mb-4">
+            {t("event_dashboard.guest.title")}
+          </h3>
           <DataTable
             data={data}
             columns={columns}
