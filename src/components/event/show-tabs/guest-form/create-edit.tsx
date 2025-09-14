@@ -25,7 +25,7 @@ import { ManageTagForm } from "./manage-tag";
 import { Group } from "@/interfaces/group";
 import { Tag } from "@/interfaces/tag";
 import { useParams, useRouter } from "next/navigation";
-import { EditIcon } from "lucide-react";
+import { EditIcon, Plus } from "lucide-react";
 import ImageUpload from "@/components/composable/upload/upload-image";
 import { useTranslation } from "react-i18next";
 
@@ -157,6 +157,7 @@ export function CreateEditForm({ id }: { id: string }) {
         </Button>
       ) : (
         <Button size="sm" onClick={() => setDialogOpen(true)}>
+          <Plus/>
           {t("guest_form.create_edit.add_new")}
         </Button>
       )}

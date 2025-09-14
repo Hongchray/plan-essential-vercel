@@ -61,6 +61,7 @@ export async function GET(
       { confirmed: 0, pending: 0, declined: 0 }
     );
 
+    //convert KHR to usd gift currency_type KHR
     const total_gift_income = event.gifts.reduce(
       (sum, exp) => sum + (exp.amount || 0),
       0

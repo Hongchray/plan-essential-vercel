@@ -278,7 +278,7 @@
     "cards": {
       "total_guests": "ភ្ញៀវសរុប",
       "confirmed": "បានបញ្ជាក់",
-      "gift_income": "ប្រាក់អំណោយ",
+      "gift_income": "ចំណងដៃ",
       "total_expenses_actual": "ចំណាយសរុប (ពិតប្រាកដ)",
       "total_expenses_budget": "ចំណាយសរុប (ថវិកា)"
     },
@@ -302,7 +302,7 @@
     },
     "financial_summary": {
       "title": "ទិដ្ឋភាពទូទៅហិរញ្ញវត្ថុ",
-      "gift_income": "ប្រាក់អំណោយ",
+      "gift_income": "ចំណងដៃ",
       "total_expenses_actual": "ចំណាយសរុប (ពិតប្រាកដ)",
       "net_amount": "ប្រាក់សុទ្ធ"
     },
