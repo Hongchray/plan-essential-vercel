@@ -12,6 +12,7 @@ import {
   DialogTrigger,
 } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
+import { Check, X } from "lucide-react";
 
 interface ConfirmDialogProps {
   trigger: React.ReactNode;
@@ -56,9 +57,11 @@ export function ConfirmDialog({
         </DialogHeader>
         <DialogFooter>
           <Button variant="outline" onClick={handleCancel}>
+            <X/>
             {cancelText ?? t("component.confirm_dialog.cancel")}
           </Button>
           <Button variant="destructive" onClick={handleConfirm}>
+            <Check/>
             {confirmText ?? t("component.confirm_dialog.confirm")}
           </Button>
         </DialogFooter>

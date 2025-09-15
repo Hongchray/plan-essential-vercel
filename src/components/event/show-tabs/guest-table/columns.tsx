@@ -25,7 +25,13 @@ import { ConfirmDialog } from "@/components/composable/dialog/confirm-dialog";
 import { useTranslation } from "react-i18next";
 import Image from "next/image";
 import { getAvatarColor, getInitials } from "@/utils/avatar";
+import { GuestStatusKH } from "@/enums/guests";
 
+const statusMap: Record<string, GuestStatusKH> = {
+  pending: GuestStatusKH.PENDING,
+  confirmed: GuestStatusKH.CONFIRMED,
+  rejected: GuestStatusKH.REJECTED,
+};
 const ActionsCell = ({ row }: { row: any }) => {
   const router = useRouter();
   const { t } = useTranslation("common");
@@ -262,24 +268,25 @@ export function useGuestColumns(): ColumnDef<Guest>[] {
       header: t("event_dashboard.guest.table.status"),
       cell: ({ row }) => (
         <Badge
-          variant={
-            row.original.status === "pending"
-              ? "outline"
-              : row.original.status === "confirmed"
-              ? "default"
-              : row.original.status === "rejected"
-              ? "secondary"
-              : "default"
-          }
-          className="capitalize"
+           className={`
+                capitalize
+              ${
+                row.original.status === "pending"
+                  ? "bg-gray-200 text-gray-700"
+                  : row.original.status === "confirmed"
+                  ? "bg-blue-100 text-blue-600"
+                  : row.original.status === "rejected"
+                  ? "bg-red-100 text-red-600"
+                  : "bg-gray-100 text-gray-500"
+              }
+            `}
         >
-          {row.original.status}
+         {row.original.status && statusMap[row.original.status] || ""}
         </Badge>
       ),
     },
     {
       id: "actions",
-      header: t("event_dashboard.guest.table.actions"),
       cell: ({ row }) => <ActionsCell row={row} />,
     },
   ];

@@ -25,7 +25,7 @@ import { ManageTagForm } from "./manage-tag";
 import { Group } from "@/interfaces/group";
 import { Tag } from "@/interfaces/tag";
 import { useParams, useRouter } from "next/navigation";
-import { EditIcon, Plus } from "lucide-react";
+import { EditIcon, Plus, X } from "lucide-react";
 import ImageUpload from "@/components/composable/upload/upload-image";
 import { useTranslation } from "react-i18next";
 
@@ -120,7 +120,7 @@ export function CreateEditForm({ id }: { id: string }) {
   const groupOptions = useMemo(
     () =>
       groupList.map((group) => ({
-        label: `${group.name_en} (${group.name_kh})`,
+        label: group.name_kh,
         value: group.id,
       })),
     [groupList]
@@ -128,7 +128,7 @@ export function CreateEditForm({ id }: { id: string }) {
   const tagOptions = useMemo(
     () =>
       tagList.map((tag) => ({
-        label: `${tag.name_en} (${tag.name_kh})`,
+        label: tag.name_kh,
         value: tag.id,
       })),
     [tagList]
@@ -197,23 +197,15 @@ export function CreateEditForm({ id }: { id: string }) {
                 form={form}
                 disabled={loading}
               />
-              <TextareaField
-                label={t("guest_form.create_edit.note")}
-                name="note"
-                placeholder={t("guest_form.create_edit.note_placeholder")}
-                form={form}
-                disabled={loading}
-              />
-              <TextareaField
+        
+              {/* <TextareaField
                 label={t("guest_form.create_edit.address")}
                 name="address"
                 placeholder={t("guest_form.create_edit.address_placeholder")}
                 form={form}
                 disabled={loading}
-              />
-              <div className="col-span-2">
-                <Separator />
-              </div>
+              /> */}
+           
               <div>
                 <div className="flex justify-between items-center pt-2">
                   <Label>{t("guest_form.create_edit.groups")}</Label>
@@ -241,6 +233,13 @@ export function CreateEditForm({ id }: { id: string }) {
                   placeholder={t("guest_form.create_edit.tags_placeholder")}
                 />
               </div>
+              <TextareaField
+                label={t("guest_form.create_edit.note")}
+                name="note"
+                placeholder={t("guest_form.create_edit.note_placeholder")}
+                form={form}
+                disabled={loading}
+              />
             </div>
             <DialogFooter>
               <div className="flex gap-2 justify-end pt-2">
@@ -253,6 +252,7 @@ export function CreateEditForm({ id }: { id: string }) {
                     router.refresh();
                   }}
                 >
+                  <X/>
                   {t("guest_form.create_edit.cancel")}
                 </Button>
                 <SubmitButton loading={loading} entityId={id} />

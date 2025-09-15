@@ -1,5 +1,6 @@
 "use client"
 import { Button } from "@/components/ui/button";
+import { X } from "lucide-react";
 import { useRouter } from "next/navigation"
 
 export function BackButton()
@@ -11,6 +12,7 @@ export function BackButton()
             variant="outline"
             onClick={() => router.back()}
         >
+            <X/>
             Cancel
         </Button>
     )
