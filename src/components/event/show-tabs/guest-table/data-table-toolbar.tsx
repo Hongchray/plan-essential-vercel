@@ -1,7 +1,19 @@
 "use client";
 
 import { Table } from "@tanstack/react-table";
-import { CopyIcon, CropIcon, Download, EllipsisVerticalIcon, MousePointerIcon, PlusCircle, SquareIcon, Trash2Icon, Upload, UploadCloud, X } from "lucide-react";
+import {
+  CopyIcon,
+  CropIcon,
+  Download,
+  EllipsisVerticalIcon,
+  MousePointerIcon,
+  PlusCircle,
+  SquareIcon,
+  Trash2Icon,
+  Upload,
+  UploadCloud,
+  X,
+} from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { DataTableViewOptions } from "./data-table-view-options";
@@ -74,18 +86,16 @@ export function DataTableToolbar<TData>({
     if (selectedCount === 0) return;
 
     try {
-      const selectedData = selectedRows.map(row => row.original);
+      const selectedData = selectedRows.map((row) => row.original);
 
       //
 
-      
       // Clear selection after successful deletion
       table.resetRowSelection();
-    } catch (error) {
-    }
+    } catch (error) {}
   };
 
-  const [isDeleting ,setIsDeleting] = useState(false);
+  const [isDeleting, setIsDeleting] = useState(false);
   // Get selected rows
   const selectedRows = table.getFilteredSelectedRowModel().rows;
   const selectedCount = selectedRows.length;
@@ -113,25 +123,35 @@ export function DataTableToolbar<TData>({
       </div>
       <div className="flex gap-4">
         <CreateEditForm id="" />
-        <div className='inline-flex w-fit -space-x-px rounded-md shadow-xs rtl:space-x-reverse'>
-          <Button className='rounded-none rounded-s-md shadow-none focus-visible:z-10' variant='outline'>
+        <div className="inline-flex w-fit -space-x-px rounded-md shadow-xs rtl:space-x-reverse">
+          <Button
+            className="rounded-none rounded-s-md shadow-none focus-visible:z-10"
+            variant="outline"
+          >
             <Upload />
-            <span className=''>បញ្ចូល Excel</span>
+            <span className="">បញ្ចូល Excel</span>
           </Button>
-          <Button className='rounded-none shadow-none focus-visible:z-10' variant='outline'>
+          <Button
+            className="rounded-none shadow-none focus-visible:z-10"
+            variant="outline"
+          >
             <Download />
-            <span className=''>ទាញយក</span>
+            <span className="">ទាញយក</span>
           </Button>
           <ConfirmDialog
             trigger={
-              <Button className='rounded-none rounded-e-md shadow-none focus-visible:z-10' variant='outline' disabled={!hasSelectedRows || isDeleting}>
+              <Button
+                className="rounded-none rounded-e-md shadow-none focus-visible:z-10"
+                variant="outline"
+                disabled={!hasSelectedRows || isDeleting}
+              >
                 <Trash2Icon />
-                <span className=''>លុប</span>
+                <span className="">លុប</span>
               </Button>
             }
             title={t("event_dashboard.guest.table.delete_title")}
             description={t("event_dashboard.guest.table.delete_description")}
-            onConfirm={()=>handleDeleteSelected}
+            onConfirm={() => handleDeleteSelected}
           />
         </div>
         {/* <DataTableViewOptions table={table} /> */}

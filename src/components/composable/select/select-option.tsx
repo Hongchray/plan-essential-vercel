@@ -18,6 +18,7 @@ interface SelectFieldProps {
   placeholder?: string;
   disabled?: boolean;
   className?: string;
+  required?: boolean; // 👈 new prop
 }
 
 export function SelectField({
@@ -27,7 +28,8 @@ export function SelectField({
   form,
   placeholder = "Select...",
   disabled = false,
-  className = "", // default empty string
+  className = "",
+  required = false, // 👈 default off
 }: SelectFieldProps) {
   const {
     register,
@@ -43,6 +45,11 @@ export function SelectField({
     <div className={`space-y-2 w-full ${className}`}>
       <Label htmlFor={name} className="text-sm font-medium">
         {label}
+        {required && (
+          <span className="text-red-500 ml-1" aria-hidden="true">
+            *
+          </span>
+        )}
       </Label>
       <Select
         value={value}

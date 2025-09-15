@@ -255,7 +255,12 @@
       "imageRequired": "Cover image is required",
       "createFailed": "Failed to create event",
       "updateFailed": "Failed to update event",
-      "getFailed": "Failed to fetch event data"
+      "getFailed": "Failed to fetch event data",
+      "startTimeRequired": "Start time is required",
+      "startTimeInvalid": "Start time must be a valid date",
+      "endTimeRequired": "End time is required",
+      "endTimeInvalid": "End time must be a valid date",
+      "endTimeAfterStart": "End time must be after start time"
     },
     "message": {
       "createSuccess": "Event created successfully",
@@ -420,6 +425,24 @@
       "cancel": "Cancel",
       "error_name_required": "Name is required",
       "error_budget_required": "Budget is required"
+    },
+    "list": {
+      "search": "Search...",
+      "add": "Add",
+      "selectAll": "Select All",
+      "deselectAll": "Deselect All",
+      "actual": "Actual",
+      "budget": "Budget",
+      "total": "Total: {{count}} items",
+      "selected": "{{count}} selected",
+      "delete": "Delete",
+      "confirm_delete_title": "Delete Expense?",
+      "confirm_delete_multiple_desc": "Are you sure you want to delete {{count}} selected expenses?",
+      "confirm_delete_single_desc": "Are you sure you want to delete the expense ",
+      "confirm_delete_warning": "This action cannot be undone.",
+      "deleting": "Deleting...",
+      "delete_selected": "Delete Selected",
+      "no_data": "No data found"
     }
   },
   "gift": {

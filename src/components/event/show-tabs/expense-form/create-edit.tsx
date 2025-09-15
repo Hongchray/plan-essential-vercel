@@ -17,9 +17,8 @@ import z from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { TextareaField } from "@/components/composable/input/input-textarea-text-field";
 import { useParams, useRouter } from "next/navigation";
-import { EditIcon } from "lucide-react";
+import { EditIcon, PlusIcon } from "lucide-react";
 import { useTranslation } from "react-i18next";
-
 export function useExpenseFormSchema() {
   const { t } = useTranslation("common");
   return z.object({
@@ -100,6 +99,7 @@ export function CreateEditForm({ id }: { id: string }) {
         </Button>
       ) : (
         <Button size="sm" onClick={() => setDialogOpen(true)}>
+          <PlusIcon />
           {t("expense.form.addNew")}
         </Button>
       )}
