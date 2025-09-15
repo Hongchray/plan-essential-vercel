@@ -104,7 +104,7 @@ export function DataTableToolbar<TData>({
     }
   };
 
-  const [isDeleting ,setIsDeleting] = useState(false);
+  const [isDeleting, setIsDeleting] = useState(false);
   // Get selected rows
   const selectedRows = table.getFilteredSelectedRowModel().rows;
   const selectedCount = selectedRows.length;
@@ -157,13 +157,13 @@ export function DataTableToolbar<TData>({
             onClick={exportGuestList}
             className='rounded-none shadow-none border-primary focus-visible:z-10 text-primary hover:text-primary/80 hover:bg-primary/10' variant='outline'>
             <Download />
-            <span className=''>ទាញយក</span>
+            <span className="">ទាញយក</span>
           </Button>
           <ConfirmDialog
             trigger={
               <Button size="sm" className='rounded-none rounded-e-md border-primary shadow-none focus-visible:z-10 text-primary hover:text-primary/80 hover:bg-primary/10' variant='outline' disabled={!hasSelectedRows || isDeleting}>
                 <Trash2Icon />
-                <span className=''>លុប</span>
+                <span className="">លុប</span>
               </Button>
             }
             title={t("event_dashboard.guest.table.delete_title")}

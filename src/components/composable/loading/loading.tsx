@@ -136,7 +136,7 @@ export const Loading = ({
 
           {/* Use GIF instead of video */}
           <img
-            src="/image-loading.gif"
+            src="/loading.gif"
             alt="Loading..."
             className={cn(iconSizes[size], "absolute inset-0 m-auto")}
           />

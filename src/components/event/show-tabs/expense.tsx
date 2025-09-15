@@ -6,6 +6,8 @@ import { IAPIResponse } from "@/interfaces/comon/api-response";
 import { Expense } from "@/interfaces/expense";
 import { Loading } from "@/components/composable/loading/loading";
 import { useTranslation } from "react-i18next";
+import TabExpenseMobile from "@/components/event/show-tabs/expense-table/tab-expense-mobile"; // <-- new mobile component
+
 async function getData(
   id: string,
   page: number = 1,
@@ -16,9 +18,7 @@ async function getData(
 ) {
   const response = await fetch(
     `/api/admin/event/${id}/expense?page=${page}&per_page=${pageSize}&search=${search}&sort=${sort}&order=${order}`,
-    {
-      method: "GET",
-    }
+    { method: "GET" }
   );
   const result: IAPIResponse<Expense> = await response.json();
   return result;
@@ -36,6 +36,7 @@ export default function TabExpense({
   const [loading, setLoading] = useState(true);
   const columns = useExpenseColumns();
   const { t } = useTranslation("common");
+
   useEffect(() => {
     async function fetchData() {
       setLoading(true);
@@ -60,19 +61,28 @@ export default function TabExpense({
   return (
     <div className="space-y-6">
       {loading ? (
-        <div className="flex items-center justify-center ">
+        <div className="flex items-center justify-center">
           <Loading variant="circle" size="lg" />
         </div>
       ) : (
         <>
           <h3 className="text-lg font-semibold mb-4">{t("expense.title")}</h3>
-          <DataTable
-            data={data}
-            columns={columns}
-            pageCount={meta.pageCount}
-            total={meta.total}
-            serverPagination={true}
-          />
+
+          {/* Laptop/Desktop View */}
+          <div className="hidden md:block">
+            <DataTable
+              data={data}
+              columns={columns}
+              pageCount={meta.pageCount}
+              total={meta.total}
+              serverPagination={true}
+            />
+          </div>
+
+          {/* Mobile View */}
+          <div className="block md:hidden">
+            <TabExpenseMobile data={data} setData={setData} />
+          </div>
         </>
       )}
     </div>

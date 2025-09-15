@@ -64,182 +64,270 @@ export default function ShowEvent({
   };
 
   return (
-    <div className="p-6 border rounded-md  bg-white  mx-auto">
-      <Tabs className="" value={tab} onValueChange={handleChange}>
-        <TabsList className="h-full p-2 gap-2">
-          <TabsTrigger
-            value="dashboard"
-            className="flex flex-col gap-1 py-3 px-2 transition-all duration-300 ease-in-out hover:bg-background/80 data-[state=active]:bg-background data-[state=active]:shadow-sm data-[state=active]:scale-105"
-          >
-            <LayoutDashboard
-              className={`h-4 w-4 transition-all duration-300 ${
-                tab === "dashboard"
-                  ? "text-primary scale-110"
-                  : "text-muted-foreground"
-              }`}
-            />
-
-            <ClientOnly>
-              <span
-                className={`text-xs transition-all duration-300 ${
+    <div className="p-2 sm:border-0 rounded-md mx-auto bg-transparent sm:bg-white">
+      <div className="hidden sm:block">
+        <Tabs className="" value={tab} onValueChange={handleChange}>
+          <TabsList className="h-full p-2 gap-2">
+            <TabsTrigger
+              value="dashboard"
+              className="flex flex-col gap-1 py-3 px-2 transition-all duration-300 ease-in-out hover:bg-background/80 data-[state=active]:bg-background data-[state=active]:shadow-sm data-[state=active]:scale-105"
+            >
+              <LayoutDashboard
+                className={`h-4 w-4 transition-all duration-300 ${
                   tab === "dashboard"
-                    ? "text-primary font-medium"
+                    ? "text-primary scale-110"
                     : "text-muted-foreground"
                 }`}
-              >
-                {t("event_dashboard.tab.dashboard")}
-              </span>
-            </ClientOnly>
-          </TabsTrigger>
+              />
 
-          <TabsTrigger
-            value="guests"
-            className="flex flex-col gap-1 py-3 px-2 transition-all duration-300 ease-in-out hover:bg-background/80 data-[state=active]:bg-background data-[state=active]:shadow-sm data-[state=active]:scale-105"
-          >
-            <Users
-              className={`h-4 w-4 transition-all duration-300 ${
-                tab === "guests"
-                  ? "text-primary scale-110"
-                  : "text-muted-foreground"
-              }`}
-            />
-            <ClientOnly>
-              <span
-                className={`text-xs transition-all duration-300 ${
+              <ClientOnly>
+                <span
+                  className={`text-xs transition-all duration-300 ${
+                    tab === "dashboard"
+                      ? "text-primary font-medium"
+                      : "text-muted-foreground"
+                  }`}
+                >
+                  {t("event_dashboard.tab.dashboard")}
+                </span>
+              </ClientOnly>
+            </TabsTrigger>
+
+            <TabsTrigger
+              value="guests"
+              className="flex flex-col gap-1 py-3 px-2 transition-all duration-300 ease-in-out hover:bg-background/80 data-[state=active]:bg-background data-[state=active]:shadow-sm data-[state=active]:scale-105"
+            >
+              <Users
+                className={`h-4 w-4 transition-all duration-300 ${
                   tab === "guests"
-                    ? "text-primary font-medium"
+                    ? "text-primary scale-110"
                     : "text-muted-foreground"
                 }`}
-              >
-                {t("event_dashboard.tab.guest")}
-              </span>
-            </ClientOnly>
-          </TabsTrigger>
-          <TabsTrigger
-            value="expense"
-            className="flex flex-col gap-1 py-3 px-2 transition-all duration-300 ease-in-out hover:bg-background/80 data-[state=active]:bg-background data-[state=active]:shadow-sm data-[state=active]:scale-105"
-          >
-            <Receipt
-              className={`h-4 w-4 transition-all duration-300 ${
-                tab === "expense"
-                  ? "text-primary scale-110"
-                  : "text-muted-foreground"
-              }`}
-            />
-
-            <ClientOnly>
-              <span
-                className={`text-xs transition-all duration-300 ${
+              />
+              <ClientOnly>
+                <span
+                  className={`text-xs transition-all duration-300 ${
+                    tab === "guests"
+                      ? "text-primary font-medium"
+                      : "text-muted-foreground"
+                  }`}
+                >
+                  {t("event_dashboard.tab.guest")}
+                </span>
+              </ClientOnly>
+            </TabsTrigger>
+            <TabsTrigger
+              value="expense"
+              className="flex flex-col gap-1 py-3 px-2 transition-all duration-300 ease-in-out hover:bg-background/80 data-[state=active]:bg-background data-[state=active]:shadow-sm data-[state=active]:scale-105"
+            >
+              <Receipt
+                className={`h-4 w-4 transition-all duration-300 ${
                   tab === "expense"
-                    ? "text-primary font-medium"
+                    ? "text-primary scale-110"
                     : "text-muted-foreground"
                 }`}
-              >
-                {t("event_dashboard.tab.expense")}
-              </span>
-            </ClientOnly>
-          </TabsTrigger>
-          <TabsTrigger
-            value="gifts"
-            className="flex flex-col gap-1 py-3 px-2 transition-all duration-300 ease-in-out hover:bg-background/80 data-[state=active]:bg-background data-[state=active]:shadow-sm data-[state=active]:scale-105"
-          >
-            <Gift
-              className={`h-4 w-4 transition-all duration-300 ${
-                tab === "gifts"
-                  ? "text-primary scale-110"
-                  : "text-muted-foreground"
-              }`}
-            />
-            <ClientOnly>
-              <span
-                className={`text-xs transition-all duration-300 ${
+              />
+
+              <ClientOnly>
+                <span
+                  className={`text-xs transition-all duration-300 ${
+                    tab === "expense"
+                      ? "text-primary font-medium"
+                      : "text-muted-foreground"
+                  }`}
+                >
+                  {t("event_dashboard.tab.expense")}
+                </span>
+              </ClientOnly>
+            </TabsTrigger>
+            <TabsTrigger
+              value="gifts"
+              className="flex flex-col gap-1 py-3 px-2 transition-all duration-300 ease-in-out hover:bg-background/80 data-[state=active]:bg-background data-[state=active]:shadow-sm data-[state=active]:scale-105"
+            >
+              <Gift
+                className={`h-4 w-4 transition-all duration-300 ${
                   tab === "gifts"
-                    ? "text-primary font-medium"
+                    ? "text-primary scale-110"
                     : "text-muted-foreground"
                 }`}
-              >
-                {t("event_dashboard.tab.wedding_gift")}
-              </span>
-            </ClientOnly>
-          </TabsTrigger>
-          <TabsTrigger
-            value="template"
-            className="flex flex-col gap-1 py-3 px-2 transition-all duration-300 ease-in-out hover:bg-background/80 data-[state=active]:bg-background data-[state=active]:shadow-sm data-[state=active]:scale-105"
-          >
-            <Mail
-              className={`h-4 w-4 transition-all duration-300 ${
-                tab === "template"
-                  ? "text-primary scale-110"
-                  : "text-muted-foreground"
-              }`}
-            />
-            <ClientOnly>
-              <span
-                className={`text-xs transition-all duration-300 ${
+              />
+              <ClientOnly>
+                <span
+                  className={`text-xs transition-all duration-300 ${
+                    tab === "gifts"
+                      ? "text-primary font-medium"
+                      : "text-muted-foreground"
+                  }`}
+                >
+                  {t("event_dashboard.tab.wedding_gift")}
+                </span>
+              </ClientOnly>
+            </TabsTrigger>
+            <TabsTrigger
+              value="template"
+              className="flex flex-col gap-1 py-3 px-2 transition-all duration-300 ease-in-out hover:bg-background/80 data-[state=active]:bg-background data-[state=active]:shadow-sm data-[state=active]:scale-105"
+            >
+              <Mail
+                className={`h-4 w-4 transition-all duration-300 ${
                   tab === "template"
-                    ? "text-primary font-medium"
+                    ? "text-primary scale-110"
                     : "text-muted-foreground"
                 }`}
-              >
-                {t("event_dashboard.tab.invite_template")}
-              </span>
-            </ClientOnly>
-          </TabsTrigger>
-          <TabsTrigger
-            value="addTemplate"
-            className="flex flex-col gap-1 py-3 px-2 transition-all duration-300 ease-in-out hover:bg-background/80 data-[state=active]:bg-background data-[state=active]:shadow-sm data-[state=active]:scale-105"
-          >
-            <PlusIcon
-              className={`h-4 w-4 transition-all duration-300 ${
-                tab === "addTemplate"
-                  ? "text-primary scale-110"
-                  : "text-muted-foreground"
-              }`}
-            />
-            <ClientOnly>
-              <span
-                className={`text-xs transition-all duration-300 ${
+              />
+              <ClientOnly>
+                <span
+                  className={`text-xs transition-all duration-300 ${
+                    tab === "template"
+                      ? "text-primary font-medium"
+                      : "text-muted-foreground"
+                  }`}
+                >
+                  {t("event_dashboard.tab.invite_template")}
+                </span>
+              </ClientOnly>
+            </TabsTrigger>
+            <TabsTrigger
+              value="addTemplate"
+              className="flex flex-col gap-1 py-3 px-2 transition-all duration-300 ease-in-out hover:bg-background/80 data-[state=active]:bg-background data-[state=active]:shadow-sm data-[state=active]:scale-105"
+            >
+              <PlusIcon
+                className={`h-4 w-4 transition-all duration-300 ${
                   tab === "addTemplate"
-                    ? "text-primary font-medium"
+                    ? "text-primary scale-110"
                     : "text-muted-foreground"
                 }`}
-              >
-                {t("event_dashboard.tab.add_template")}
-              </span>
-            </ClientOnly>
-          </TabsTrigger>
-        </TabsList>
-        <TabsContent value="dashboard">
-          <div>
+              />
+              <ClientOnly>
+                <span
+                  className={`text-xs transition-all duration-300 ${
+                    tab === "addTemplate"
+                      ? "text-primary font-medium"
+                      : "text-muted-foreground"
+                  }`}
+                >
+                  {t("event_dashboard.tab.add_template")}
+                </span>
+              </ClientOnly>
+            </TabsTrigger>
+          </TabsList>
+          <TabsContent value="dashboard">
+            <div>
+              <TabDashboard eventId={eventId} />
+            </div>
+          </TabsContent>
+          <TabsContent value="guests">
+            <div>
+              <TabGuest paramId={eventId} searchParams={searchParams} />
+            </div>
+          </TabsContent>
+          <TabsContent value="expense">
+            <div>
+              <TabExpense paramId={eventId} searchParams={searchParams} />
+            </div>
+          </TabsContent>
+          <TabsContent value="gifts">
+            <div>
+              <TabGift paramId={eventId} searchParams={searchParams} />
+            </div>
+          </TabsContent>
+          <TabsContent value="template">
+            <div>
+              <TabTemplate paramId={eventId} />
+            </div>
+          </TabsContent>
+          <TabsContent value="addTemplate">
+            <div>
+              <TabAddTemplate />
+            </div>
+          </TabsContent>
+        </Tabs>
+      </div>
+      <div className="block sm:hidden ">
+        <Tabs value={tab} onValueChange={handleChange}>
+          <TabsList className=" w-full h-full flex gap-1 bg-white">
+            {[
+              {
+                value: "dashboard",
+                icon: LayoutDashboard,
+                label: t("event_dashboard.tab.dashboard"),
+              },
+              {
+                value: "guests",
+                icon: Users,
+                label: t("event_dashboard.tab.guest"),
+              },
+              {
+                value: "expense",
+                icon: Receipt,
+                label: t("event_dashboard.tab.expense"),
+              },
+              {
+                value: "gifts",
+                icon: Gift,
+                label: t("event_dashboard.tab.wedding_gift"),
+              },
+              {
+                value: "template",
+                icon: Mail,
+                label: t("event_dashboard.tab.invite_template"),
+              },
+              {
+                value: "addTemplate",
+                icon: PlusIcon,
+                label: t("event_dashboard.tab.add_template"),
+              },
+            ].map((item) => {
+              const Icon = item.icon;
+              return (
+                <TabsTrigger
+                  key={item.value}
+                  value={item.value}
+                  className="flex-1 flex flex-col items-center justify-center gap-1 py-3 px-2 min-h-[70px] transition-all duration-300 ease-in-out hover:bg-background/80 data-[state=active]:bg-background data-[state=active]:shadow-sm data-[state=active]:scale-105"
+                >
+                  <Icon
+                    className={`h-4 w-4 transition-all duration-300 ${
+                      tab === item.value
+                        ? "text-primary scale-110"
+                        : "text-muted-foreground"
+                    }`}
+                  />
+                  <ClientOnly>
+                    <span
+                      className={`text-xs text-center break-words whitespace-normal transition-all duration-300 ${
+                        tab === item.value
+                          ? "text-primary font-medium"
+                          : "text-muted-foreground"
+                      }`}
+                    >
+                      {item.label}
+                    </span>
+                  </ClientOnly>
+                </TabsTrigger>
+              );
+            })}
+          </TabsList>
+
+          {/* Tabs Content */}
+          <TabsContent value="dashboard">
             <TabDashboard eventId={eventId} />
-          </div>
-        </TabsContent>
-        <TabsContent value="guests">
-          <div>
+          </TabsContent>
+          <TabsContent value="guests">
             <TabGuest paramId={eventId} searchParams={searchParams} />
-          </div>
-        </TabsContent>
-        <TabsContent value="expense">
-          <div>
+          </TabsContent>
+          <TabsContent value="expense">
             <TabExpense paramId={eventId} searchParams={searchParams} />
-          </div>
-        </TabsContent>
-        <TabsContent value="gifts">
-          <div>
+          </TabsContent>
+          <TabsContent value="gifts">
             <TabGift paramId={eventId} searchParams={searchParams} />
-          </div>
-        </TabsContent>
-        <TabsContent value="template">
-          <div>
+          </TabsContent>
+          <TabsContent value="template">
             <TabTemplate paramId={eventId} />
-          </div>
-        </TabsContent>
-        <TabsContent value="addTemplate">
-          <div>
+          </TabsContent>
+          <TabsContent value="addTemplate">
             <TabAddTemplate />
-          </div>
-        </TabsContent>
-      </Tabs>
+          </TabsContent>
+        </Tabs>
+      </div>
     </div>
   );
 }

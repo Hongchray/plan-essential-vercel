@@ -16,7 +16,7 @@ import { DatePickerField } from "../composable/date/date-picker";
 import ImageUpload from "../composable/upload/upload-image";
 import { useTranslation } from "next-i18next";
 import { Label } from "@/components/ui/label";
-
+import { RequiredMark } from "../composable/required-mark";
 export function CreateEditForm({ id }: { id?: string }) {
   const { t } = useTranslation("common");
   const { setOverlayLoading } = useLoading();
@@ -24,26 +24,36 @@ export function CreateEditForm({ id }: { id?: string }) {
   const [loading, setLoading] = useState(false);
   const [mounted, setMounted] = useState(false);
 
-  // ✅ Zod schema inside component to use t()
-  const formSchema = z.object({
-    name: z
-      .string()
-      .min(1, t("EventPage.error.nameRequired"))
-      .max(50, t("EventPage.error.nameMax")),
-    type: z.string().min(1, t("EventPage.error.typeRequired")),
-    bride: z.string().min(1, t("EventPage.error.brideRequired")),
-    groom: z.string().min(1, t("EventPage.error.groomRequired")),
-    image: z.string().nullable(),
-    status: z.string(),
-    description: z.string(),
-    userId: z.string(),
-    location: z.string(),
-    latitude: z.coerce.string().optional(),
-    longitude: z.coerce.string().optional(),
-    startTime: z.coerce.date().optional(),
-    owner: z.coerce.string().optional(),
-    endTime: z.coerce.date().optional(),
-  });
+  const formSchema = z
+    .object({
+      name: z
+        .string()
+        .min(1, t("EventPage.error.nameRequired"))
+        .max(50, t("EventPage.error.nameMax")),
+      type: z.string().min(1, t("EventPage.error.typeRequired")),
+      bride: z.string().min(1, t("EventPage.error.brideRequired")),
+      groom: z.string().min(1, t("EventPage.error.groomRequired")),
+      image: z.string().nullable(),
+      status: z.string(),
+      description: z.string(),
+      userId: z.string(),
+      location: z.string(),
+      latitude: z.coerce.string().optional(),
+      longitude: z.coerce.string().optional(),
+      startTime: z.coerce.date({
+        required_error: t("EventPage.error.startTimeRequired"),
+        invalid_type_error: t("EventPage.error.startTimeInvalid"),
+      }),
+      endTime: z.coerce.date({
+        required_error: t("EventPage.error.endTimeRequired"),
+        invalid_type_error: t("EventPage.error.endTimeInvalid"),
+      }),
+      owner: z.coerce.string().optional(),
+    })
+    .refine((data) => data.endTime >= data.startTime, {
+      path: ["endTime"],
+      message: t("EventPage.error.endTimeAfterStart"),
+    });
 
   type FormData = z.infer<typeof formSchema>;
 
@@ -162,6 +172,7 @@ export function CreateEditForm({ id }: { id?: string }) {
             placeholder={t("EventPage.create.namePlaceholder")}
             form={form}
             disabled={loading}
+            required
           />
 
           <SelectField
@@ -170,6 +181,7 @@ export function CreateEditForm({ id }: { id?: string }) {
             placeholder={t("EventPage.create.typePlaceholder")}
             disabled={id != null}
             className="w-full"
+            required
             options={[
               { label: t("EventPage.create.wedding"), value: "wedding" },
               {
@@ -200,11 +212,13 @@ export function CreateEditForm({ id }: { id?: string }) {
                 name="groom"
                 placeholder={t("EventPage.create.groomPlaceholder")}
                 form={form}
+                required
                 disabled={loading}
               />
               <InputTextField
                 label={t("EventPage.create.bride")}
                 name="bride"
+                required
                 placeholder={t("EventPage.create.bridePlaceholder")}
                 form={form}
                 disabled={loading}
@@ -217,12 +231,14 @@ export function CreateEditForm({ id }: { id?: string }) {
             name="startTime"
             placeholder={t("EventPage.create.startDatePlaceholder")}
             form={form}
+            required
           />
           <DatePickerField
             label={t("EventPage.create.endDate")}
             name="endTime"
             placeholder={t("EventPage.create.endDatePlaceholder")}
             form={form}
+            required
           />
 
           <TextareaField

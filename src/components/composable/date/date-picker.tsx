@@ -1,39 +1,40 @@
-'use client'
+"use client";
 
-import { useState, useEffect } from "react"
-import { CalendarIcon } from "lucide-react"
-import { format } from "date-fns"
-import { Button } from "@/components/ui/button"
-import { Calendar } from "@/components/ui/calendar"
-import { Input } from "@/components/ui/input"
-import { Label } from "@/components/ui/label"
+import { useState, useEffect } from "react";
+import { CalendarIcon } from "lucide-react";
+import { format } from "date-fns";
+import { Button } from "@/components/ui/button";
+import { Calendar } from "@/components/ui/calendar";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
 import {
   Popover,
   PopoverContent,
   PopoverTrigger,
-} from "@/components/ui/popover"
-import { FieldError, UseFormReturn } from "react-hook-form"
+} from "@/components/ui/popover";
+import { FieldError, UseFormReturn } from "react-hook-form";
 
 interface DatePickerFieldProps {
-  label: string
-  name: string
-  placeholder?: string
-  form: UseFormReturn<any>
-  disabled?: boolean
+  label: string;
+  name: string;
+  placeholder?: string;
+  form: UseFormReturn<any>;
+  disabled?: boolean;
+  required?: boolean; // 👈 optional prop, default false
 }
 
 function formatDate(date: Date | undefined) {
   if (!date) {
-    return ""
+    return "";
   }
-  return format(date, "PPP")
+  return format(date, "PPP");
 }
 
 function isValidDate(date: Date | undefined): date is Date {
   if (!date) {
-    return false
+    return false;
   }
-  return date instanceof Date && !isNaN(date.getTime())
+  return date instanceof Date && !isNaN(date.getTime());
 }
 
 export function DatePickerField({
@@ -42,95 +43,105 @@ export function DatePickerField({
   placeholder = "Select a date",
   form,
   disabled = false,
+  required = false,
 }: DatePickerFieldProps) {
-  const [open, setOpen] = useState(false)
-  
+  const [open, setOpen] = useState(false);
+
   const {
     formState: { errors },
     setValue,
     watch,
     trigger,
-  } = form
+  } = form;
 
-  const error: FieldError | undefined = errors[name] as FieldError
-  const watchedValue = watch(name)
-  
+  const error: FieldError | undefined = errors[name] as FieldError;
+  const watchedValue = watch(name);
+
   // Convert watched value to Date object if it's a string
-  const selectedDate = watchedValue instanceof Date ? watchedValue : 
-                      (watchedValue ? new Date(watchedValue) : undefined)
+  const selectedDate =
+    watchedValue instanceof Date
+      ? watchedValue
+      : watchedValue
+      ? new Date(watchedValue)
+      : undefined;
 
   const [inputValue, setInputValue] = useState(
     isValidDate(selectedDate) ? formatDate(selectedDate) : ""
-  )
-  
+  );
+
   // Set initial month to selected date or current date
   const [month, setMonth] = useState<Date>(
     isValidDate(selectedDate) ? selectedDate : new Date()
-  )
+  );
 
   // Sync input value when form value changes externally
   useEffect(() => {
     if (isValidDate(selectedDate)) {
-      const formatted = formatDate(selectedDate)
+      const formatted = formatDate(selectedDate);
       if (inputValue !== formatted) {
-        setInputValue(formatted)
+        setInputValue(formatted);
       }
       if (month?.getTime() !== selectedDate.getTime()) {
-        setMonth(selectedDate)
+        setMonth(selectedDate);
       }
     } else {
       if (inputValue !== "") {
-        setInputValue("")
+        setInputValue("");
       }
     }
-  }, [selectedDate]) 
+  }, [selectedDate]);
 
   const handleDateSelect = (date: Date | undefined) => {
-    setValue(name, date, { shouldValidate: true, shouldDirty: true })
-    setInputValue(date && isValidDate(date) ? formatDate(date) : "")
+    setValue(name, date, { shouldValidate: true, shouldDirty: true });
+    setInputValue(date && isValidDate(date) ? formatDate(date) : "");
     if (date && isValidDate(date)) {
-      setMonth(date)
+      setMonth(date);
     }
-    setOpen(false)
+    setOpen(false);
     // Trigger validation
-    trigger(name)
-  }
+    trigger(name);
+  };
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const value = e.target.value
-    setInputValue(value)
-    
+    const value = e.target.value;
+    setInputValue(value);
+
     if (!value.trim()) {
       // Handle empty input
-      setValue(name, undefined, { shouldValidate: true, shouldDirty: true })
-      trigger(name)
-      return
+      setValue(name, undefined, { shouldValidate: true, shouldDirty: true });
+      trigger(name);
+      return;
     }
-    
+
     // Try to parse the input as a date
-    const parsedDate = new Date(value)
+    const parsedDate = new Date(value);
     if (isValidDate(parsedDate)) {
-      setValue(name, parsedDate, { shouldValidate: true, shouldDirty: true })
-      setMonth(parsedDate)
-      trigger(name)
+      setValue(name, parsedDate, { shouldValidate: true, shouldDirty: true });
+      setMonth(parsedDate);
+      trigger(name);
     } else {
       // Set invalid value to trigger validation error
-      setValue(name, value, { shouldValidate: true, shouldDirty: true })
-      trigger(name)
+      setValue(name, value, { shouldValidate: true, shouldDirty: true });
+      trigger(name);
     }
-  }
+  };
 
   const handleInputBlur = () => {
     // On blur, if we have a valid selected date but input doesn't match, reset input
     if (isValidDate(selectedDate) && inputValue !== formatDate(selectedDate)) {
-      setInputValue(formatDate(selectedDate))
+      setInputValue(formatDate(selectedDate));
     }
-  }
+  };
 
   return (
     <div className="space-y-2">
       <Label htmlFor={name} className="text-sm font-medium">
         {label}
+        {required && (
+          <span className="text-red-500 ml-1" aria-hidden="true">
+            *
+          </span>
+        )}
       </Label>
       <div className="relative">
         <Input
@@ -142,8 +153,8 @@ export function DatePickerField({
           onBlur={handleInputBlur}
           onKeyDown={(e) => {
             if (e.key === "ArrowDown") {
-              e.preventDefault()
-              setOpen(true)
+              e.preventDefault();
+              setOpen(true);
             }
           }}
           className="pr-10"
@@ -179,11 +190,7 @@ export function DatePickerField({
           </PopoverContent>
         </Popover>
       </div>
-      {error && (
-        <p className="text-sm text-destructive">
-          {error.message}
-        </p>
-      )}
+      {error && <p className="text-sm text-destructive">{error.message}</p>}
     </div>
-  )
+  );
 }
