@@ -426,7 +426,26 @@
       "amount_placeholder": "Enter amount",
       "cancel": "Cancel",
       "error_name_required": "Name is required",
-      "error_budget_required": "Budget is required"
+      "error_budget_required": "Budget is required",
+      "calculated_from_payments": "Calculated from payments",
+      "payment": {
+        "error_name_required": "Payment name is required",
+        "error_amount_required": "Payment amount must be greater than 0"
+      },
+      "payments": {
+        "title": "Payments",
+        "add": "Add Payment",
+        "no_payments": "No payments added yet. Click 'Add Payment' to get started.",
+        "payment": "Payment",
+        "name": "Payment for",
+        "name_placeholder": "Enter payment description",
+        "amount": "Amount",
+        "amount_placeholder": "Enter payment amount",
+        "paid_date": "Payment Date",
+        "note": "Note",
+        "note_placeholder": "Optional payment note",
+        "total": "Total Payments"
+      }
     },
     "list": {
       "search": "Search...",

@@ -1,5 +1,5 @@
-import { NextResponse } from 'next/server';
-import { generateGuestImportTemplate } from '@/lib/excel-export-import';
+import { NextResponse } from "next/server";
+import { generateGuestImportTemplate } from "@/lib/excel-export-import";
 
 export async function GET() {
   try {
@@ -8,18 +8,23 @@ export async function GET() {
 
     // Set headers for file download
     const headers = new Headers();
-    headers.set('Content-Type', 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
-    headers.set('Content-Disposition', 'attachment; filename="guest-import-template.xlsx"');
+    headers.set(
+      "Content-Type",
+      "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
+    );
+    headers.set(
+      "Content-Disposition",
+      'attachment; filename="guest-import-template.xlsx"'
+    );
 
-    return new NextResponse(templateBuffer, {
+    return new NextResponse(new Uint8Array(templateBuffer), {
       status: 200,
       headers,
     });
-
   } catch (error) {
-    console.error('Error generating template:', error);
+    console.error("Error generating template:", error);
     return NextResponse.json(
-      { error: 'Failed to generate template' },
+      { error: "Failed to generate template" },
       { status: 500 }
     );
   }

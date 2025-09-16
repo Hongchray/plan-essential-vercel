@@ -116,7 +116,7 @@ export default function DashboardPage() {
           <CardContent>
             <div className="text-2xl font-bold text-orange-600 flex items-center gap-2">
               {loading ? (
-                <Loading variant="circle" size="sm" />
+                <Loading variant="minimal" size="sm" />
               ) : (
                 <span>{totalUsers ?? 0}</span>
               )}
@@ -149,7 +149,7 @@ export default function DashboardPage() {
           <CardContent>
             <div className="text-2xl font-bold text-rose-600">
               {templates === null ? (
-                <Loading variant="circle" size="sm" />
+                <Loading variant="minimal" size="sm" />
               ) : (
                 templates
               )}
@@ -178,7 +178,7 @@ export default function DashboardPage() {
           <CardContent>
             <div className="text-2xl font-bold text-green-600">
               {events === null ? (
-                <Loading variant="circle" size="sm" />
+                <Loading variant="minimal" size="sm" />
               ) : (
                 events
               )}
@@ -212,7 +212,7 @@ export default function DashboardPage() {
           <CardContent>
             {loading ? (
               <div className="flex justify-center items-center h-[250px]">
-                <Loading variant="circle" size="md" />
+                <Loading variant="minimal" size="md" />
               </div>
             ) : (
               <ChartContainer
@@ -256,7 +256,7 @@ export default function DashboardPage() {
           <CardContent>
             {loading ? (
               <div className="flex justify-center items-center h-[250px]">
-                <Loading variant="circle" size="md" />
+                <Loading variant="minimal" size="md" />
               </div>
             ) : (
               <ChartContainer
@@ -298,7 +298,7 @@ export default function DashboardPage() {
         <CardContent>
           {loadingEvents ? (
             <div className="flex justify-center py-10">
-              <Loading variant="circle" size="md" />
+              <Loading variant="minimal" size="md" />
             </div>
           ) : (
             <div className="rounded-md border">

@@ -16,15 +16,15 @@ export const Loading = ({
   className,
 }: LoadingProps) => {
   const sizeClasses = {
-    sm: "h-6 w-6", // for small loaders (inline/data loading)
-    md: "h-10 w-10", // medium (between inline and full page)
-    lg: "h-16 w-16", // large (page loading)
+    sm: "h-4 w-4", // 16px
+    md: "h-6 w-6", // 24px
+    lg: "h-12 w-12", // 24px (largest capped)
   };
 
   const iconSizes = {
-    sm: "h-6 w-6",
-    md: "h-10 w-10",
-    lg: "h-16 w-16",
+    sm: "h-4 w-4", // 16px
+    md: "h-6 w-6", // 24px
+    lg: "h-12 w-12", // 24px
   };
 
   if (variant === "minimal") {
@@ -120,8 +120,7 @@ export const Loading = ({
     return (
       <div
         className={cn(
-          "flex items-center justify-center",
-          sizeClasses[size],
+          "fixed inset-0 z-50 flex items-center justify-center bg-white/50", // full screen overlay
           className
         )}
       >
@@ -134,7 +133,7 @@ export const Loading = ({
             )}
           />
 
-          {/* Use GIF instead of video */}
+          {/* Loading GIF */}
           <img
             src="/loading.gif"
             alt="Loading..."
@@ -176,5 +175,5 @@ export const Loading = ({
 
 // Keep original component for backward compatibility
 export const Spining = () => {
-  return <LoaderIcon className="animate-spin self-center"/>;
+  return <LoaderIcon className="animate-spin self-center" />;
 };
