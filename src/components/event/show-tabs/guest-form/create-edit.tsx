@@ -164,16 +164,16 @@ export function CreateEditForm({ id }: { id: string }) {
       <Dialog open={dialogOpen} onOpenChange={setDialogOpen} modal>
         <DialogContent className="sm:max-w-5xl">
           <DialogHeader>
-            <DialogTitle>
+            <DialogTitle className="text-left">
               {id
                 ? t("guest_form.create_edit.edit_guest")
                 : t("guest_form.create_edit.add_new_guest")}
             </DialogTitle>
-            <DialogDescription>
+            <DialogDescription className="text-left">
               {t("guest_form.create_edit.fill_guest_details")}
             </DialogDescription>
           </DialogHeader>
-          <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
+          <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-2 md:space-y-4 overflow-y-scroll">
             <div>
               <ImageUpload
                 label={t("guest_form.create_edit.photo")}
@@ -182,7 +182,7 @@ export function CreateEditForm({ id }: { id: string }) {
                 value={form.watch("image") ?? ""}
               />
             </div>
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-2 md:gap-4">
               <InputTextField
                 label={t("guest_form.create_edit.name")}
                 name="name"
@@ -200,7 +200,7 @@ export function CreateEditForm({ id }: { id: string }) {
         
               {/* <TextareaField
                 label={t("guest_form.create_edit.address")}
-                name="address"
+                name="address" 
                 placeholder={t("guest_form.create_edit.address_placeholder")}
                 form={form}
                 disabled={loading}
