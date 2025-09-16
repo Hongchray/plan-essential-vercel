@@ -64,7 +64,7 @@ export function DashboardHeader() {
   if (status === "loading") return null;
 
   return (
-    <header className="border-b z-50 bg-background sticky top-0 flex h-16 shrink-0 items-center px-4">
+    <header className="border-b z-50 bg-background sticky top-0 flex h-16 shrink-0 items-center px-2 md:px-4">
       <div className="flex items-center gap-6 w-full">
         <LogoApp />
 
@@ -94,7 +94,9 @@ export function DashboardHeader() {
       <div className="flex items-center gap-2">
         {user ? (
           <>
-            <LanguageSwitcher />
+            <div className="hidden  md:flex">
+              <LanguageSwitcher />
+            </div>
             <NavUser />
           </>
         ) : (
@@ -119,9 +121,9 @@ export default function DashboardLayout({
             <SidebarInset>
               <DashboardHeader />
               {/* Fixed main content area with proper overflow handling */}
-              <div className="flex flex-1 flex-col gap-4 p-4 pt-0 bg-rose-50 relative overflow-hidden">
+              <div className="flex flex-1 flex-col gap-4  p-0 md:p-4 pt-0 bg-rose-50 relative overflow-hidden">
                 <NextTopLoader color="#dd1d49" showSpinner={false} />
-                <div className="pt-4 flex-1 overflow-y-auto">{children}</div>
+                <div className="pt-0 md:pt-4 flex-1 overflow-y-auto">{children}</div>
               </div>
             </SidebarInset>
           </SidebarProvider>

@@ -3,7 +3,6 @@ import { ColumnDef } from "@tanstack/react-table";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Event } from "../data/schema";
 import { DataTableColumnHeader } from "./data-table-column-header";
-import Image from "next/image";
 import { Button } from "@/components/ui/button";
 import { EditIcon, EyeIcon, Trash2Icon } from "lucide-react";
 import Link from "next/link";

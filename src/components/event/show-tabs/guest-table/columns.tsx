@@ -32,6 +32,7 @@ const statusMap: Record<string, GuestStatusKH> = {
   confirmed: GuestStatusKH.CONFIRMED,
   rejected: GuestStatusKH.REJECTED,
 };
+
 const ActionsCell = ({ row }: { row: any }) => {
   const router = useRouter();
   const { t } = useTranslation("common");
@@ -100,7 +101,7 @@ const ActionsCell = ({ row }: { row: any }) => {
             <PopoverTrigger asChild>
               {!row.original.is_invited ? (
                 <Button size="icon" variant="outline">
-                  <Send />
+                  <Send size={5}/>
                 </Button>
               ) : (
                 <Button size="icon" variant="default">
@@ -168,8 +169,8 @@ const ActionsCell = ({ row }: { row: any }) => {
       <ConfirmDialog
         trigger={
           <Button size="icon" variant="outline" className="border-red-500">
-            <Trash2Icon className="text-red-700" />
-          </Button>
+            <Trash2Icon className="text-red-700 " />
+          </Button> 
         }
         title={t("event_dashboard.guest.table.delete_title")}
         description={t("event_dashboard.guest.table.delete_description")}
@@ -178,6 +179,65 @@ const ActionsCell = ({ row }: { row: any }) => {
     </div>
   );
 };
+
+// Mobile List Card Component
+const MobileGuestCard = ({
+  guest,
+  onSelect,
+  isSelected,
+}: {
+  guest: Guest
+  onSelect: (selected: boolean) => void
+  isSelected: boolean
+}) => {
+  const { t } = useTranslation("common")
+  const name: string = guest.name ?? ""
+  const { bg, text } = getAvatarColor(name)
+
+  return (
+    <div className="bg-white border-t border-gray-200 p-2">
+      <div className="flex items-start gap-3">
+        <Avatar className="h-6 w-6 flex-shrink-0">
+          <AvatarImage src="/placeholder.svg" />
+          <AvatarFallback className={`${bg} ${text} font-bold text-[12px]`}>{getInitials(name)}</AvatarFallback>
+        </Avatar>
+
+        <div className="flex-1 min-w-0">
+          <div className="mb-2">
+            <h3 className="text-[12px] font-medium text-gray-900 truncate">{name}</h3>
+            {guest.phone && <p className="text-[10px] text-gray-500 truncate">{guest.phone}</p>}
+          </div>
+
+          <div className="flex gap-2">
+            {guest.guestGroup && guest.guestGroup.length > 0 && (
+              <div className="flex flex-wrap gap-1 items-start">
+                {guest.guestGroup.map((group: any) => (
+                  <Badge key={group.id} variant="default" className="text-[10px]">
+                    {group.group?.name_kh}
+                  </Badge>
+                ))}
+              </div>
+            )}
+
+            {guest.guestTag && guest.guestTag.length > 0 && (
+              <div className="flex flex-wrap gap-1 items-start">
+                {guest.guestTag.map((tag: any) => (
+                  <Badge key={tag.id} variant="secondary" className="text-[10px]">
+                    {tag.tag?.name_kh}
+                  </Badge>
+                ))}
+              </div>
+            )}
+          </div>
+        </div>
+
+        <div className="flex-shrink-0">
+          <ActionsCell row={{ original: guest }} />
+        </div>
+      </div>
+    </div>
+  )
+}
 
 export function useGuestColumns(): ColumnDef<Guest>[] {
   const { t } = useTranslation("common");
@@ -216,19 +276,20 @@ export function useGuestColumns(): ColumnDef<Guest>[] {
         />
       ),
       cell: ({ row }) => {
-        const name: string = row.getValue("name")??'';
+        const name: string = row.getValue("name") ?? '';
         const { bg, text } = getAvatarColor(name)
-        return(
+        return (
           <span className="max-w-[350px] truncate font-medium">
             <div className="flex gap-2 items-center">
-                <Avatar>
-                  <AvatarImage src="" />
-                  <AvatarFallback className={`${bg} ${text} font-bold`}>{getInitials(name)}</AvatarFallback>
-                </Avatar>
-                { name }
+              <Avatar>
+                <AvatarImage src="" />
+                <AvatarFallback className={`${bg} ${text} font-bold`}>{getInitials(name)}</AvatarFallback>
+              </Avatar>
+              {name}
             </div>
           </span>
-        )},
+        )
+      },
     },
     {
       accessorKey: "phone",
@@ -268,20 +329,20 @@ export function useGuestColumns(): ColumnDef<Guest>[] {
       header: t("event_dashboard.guest.table.status"),
       cell: ({ row }) => (
         <Badge
-           className={`
-                capitalize
-              ${
-                row.original.status === "pending"
-                  ? "bg-gray-200 text-gray-700"
-                  : row.original.status === "confirmed"
-                  ? "bg-blue-100 text-blue-600"
-                  : row.original.status === "rejected"
-                  ? "bg-red-100 text-red-600"
-                  : "bg-gray-100 text-gray-500"
-              }
-            `}
+          className={`
+            capitalize
+            ${
+              row.original.status === "pending"
+                ? "bg-gray-200 text-gray-700"
+                : row.original.status === "confirmed"
+                ? "bg-blue-100 text-blue-600"
+                : row.original.status === "rejected"
+                ? "bg-red-100 text-red-600"
+                : "bg-gray-100 text-gray-500"
+            }
+          `}
         >
-         {row.original.status && statusMap[row.original.status] || ""}
+          {row.original.status && statusMap[row.original.status] || ""}
         </Badge>
       ),
     },
@@ -291,3 +352,6 @@ export function useGuestColumns(): ColumnDef<Guest>[] {
     },
   ];
 }
+
+// Export the mobile component for use in your main table component
+export { MobileGuestCard };

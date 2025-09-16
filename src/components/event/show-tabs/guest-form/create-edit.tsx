@@ -158,7 +158,7 @@ export function CreateEditForm({ id }: { id: string }) {
       ) : (
         <Button size="sm" onClick={() => setDialogOpen(true)}>
           <Plus/>
-          {t("guest_form.create_edit.add_new")}
+         <span className="text-[12px] md:text-base">{t("guest_form.create_edit.add_new")}</span> 
         </Button>
       )}
       <Dialog open={dialogOpen} onOpenChange={setDialogOpen} modal>

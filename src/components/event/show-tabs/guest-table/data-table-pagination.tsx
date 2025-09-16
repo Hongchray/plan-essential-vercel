@@ -8,7 +8,7 @@ import {
   ChevronsRight,
 } from "lucide-react";
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
-import { useCallback } from "react";
+import { useCallback, useEffect, useState } from "react";
 
 import { Button } from "@/components/ui/button";
 import {
@@ -35,6 +35,19 @@ export function DataTablePagination<TData>({
   const router = useRouter();
   const pathname = usePathname();
   const searchParams = useSearchParams();
+  const [isMobile, setIsMobile] = useState(false);
+
+  // Detect mobile screen size
+  useEffect(() => {
+    const checkScreenSize = () => {
+      setIsMobile(window.innerWidth < 768);
+    };
+
+    checkScreenSize();
+    window.addEventListener('resize', checkScreenSize);
+    
+    return () => window.removeEventListener('resize', checkScreenSize);
+  }, []);
 
   const createQueryString = useCallback(
     (params: Record<string, string | number | null>) => {
@@ -64,7 +77,90 @@ export function DataTablePagination<TData>({
   };
 
   const currentPerPage = Number(searchParams.get("per_page")) || 10;
+  const currentPage = table.getState().pagination.pageIndex + 1;
+  const totalPages = table.getPageCount();
 
+  // Mobile Layout
+  if (isMobile) {
+    return (
+      <div className="space-y-3 bg-gray-50 p-2 rounded">
+        {/* Navigation Controls - Mobile */}
+        <div className="flex items-center justify-between">
+          <Button
+            variant="outline"
+            size="sm"
+            onClick={() => {
+              if (serverPagination) {
+                const currentPageNum = Number(searchParams.get("page")) || 1;
+                router.push(
+                  `${pathname}?${createQueryString({
+                    page: Math.max(1, currentPageNum - 1),
+                  })}`,
+                  { scroll: false }
+                );
+              } else table.previousPage();
+            }}
+            disabled={!table.getCanPreviousPage()}
+            className="flex items-center gap-1"
+          >
+            <ChevronLeft className="h-4 w-4" />
+            {/* {t("component.table.prev_page")} */}
+          </Button>
+
+          {/* Per Page Selector - Mobile */}
+          <div className="flex items-center justify-center gap-2">
+            <Select
+              value={`${currentPerPage}`}
+              onValueChange={handlePerPageChange}
+            >
+              <SelectTrigger className="h-8 w-20">
+                <SelectValue />
+              </SelectTrigger>
+              <SelectContent>
+                {[10, 20, 30, 40, 50].map((pageSize) => (
+                  <SelectItem key={pageSize} value={`${pageSize}`}>
+                    {pageSize}
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
+          </div>
+          <div className="flex items-center gap-2">
+            <span className="text-sm font-medium">
+              {currentPage} / {totalPages}
+            </span>
+          </div>
+          <p className="text-sm text-muted-foreground">
+            <span className="font-medium text-foreground">{total}</span> {" "}
+            {t("component.table.records")}
+          </p>
+
+          <Button
+            variant="outline"
+            size="sm"
+            onClick={() => {
+              if (serverPagination) {
+                const currentPageNum = Number(searchParams.get("page")) || 1;
+                router.push(
+                  `${pathname}?${createQueryString({ page: currentPageNum + 1 })}`,
+                  { scroll: false }
+                );
+              } else table.nextPage();
+            }}
+            disabled={!table.getCanNextPage()}
+            className="flex items-center gap-1"
+          >
+            {/* {t("component.table.next_page")} */}
+            <ChevronRight className="h-4 w-4" />
+          </Button>
+        </div>
+
+     
+      </div>
+    );
+  }
+
+  // Desktop Layout
   return (
     <div className="flex items-center justify-between px-2">
       <div className="flex-1 text-sm text-muted-foreground">
@@ -100,8 +196,8 @@ export function DataTablePagination<TData>({
 
         <div className="flex w-[100px] items-center justify-center text-sm font-medium">
           {t("component.table.page")}{" "}
-          {table.getState().pagination.pageIndex + 1} {t("component.table.of")}{" "}
-          {table.getPageCount()}
+          {currentPage} {t("component.table.of")}{" "}
+          {totalPages}
         </div>
 
         <div className="flex items-center space-x-2">
@@ -126,10 +222,10 @@ export function DataTablePagination<TData>({
             className="h-8 w-8 p-0"
             onClick={() => {
               if (serverPagination) {
-                const currentPage = Number(searchParams.get("page")) || 1;
+                const currentPageNum = Number(searchParams.get("page")) || 1;
                 router.push(
                   `${pathname}?${createQueryString({
-                    page: Math.max(1, currentPage - 1),
+                    page: Math.max(1, currentPageNum - 1),
                   })}`,
                   { scroll: false }
                 );
@@ -146,9 +242,9 @@ export function DataTablePagination<TData>({
             className="h-8 w-8 p-0"
             onClick={() => {
               if (serverPagination) {
-                const currentPage = Number(searchParams.get("page")) || 1;
+                const currentPageNum = Number(searchParams.get("page")) || 1;
                 router.push(
-                  `${pathname}?${createQueryString({ page: currentPage + 1 })}`,
+                  `${pathname}?${createQueryString({ page: currentPageNum + 1 })}`,
                   { scroll: false }
                 );
               } else table.nextPage();
@@ -166,11 +262,11 @@ export function DataTablePagination<TData>({
               if (serverPagination)
                 router.push(
                   `${pathname}?${createQueryString({
-                    page: table.getPageCount(),
+                    page: totalPages,
                   })}`,
                   { scroll: false }
                 );
-              else table.setPageIndex(table.getPageCount() - 1);
+              else table.setPageIndex(totalPages - 1);
             }}
             disabled={!table.getCanNextPage()}
           >

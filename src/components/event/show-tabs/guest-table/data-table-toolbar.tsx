@@ -118,14 +118,13 @@ export function DataTableToolbar<TData>({
   return (
     <div className="flex items-center justify-between">
       <div className="flex flex-1 items-center space-x-2">
-       
         <div className="relative w-full max-w-sm">
           <SearchIcon className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
             <Input
               placeholder={t("component.table.search_placeholder")}
               value={searchValue}
               onChange={(event) => handleSearch(event.target.value)}
-              className="h-8 w-[150px] lg:w-[250px] pl-10"
+              className="h-8 w-[150px] lg:w-[250px] pl-10 text-[12px] md:text-base"
           />
         </div>
         {searchValue && (
@@ -141,7 +140,7 @@ export function DataTableToolbar<TData>({
       </div>
       <div className="flex gap-4">
         <CreateEditForm id="" />
-        <div className='inline-flex w-fit -space-x-px rounded-md shadow-xs rtl:space-x-reverse'>
+        <div className='hidden  md:inline-flex w-fit -space-x-px rounded-md shadow-xs rtl:space-x-reverse'>
           <ExcelImportModal
             eventId={eventId}
             onImportComplete={handleImportComplete}
