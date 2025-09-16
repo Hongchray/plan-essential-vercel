@@ -25,7 +25,7 @@ import { ManageTagForm } from "./manage-tag";
 import { Group } from "@/interfaces/group";
 import { Tag } from "@/interfaces/tag";
 import { useParams, useRouter } from "next/navigation";
-import { EditIcon, Plus } from "lucide-react";
+import { EditIcon, Plus, X } from "lucide-react";
 import ImageUpload from "@/components/composable/upload/upload-image";
 import { useTranslation } from "react-i18next";
 
@@ -120,7 +120,7 @@ export function CreateEditForm({ id }: { id: string }) {
   const groupOptions = useMemo(
     () =>
       groupList.map((group) => ({
-        label: `${group.name_en} (${group.name_kh})`,
+        label: group.name_kh,
         value: group.id,
       })),
     [groupList]
@@ -128,7 +128,7 @@ export function CreateEditForm({ id }: { id: string }) {
   const tagOptions = useMemo(
     () =>
       tagList.map((tag) => ({
-        label: `${tag.name_en} (${tag.name_kh})`,
+        label: tag.name_kh,
         value: tag.id,
       })),
     [tagList]
@@ -158,22 +158,22 @@ export function CreateEditForm({ id }: { id: string }) {
       ) : (
         <Button size="sm" onClick={() => setDialogOpen(true)}>
           <Plus/>
-          {t("guest_form.create_edit.add_new")}
+         <span className="text-[12px] md:text-base">{t("guest_form.create_edit.add_new")}</span> 
         </Button>
       )}
       <Dialog open={dialogOpen} onOpenChange={setDialogOpen} modal>
         <DialogContent className="sm:max-w-5xl">
           <DialogHeader>
-            <DialogTitle>
+            <DialogTitle className="text-left">
               {id
                 ? t("guest_form.create_edit.edit_guest")
                 : t("guest_form.create_edit.add_new_guest")}
             </DialogTitle>
-            <DialogDescription>
+            <DialogDescription className="text-left">
               {t("guest_form.create_edit.fill_guest_details")}
             </DialogDescription>
           </DialogHeader>
-          <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
+          <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-2 md:space-y-4 overflow-y-scroll">
             <div>
               <ImageUpload
                 label={t("guest_form.create_edit.photo")}
@@ -182,7 +182,7 @@ export function CreateEditForm({ id }: { id: string }) {
                 value={form.watch("image") ?? ""}
               />
             </div>
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-2 md:gap-4">
               <InputTextField
                 label={t("guest_form.create_edit.name")}
                 name="name"
@@ -197,23 +197,15 @@ export function CreateEditForm({ id }: { id: string }) {
                 form={form}
                 disabled={loading}
               />
-              <TextareaField
-                label={t("guest_form.create_edit.note")}
-                name="note"
-                placeholder={t("guest_form.create_edit.note_placeholder")}
-                form={form}
-                disabled={loading}
-              />
-              <TextareaField
+        
+              {/* <TextareaField
                 label={t("guest_form.create_edit.address")}
-                name="address"
+                name="address" 
                 placeholder={t("guest_form.create_edit.address_placeholder")}
                 form={form}
                 disabled={loading}
-              />
-              <div className="col-span-2">
-                <Separator />
-              </div>
+              /> */}
+           
               <div>
                 <div className="flex justify-between items-center pt-2">
                   <Label>{t("guest_form.create_edit.groups")}</Label>
@@ -241,6 +233,13 @@ export function CreateEditForm({ id }: { id: string }) {
                   placeholder={t("guest_form.create_edit.tags_placeholder")}
                 />
               </div>
+              <TextareaField
+                label={t("guest_form.create_edit.note")}
+                name="note"
+                placeholder={t("guest_form.create_edit.note_placeholder")}
+                form={form}
+                disabled={loading}
+              />
             </div>
             <DialogFooter>
               <div className="flex gap-2 justify-end pt-2">
@@ -253,6 +252,7 @@ export function CreateEditForm({ id }: { id: string }) {
                     router.refresh();
                   }}
                 >
+                  <X/>
                   {t("guest_form.create_edit.cancel")}
                 </Button>
                 <SubmitButton loading={loading} entityId={id} />

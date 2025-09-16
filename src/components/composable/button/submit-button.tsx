@@ -1,7 +1,7 @@
 "use client";
 
 import { Button } from "@/components/ui/button";
-import { Loader2 } from "lucide-react";
+import { Check, Loader2 } from "lucide-react";
 import { useTranslation } from "next-i18next";
 
 interface SubmitButtonProps {
@@ -23,8 +23,8 @@ export function SubmitButton({
       {loading
         ? t("component.button.saving")
         : entityId
-        ? t("component.button.saveChanges")
-        : t("component.button.create")}
+        ? (<><Check/>  {t("component.button.saveChanges")}</>)
+        : (<><Check/>  {t("component.button.create")}</>)}
     </Button>
   );
 }

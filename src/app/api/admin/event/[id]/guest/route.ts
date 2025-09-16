@@ -109,3 +109,95 @@ export async function POST(
     );
   }
 }
+export async function DELETE(req: NextRequest) {
+  try {
+    const body = await req.json();
+    const { ids } = body;
+    if (!ids || !Array.isArray(ids) || ids.length === 0) {
+      return NextResponse.json(
+        { error: "Invalid request: ids array is required" }, 
+        { status: 400 }
+      );
+    }
+
+    const result = await prisma.$transaction(async (tx) => {
+
+      const deletedTags = await tx.guestTag.deleteMany({
+        where: {
+          guestId: {
+            in: ids
+          }
+        }
+      });
+
+      const deletedGroups = await tx.guestGroup.deleteMany({
+        where: {
+          guestId: {
+            in: ids
+          }
+        }
+      });
+      const deletedGift = await tx.gift.deleteMany({
+        where: {
+          guestId: {
+            in: ids
+          }
+        }
+      });
+
+      const deletedGuests = await tx.guest.deleteMany({
+        where: {
+          id: {
+            in: ids
+          }
+        }
+      });
+
+      return {
+        deletedGuests: deletedGuests.count,
+        deletedTags: deletedTags.count,
+        deletedGroups: deletedGroups.count,
+        deletedGift: deletedGift.count
+      };
+    });
+
+    if (result.deletedGuests === 0) {
+      return NextResponse.json(
+        { error: "No guests found with the provided IDs" }, 
+        { status: 404 }
+      );
+    }
+
+    return NextResponse.json({
+      message: `Successfully deleted ${result.deletedGuests} guest(s)`,
+      deletedCount: result.deletedGuests,
+      deletedRelations: {
+        tags: result.deletedTags,
+        groups: result.deletedGroups
+      },
+      success: true
+    }, { status: 200 });
+
+  } catch (error) {
+    console.error('Error deleting guests:', error);
+    
+    if (error instanceof Error && 'code' in error && error.code === 'P2025') {
+      return NextResponse.json(
+        { error: "Some guests were not found" }, 
+        { status: 404 }
+      );
+    }
+
+    if (error instanceof Error && 'code' in error && error.code === 'P2003') {
+      return NextResponse.json(
+        { error: "Cannot delete guests due to existing references" }, 
+        { status: 409 }
+      );
+    }
+
+    return NextResponse.json(
+      { error: "Internal server error" }, 
+      { status: 500 }
+    );
+  }
+}

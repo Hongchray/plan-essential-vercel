@@ -30,10 +30,11 @@ import { useTranslation } from "next-i18next";
 import { useEffect, useState } from "react";
 import { Loading } from "@/components/composable/loading/loading";
 import { currencyFormatters } from "@/utils/currency";
+import { ScrollArea, ScrollBar } from "@/components/ui/scroll-area";
 export default function TabDashboard({ eventId }: { eventId: string }) {
   const [event, setEvent] = useState<any>(null);
   const [loading, setLoading] = useState(true);
-  const { t } = useTranslation("common"); // ✅ use hook inside component
+  const { t } = useTranslation("common"); 
 
   useEffect(() => {
     async function fetchEvent() {
@@ -78,53 +79,59 @@ export default function TabDashboard({ eventId }: { eventId: string }) {
   ];
 
   return (
-    <div className="space-y-6">
-      <h3 className="text-lg font-semibold mb-4">
+    <div className="space-y-2 md:space-y-6">
+      <h3 className="text-md md:text-lg font-semibold">
         {t("event_dashboard.title")}
       </h3>
+      <ScrollArea>
+        <div className="flex gap-4 mb-6 w-full overflow-x-auto md:grid grid-cols-5">
+          <div className="bg-blue-50 p-4 rounded-lg flex-shrink-0 w-40 md:w-auto">
+            <div className="text-2xl font-bold text-blue-600">
+              {event.total_guest}
+            </div>
+            <div className="text-sm text-blue-800">
+              {t("event_dashboard.cards.total_guests")}
+            </div>
+          </div>
 
-      <div className="grid grid-cols-1 md:grid-cols-5 gap-4 mb-6">
-        <div className="bg-blue-50 p-4 rounded-lg">
-          <div className="text-2xl font-bold text-blue-600">
-            {event.total_guest}
+          <div className="bg-green-50 p-4 rounded-lg flex-shrink-0 w-40 md:w-auto">
+            <div className="text-2xl font-bold text-green-600">
+              {event.total_confirmed}
+            </div>
+            <div className="text-sm text-green-800">
+              {t("event_dashboard.cards.confirmed")}
+            </div>
           </div>
-          <div className="text-sm text-blue-800">
-            {t("event_dashboard.cards.total_guests")}
+
+          <div className="bg-purple-50 p-4 rounded-lg flex-shrink-0 w-40 md:w-auto">
+            <div className="text-2xl font-bold text-purple-600">
+              {currencyFormatters.usd(event.total_gift_income)}
+            </div>
+            <div className="text-sm text-purple-800">
+              {t("event_dashboard.cards.gift_income")}
+            </div>
           </div>
-        </div>
-        <div className="bg-green-50 p-4 rounded-lg">
-          <div className="text-2xl font-bold text-green-600">
-            {event.total_confirmed}
+
+          <div className="bg-pink-50 p-4 rounded-lg flex-shrink-0 w-40 md:w-auto">
+            <div className="text-2xl font-bold text-red-600">
+              {currencyFormatters.usd(event.total_expend_actual || 0)}
+            </div>
+            <div className="text-sm text-red-800">
+              {t("event_dashboard.cards.total_expenses_actual")}
+            </div>
           </div>
-          <div className="text-sm text-green-800">
-            {t("event_dashboard.cards.confirmed")}
-          </div>
-        </div>
-        <div className="bg-purple-50 p-4 rounded-lg">
-          <div className="text-2xl font-bold text-purple-600">
-            {currencyFormatters.usd(event.total_gift_income)}
-          </div>
-          <div className="text-sm text-purple-800">
-            {t("event_dashboard.cards.gift_income")}
-          </div>
-        </div>
-        <div className="bg-red-50 p-4 rounded-lg">
-          <div className="text-2xl font-bold text-red-600">
-            {currencyFormatters.usd(event.total_expend_actual || 0)}
-          </div>
-          <div className="text-sm text-red-800">
-            {t("event_dashboard.cards.total_expenses_actual")}
-          </div>
-        </div>
-        <div className="bg-red-50 p-4 rounded-lg">
-          <div className="text-2xl font-bold text-red-600">
-            {currencyFormatters.usd(event.total_expend_budget || 0)}
-          </div>
-          <div className="text-sm text-red-800">
-            {t("event_dashboard.cards.total_expenses_budget")}
+
+          <div className="bg-yellow-50 p-4 rounded-lg flex-shrink-0 w-40 md:w-auto">
+            <div className="text-2xl font-bold text-red-600">
+              {currencyFormatters.usd(event.total_expend_budget || 0)}
+            </div>
+            <div className="text-sm text-red-800">
+              {t("event_dashboard.cards.total_expenses_budget")}
+            </div>
           </div>
         </div>
-      </div>
+        <ScrollBar orientation="horizontal" />
+      </ScrollArea>
 
       {/* Charts */}
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 mb-6">

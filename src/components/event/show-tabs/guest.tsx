@@ -59,14 +59,14 @@ export default function TabGuest({
   }, [paramId, params]);
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-2 md:space-y-6">
       {loading ? (
         <div className="flex items-center justify-center ">
           <Loading variant="circle" size="lg" />
         </div>
       ) : (
         <>
-          <h3 className="text-lg font-semibold mb-4">
+          <h3 className="text-md md:text-lg font-semibold ">
             {t("event_dashboard.guest.title")}
           </h3>
           <DataTable

@@ -176,5 +176,5 @@ export const Loading = ({
 
 // Keep original component for backward compatibility
 export const Spining = () => {
-  return <Loading />;
+  return <LoaderIcon className="animate-spin self-center"/>;
 };
