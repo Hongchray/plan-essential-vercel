@@ -301,7 +301,7 @@ export function CreateEditForm({ id }: { id: string }) {
               )}
 
               {fields.map((field, index) => {
-                const isCollapsed = collapsedPayments[index] ?? false;
+                const isCollapsed = collapsedPayments[index] ?? true;
                 const payment = watchedPayments?.[index];
                 const paymentSummary = payment?.name || `Payment #${index + 1}`;
                 const paymentAmount = payment?.amount
