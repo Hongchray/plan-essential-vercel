@@ -76,6 +76,11 @@ export default function TabDashboard({ eventId }: { eventId: string }) {
       amount: event.total_expend_actual,
       color: "#ef4444", // red
     },
+    {
+      category: "ចំនេញ/ខាត",
+      amount: event.netAmount,
+      color: "#0092b8",
+    },
   ];
 
   return (
@@ -105,7 +110,7 @@ export default function TabDashboard({ eventId }: { eventId: string }) {
 
           <div className="bg-purple-50 p-4 rounded-lg flex-shrink-0 w-40 md:w-auto">
             <div className="text-2xl font-bold text-purple-600">
-              {currencyFormatters.usd(event.total_gift_income)}
+              {currencyFormatters.usd(event.total_gift_income)}  ( {currencyFormatters.khr(event.total_income_khr)})
             </div>
             <div className="text-sm text-purple-800">
               {t("event_dashboard.cards.gift_income")}
@@ -121,12 +126,12 @@ export default function TabDashboard({ eventId }: { eventId: string }) {
             </div>
           </div>
 
-          <div className="bg-yellow-50 p-4 rounded-lg flex-shrink-0 w-40 md:w-auto">
-            <div className="text-2xl font-bold text-red-600">
-              {currencyFormatters.usd(event.total_expend_budget || 0)}
+          <div className="bg-cyan-50 p-4 rounded-lg flex-shrink-0 w-40 md:w-auto">
+            <div className="text-2xl font-bold text-cyan-600">
+              {currencyFormatters.usd(event.netAmount || 0)}
             </div>
-            <div className="text-sm text-red-800">
-              {t("event_dashboard.cards.total_expenses_budget")}
+            <div className="text-sm text-cyan-800">
+              {t("event_dashboard.cards.profit_loss")}
             </div>
           </div>
         </div>
@@ -148,7 +153,7 @@ export default function TabDashboard({ eventId }: { eventId: string }) {
           <CardContent className="flex-1 flex items-center justify-center">
             <ChartContainer
               config={{
-                confirmed: { label: "យល់ព្រម", color: "#10b981" },
+                confirmed: { label: "បានបញ្ជាក់", color: "#10b981" },
                 pending: { label: "មិនទាន់ឆ្លើយតប", color: "#f59e0b" },
                 declined: { label: "បដិសេធ", color: "#ef4444" },
               }}
@@ -201,7 +206,7 @@ export default function TabDashboard({ eventId }: { eventId: string }) {
               <ResponsiveContainer width="100%" height="100%">
                 <BarChart
                   data={financialData}
-                  margin={{ top: 20, right: 20, left: 0, bottom: 20 }}
+                  margin={{ top: 10, right: 20, left: 0, bottom: 20 }}
                 >
                   <CartesianGrid strokeDasharray="3 3" strokeOpacity={0.2} />
                   <XAxis dataKey="category" />
@@ -221,13 +226,13 @@ export default function TabDashboard({ eventId }: { eventId: string }) {
                     {financialData.map((entry, index) => (
                       <Cell key={`cell-${index}`} fill={entry.color} name={entry.category} />
                     ))}
-                     <LabelList
+                     {/* <LabelList
                         dataKey="amount"
                         position="top"
                         formatter={(value: number) =>
                           value.toLocaleString() 
                         }
-                      />
+                      /> */}
                   </Bar>
                 </BarChart>
               </ResponsiveContainer>
@@ -300,41 +305,38 @@ export default function TabDashboard({ eventId }: { eventId: string }) {
           </h4>
           <div className="space-y-2">
             <div className="flex justify-between">
-              <span className="text-green-600">
+              <span className="text-green-600 font-medium">
                 {t("event_dashboard.financial_summary.gift_income")}
               </span>
               <span className="font-medium text-green-600">
-                {event.total_gift_income.toFixed(2)}$
+                {currencyFormatters.usd(event.total_gift_income)}
               </span>
             </div>
             <div className="flex justify-between">
-              <span className="text-red-600">
+              <span className="text-red-600 font-medium">
                 {t("event_dashboard.financial_summary.total_expenses_actual")}
               </span>
               <span className="font-medium text-red-600">
-                {event.total_expend_actual.toFixed(2)}$
+                {currencyFormatters.usd(event.total_expend_actual)}
               </span>
             </div>
             <div className="my-2 border-t-2 border-dashed"></div>
-            <div className="flex justify-between text-lg">
+            <div className="flex justify-between">
               <span
-                className={
-                  event.netAmount >= 0 ? "text-green-600" : "text-red-600"
-                }
+                className="text-blue-600 font-medium" 
               >
-                {t("event_dashboard.financial_summary.net_amount")}
+                {t("event_dashboard.cards.profit_loss")}
               </span>
               <span
-                className={`font-bold ${
+                className={`font-medium ${
                   event.netAmount >= 0 ? "text-green-600" : "text-red-600"
                 }`}
               >
-                {event.netAmount.toFixed(2)}$
+                {currencyFormatters.usd(event.netAmount)}
               </span>
             </div>
           </div>
         </div>
-
         <div className="bg-white p-4 border rounded-lg">
           <h4 className="font-semibold mb-3">
             {t("event_dashboard.guest_summary.title")}
@@ -342,36 +344,36 @@ export default function TabDashboard({ eventId }: { eventId: string }) {
           <div className="space-y-3">
             <div className="flex items-center justify-between">
               <div className="flex items-center gap-2">
-                <div className="w-3 h-3 bg-green-400 rounded-full"></div>
-                <span>{t("event_dashboard.guest_summary.confirmed")}</span>
+                {/* <div className="w-3 h-3 bg-green-500 rounded-full"></div> */}
+                <span className="text-green-500 font-medium">{t("event_dashboard.guest_summary.confirmed")}</span>
               </div>
-              <span className="font-medium">
+              <span className="font-medium text-green-500">
                 {event.guest_summary.confirmed}
               </span>
             </div>
             <div className="flex items-center justify-between">
               <div className="flex items-center gap-2">
-                <div className="w-3 h-3 bg-yellow-400 rounded-full"></div>
-                <span>{t("event_dashboard.guest_summary.pending")}</span>
+                {/* <div className="w-3 h-3 bg-yellow-500 rounded-full"></div> */}
+                <span className="text-yellow-500 font-medium">{t("event_dashboard.guest_summary.pending")}</span>
               </div>
-              <span className="font-medium">{event.guest_summary.pending}</span>
+              <span className="font-medium text-yellow-500">{event.guest_summary.pending}</span>
             </div>
             <div className="flex items-center justify-between">
               <div className="flex items-center gap-2">
-                <div className="w-3 h-3 bg-red-400 rounded-full"></div>
-                <span>{t("event_dashboard.guest_summary.declined")}</span>
+                {/* <div className="w-3 h-3 bg-red-500 rounded-full"></div> */}
+                <span className="text-red-500 font-medium">{t("event_dashboard.guest_summary.declined")}</span>
               </div>
-              <span className="font-medium">
+              <span className="font-medium text-red-500">
                 {event.guest_summary.declined}
               </span>
             </div>
             <div className="my-2 border-t-2 border-dashed"></div>
             <div className="flex items-center justify-between">
               <div className="flex items-center gap-2">
-                <div className="w-3 h-3 bg-purple-400 rounded-full"></div>
-                <span>{t("event_dashboard.guest_summary.gifts_received")}</span>
+                {/* <div className="w-3 h-3 bg-blue-400 rounded-full"></div> */}
+                <span className="text-blue-500 font-medium">{t("event_dashboard.guest_summary.gifts_received")}</span>
               </div>
-              <span className="font-medium">{event.total_gift}</span>
+              <span className="font-medium text-blue-500">{event.total_gift}</span>
             </div>
           </div>
         </div>

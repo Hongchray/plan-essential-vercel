@@ -32,7 +32,7 @@ export async function GET(
 
     const guestStatusData = [
       {
-        name: "យល់ព្រម",
+        name: "បានបញ្ជាក់",
         value: event.guests.filter((g) => g.status === GuestStatus.CONFIRMED)
           .length,
         color: "#10b981",
@@ -62,10 +62,23 @@ export async function GET(
     );
 
     //convert KHR to usd gift currency_type KHR
-    const total_gift_income = event.gifts.reduce(
-      (sum, exp) => sum + (exp.amount || 0),
-      0
-    );
+    const giftTotals = event.gifts.reduce((totals, gift) => {
+      const currency = gift.currency_type;
+      const amount = gift.amount || 0;
+
+      if (!totals[currency]) {
+        totals[currency] = 0;
+      }
+      totals[currency] += amount;
+
+      return totals;
+    }, {} as Record<string, number>);
+
+    const total_income_usd =  giftTotals['USD']??0;
+    const total_income_khr =  giftTotals['KHR']??0;
+
+    const total_gift_income =  total_income_usd + (total_income_khr / 4000);
+
 
     const total_expend_actual = event.expenses.reduce(
       (sum, exp) => sum + (exp.actual_amount || 0),
@@ -76,6 +89,7 @@ export async function GET(
       (sum, exp) => sum + (exp.budget_amount || 0),
       0
     );
+
 
     const netAmount = total_gift_income - total_expend_actual;
 
@@ -93,6 +107,7 @@ export async function GET(
       total_confirmed,
       guest_summary,
       total_gift_income,
+      total_income_khr,
       netAmount,
     });
   } catch (error: any) {

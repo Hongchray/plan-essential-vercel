@@ -173,7 +173,7 @@ export function CreateEditForm({ id }: { id: string }) {
               {t("guest_form.create_edit.fill_guest_details")}
             </DialogDescription>
           </DialogHeader>
-          <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-2 md:space-y-4 overflow-y-scroll">
+          <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-2 md:space-y-4 overflow-y-auto">
             <div>
               <ImageUpload
                 label={t("guest_form.create_edit.photo")}
