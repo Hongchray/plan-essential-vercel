@@ -384,7 +384,8 @@
       "list_of_tags": "List of Tags",
       "total": "Total",
       "delete_tag_title": "Delete this tag?",
-      "delete_tag_description": "This will permanently remove the tag"
+      "delete_tag_description": "This will permanently remove the tag",
+      "no_group_found": "No Data Found!"
     },
     "message": {
       "name_required": "Name is required",

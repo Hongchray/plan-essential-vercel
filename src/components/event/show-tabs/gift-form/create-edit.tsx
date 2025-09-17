@@ -26,6 +26,7 @@ import {
   ChevronsUpDown,
   Search,
 } from "lucide-react";
+import { Badge } from "@/components/ui/badge";
 import { Label } from "@/components/ui/label";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import {
@@ -44,7 +45,10 @@ import {
 import { cn } from "@/lib/utils";
 import { Guest } from "@/interfaces/guest";
 import { useTranslation } from "react-i18next";
-
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import { getAvatarColor, getInitials } from "@/utils/avatar";
+import { NoData } from "@/components/composable/no-data";
+import { RequiredMark } from "@/components/composable/required-mark";
 export function CreateEditGiftForm({ id }: { id: string }) {
   const params = useParams();
   const eventId = params.id;
@@ -57,21 +61,42 @@ export function CreateEditGiftForm({ id }: { id: string }) {
   const router = useRouter();
   const { t } = useTranslation("common");
 
-  const GiftFormSchema = z.object({
-    guestId: z
-      .string()
-      .min(1, { message: t("gift.form.error_guest_required") }),
-    note: z.string().nullable().optional(),
-    payment_type: z.enum(["CASH", "KHQR"], {
-      message: t("gift.form.error_payment_required"),
-    }),
-    currency_type: z.string().min(1, {
-      message: t("gift.form.error_currency_required"),
-    }),
-    amount: z.coerce
-      .number()
-      .min(0.01, { message: t("gift.form.error_amount_required") }),
-  });
+  const GiftFormSchema = z
+    .object({
+      guestId: z
+        .string()
+        .min(1, { message: t("gift.form.error_guest_required") }),
+      note: z.string().nullable().optional(),
+      payment_type: z.enum(["CASH", "KHQR"], {
+        message: t("gift.form.error_payment_required"),
+      }),
+      currency_type: z.string().min(1, {
+        message: t("gift.form.error_currency_required"),
+      }),
+      amount_khr: z.coerce.number().optional(),
+      amount_usd: z.coerce.number().optional(),
+    })
+    .superRefine((data, ctx) => {
+      if (data.currency_type === "KHR") {
+        if (!data.amount_khr || data.amount_khr <= 0) {
+          ctx.addIssue({
+            path: ["amount_khr"],
+            code: "custom",
+            message: t("gift.form.error_amount_required"),
+          });
+        }
+      }
+
+      if (data.currency_type === "USD") {
+        if (!data.amount_usd || data.amount_usd <= 0) {
+          ctx.addIssue({
+            path: ["amount_usd"],
+            code: "custom",
+            message: t("gift.form.error_amount_required"),
+          });
+        }
+      }
+    });
 
   type GiftFormData = z.infer<typeof GiftFormSchema>;
 
@@ -82,7 +107,8 @@ export function CreateEditGiftForm({ id }: { id: string }) {
       note: "",
       payment_type: "CASH",
       currency_type: "USD",
-      amount: 0,
+      amount_khr: 0,
+      amount_usd: 0,
     },
   });
 
@@ -241,7 +267,7 @@ export function CreateEditGiftForm({ id }: { id: string }) {
 
       {/* Dialog */}
       <Dialog open={dialogOpen} onOpenChange={setDialogOpen} modal>
-        <DialogContent className="sm:max-w-xl">
+        <DialogContent className="sm:max-w-3xl max-w-xl">
           <DialogHeader>
             <DialogTitle>
               {id ? t("gift.form.editTitle") : t("gift.form.addTitle")}
@@ -250,125 +276,122 @@ export function CreateEditGiftForm({ id }: { id: string }) {
           </DialogHeader>
 
           <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
-            <div className="grid grid-cols-1 gap-4">
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 sm:divide-x sm:divide-gray-300">
               {/* Guest Selection */}
-              <div className="space-y-2">
+              <div className="space-y-2 p-4">
                 <Label htmlFor="guest-select">{t("gift.form.guest")} *</Label>
-                <Popover
-                  open={guestSearchOpen}
-                  onOpenChange={setGuestSearchOpen}
-                >
-                  <PopoverTrigger asChild>
-                    <Button
-                      variant="outline"
-                      role="combobox"
-                      aria-expanded={guestSearchOpen}
-                      className="w-full justify-between"
-                      disabled={loading || guestsLoading}
-                    >
-                      {selectedGuest ? (
-                        <div className="flex items-center gap-2 truncate">
-                          <span className="truncate font-medium">
-                            {selectedGuest.name}
-                          </span>
-                          {(selectedGuest.phone || selectedGuest.address) && (
-                            <span className="text-muted-foreground text-sm truncate">
-                              ({selectedGuest.phone || selectedGuest.address})
-                            </span>
-                          )}
-                        </div>
-                      ) : (
-                        <span className="text-muted-foreground">
-                          {guestsLoading
-                            ? "Loading guests..."
-                            : "Select guest..."}
-                        </span>
-                      )}
-                      <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
-                    </Button>
-                  </PopoverTrigger>
 
-                  <PopoverContent className="w-full p-0" align="start">
-                    <Command shouldFilter={false}>
-                      <div className="flex items-center border-b px-3">
-                        <Search className="mr-2 h-4 w-4 shrink-0 opacity-50" />
-                        <CommandInput
-                          placeholder="Search by name, phone, or address..."
-                          className="flex h-10 w-full rounded-md bg-transparent py-3 text-sm outline-none placeholder:text-muted-foreground disabled:cursor-not-allowed disabled:opacity-50"
-                          value={searchQuery}
-                          onValueChange={handleSearchChange}
-                        />
+                {/* Search Input */}
+                <div className="flex items-center border rounded-md px-3">
+                  <Search className="mr-2 h-4 w-4 shrink-0 opacity-50" />
+                  <input
+                    id="guest-select"
+                    placeholder="Search by name, phone, or address..."
+                    className="flex h-10 w-full rounded-md bg-transparent py-2 text-sm outline-none placeholder:text-muted-foreground"
+                    value={searchQuery}
+                    onChange={(e) => handleSearchChange(e.target.value)}
+                    disabled={loading || guestsLoading}
+                  />
+                </div>
+
+                {/* Guest List (always under input) */}
+                <div className="max-h-[300px] overflow-y-auto border rounded-md">
+                  {guestsLoading ? (
+                    <div className="py-6 text-center text-sm">
+                      <div className="flex items-center justify-center gap-2">
+                        <div className="h-4 w-4 animate-spin rounded-full border-2 border-muted border-t-foreground"></div>
+                        Loading guests...
                       </div>
+                    </div>
+                  ) : filteredGuests.length === 0 ? (
+                    <div className="py-6 text-center text-sm">
+                      <NoData icon="database" />
+                      {searchQuery && (
+                        <div className="mt-1 text-xs text-muted-foreground">
+                          Try searching with different terms
+                        </div>
+                      )}
+                    </div>
+                  ) : (
+                    filteredGuests.map((guest) => (
+                      <div
+                        key={guest.id}
+                        onClick={() => handleGuestSelect(guest)}
+                        className={`flex items-start gap-3 p-3 cursor-pointer hover:bg-accent border-t first:border-t-0 ${
+                          selectedGuest?.id === guest.id ? "bg-accent/50" : ""
+                        }`}
+                      >
+                        <Check
+                          className={cn(
+                            "h-4 w-4 mt-0.5 flex-shrink-0",
+                            selectedGuest?.id === guest.id
+                              ? "opacity-100"
+                              : "opacity-0"
+                          )}
+                        />
+                        <div className="flex flex-col gap-1 min-w-0 flex-1">
+                          {/* Avatar */}
+                          <div className="flex items-center gap-3">
+                            {" "}
+                            <Avatar className="h-8 w-8 flex-shrink-0">
+                              {guest.image ? (
+                                <AvatarImage src={guest.image} />
+                              ) : (
+                                <AvatarFallback
+                                  className={` font-bold text-[12px]`}
+                                >
+                                  {getInitials(guest.name)}
+                                </AvatarFallback>
+                              )}
+                            </Avatar>
+                            <span className="font-medium text-sm">
+                              {guest.name}
+                            </span>
+                          </div>
 
-                      <CommandList className="max-h-[300px] overflow-y-auto">
-                        <CommandEmpty>
-                          {guestsLoading ? (
-                            <div className="py-6 text-center text-sm">
-                              <div className="flex items-center justify-center gap-2">
-                                <div className="h-4 w-4 animate-spin rounded-full border-2 border-muted border-t-foreground"></div>
-                                Loading guests...
+                          <div className="flex flex-row gap-1 text-xs text-muted-foreground">
+                            {/* Tags */}
+                            {guest.guestTag && guest.guestTag.length > 0 && (
+                              <div className="flex items-center gap-1 flex-wrap">
+                                <div className="flex gap-1 flex-wrap">
+                                  {guest.guestTag.map((gt) => (
+                                    <Badge
+                                      key={gt.id}
+                                      variant="secondary"
+                                      className="text-[10px] px-2 py-0.5"
+                                    >
+                                      {gt.tag?.name_en}
+                                    </Badge>
+                                  ))}
+                                </div>
                               </div>
-                            </div>
-                          ) : (
-                            <div className="py-6 text-center text-sm">
-                              No guests found.
-                              {searchQuery && (
-                                <div className="mt-1 text-xs text-muted-foreground">
-                                  Try searching with different terms
+                            )}
+
+                            {/* Groups */}
+                            {guest.guestGroup &&
+                              guest.guestGroup.length > 0 && (
+                                <div className="flex items-center gap-1 flex-wrap">
+                                  <div className="flex gap-1 flex-wrap">
+                                    {guest.guestGroup.map((gg) => (
+                                      <Badge
+                                        key={gg.id}
+                                        variant="outline"
+                                        className="text-[10px] px-2 py-0.5"
+                                      >
+                                        {gg.group?.name_en}
+                                      </Badge>
+                                    ))}
+                                  </div>
                                 </div>
                               )}
-                            </div>
-                          )}
-                        </CommandEmpty>
+                          </div>
+                        </div>
+                      </div>
+                    ))
+                  )}
+                </div>
 
-                        <CommandGroup>
-                          {filteredGuests.map((guest) => (
-                            <CommandItem
-                              key={guest.id}
-                              value={`${guest.name} ${guest.email || ""} ${
-                                guest.phone || ""
-                              } ${guest.address || ""}`}
-                              onSelect={() => handleGuestSelect(guest)}
-                              className="flex items-start gap-3 p-3 cursor-pointer"
-                            >
-                              <Check
-                                className={cn(
-                                  "h-4 w-4 mt-0.5 flex-shrink-0",
-                                  selectedGuest?.id === guest.id
-                                    ? "opacity-100"
-                                    : "opacity-0"
-                                )}
-                              />
-                              <div className="flex flex-col gap-1 min-w-0 flex-1">
-                                <span className="font-medium text-sm">
-                                  {guest.name}
-                                </span>
-                                <div className="flex flex-col gap-0.5 text-xs text-muted-foreground">
-                                  {guest.phone && (
-                                    <span className="flex items-center gap-1">
-                                      {guest.phone}
-                                    </span>
-                                  )}
-                                  {guest.email && (
-                                    <span className="flex items-center gap-1">
-                                      {guest.email}
-                                    </span>
-                                  )}
-                                  {guest.address && (
-                                    <span className="flex items-center gap-1">
-                                      {guest.address}
-                                    </span>
-                                  )}
-                                </div>
-                              </div>
-                            </CommandItem>
-                          ))}
-                        </CommandGroup>
-                      </CommandList>
-                    </Command>
-                  </PopoverContent>
-                </Popover>
-
+                {/* Error */}
                 {form.formState.errors.guestId && (
                   <p className="text-sm text-red-500">
                     {form.formState.errors.guestId.message}
@@ -376,108 +399,130 @@ export function CreateEditGiftForm({ id }: { id: string }) {
                 )}
               </div>
 
-              {/* Payment Type */}
               <div className="space-y-2">
-                <Label>{t("gift.form.payment_type")}</Label>
-                <RadioGroup
-                  value={form.watch("payment_type")}
-                  onValueChange={(value) =>
-                    form.setValue("payment_type", value as "CASH" | "KHQR")
-                  }
-                  className="flex gap-4"
-                >
-                  {["CASH", "KHQR"].map((type) => (
-                    <div key={type} className="flex items-center space-x-2">
-                      <Label className="hover:bg-accent/50 flex items-start gap-3 rounded-lg border-2 p-3 has-[[aria-checked=true]]:border-primary has-[[aria-checked=true]]:bg-rose-50 dark:has-[[aria-checked=true]]:border-primary-900 dark:has-[[aria-checked=true]]:bg-primary-950 cursor-pointer">
-                        <RadioGroupItem
-                          value={type}
-                          id={type}
-                          className="hidden data-[state=checked]:border-primary data-[state=checked]:bg-primary data-[state=checked]:text-white dark:data-[state=checked]:border-primary dark:data-[state=checked]:bg-primary"
-                        />
-                        <div className="grid gap-1.5 font-normal">
-                          <p className="text-xl leading-none font-bold">
-                            {type === "CASH" ? "Cash" : "KHQR"}
-                          </p>
-                          <p className="text-muted-foreground text-sm">
-                            {type === "CASH" ? (
-                              <Receipt size={120} />
-                            ) : (
-                              <QrCode size={120} />
-                            )}
-                          </p>
-                        </div>
-                      </Label>
-                    </div>
-                  ))}
-                </RadioGroup>
+                {/* Payment Type */}
+                <div className="space-y-2">
+                  <Label>
+                    {t("gift.form.payment_type")}
+                    <RequiredMark />
+                  </Label>
+                  <RadioGroup
+                    value={form.watch("payment_type")}
+                    onValueChange={(value) =>
+                      form.setValue("payment_type", value as "CASH" | "KHQR")
+                    }
+                    className="flex gap-4"
+                  >
+                    {["CASH", "KHQR"].map((type) => (
+                      <div key={type} className="flex flex-1">
+                        <Label className="hover:bg-accent/50 flex flex-1 items-center justify-center rounded-lg border-2 p-2 has-[[aria-checked=true]]:border-primary has-[[aria-checked=true]]:bg-rose-50 dark:has-[[aria-checked=true]]:border-primary-900 dark:has-[[aria-checked=true]]:bg-primary-950 cursor-pointer">
+                          <RadioGroupItem
+                            value={type}
+                            id={type}
+                            className="hidden"
+                          />
+                          <div className="flex items-center justify-center gap-4">
+                            <p className="text-md font-bold">
+                              {type === "CASH" ? "Cash" : "KHQR"}
+                            </p>
+                            <div className="text-muted-foreground flex-shrink-0">
+                              {type === "CASH" ? (
+                                <Receipt size={50} />
+                              ) : (
+                                <QrCode size={50} />
+                              )}
+                            </div>
+                          </div>
+                        </Label>
+                      </div>
+                    ))}
+                  </RadioGroup>
 
-                {form.formState.errors.payment_type && (
-                  <p className="text-sm text-red-500">
-                    {form.formState.errors.payment_type.message}
-                  </p>
-                )}
-              </div>
+                  {form.formState.errors.payment_type && (
+                    <p className="text-sm text-red-500">
+                      {form.formState.errors.payment_type.message}
+                    </p>
+                  )}
+                </div>
 
-              {/* Currency Type */}
-              <div className="space-y-2">
-                <Label>{t("gift.form.currency_type")}</Label>
-                <RadioGroup
-                  value={form.watch("currency_type")}
-                  onValueChange={(value) =>
-                    form.setValue("currency_type", value as "USD" | "KHR")
-                  }
-                  className="flex gap-4"
-                >
-                  {[
-                    { id: "USD", label: "USD ($)", desc: "US Dollar" },
-                    { id: "KHR", label: "KHR (៛)", desc: "Cambodian Riel" },
-                  ].map((currency) => (
-                    <div
-                      key={currency.id}
-                      className="flex items-center space-x-2"
-                    >
-                      <Label className="hover:bg-accent/50 flex items-start gap-3 rounded-lg border p-3 has-[[aria-checked=true]]:border-primary has-[[aria-checked=true]]:bg-rose-50 dark:has-[[aria-checked=true]]:border-primary-900 dark:has-[[aria-checked=true]]:bg-primary-950 cursor-pointer">
+                {/* Currency Type */}
+                <div className="space-y-2">
+                  <Label>
+                    {t("gift.form.currency_type")} <RequiredMark />
+                  </Label>
+                  <RadioGroup
+                    value={form.watch("currency_type")}
+                    onValueChange={(value) =>
+                      form.setValue("currency_type", value as "USD" | "KHR")
+                    }
+                    className="grid grid-cols-2 gap-4" // two columns
+                  >
+                    {[
+                      { id: "USD", label: "USD ($)", desc: "US Dollar" },
+                      { id: "KHR", label: "KHR (៛)", desc: "Cambodian Riel" },
+                    ].map((currency) => (
+                      <Label
+                        key={currency.id}
+                        className="hover:bg-accent/50 flex flex-col items-start gap-1 rounded-lg border p-3 has-[[aria-checked=true]]:border-primary has-[[aria-checked=true]]:bg-rose-50 dark:has-[[aria-checked=true]]:border-primary-900 dark:has-[[aria-checked=true]]:bg-primary-950 cursor-pointer w-full"
+                      >
                         <RadioGroupItem
                           value={currency.id}
                           id={currency.id}
-                          className="data-[state=checked]:border-primary data-[state=checked]:bg-primary data-[state=checked]:text-white dark:data-[state=checked]:border-primary dark:data-[state=checked]:bg-primary"
+                          className="hidden data-[state=checked]:border-primary data-[state=checked]:bg-primary data-[state=checked]:text-white dark:data-[state=checked]:border-primary dark:data-[state=checked]:bg-primary"
                         />
-                        <div className="grid gap-1.5 font-normal">
-                          <p className="text-sm leading-none font-medium">
-                            {currency.label}
-                          </p>
-                          <p className="text-muted-foreground text-xs">
-                            {currency.desc}
-                          </p>
-                        </div>
+                        <p className="text-sm font-medium">{currency.label}</p>
+                        <p className="text-xs text-muted-foreground">
+                          {currency.desc}
+                        </p>
                       </Label>
-                    </div>
-                  ))}
-                </RadioGroup>
+                    ))}
+                  </RadioGroup>
 
-                {form.formState.errors.currency_type && (
-                  <p className="text-sm text-red-500">
-                    {form.formState.errors.currency_type.message}
-                  </p>
+                  {form.formState.errors.currency_type && (
+                    <p className="text-sm text-red-500">
+                      {form.formState.errors.currency_type.message}
+                    </p>
+                  )}
+                </div>
+
+                {/* Amount & Note */}
+                {form.watch("currency_type") === "KHR" && (
+                  <InputTextField
+                    label={
+                      t("gift.form.amount") +
+                      (form.watch("currency_type") === "USD" ? " ($)" : " (៛)")
+                    }
+                    required
+                    name="amount_khr"
+                    placeholder={t("gift.form.amount_placeholder")}
+                    step={0.01}
+                    form={form}
+                    disabled={loading}
+                  />
                 )}
-              </div>
 
-              {/* Amount & Note */}
-              <InputTextField
-                label={t("gift.form.amount")}
-                name="amount"
-                placeholder={t("gift.form.amount_placeholder")}
-                step={0.01}
-                form={form}
-                disabled={loading}
-              />
-              <TextareaField
-                label={t("gift.form.note")}
-                name="note"
-                placeholder={t("gift.form.note_placeholder")}
-                form={form}
-                disabled={loading}
-              />
+                {form.watch("currency_type") === "USD" && (
+                  <InputTextField
+                    label={
+                      t("gift.form.amount") +
+                      (form.watch("currency_type") === "USD" ? " ($)" : " (៛)")
+                    }
+                    name="amount_usd"
+                    placeholder={t("gift.form.amount_placeholder")}
+                    step={0.01}
+                    required
+                    form={form}
+                    disabled={loading}
+                  />
+                )}
+                <TextareaField
+                  label={t("gift.form.note")}
+                  name="note"
+                  placeholder={t("gift.form.note_placeholder")}
+                  form={form}
+                  disabled={loading}
+                />
+              </div>
             </div>
 
             {/* Dialog Footer */}

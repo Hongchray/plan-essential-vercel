@@ -64,7 +64,7 @@ export default function ShowEvent({
   };
 
   return (
-    <div className="p-2 sm:border-0 rounded-md mx-auto bg-transparent sm:bg-white">
+    <div className="sm:p-4 p-2 sm:border-0 rounded-md mx-auto bg-transparent sm:bg-white">
       <div className="hidden sm:block">
         <Tabs className="" value={tab} onValueChange={handleChange}>
           <TabsList className="h-full p-2 gap-2">
@@ -293,7 +293,7 @@ export default function ShowEvent({
                   />
                   <ClientOnly>
                     <span
-                      className={`text-xs text-center break-words whitespace-normal transition-all duration-300 ${
+                      className={`text-[10px] text-center break-words whitespace-normal transition-all duration-300 ${
                         tab === item.value
                           ? "text-primary font-medium"
                           : "text-muted-foreground"

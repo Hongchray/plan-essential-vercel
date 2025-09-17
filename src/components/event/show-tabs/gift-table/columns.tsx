@@ -8,9 +8,11 @@ import { toast } from "sonner";
 import { useRouter } from "next/navigation";
 import { CreateEditGiftForm } from "../gift-form/create-edit";
 import { currencyFormatters } from "@/utils/currency";
-import { Gift } from "@/interfaces/gift";
 import { useTranslation } from "react-i18next";
-
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import { Badge } from "@/components/ui/badge";
+import { getAvatarColor, getInitials } from "@/utils/avatar";
+import { Gift } from "@/interfaces/gift";
 const ActionsCell = ({ row }: { row: any }) => {
   const router = useRouter();
   const { t } = useTranslation("common");
@@ -44,6 +46,65 @@ const ActionsCell = ({ row }: { row: any }) => {
         description={t("gift.table.delete_description")}
         onConfirm={() => deleteEvent(row.original.eventId, row.original.id)}
       />
+    </div>
+  );
+};
+
+export const MobileGiftCard = ({
+  gift,
+  onSelect,
+  isSelected,
+}: {
+  gift: Gift;
+  onSelect: (selected: boolean) => void;
+  isSelected: boolean;
+}) => {
+  const { t } = useTranslation("common");
+  const name: string = gift.guest?.name ?? "";
+  const { bg, text } = getAvatarColor(name);
+
+  return (
+    <div className="bg-white border-t border-gray-200 p-2 ">
+      <div className="flex items-start gap-3">
+        {/* Avatar */}
+        <Avatar className="h-8 w-8 flex-shrink-0">
+          {gift.guest?.image ? (
+            <AvatarImage src={gift.guest.image} alt={name} />
+          ) : (
+            <AvatarImage src="/placeholder.svg" />
+          )}
+          <AvatarFallback className={`${bg} ${text} font-bold text-[12px]`}>
+            {getInitials(name)}
+          </AvatarFallback>
+        </Avatar>
+
+        {/* Guest & Gift info */}
+        <div className="flex-1 min-w-0">
+          <div className="mb-1">
+            <h3 className="text-[13px] font-semibold text-gray-900 break-words">
+              {name}
+            </h3>
+            <p className="text-[11px] text-gray-500">{gift.guest?.phone}</p>
+          </div>
+
+          <div className="flex flex-wrap items-center gap-2 text-[11px] text-gray-600">
+            <Badge variant="default" className="text-[10px]">
+              {gift.payment_type}
+            </Badge>
+            <Badge variant="outline" className="text-[10px]">
+              {gift.currency_type} {gift.amount_usd}
+            </Badge>
+            {gift.note && (
+              <span className="italic text-gray-500">“{gift.note}”</span>
+            )}
+          </div>
+        </div>
+      </div>
+
+      {/* Actions */}
+      <div className="flex justify-end mt-2">
+        <ActionsCell row={{ original: gift }} />
+      </div>
     </div>
   );
 };
@@ -129,7 +190,7 @@ export const columns: ColumnDef<Gift>[] = [
     ),
   },
   {
-    accessorKey: "amount",
+    accessorKey: "amount_usd",
     header: () => {
       const { t } = useTranslation("common");
       return t("gift.table.amount");
@@ -138,8 +199,8 @@ export const columns: ColumnDef<Gift>[] = [
       <div className="flex gap-2">
         <span className="max-w-[350px] truncate ">
           {row.original.currency_type === "USD"
-            ? currencyFormatters.usd(row.getValue("amount") ?? 0)
-            : currencyFormatters.khr(row.getValue("amount") ?? 0)}
+            ? currencyFormatters.usd(row.getValue("amount_usd") ?? 0)
+            : currencyFormatters.khr(row.getValue("amount_usd") ?? 0)}
         </span>
       </div>
     ),

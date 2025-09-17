@@ -10,17 +10,10 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { Globe, Check } from "lucide-react";
+import { useMediaQuery } from "react-responsive";
 
 export default function LanguageSwitcher() {
   const { t } = useTranslation("common");
-
-  const switchLanguage = (lng: string) => {
-    i18n.changeLanguage(lng);
-    document.cookie = `NEXT_LOCALE=${lng}; path=/; max-age=${
-      60 * 60 * 24 * 30
-    }`;
-    window.location.reload();
-  };
 
   const languages = [
     { code: "en", name: "English", flag: "🇺🇸" },
@@ -30,6 +23,48 @@ export default function LanguageSwitcher() {
   const currentLanguage =
     languages.find((lang) => lang.code === i18n.language) || languages[0];
 
+  // Detect small screens
+  const isSmallScreen = useMediaQuery({ maxWidth: 767 });
+
+  // Change language
+  const switchLanguage = (lng: string) => {
+    i18n.changeLanguage(lng);
+    document.cookie = `NEXT_LOCALE=${lng}; path=/; max-age=${
+      60 * 60 * 24 * 30
+    }`;
+    window.location.reload();
+  };
+
+  // On small screens: switch to next language
+  const handleClick = () => {
+    if (isSmallScreen) {
+      const nextIndex =
+        (languages.findIndex((lang) => lang.code === currentLanguage.code) +
+          1) %
+        languages.length;
+      switchLanguage(languages[nextIndex].code);
+    }
+  };
+
+  // --- Render ---
+  if (isSmallScreen) {
+    // Small screens: single button
+    return (
+      <Button
+        variant="outline"
+        size="sm"
+        className="flex items-center gap-2 bg-transparent cursor-pointer"
+        onClick={handleClick}
+      >
+        <Globe className="h-4 w-4" />
+        <span className="text-xs font-medium">
+          {currentLanguage.code.toUpperCase()}
+        </span>
+      </Button>
+    );
+  }
+
+  // Medium+ screens: full dropdown
   return (
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
@@ -39,11 +74,7 @@ export default function LanguageSwitcher() {
           className="flex items-center gap-2 bg-transparent cursor-pointer"
         >
           <Globe className="h-4 w-4" />
-          {/* <span className="hidden sm:inline">{currentLanguage.flag}</span> */}
           <span className="hidden md:inline">{currentLanguage.name}</span>
-          <span className="md:hidden">
-            {currentLanguage.code.toUpperCase()}
-          </span>
         </Button>
       </DropdownMenuTrigger>
       <DropdownMenuContent align="end">

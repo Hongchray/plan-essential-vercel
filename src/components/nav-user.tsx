@@ -49,7 +49,8 @@ export function NavUser() {
               size="lg"
               className="data-[state=open]:bg-sidebar-accent data-[state=open]:text-sidebar-accent-foreground cursor-pointer"
             >
-              <Avatar className="h-8 w-8 rounded-lg">
+              {/* Avatar */}
+              <Avatar className="h-6 w-6 sm:h-8 sm:w-8 rounded-lg">
                 <AvatarImage
                   src={user.photoUrl ?? undefined}
                   alt={user.name ?? "User"}
@@ -59,43 +60,38 @@ export function NavUser() {
                 </AvatarFallback>
               </Avatar>
 
-              <div className="grid flex-1 text-left text-sm leading-tight">
-                <span className=" font-medium">{user.name}</span>
-                <span className=" text-xs">{user.phone}</span>
+              {/* Name & Phone */}
+              <div className="grid flex-1 text-left text-xs sm:text-sm leading-tight sm:leading-tight">
+                <span className="font-medium">{user.name}</span>
+                <span>{user.phone}</span>
               </div>
-              <ChevronsUpDown className="ml-auto size-4" />
+
+              {/* Chevron */}
+              <ChevronsUpDown className="ml-auto h-3 w-3 sm:h-4 sm:w-4" />
             </SidebarMenuButton>
           </DropdownMenuTrigger>
 
           <DropdownMenuContent
-            className="w-(--radix-dropdown-menu-trigger-width) min-w-56 rounded-lg"
+            className="min-w-[14rem] sm:min-w-[16rem] rounded-lg text-xs sm:text-sm"
             side={isMobile ? "bottom" : "right"}
             align="end"
             sideOffset={4}
           >
             <DropdownMenuLabel className="p-0 font-normal">
-              <div className="flex items-center gap-2 px-1 py-1.5 text-left text-sm">
-                <Avatar className="h-8 w-8 rounded-lg">
+              <div className="flex flex-col sm:flex-row items-start sm:items-center gap-1 sm:gap-2 px-1 py-1.5 sm:px-2 sm:py-2 text-left text-xs sm:text-sm">
+                <Avatar className="h-6 w-6 sm:h-8 sm:w-8 rounded-lg">
                   <AvatarImage
                     src={user.photoUrl ?? undefined}
                     alt={user.name ?? undefined}
                   />
                   <AvatarFallback className="rounded-lg">CN</AvatarFallback>
                 </Avatar>
-                <div className="grid flex-1 text-left text-sm leading-tight">
-                  <span className="truncate font-medium">{user.name}</span>
-                  <span className="truncate text-xs">{user.phone}</span>
-                  {user.username && (
-                    <span className="truncate text-xs">{user.username}</span>
-                  )}
-                  {user.role && (
-                    <span className="truncate text-xs capitalize">
-                      {user.role}
-                    </span>
-                  )}
-                  {user.telegramId && (
-                    <span className="truncate text-xs">{user.telegramId}</span>
-                  )}
+                <div className="grid flex-1 text-left text-xs sm:text-sm leading-tight sm:leading-tight">
+                  <span className="font-medium">{user.name}</span>
+                  <span>{user.phone}</span>
+                  {user.username && <span>{user.username}</span>}
+                  {user.role && <span className="capitalize">{user.role}</span>}
+                  {user.telegramId && <span>{user.telegramId}</span>}
                 </div>
               </div>
             </DropdownMenuLabel>
@@ -103,8 +99,8 @@ export function NavUser() {
             <DropdownMenuSeparator />
 
             <DropdownMenuGroup>
-              <DropdownMenuItem>
-                <Sparkles />
+              <DropdownMenuItem className="text-xs sm:text-sm flex items-center gap-1 sm:gap-2">
+                <Sparkles className="h-3 w-3 sm:h-4 sm:w-4" />
                 Upgrade to Pro
               </DropdownMenuItem>
             </DropdownMenuGroup>
@@ -112,24 +108,27 @@ export function NavUser() {
             <DropdownMenuSeparator />
 
             <DropdownMenuGroup>
-              <DropdownMenuItem>
-                <BadgeCheck />
+              <DropdownMenuItem className="text-xs sm:text-sm flex items-center gap-1 sm:gap-2">
+                <BadgeCheck className="h-3 w-3 sm:h-4 sm:w-4" />
                 Account
               </DropdownMenuItem>
-              <DropdownMenuItem>
-                <CreditCard />
+              <DropdownMenuItem className="text-xs sm:text-sm flex items-center gap-1 sm:gap-2">
+                <CreditCard className="h-3 w-3 sm:h-4 sm:w-4" />
                 Billing
               </DropdownMenuItem>
-              <DropdownMenuItem>
-                <Bell />
+              <DropdownMenuItem className="text-xs sm:text-sm flex items-center gap-1 sm:gap-2">
+                <Bell className="h-3 w-3 sm:h-4 sm:w-4" />
                 Notification
               </DropdownMenuItem>
             </DropdownMenuGroup>
 
             <DropdownMenuSeparator />
 
-            <DropdownMenuItem onClick={handleLogout}>
-              <LogOut />
+            <DropdownMenuItem
+              onClick={handleLogout}
+              className="text-xs sm:text-sm flex items-center gap-1 sm:gap-2"
+            >
+              <LogOut className="h-3 w-3 sm:h-4 sm:w-4" />
               Log out
             </DropdownMenuItem>
           </DropdownMenuContent>

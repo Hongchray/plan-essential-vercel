@@ -316,7 +316,7 @@
       "confirmed": "បានបញ្ជាក់",
       "pending": "កំពុងរងចាំ",
       "declined": "បានបដិសេធ",
-      "gifts_received": "អំណោយដែលទទួលបាន"
+      "gifts_received": "ចំណងដៃដែលទទួលបាន"
     },
     "guest": {
       "title": "ការគ្រប់គ្រងភ្ញៀវ",
@@ -383,7 +383,8 @@
       "list_of_tags": "បញ្ជីស្លាក",
       "total": "សរុប",
       "delete_tag_title": "លុបស្លាកនេះ?",
-      "delete_tag_description": "នេះនឹងលុបស្លាកនេះជាអចិន្រ្តៃយ៍"
+      "delete_tag_description": "នេះនឹងលុបស្លាកនេះជាអចិន្រ្តៃយ៍",
+      "no_group_found": "មិនមានទិន្នន័យ!"
     },
     "message": {
       "name_required": "សូមបញ្ចូលឈ្មោះ",
@@ -464,11 +465,11 @@
     }
   },
   "gift": {
-    "wedding_gifts": "អំណោយអាពាហ៍ពិពាហ៍",
-    "received": "អំណោយបានទទួល",
+    "wedding_gifts": "ចំណងដៃអាពាហ៍ពិពាហ៍",
+    "received": "ចំណងដៃបានទទួល",
     "total_usd": "សរុប ដុល្លារ ($)",
     "total_khr": "សរុប រៀល (៛)",
-    "title": "បញ្ជីអំណោយ",
+    "title": "បញ្ជីចំណងដៃ",
     "table": {
       "guest_name": "ឈ្មោះភ្ញៀវ",
       "note": "កំណត់ចំណាំ",
@@ -476,16 +477,16 @@
       "currency_type": "ប្រភេទរូបិយប័ណ្ណ",
       "amount": "ចំនួនទឹកប្រាក់",
       "actions": "សកម្មភាព",
-      "delete_title": "លុបអំណោយនេះ?",
-      "delete_description": "វានឹងលុបអំណោយនេះចោលអចិន្រ្តៃយ៍។",
-      "delete_success": "លុបអំណោយបានជោគជ័យ",
-      "delete_error": "មានបញ្ហាក្នុងការលុបអំណោយ"
+      "delete_title": "លុបចំណងដៃនេះ?",
+      "delete_description": "វានឹងលុបចំណងដៃនេះចោលអចិន្រ្តៃយ៍។",
+      "delete_success": "លុបចំណងដៃបានជោគជ័យ",
+      "delete_error": "មានបញ្ហាក្នុងការលុបចំណងដៃ"
     },
     "form": {
       "addNew": "បន្ថែមថ្មី",
-      "editTitle": "កែប្រែអំណោយ",
-      "addTitle": "បន្ថែមអំណោយថ្មី",
-      "description": "បំពេញព័ត៌មានអំពីអំណោយខាងក្រោម",
+      "editTitle": "កែប្រែចំណងដៃ",
+      "addTitle": "បន្ថែមចំណងដៃថ្មី",
+      "description": "បំពេញព័ត៌មានអំពីចំណងដៃខាងក្រោម",
       "guest": "ភ្ញៀវ",
       "guest_placeholder": "បញ្ចូលឈ្មោះភ្ញៀវ",
       "phone_placeholder": "បញ្ចូលលេខទូរស័ព្ទ",

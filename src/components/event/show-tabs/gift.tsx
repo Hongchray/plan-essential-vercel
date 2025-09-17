@@ -51,7 +51,7 @@ export default function TabGift({
   searchParams,
 }: {
   paramId: string;
-  searchParams: any; 
+  searchParams: any;
 }) {
   const params = use(searchParams) as SearchParams; // 👈 cast unknown to proper type
 
@@ -125,7 +125,7 @@ export default function TabGift({
                   <Loading variant="minimal" message="" size="sm" />
                 ) : (
                   `${currencyFormatters.usd(
-                    aggregates?.by_currency[1]?._sum?.amount ?? 0
+                    aggregates?.by_currency[1]?._sum?.amount_usd ?? 0
                   )}`
                 )}
               </div>
@@ -141,7 +141,7 @@ export default function TabGift({
                   <Loading variant="minimal" message="" size="sm" />
                 ) : (
                   `${currencyFormatters.khr(
-                    aggregates?.by_currency[0]?._sum?.amount ?? 0
+                    aggregates?.by_currency[0]?._sum?.amount_usd ?? 0
                   )}`
                 )}
               </div>

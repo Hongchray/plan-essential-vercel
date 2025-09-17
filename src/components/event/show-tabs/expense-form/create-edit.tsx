@@ -33,6 +33,8 @@ import {
   ChevronDownIcon,
   ChevronUpIcon,
 } from "lucide-react";
+import { formatDate } from "date-fns";
+import { formatDateCustom } from "@/utils/date";
 export function useExpenseFormSchema() {
   const { t } = useTranslation("common");
   return z.object({
@@ -59,21 +61,6 @@ export function useExpenseFormSchema() {
       .optional()
       .default([]),
   });
-}
-export function formatDate(
-  date?: string | Date | null,
-  options?: Intl.DateTimeFormatOptions,
-  fallback: string = "Not Paid",
-  locale: string = ""
-): string {
-  if (!date) return fallback;
-
-  const d = typeof date === "string" ? new Date(date) : date;
-
-  // Check for invalid date
-  if (isNaN(d.getTime())) return fallback;
-
-  return d.toLocaleDateString(locale, options);
 }
 
 export function CreateEditForm({ id }: { id: string }) {
@@ -330,7 +317,7 @@ export function CreateEditForm({ id }: { id: string }) {
                                 <CardTitle className="text-base flex justify-between items-center">
                                   <span>{paymentSummary}</span>
                                   <span className="text-sm text-gray-500 ml-5">
-                                    {formatDate(payment.paidAt)}
+                                    {payment.paidAt}
                                   </span>
                                 </CardTitle>
                               </div>

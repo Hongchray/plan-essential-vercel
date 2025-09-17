@@ -18,14 +18,17 @@ export function LogoApp() {
             className="data-[slot=sidebar-menu-button]:!p-[0]"
           >
             <Link href="/dashboard">
-              <Image
-                src="/logo.png"
-                alt="Logo"
-                width={34}
-                height={34}
-                className="mr-0.5"
-              />
-              <span className="text-xl font-bold text-primary">plan essential</span>
+              <div className="relative h-6 w-6 sm:h-8 sm:w-8">
+                <Image
+                  src="/logo.png"
+                  alt="Logo"
+                  fill
+                  className="object-contain"
+                />
+              </div>
+              <span className="text-xl font-bold text-primary">
+                plan essential
+              </span>
             </Link>
           </SidebarMenuButton>
         </SidebarMenuItem>

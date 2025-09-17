@@ -25,6 +25,15 @@ import {
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { LogoApp } from "../../components/logo-app";
+import {
+  Sheet,
+  SheetContent,
+  SheetTrigger,
+  SheetTitle,
+} from "@/components/ui/sheet";
+import { MenuIcon } from "lucide-react";
+import { Button } from "@/components/ui/button";
+import { VisuallyHidden } from "@radix-ui/react-visually-hidden";
 
 export function DashboardHeader() {
   const { data: session, status } = useSession();
@@ -51,25 +60,67 @@ export function DashboardHeader() {
     // Filter based on role
     const userRole = session?.user?.role;
     if (userRole === "user") {
-      // Normal users see only Event
       setNavMain(allMenus.filter((item) => item.url === "/event"));
     } else {
-      // Admins or others see all
       setNavMain(allMenus);
     }
   }, [t, session]);
 
   const user = session?.user;
-
   if (status === "loading") return null;
 
   return (
     <header className="border-b z-50 bg-background sticky top-0 flex h-16 shrink-0 items-center px-2 md:px-4">
-      <div className="flex items-center gap-6 w-full">
+      <div className="flex items-center gap-2 sm:gap-2 w-full">
+        {/* Mobile Burger Menu (left of Logo) */}
+        <div className="md:hidden">
+          <Sheet>
+            <SheetTrigger asChild>
+              <Button
+                variant="ghost"
+                size="icon"
+                className="h-8 w-8 rounded-lg"
+              >
+                <MenuIcon className="h-8 w-8" />{" "}
+              </Button>
+            </SheetTrigger>
+            <SheetContent side="left" className="w-64 p-4">
+              <VisuallyHidden>
+                <SheetTitle>Navigation Menu</SheetTitle>
+              </VisuallyHidden>
+
+              <div className="flex flex-col gap-4 mt-6">
+                {user && <NavUser />}
+                {navMain.map((item) => {
+                  const isActive = pathname.startsWith(item.url);
+                  return (
+                    <Link
+                      key={item.url}
+                      href={item.url}
+                      className={`flex items-center gap-2 text-sm font-medium transition-colors ${
+                        isActive
+                          ? "text-primary"
+                          : "text-gray-700 hover:text-gray-900"
+                      }`}
+                    >
+                      <item.icon size={18} />
+                      {item.title}
+                    </Link>
+                  );
+                })}
+                <Separator className="my-4" />
+                <LanguageSwitcher />
+              </div>
+            </SheetContent>
+          </Sheet>
+        </div>
+
+        {/* Logo (right next to menu) */}
         <LogoApp />
 
         <Separator orientation="vertical" className="h-6 hidden md:block" />
 
+        {/* Desktop nav */}
         <nav className="hidden md:flex gap-4">
           {navMain.map((item) => {
             const isActive = pathname.startsWith(item.url);
@@ -91,10 +142,11 @@ export function DashboardHeader() {
         </nav>
       </div>
 
+      {/* Right-side user/lang */}
       <div className="flex items-center gap-2">
         {user ? (
           <>
-            <div className="hidden  md:flex">
+            <div className="hidden md:flex">
               <LanguageSwitcher />
             </div>
             <NavUser />
@@ -106,7 +158,6 @@ export function DashboardHeader() {
     </header>
   );
 }
-
 export default function DashboardLayout({
   children,
 }: {
@@ -123,7 +174,9 @@ export default function DashboardLayout({
               {/* Fixed main content area with proper overflow handling */}
               <div className="flex flex-1 flex-col gap-4  p-0 md:p-4 pt-0 bg-rose-50 relative overflow-hidden">
                 <NextTopLoader color="#dd1d49" showSpinner={false} />
-                <div className="pt-0 md:pt-4 flex-1 overflow-y-auto">{children}</div>
+                <div className="pt-0 md:pt-4 flex-1 overflow-y-auto">
+                  {children}
+                </div>
               </div>
             </SidebarInset>
           </SidebarProvider>

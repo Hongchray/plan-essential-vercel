@@ -105,9 +105,9 @@ export default function DashboardPage() {
 
   return (
     <div className="w-full space-y-6">
-      <div className="grid gap-6 md:grid-cols-3">
-        <Card className="relative overflow-hidden">
-          <CardHeader className="flex flex-row items-center justify-between pb-2">
+      <div className="grid gap-4 sm:gap-6 md:grid-cols-3 ">
+        <Card className="relative overflow-hidden flex flex-col gap-3">
+          <CardHeader className="flex flex-row items-center justify-between">
             <CardTitle className="text-sm font-medium text-muted-foreground">
               {t("dashboard.totalUsers")}
             </CardTitle>
@@ -139,7 +139,7 @@ export default function DashboardPage() {
         </Card>
 
         {/* Total Templates */}
-        <Card className="relative overflow-hidden">
+        <Card className="relative overflow-hidden flex flex-col gap-3">
           <CardHeader className="flex flex-row items-center justify-between pb-2">
             <CardTitle className="text-sm font-medium text-muted-foreground">
               {t("dashboard.totalTemplates")}
@@ -168,22 +168,22 @@ export default function DashboardPage() {
         </Card>
 
         {/* Total Events */}
-        <Card className="relative overflow-hidden">
-          <CardHeader className="flex flex-row items-center justify-between pb-2">
-            <CardTitle className="text-sm font-medium text-muted-foreground">
+        <Card className="relative overflow-hidden flex flex-col gap-3">
+          <CardHeader className="flex flex-row items-center justify-between pb-2 ">
+            <CardTitle className="text-sm font-medium text-muted-foreground ">
               {t("dashboard.totalEvents")}
             </CardTitle>
             <PartyPopper className="h-4 w-4 text-green-600" />
           </CardHeader>
-          <CardContent>
-            <div className="text-2xl font-bold text-green-600">
+          <CardContent className="">
+            <div className="text-2xl font-bold text-green-600 ">
               {events === null ? (
                 <Loading variant="minimal" size="sm" />
               ) : (
                 events
               )}
             </div>
-            <div className="flex items-center text-xs text-muted-foreground mt-1">
+            <div className="flex items-center text-xs text-muted-foreground mt-1 ">
               {events === 0 ? (
                 <>{t("dashboard.readyToStart")}</>
               ) : (
@@ -197,7 +197,7 @@ export default function DashboardPage() {
         </Card>
       </div>
 
-      <div className="grid gap-6 md:grid-cols-2">
+      <div className="grid gap-4 sm:gap-6 md:grid-cols-2">
         {/* User Growth Chart */}
         <Card>
           <CardHeader>
@@ -266,9 +266,9 @@ export default function DashboardPage() {
                     color: "hsl(var(--chart-2))",
                   },
                 }}
-                className="min-h-[100px] max-h-[250px] w-[100%]"
+                className="min-h-[100px] max-h-[250px] w-[100%] "
               >
-                <ResponsiveContainer width="100%" height="100%">
+                <ResponsiveContainer width="100%" height="100%" className="p-0">
                   <BarChart data={weeklyActivity}>
                     <CartesianGrid strokeDasharray="3 3" />
                     <XAxis dataKey="day" />
