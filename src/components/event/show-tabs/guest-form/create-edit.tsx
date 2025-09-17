@@ -173,15 +173,15 @@ export function CreateEditForm({ id }: { id: string }) {
               {t("guest_form.create_edit.fill_guest_details")}
             </DialogDescription>
           </DialogHeader>
-          <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-2 md:space-y-4 overflow-y-scroll">
-            <div>
+          <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-2 md:space-y-4 overflow-y-auto">
+            {/* <div>
               <ImageUpload
                 label={t("guest_form.create_edit.photo")}
                 folder="/event/guest"
                 {...form.register("image")}
                 value={form.watch("image") ?? ""}
               />
-            </div>
+            </div> */}
             <div className="grid grid-cols-1 md:grid-cols-2 gap-2 md:gap-4">
               <InputTextField
                 label={t("guest_form.create_edit.name")}

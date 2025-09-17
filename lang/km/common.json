@@ -272,6 +272,7 @@
   "event_dashboard": {
     "tab": {
       "dashboard": "ផ្ទាំងព័ត៌មាន",
+      "mobile_dashboard": "ព័ត៌មាន",
       "guest": "បញ្ជីភ្ញៀវ",
       "expense": "ចំណាយ",
       "wedding_gift": "ចំណងដៃ",
@@ -281,18 +282,19 @@
 
     "title": "ផ្ទាំងគ្រប់គ្រងមង្គលការ",
     "cards": {
-      "total_guests": "ភ្ញៀវសរុប",
+      "total_guests": "ភ្ញៀវដែលបានអញ្ជើញ",
       "confirmed": "បានបញ្ជាក់",
-      "gift_income": "ចំណងដៃ",
+      "gift_income": "ចំណងដៃសរុប",
       "total_expenses_actual": "ចំណាយសរុប (ចំណាយជាក់ស្តែង)",
-      "total_expenses_budget": "ចំណាយសរុប (គ្រោងចំណាយ)"
+      "total_expenses_budget": "ចំណាយសរុប (គ្រោងចំណាយ)",
+      "profit_loss": "ចំនេញ/ខាត"
     },
     "charts": {
       "guest_status": {
         "title": "ក្រាបទិន្នន័យអ្នកចូលរួម",
         "description": "ការឆ្លើយតប RSVP",
         "confirmed": "បានបញ្ជាក់",
-        "pending": "កំពុងរងចាំ",
+        "pending": "មិនទាន់ឆ្លើយតប",
         "declined": "បានបដិសេធ"
       },
       "financial_overview": {
@@ -314,9 +316,9 @@
     "guest_summary": {
       "title": "ស្ថិតិភ្ញៀវ",
       "confirmed": "បានបញ្ជាក់",
-      "pending": "កំពុងរងចាំ",
+      "pending": "មិនទាន់ឆ្លើយតប",
       "declined": "បានបដិសេធ",
-      "gifts_received": "ចំណងដៃដែលទទួលបាន"
+      "gifts_received": "បានចង់ដៃ"
     },
     "guest": {
       "title": "ការគ្រប់គ្រងភ្ញៀវ",

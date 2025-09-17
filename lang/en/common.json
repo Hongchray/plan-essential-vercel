@@ -274,6 +274,7 @@
   "event_dashboard": {
     "tab": {
       "dashboard": "Dashboard",
+      "mobile_dashboard": "Dashboard",
       "guest": "Guests",
       "expense": "Expenses",
       "wedding_gift": "Wedding Gift",
@@ -286,7 +287,8 @@
       "confirmed": "Confirmed",
       "gift_income": "Gift Income",
       "total_expenses_actual": "Total Expenses Actual",
-      "total_expenses_budget": "Total Expenses Budget"
+      "total_expenses_budget": "Total Expenses Budget",
+      "profit_loss": "Profit and loss"
     },
     "charts": {
       "guest_status": {

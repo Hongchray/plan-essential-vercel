@@ -196,7 +196,7 @@ const MobileGuestCard = ({
 
   return (
     <div className="bg-white border-t border-gray-200 p-2">
-      <div className="flex items-start gap-3">
+      <div className="flex items-center gap-3">
         <Avatar className="h-6 w-6 flex-shrink-0">
           <AvatarImage src="/placeholder.svg" />
           <AvatarFallback className={`${bg} ${text} font-bold text-[12px]`}>{getInitials(name)}</AvatarFallback>

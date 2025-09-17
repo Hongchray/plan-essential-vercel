@@ -70,7 +70,7 @@ export default function ShowEvent({
           <TabsList className="h-full p-2 gap-2">
             <TabsTrigger
               value="dashboard"
-              className="flex flex-col gap-1 py-3 px-2 transition-all duration-300 ease-in-out hover:bg-background/80 data-[state=active]:bg-background data-[state=active]:shadow-sm data-[state=active]:scale-105"
+              className="w-[80px] flex flex-col gap-1 py-3 px-2 transition-all duration-300 ease-in-out hover:bg-background/80 data-[state=active]:bg-background data-[state=active]:shadow-sm data-[state=active]:scale-105"
             >
               <LayoutDashboard
                 className={`h-4 w-4 transition-all duration-300 ${
@@ -92,10 +92,9 @@ export default function ShowEvent({
                 </span>
               </ClientOnly>
             </TabsTrigger>
-
             <TabsTrigger
               value="guests"
-              className="flex flex-col gap-1 py-3 px-2 transition-all duration-300 ease-in-out hover:bg-background/80 data-[state=active]:bg-background data-[state=active]:shadow-sm data-[state=active]:scale-105"
+              className="w-[80px] flex flex-col gap-1 py-3 px-2 transition-all duration-300 ease-in-out hover:bg-background/80 data-[state=active]:bg-background data-[state=active]:shadow-sm data-[state=active]:scale-105"
             >
               <Users
                 className={`h-4 w-4 transition-all duration-300 ${
@@ -118,7 +117,7 @@ export default function ShowEvent({
             </TabsTrigger>
             <TabsTrigger
               value="expense"
-              className="flex flex-col gap-1 py-3 px-2 transition-all duration-300 ease-in-out hover:bg-background/80 data-[state=active]:bg-background data-[state=active]:shadow-sm data-[state=active]:scale-105"
+              className="w-[80px] flex flex-col gap-1 py-3 px-2 transition-all duration-300 ease-in-out hover:bg-background/80 data-[state=active]:bg-background data-[state=active]:shadow-sm data-[state=active]:scale-105"
             >
               <Receipt
                 className={`h-4 w-4 transition-all duration-300 ${
@@ -142,7 +141,7 @@ export default function ShowEvent({
             </TabsTrigger>
             <TabsTrigger
               value="gifts"
-              className="flex flex-col gap-1 py-3 px-2 transition-all duration-300 ease-in-out hover:bg-background/80 data-[state=active]:bg-background data-[state=active]:shadow-sm data-[state=active]:scale-105"
+              className="w-[80px] flex flex-col gap-1 py-3 px-2 transition-all duration-300 ease-in-out hover:bg-background/80 data-[state=active]:bg-background data-[state=active]:shadow-sm data-[state=active]:scale-105"
             >
               <Gift
                 className={`h-4 w-4 transition-all duration-300 ${
@@ -165,7 +164,7 @@ export default function ShowEvent({
             </TabsTrigger>
             <TabsTrigger
               value="template"
-              className="flex flex-col gap-1 py-3 px-2 transition-all duration-300 ease-in-out hover:bg-background/80 data-[state=active]:bg-background data-[state=active]:shadow-sm data-[state=active]:scale-105"
+              className="w-[80px] flex flex-col gap-1 py-3 px-2 transition-all duration-300 ease-in-out hover:bg-background/80 data-[state=active]:bg-background data-[state=active]:shadow-sm data-[state=active]:scale-105"
             >
               <Mail
                 className={`h-4 w-4 transition-all duration-300 ${
@@ -188,7 +187,7 @@ export default function ShowEvent({
             </TabsTrigger>
             <TabsTrigger
               value="addTemplate"
-              className="flex flex-col gap-1 py-3 px-2 transition-all duration-300 ease-in-out hover:bg-background/80 data-[state=active]:bg-background data-[state=active]:shadow-sm data-[state=active]:scale-105"
+              className="w-[80px] flex flex-col gap-1 py-3 px-2 transition-all duration-300 ease-in-out hover:bg-background/80 data-[state=active]:bg-background data-[state=active]:shadow-sm data-[state=active]:scale-105"
             >
               <PlusIcon
                 className={`h-4 w-4 transition-all duration-300 ${
@@ -244,12 +243,12 @@ export default function ShowEvent({
       </div>
       <div className="block sm:hidden ">
         <Tabs value={tab} onValueChange={handleChange}>
-          <TabsList className=" w-full h-full flex gap-1 bg-white">
+          <TabsList className=" w-full h-full flex gap-1 bg-white p-2">
             {[
               {
                 value: "dashboard",
                 icon: LayoutDashboard,
-                label: t("event_dashboard.tab.dashboard"),
+                label: t("event_dashboard.tab.mobile_dashboard"),
               },
               {
                 value: "guests",
