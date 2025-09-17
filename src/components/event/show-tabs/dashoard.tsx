@@ -89,7 +89,7 @@ export default function TabDashboard({ eventId }: { eventId: string }) {
         {t("event_dashboard.title")}
       </h3>
       <ScrollArea>
-        <div className="flex gap-4 mb-6 w-full overflow-x-auto md:grid grid-cols-5">
+        <div className="flex gap-4 w-full overflow-x-auto md:grid grid-cols-5">
           <div className="bg-blue-50 p-4 rounded-lg flex-shrink-0 w-40 md:w-auto">
             <div className="text-2xl font-bold text-blue-600">
               {event.total_guest}
@@ -139,7 +139,7 @@ export default function TabDashboard({ eventId }: { eventId: string }) {
       </ScrollArea>
 
       {/* Charts */}
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 mb-6">
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-2 md:gap-6">
         {/* Guest Status Distribution */}
         <Card className="flex flex-col shadow-none">
           <CardHeader>
@@ -298,7 +298,7 @@ export default function TabDashboard({ eventId }: { eventId: string }) {
       </div>
 
       {/* Financial & Guest Summary */}
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-2 md:gap-6">
         <div className="bg-white p-4 border rounded-lg">
           <h4 className="font-semibold mb-3">
             {t("event_dashboard.financial_summary.title")}

@@ -272,6 +272,7 @@
   "event_dashboard": {
     "tab": {
       "dashboard": "ផ្ទាំងព័ត៌មាន",
+      "mobile_dashboard": "ព័ត៌មាន",
       "guest": "បញ្ជីភ្ញៀវ",
       "expense": "ចំណាយ",
       "wedding_gift": "ចំណងដៃ",
