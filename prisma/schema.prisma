@@ -24,6 +24,7 @@ model User {
   createdAt        DateTime @default(now())
   updatedAt        DateTime @updatedAt
   events           Event[]
+  userPlan         UserPlan[]
   
   @@index([email])
   @@index([phone])
@@ -216,6 +217,28 @@ model Gift {
   currency_type String
   amount_khr    Float?
   amount_usd    Float?
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model Plan {
+  id  String   @id @default(cuid())
+  name String 
+  price     Float?
+  userPlan UserPlan[]
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model UserPlan {
+  id  String   @id @default(cuid())
+  userId   String
+  user     User  @relation(fields: [userId], references: [id])
+  planId        String 
+  plan Plan  @relation(fields: [planId], references: [id])
+  limit_guests  Int
+  limit_template Int
+  limit_export_excel Boolean
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 }

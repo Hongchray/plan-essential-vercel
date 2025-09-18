@@ -9,7 +9,6 @@ import {
 } from "lucide-react";
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
 import { useCallback } from "react";
-import { useState, useEffect } from "react";
 
 import { Button } from "@/components/ui/button";
 import {
@@ -36,11 +35,7 @@ export function DataTablePagination<TData>({
   const router = useRouter();
   const pathname = usePathname();
   const searchParams = useSearchParams();
-  const [mounted, setMounted] = useState(false);
 
-  useEffect(() => {
-    setMounted(true);
-  }, []);
   const createQueryString = useCallback(
     (params: Record<string, string | number | null>) => {
       const current = new URLSearchParams(Array.from(searchParams.entries()));
@@ -73,20 +68,19 @@ export function DataTablePagination<TData>({
   return (
     <div className="flex items-center justify-between px-2">
       <div className="flex-1 text-sm text-muted-foreground">
-        {mounted && (
-          <p>
-            {t("component.table.total")}:{" "}
-            <span className="font-bold text-primary">
-              {total} {t("component.table.records")}
-            </span>
-          </p>
-        )}
+        <p>
+          {t("component.table.total")}:{" "}
+          <span className="font-bold text-primary">
+            {total} {t("component.table.records")}
+          </span>
+        </p>
       </div>
 
       <div className="flex items-center space-x-6 lg:space-x-8">
         <div className="flex items-center space-x-2">
-          {mounted && <p>{t("component.table.rows_per_page")}</p>}
-
+          <p className="text-sm font-medium">
+            {t("component.table.rows_per_page")}
+          </p>
           <Select
             value={`${currentPerPage}`}
             onValueChange={handlePerPageChange}
@@ -105,14 +99,9 @@ export function DataTablePagination<TData>({
         </div>
 
         <div className="flex w-[100px] items-center justify-center text-sm font-medium">
-          {mounted && (
-            <p>
-              {t("component.table.total")}:{" "}
-              <span className="font-bold text-primary">
-                {total} {t("component.table.records")}
-              </span>
-            </p>
-          )}
+          {t("component.table.page")}{" "}
+          {table.getState().pagination.pageIndex + 1} {t("component.table.of")}{" "}
+          {table.getPageCount()}
         </div>
 
         <div className="flex items-center space-x-2">
@@ -128,8 +117,7 @@ export function DataTablePagination<TData>({
             }}
             disabled={!table.getCanPreviousPage()}
           >
-            {mounted && <p>{t("component.table.first_page")}</p>}
-
+            <span className="sr-only">{t("component.table.first_page")}</span>
             <ChevronsLeft />
           </Button>
 
@@ -149,7 +137,7 @@ export function DataTablePagination<TData>({
             }}
             disabled={!table.getCanPreviousPage()}
           >
-            {mounted && <p>{t("component.table.prev_page")}</p>}
+            <span className="sr-only">{t("component.table.prev_page")}</span>
             <ChevronLeft />
           </Button>
 
@@ -167,7 +155,7 @@ export function DataTablePagination<TData>({
             }}
             disabled={!table.getCanNextPage()}
           >
-            {mounted && <p>{t("component.table.next_page")}</p>}
+            <span className="sr-only">{t("component.table.next_page")}</span>
             <ChevronRight />
           </Button>
 
@@ -186,8 +174,7 @@ export function DataTablePagination<TData>({
             }}
             disabled={!table.getCanNextPage()}
           >
-            {" "}
-            {mounted && <p>{t("component.table.last_page")}</p>}
+            <span className="sr-only">{t("component.table.last_page")}</span>
             <ChevronsRight />
           </Button>
         </div>
