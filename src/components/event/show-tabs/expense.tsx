@@ -68,21 +68,13 @@ export default function TabExpense({
         <>
           <h3 className="text-lg font-semibold mb-4">{t("expense.title")}</h3>
 
-          {/* Laptop/Desktop View */}
-          <div className="hidden md:block">
-            <DataTable
-              data={data}
-              columns={columns}
-              pageCount={meta.pageCount}
-              total={meta.total}
-              serverPagination={true}
-            />
-          </div>
-
-          {/* Mobile View */}
-          <div className="block md:hidden">
-            <TabExpenseMobile data={data} setData={setData} />
-          </div>
+          <DataTable
+            data={data}
+            columns={columns}
+            pageCount={meta.pageCount}
+            total={meta.total}
+            serverPagination={true}
+          />
         </>
       )}
     </div>

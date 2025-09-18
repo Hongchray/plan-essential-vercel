@@ -16,23 +16,26 @@ import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import { EditIcon, Trash2Icon, EyeIcon } from "lucide-react";
 import { ConfirmDialog } from "@/components/composable/dialog/confirm-dialog";
+import { useTranslation } from "react-i18next";
 
 const ActionsCell = ({ row }: { row: any }) => {
   const router = useRouter();
+  const { t } = useTranslation("common"); // ✅ hook at top level
 
   const deleteTemplate = async (id: string) => {
     try {
       const res = await fetch(`/api/admin/template/${id}`, {
         method: "DELETE",
       });
+
       if (res.ok) {
-        toast.success("Delete Template successfully");
+        toast.success(t("templates.message.delete_success"));
         router.refresh();
       } else {
-        toast.error("Error deleting template");
+        toast.error(t("templates.message.delete_error"));
       }
     } catch (error) {
-      toast.error("Error deleting template");
+      toast.error(t("templates.message.delete_error"));
     }
   };
 
@@ -54,8 +57,8 @@ const ActionsCell = ({ row }: { row: any }) => {
             <Trash2Icon />
           </Button>
         }
-        title="Delete this file?"
-        description="This will permanently remove the file."
+        title={t("templates.message.delete_title")}
+        description={t("templates.message.delete_description")}
         onConfirm={() => deleteTemplate(row.original.id)}
       />
     </div>
@@ -90,9 +93,10 @@ export const columns: ColumnDef<Template>[] = [
   {
     accessorKey: "image",
     enableSorting: false,
-    header: ({ column }) => (
-      <DataTableColumnHeader column={column} title="Image" />
-    ),
+    header: () => {
+      const { t } = useTranslation("common");
+      return t("templates.table.image");
+    },
     cell: ({ row }) => {
       return (
         <Avatar className="rounded h-[50px] ">
@@ -104,9 +108,10 @@ export const columns: ColumnDef<Template>[] = [
   },
   {
     accessorKey: "name",
-    header: ({ column }) => (
-      <DataTableColumnHeader column={column} title="Name" />
-    ),
+    header: () => {
+      const { t } = useTranslation("common");
+      return t("templates.table.name");
+    },
     cell: ({ row }) => {
       return (
         <div className="flex gap-2">
@@ -119,9 +124,10 @@ export const columns: ColumnDef<Template>[] = [
   },
   {
     accessorKey: "type",
-    header: ({ column }) => (
-      <DataTableColumnHeader column={column} title="Type" />
-    ),
+    header: () => {
+      const { t } = useTranslation("common");
+      return t("templates.table.type");
+    },
     cell: ({ row }) => {
       return (
         <div className="flex gap-2">
@@ -134,9 +140,10 @@ export const columns: ColumnDef<Template>[] = [
   },
   {
     accessorKey: "status",
-    header: ({ column }) => (
-      <DataTableColumnHeader column={column} title="Status" />
-    ),
+    header: () => {
+      const { t } = useTranslation("common");
+      return t("templates.table.status");
+    },
     cell: ({ row }) => {
       return (
         <div className="flex gap-2">
@@ -150,9 +157,10 @@ export const columns: ColumnDef<Template>[] = [
 
   {
     accessorKey: "updatedAt",
-    header: ({ column }) => (
-      <DataTableColumnHeader column={column} title="Updated At" />
-    ),
+    header: () => {
+      const { t } = useTranslation("common");
+      return t("templates.table.updatedAt");
+    },
     cell: ({ row }) => {
       return (
         <div className="flex gap-2">
@@ -165,9 +173,10 @@ export const columns: ColumnDef<Template>[] = [
   },
   {
     accessorKey: "createdAt",
-    header: ({ column }) => (
-      <DataTableColumnHeader column={column} title="Created At" />
-    ),
+    header: () => {
+      const { t } = useTranslation("common");
+      return t("templates.table.createdAt");
+    },
     cell: ({ row }) => {
       return (
         <div className="flex gap-2">

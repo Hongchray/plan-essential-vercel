@@ -18,13 +18,13 @@ export const Loading = ({
   const sizeClasses = {
     sm: "h-4 w-4", // 16px
     md: "h-6 w-6", // 24px
-    lg: "h-12 w-12", // 24px (largest capped)
+    lg: "h-8 w-8", // 24px (largest capped)
   };
 
   const iconSizes = {
     sm: "h-4 w-4", // 16px
     md: "h-6 w-6", // 24px
-    lg: "h-12 w-12", // 24px
+    lg: "h-8 w-8", // 24px
   };
 
   if (variant === "minimal") {

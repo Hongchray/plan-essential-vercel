@@ -28,13 +28,13 @@ const ActionsCell = ({ row }: { row: any }) => {
       } else {
         toast.error(t("gift.table.delete_error"));
       }
-    } catch (error) {
+    } catch {
       toast.error(t("gift.table.delete_error"));
     }
   };
 
   return (
-    <div className="flex gap-2 items-end justify-end">
+    <div className="flex gap-2 justify-end items-center">
       <CreateEditGiftForm id={row.original.id} />
       <ConfirmDialog
         trigger={
@@ -145,22 +145,11 @@ export const columns: ColumnDef<Gift>[] = [
         <span className="max-w-[350px] truncate text-primary font-medium">
           {row.original.guest?.name}
         </span>
-        <span>({row.original.guest?.phone})</span>
+        {row.original.guest?.phone && <span>({row.original.guest.phone})</span>}
       </div>
     ),
   },
-  {
-    accessorKey: "note",
-    header: () => {
-      const { t } = useTranslation("common");
-      return t("gift.table.note");
-    },
-    cell: ({ row }) => (
-      <div className="flex gap-2">
-        <span className="max-w-[300px] truncate ">{row.getValue("note")}</span>
-      </div>
-    ),
-  },
+
   {
     accessorKey: "payment_type",
     header: () => {
@@ -190,27 +179,44 @@ export const columns: ColumnDef<Gift>[] = [
     ),
   },
   {
-    accessorKey: "amount_usd",
+    accessorKey: "amount",
     header: () => {
       const { t } = useTranslation("common");
       return t("gift.table.amount");
     },
+    cell: ({ row }) => {
+      const currency = row.original.currency_type;
+      const amount =
+        currency === "USD"
+          ? row.original.amount_usd ?? 0
+          : row.original.amount_khr ?? 0;
+
+      return (
+        <div className="flex gap-2">
+          <span className="max-w-[350px] truncate">
+            {currency === "USD"
+              ? currencyFormatters.usd(amount)
+              : currencyFormatters.khr(amount)}
+          </span>
+        </div>
+      );
+    },
+  },
+  {
+    accessorKey: "note",
+    header: () => {
+      const { t } = useTranslation("common");
+      return t("gift.table.note");
+    },
     cell: ({ row }) => (
       <div className="flex gap-2">
-        <span className="max-w-[350px] truncate ">
-          {row.original.currency_type === "USD"
-            ? currencyFormatters.usd(row.getValue("amount_usd") ?? 0)
-            : currencyFormatters.khr(row.getValue("amount_usd") ?? 0)}
-        </span>
+        <span className="max-w-[200px] truncate ">{row.getValue("note")}</span>
       </div>
     ),
   },
+
   {
     id: "actions",
-    header: () => {
-      const { t } = useTranslation("common");
-      return t("gift.table.actions");
-    },
     cell: ({ row }) => <ActionsCell row={row} />,
   },
 ];

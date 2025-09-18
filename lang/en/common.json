@@ -208,6 +208,7 @@
     "welcomeTitle": "Welcome! We're glad to have you here.",
     "welcomeSubtitle": "Explore your events below or create a new one to get started.",
     "view": "View",
+    "add_new": "Add New",
     "dashboard": "Dashboard",
     "edit": "Edit",
     "delete": "Delete",
@@ -267,7 +268,20 @@
       "createError": "Failed to create event",
       "updateSuccess": "Event updated successfully",
       "updateError": "Failed to update event",
-      "getError": "Failed to load event"
+      "getError": "Failed to load event",
+      "delete_title": "Delete this event?",
+      "delete_description": "This will permanently remove the event.",
+      "delete_success": "Event deleted successfully",
+      "delete_error": "Error deleting event"
+    },
+
+    "table": {
+      "name": "Name",
+      "type": "Type",
+      "startDate": "Start Date",
+      "location": "Location",
+      "status": "Status",
+      "actions": "Actions"
     }
   },
 
@@ -473,6 +487,8 @@
     "total_usd": "Total Dollar ($)",
     "total_khr": "Total Riel (៛)",
     "title": "List of Gifts",
+    "total_usd_equivalent": "Total as USD",
+    "exchange_rate": "Exchange rate: 1 USD = {{rate}} KHR",
     "table": {
       "guest_name": "Guest Name",
       "note": "Note",
@@ -550,6 +566,20 @@
       "template": "Template",
       "component": "Component",
       "last_modified": "Last modified"
+    },
+    "message": {
+      "delete_title": "លុបទិន្នន័យនេះ?",
+      "delete_description": "នេះនឹងលុបទិន្នន័យនេះជាអចិន្ត្រៃយ៍។",
+      "delete_success": "លុបទិន្នន័យដោយជោគជ័យ",
+      "delete_error": "មានបញ្ហាក្នុងការលុបទិន្នន័យ"
+    },
+    "table": {
+      "image": "Image",
+      "name": "Name",
+      "type": "Type",
+      "status": "Status",
+      "updatedAt": "Updated At",
+      "createdAt": "Created At"
     }
   },
 

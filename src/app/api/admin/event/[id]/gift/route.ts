@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
+import { EXCHANGE_RATES } from "@/utils/exchangeRates";
 
 export async function GET(
   req: NextRequest,
@@ -23,6 +24,9 @@ export async function GET(
         amount_usd: true,
       },
     });
+    const totalUsdEquivalent =
+      (overall._sum?.amount_usd ?? 0) +
+      (overall._sum?.amount_khr ?? 0) * EXCHANGE_RATES.KHR_TO_USD;
 
     // 2️⃣ Group by currency_type
     const byCurrency = await prisma.gift.groupBy({
@@ -75,6 +79,7 @@ export async function GET(
           by_currency: safeByCurrency,
           total_amount_khr: overall._sum?.amount_khr ?? 0,
           total_amount_usd: overall._sum?.amount_usd ?? 0,
+          total_amount_usd_equivalent: totalUsdEquivalent ?? 0,
         },
       },
       { status: 200 }
@@ -111,4 +116,70 @@ export async function POST(
   });
 
   return NextResponse.json(gift);
+}
+
+export async function DELETE(req: NextRequest) {
+  try {
+    const body = await req.json();
+    const { ids } = body;
+
+    if (!ids || !Array.isArray(ids) || ids.length === 0) {
+      return NextResponse.json(
+        { error: "Invalid request: ids array is required" },
+        { status: 400 }
+      );
+    }
+
+    // Delete gifts in a transaction
+    const result = await prisma.$transaction(async (tx) => {
+      const deletedGift = await tx.gift.deleteMany({
+        where: {
+          id: {
+            in: ids,
+          },
+        },
+      });
+
+      return {
+        deletedGift: deletedGift.count,
+      };
+    });
+
+    if (result.deletedGift === 0) {
+      return NextResponse.json(
+        { error: "No gifts found with the provided IDs" },
+        { status: 404 }
+      );
+    }
+
+    return NextResponse.json(
+      {
+        message: `Successfully deleted ${result.deletedGift} gift(s)`,
+        deletedCount: result.deletedGift,
+        success: true,
+      },
+      { status: 200 }
+    );
+  } catch (error) {
+    console.error("Error deleting gifts:", error);
+
+    if (error instanceof Error && "code" in error && error.code === "P2025") {
+      return NextResponse.json(
+        { error: "Some gifts were not found" },
+        { status: 404 }
+      );
+    }
+
+    if (error instanceof Error && "code" in error && error.code === "P2003") {
+      return NextResponse.json(
+        { error: "Cannot delete gifts due to existing references" },
+        { status: 409 }
+      );
+    }
+
+    return NextResponse.json(
+      { error: "Internal server error" },
+      { status: 500 }
+    );
+  }
 }

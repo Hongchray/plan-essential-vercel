@@ -78,7 +78,7 @@ export function DataTableToolbar<TData>({
     <div className="flex items-center justify-between">
       <div className="flex flex-1 items-center space-x-2">
         <Input
-          placeholder="Search..."
+          placeholder="Search Games..."
           value={searchValue}
           onChange={(event) => handleSearch(event.target.value)}
           className="h-8 w-[150px] lg:w-[250px]"
@@ -95,9 +95,9 @@ export function DataTableToolbar<TData>({
         )}
       </div>
       <div className="flex gap-4">
-        <Link href="/event/create">
+        {/* <Link href="/user/create">
           <Button size="sm">Add New</Button>
-        </Link>
+        </Link> */}
 
         <DataTableViewOptions table={table} />
       </div>

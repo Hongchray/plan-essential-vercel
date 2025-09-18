@@ -26,6 +26,7 @@ import {
   ChartTooltipContent,
 } from "@/components/ui/chart";
 import { useTranslation } from "next-i18next";
+import { EXCHANGE_RATES } from "@/utils/exchangeRates";
 
 import { useEffect, useState } from "react";
 import { Loading } from "@/components/composable/loading/loading";
@@ -34,7 +35,7 @@ import { ScrollArea, ScrollBar } from "@/components/ui/scroll-area";
 export default function TabDashboard({ eventId }: { eventId: string }) {
   const [event, setEvent] = useState<any>(null);
   const [loading, setLoading] = useState(true);
-  const { t } = useTranslation("common"); 
+  const { t } = useTranslation("common");
 
   useEffect(() => {
     async function fetchEvent() {
@@ -110,7 +111,11 @@ export default function TabDashboard({ eventId }: { eventId: string }) {
 
           <div className="bg-purple-50 p-4 rounded-lg flex-shrink-0 w-40 md:w-auto">
             <div className="text-2xl font-bold text-purple-600">
-              {currencyFormatters.usd(event.total_gift_income)}  ( {currencyFormatters.khr(event.total_income_khr)})
+              {currencyFormatters.usd(event.total_gift_income)} ({" "}
+              {currencyFormatters.khr(event.total_income_khr)})
+            </div>
+            <div className="text-xs text-purple-500 mt-1">
+              {t("gift.exchange_rate", { rate: EXCHANGE_RATES.USD_TO_KHR })}
             </div>
             <div className="text-sm text-purple-800">
               {t("event_dashboard.cards.gift_income")}
@@ -212,7 +217,7 @@ export default function TabDashboard({ eventId }: { eventId: string }) {
                   <XAxis dataKey="category" />
                   <YAxis />
                   <ChartTooltip content={<ChartTooltipContent />} />
-                 <Legend
+                  <Legend
                     verticalAlign="top"
                     align="center"
                     payload={financialData.map((item) => ({
@@ -224,9 +229,13 @@ export default function TabDashboard({ eventId }: { eventId: string }) {
                   />
                   <Bar dataKey="amount" radius={[6, 6, 0, 0]} barSize={80}>
                     {financialData.map((entry, index) => (
-                      <Cell key={`cell-${index}`} fill={entry.color} name={entry.category} />
+                      <Cell
+                        key={`cell-${index}`}
+                        fill={entry.color}
+                        name={entry.category}
+                      />
                     ))}
-                     {/* <LabelList
+                    {/* <LabelList
                         dataKey="amount"
                         position="top"
                         formatter={(value: number) =>
@@ -252,11 +261,11 @@ export default function TabDashboard({ eventId }: { eventId: string }) {
           </CardHeader>
           <CardContent className="flex-1 h-[250px] ">
             <ChartContainer
-                config={{
-                  amount: { label: "Amount ($)", color: "#3b82f6" },
-                }}
-                className="h-[250px] w-full"
-              >
+              config={{
+                amount: { label: "Amount ($)", color: "#3b82f6" },
+              }}
+              className="h-[250px] w-full"
+            >
               <ResponsiveContainer width="100%" height="100%">
                 <PieChart>
                   <Pie
@@ -322,9 +331,7 @@ export default function TabDashboard({ eventId }: { eventId: string }) {
             </div>
             <div className="my-2 border-t-2 border-dashed"></div>
             <div className="flex justify-between">
-              <span
-                className="text-blue-600 font-medium" 
-              >
+              <span className="text-blue-600 font-medium">
                 {t("event_dashboard.cards.profit_loss")}
               </span>
               <span
@@ -345,7 +352,9 @@ export default function TabDashboard({ eventId }: { eventId: string }) {
             <div className="flex items-center justify-between">
               <div className="flex items-center gap-2">
                 {/* <div className="w-3 h-3 bg-green-500 rounded-full"></div> */}
-                <span className="text-green-500 font-medium">{t("event_dashboard.guest_summary.confirmed")}</span>
+                <span className="text-green-500 font-medium">
+                  {t("event_dashboard.guest_summary.confirmed")}
+                </span>
               </div>
               <span className="font-medium text-green-500">
                 {event.guest_summary.confirmed}
@@ -354,14 +363,20 @@ export default function TabDashboard({ eventId }: { eventId: string }) {
             <div className="flex items-center justify-between">
               <div className="flex items-center gap-2">
                 {/* <div className="w-3 h-3 bg-yellow-500 rounded-full"></div> */}
-                <span className="text-yellow-500 font-medium">{t("event_dashboard.guest_summary.pending")}</span>
+                <span className="text-yellow-500 font-medium">
+                  {t("event_dashboard.guest_summary.pending")}
+                </span>
               </div>
-              <span className="font-medium text-yellow-500">{event.guest_summary.pending}</span>
+              <span className="font-medium text-yellow-500">
+                {event.guest_summary.pending}
+              </span>
             </div>
             <div className="flex items-center justify-between">
               <div className="flex items-center gap-2">
                 {/* <div className="w-3 h-3 bg-red-500 rounded-full"></div> */}
-                <span className="text-red-500 font-medium">{t("event_dashboard.guest_summary.declined")}</span>
+                <span className="text-red-500 font-medium">
+                  {t("event_dashboard.guest_summary.declined")}
+                </span>
               </div>
               <span className="font-medium text-red-500">
                 {event.guest_summary.declined}
@@ -371,9 +386,13 @@ export default function TabDashboard({ eventId }: { eventId: string }) {
             <div className="flex items-center justify-between">
               <div className="flex items-center gap-2">
                 {/* <div className="w-3 h-3 bg-blue-400 rounded-full"></div> */}
-                <span className="text-blue-500 font-medium">{t("event_dashboard.guest_summary.gifts_received")}</span>
+                <span className="text-blue-500 font-medium">
+                  {t("event_dashboard.guest_summary.gifts_received")}
+                </span>
               </div>
-              <span className="font-medium text-blue-500">{event.total_gift}</span>
+              <span className="font-medium text-blue-500">
+                {event.total_gift}
+              </span>
             </div>
           </div>
         </div>

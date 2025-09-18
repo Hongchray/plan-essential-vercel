@@ -1,6 +1,7 @@
 import { NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
 import { GuestStatus } from "@/enums/guests";
+import { EXCHANGE_RATES } from "@/utils/exchangeRates";
 
 export async function GET(
   req: Request,
@@ -74,21 +75,37 @@ export async function GET(
       return totals;
     }, {} as Record<string, number>);
 
-    const total_income_usd = giftTotals["USD"] ?? 0;
-    const total_income_khr = giftTotals["KHR"] ?? 0;
+    const total_gift_income = event.gifts.reduce((sum, gift) => {
+      if (gift.currency_type === "USD") {
+        return sum + (gift.amount_usd ?? 0);
+      }
+      if (gift.currency_type === "KHR") {
+        return sum + (gift.amount_khr ?? 0) * EXCHANGE_RATES.KHR_TO_USD;
+      }
+      return sum;
+    }, 0);
 
-    const total_gift_income = total_income_usd + total_income_khr / 4000;
+    // --- Optionally keep raw totals per currency ---
+    const total_income_usd = event.gifts
+      .filter((g) => g.currency_type === "USD")
+      .reduce((sum, g) => sum + (g.amount_usd ?? 0), 0);
 
+    const total_income_khr = event.gifts
+      .filter((g) => g.currency_type === "KHR")
+      .reduce((sum, g) => sum + (g.amount_khr ?? 0), 0);
+
+    // --- Calculate total expenditures ---
     const total_expend_actual = event.expenses.reduce(
-      (sum, exp) => sum + (exp.actual_amount || 0),
+      (sum, exp) => sum + (exp.actual_amount ?? 0),
       0
     );
 
     const total_expend_budget = event.expenses.reduce(
-      (sum, exp) => sum + (exp.budget_amount || 0),
+      (sum, exp) => sum + (exp.budget_amount ?? 0),
       0
     );
 
+    // --- Net amount (USD equivalent) ---
     const netAmount = total_gift_income - total_expend_actual;
 
     const total_confirmed = event.guests.filter(
@@ -106,6 +123,7 @@ export async function GET(
       guest_summary,
       total_gift_income,
       total_income_khr,
+      total_income_usd,
       netAmount,
     });
   } catch (error: any) {
