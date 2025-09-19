@@ -44,22 +44,19 @@ export function useExpenseFormSchema() {
       .number()
       .min(1, { message: t("expense.form.error_budget_required") }),
     actual_amount: z.coerce.number().optional(),
-    payments: z
-      .array(
-        z.object({
-          id: z.string().optional(),
-          name: z
-            .string()
-            .min(1, { message: t("expense.form.payment.error_name_required") }),
-          amount: z.coerce.number().min(0.01, {
-            message: t("expense.form.payment.error_amount_required"),
-          }),
-          paidAt: z.string().optional(),
-          note: z.string().nullable().optional(),
-        })
-      )
-      .optional()
-      .default([]),
+    payments: z.array(
+      z.object({
+        id: z.string().optional(),
+        name: z
+          .string()
+          .min(1, { message: t("expense.form.payment.error_name_required") }),
+        amount: z.coerce.number().min(0.01, {
+          message: t("expense.form.payment.error_amount_required"),
+        }),
+        paidAt: z.string().optional(),
+        note: z.string().nullable().optional(),
+      })
+    ),
   });
 }
 
@@ -74,10 +71,11 @@ export function CreateEditForm({ id }: { id: string }) {
   }>({});
 
   const form = useForm<ExpenseFormData>({
+    resolver: zodResolver(ExpenseFormSchema), // <--- add this
     defaultValues: {
       name: "",
       description: "",
-      budget_amount: 0,
+      budget_amount: undefined, // better than 0 to enforce required
       actual_amount: 0,
       payments: [],
     },
@@ -245,18 +243,6 @@ export function CreateEditForm({ id }: { id: string }) {
                 form={form}
                 disabled={loading}
               />
-              {/* <InputTextField
-                label={`${t("expense.form.actual")} (${t(
-                  "expense.form.calculated_from_payments"
-                )})`}
-                name="actual_amount"
-                placeholder={t("expense.form.amount_placeholder")}
-                type="number"
-                step={0.01}
-                form={form}
-                disabled={true} // Always disabled since it's calculated
-                value={totalPaymentsAmount}
-              /> */}
             </div>
 
             {/* Payments Section */}

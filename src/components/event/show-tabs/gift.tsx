@@ -129,8 +129,8 @@ export default function TabGift({
             {/* Total Value (USD) */}
             <div className="bg-gradient-to-br from-orange-100 to-orange-200 p-5 rounded-xl shadow-md hover:shadow-lg hover:scale-[1.02] transition-all duration-200">
               <div className="flex items-center justify-between">
-                <DollarSign className="w-8 h-8 text-orange-700" />
-                <div className="text-3xl font-extrabold text-orange-700">
+                <DollarSign className="w-8 h-8 text-blue-600" />
+                <div className="text-3xl font-extrabold text-blue-700">
                   {loading ? (
                     <Loading variant="minimal" message="" size="sm" />
                   ) : (
@@ -140,7 +140,7 @@ export default function TabGift({
                   )}
                 </div>
               </div>
-              <div className="text-sm font-medium text-orange-900 mt-2">
+              <div className="text-sm font-medium text-blue-800 mt-2">
                 {t("gift.total_usd")}
               </div>
             </div>
@@ -148,8 +148,8 @@ export default function TabGift({
             {/* Total Value (KHR) */}
             <div className="bg-gradient-to-br from-pink-100 to-pink-200 p-5 rounded-xl shadow-md hover:shadow-lg hover:scale-[1.02] transition-all duration-200">
               <div className="flex items-center justify-between">
-                <p className="text-[35px] font-bold text-pink-700">៛</p>
-                <div className="text-3xl font-extrabold text-pink-700">
+                <p className="text-[35px] font-bold text-blue-600">៛</p>
+                <div className="text-3xl font-extrabold text-blue-700">
                   {loading ? (
                     <Loading variant="minimal" message="" size="sm" />
                   ) : (
@@ -159,7 +159,7 @@ export default function TabGift({
                   )}
                 </div>
               </div>
-              <div className="text-sm font-medium text-pink-900 mt-2">
+              <div className="text-sm font-medium text-blue-800 mt-2">
                 {t("gift.total_khr")}
               </div>
             </div>
@@ -167,8 +167,8 @@ export default function TabGift({
             {/* Total USD Equivalent */}
             <div className="bg-gradient-to-br from-purple-50 to-purple-100 p-5 rounded-xl shadow-md hover:shadow-lg hover:scale-[1.02] transition-all duration-200">
               <div className="flex items-center justify-between">
-                <TrendingUp className="w-8 h-8 text-purple-700" />
-                <div className="text-3xl font-extrabold text-purple-700">
+                <TrendingUp className="w-8 h-8 text-blue-600" />
+                <div className="text-3xl font-extrabold text-blue-700">
                   {loading ? (
                     <Loading variant="minimal" message="" size="sm" />
                   ) : (
@@ -178,10 +178,10 @@ export default function TabGift({
                   )}
                 </div>
               </div>
-              <div className="text-sm font-medium text-purple-900 mt-2">
+              <div className="text-sm font-medium text-blue-800 mt-2">
                 {t("gift.total_usd_equivalent")}
               </div>
-              <div className="text-xs text-purple-500 mt-1">
+              <div className="text-xs text-blue-500 mt-1">
                 {t("gift.exchange_rate", { rate: EXCHANGE_RATES.USD_TO_KHR })}
               </div>
             </div>

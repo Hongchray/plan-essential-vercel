@@ -515,7 +515,11 @@
       "amount_placeholder": "បញ្ចូលចំនួនទឹកប្រាក់",
       "cancel": "បោះបង់",
       "error_guest_required": "ត្រូវការជ្រើសរើសភ្ញៀវ",
-      "error_amount_required": "ត្រូវការចំនួនទឹកប្រាក់"
+      "error_amount_required": "ត្រូវការចំនួនទឹកប្រាក់",
+      "Riel": "ប្រាក់រៀល (៛)",
+      "Dollar": "ប្រាក់ដុល្លារ ($)",
+      "search_guest": "ស្វែងរកភ្ញៀវ...",
+      "no_guest_found": "រកមិនឃើញភ្ញៀវ"
     }
   },
   "add_template": {

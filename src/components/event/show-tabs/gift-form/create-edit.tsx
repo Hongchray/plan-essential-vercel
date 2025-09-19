@@ -51,7 +51,15 @@ import { NoData } from "@/components/composable/no-data";
 import { RequiredMark } from "@/components/composable/required-mark";
 import { PlusIcon } from "lucide-react";
 import { ScrollArea } from "@/components/ui/scroll-area";
-export function CreateEditGiftForm({ id }: { id: string }) {
+import { Circle, CircleDot, CircleCheck } from "lucide-react";
+import { CustomCurrencyInput } from "./components/custom-currency-input";
+export function CreateEditGiftForm({
+  id,
+  onSelect,
+}: {
+  id: string;
+  onSelect: (guest: any) => void;
+}) {
   const params = useParams();
   const eventId = params.id;
   const [loading, setLoading] = useState(false);
@@ -60,6 +68,7 @@ export function CreateEditGiftForm({ id }: { id: string }) {
   const [guestsLoading, setGuestsLoading] = useState(false);
   const [guestSearchOpen, setGuestSearchOpen] = useState(false);
   const [searchQuery, setSearchQuery] = useState("");
+  const [open, setOpen] = useState(false);
   const router = useRouter();
   const { t } = useTranslation("common");
 
@@ -207,9 +216,9 @@ export function CreateEditGiftForm({ id }: { id: string }) {
   }, [guests, form.watch("guestId")]);
 
   const handleGuestSelect = (guest: Guest) => {
-    form.setValue("guestId", guest.id);
-    setGuestSearchOpen(false);
-    setSearchQuery(""); // Clear search after selection
+    form.setValue("guestId", guest.id, { shouldValidate: true });
+    setSearchQuery(""); // clear search
+    setOpen(false); // close popover
   };
 
   // Debounced query
@@ -250,6 +259,7 @@ export function CreateEditGiftForm({ id }: { id: string }) {
   const handleSearchChange = (value: string) => {
     setSearchQuery(value);
   };
+
   return (
     <>
       <div className="space-y-4 = rounded-lg">
@@ -272,7 +282,7 @@ export function CreateEditGiftForm({ id }: { id: string }) {
         {/* Dialog */}
         <Dialog open={dialogOpen} onOpenChange={setDialogOpen} modal>
           <DialogContent className="max-w-xl sm:max-w-3xl p-0 ">
-            <DialogHeader className="pt-4">
+            <DialogHeader className="p-8">
               <DialogTitle>
                 {id ? t("gift.form.editTitle") : t("gift.form.addTitle")}
               </DialogTitle>
@@ -289,88 +299,93 @@ export function CreateEditGiftForm({ id }: { id: string }) {
               >
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 sm:divide-x sm:divide-gray-300">
                   {/* Guest Selection */}
-                  <div className="space-y-2 p-4">
+                  <div className="space-y-2 px-4">
                     <Label htmlFor="guest-select">
-                      {t("gift.form.guest")} *
+                      {t("gift.form.no_guest_found")} <RequiredMark />
                     </Label>
 
-                    {/* Search Input */}
-                    <div className="flex items-center border rounded-md px-3">
-                      <Search className="mr-2 h-4 w-4 shrink-0 opacity-50" />
-                      <input
-                        id="guest-select"
-                        placeholder="Search by name, phone, or address..."
-                        className="flex h-10 w-full rounded-md bg-transparent py-2 text-sm outline-none placeholder:text-muted-foreground"
-                        value={searchQuery}
-                        onChange={(e) => handleSearchChange(e.target.value)}
-                        disabled={loading || guestsLoading}
-                      />
-                    </div>
-
-                    {/* Guest List (always under input) */}
-                    <div className="max-h-[300px] overflow-y-auto border rounded-md">
-                      {guestsLoading ? (
-                        <div className="py-6 text-center text-sm">
-                          <div className="flex items-center justify-center gap-2">
-                            <div className="h-4 w-4 animate-spin rounded-full border-2 border-muted border-t-foreground"></div>
-                            Loading guests...
-                          </div>
-                        </div>
-                      ) : filteredGuests.length === 0 ? (
-                        <div className="py-6 text-center text-sm">
-                          <NoData icon="database" />
-                          {searchQuery && (
-                            <div className="mt-1 text-xs text-muted-foreground">
-                              Try searching with different terms
+                    <Popover open={open} onOpenChange={setOpen}>
+                      <PopoverTrigger asChild>
+                        <Button
+                          variant="outline"
+                          role="combobox"
+                          className="flex justify-between w-full"
+                        >
+                          {selectedGuest ? (
+                            <div className="flex items-center gap-2">
+                              <Avatar className="h-6 w-6">
+                                {selectedGuest.image ? (
+                                  <AvatarImage src={selectedGuest.image} />
+                                ) : (
+                                  <AvatarFallback className="text-xs font-bold">
+                                    {selectedGuest.name
+                                      .slice(0, 2)
+                                      .toUpperCase()}
+                                  </AvatarFallback>
+                                )}
+                              </Avatar>
+                              <span className="truncate">
+                                {selectedGuest.name}
+                              </span>
                             </div>
+                          ) : (
+                            <span className="text-muted-foreground">
+                              {t("gift.form.search_guest")}
+                            </span>
                           )}
-                        </div>
-                      ) : (
-                        filteredGuests.map((guest) => (
-                          <div
-                            key={guest.id}
-                            onClick={() => handleGuestSelect(guest)}
-                            className={`flex items-start gap-3 p-3 cursor-pointer hover:bg-accent border-t first:border-t-0 ${
-                              selectedGuest?.id === guest.id
-                                ? "bg-accent/50"
-                                : ""
-                            }`}
-                          >
-                            <Check
-                              className={cn(
-                                "h-4 w-4 mt-0.5 flex-shrink-0",
-                                selectedGuest?.id === guest.id
-                                  ? "opacity-100"
-                                  : "opacity-0"
-                              )}
-                            />
-                            <div className="flex flex-col gap-1 min-w-0 flex-1">
-                              {/* Avatar */}
-                              <div className="flex items-center gap-3">
-                                {" "}
-                                <Avatar className="h-8 w-8 flex-shrink-0">
-                                  {guest.image ? (
-                                    <AvatarImage src={guest.image} />
-                                  ) : (
-                                    <AvatarFallback
-                                      className={` font-bold text-[12px]`}
-                                    >
-                                      {getInitials(guest.name)}
-                                    </AvatarFallback>
-                                  )}
-                                </Avatar>
-                                <span className="font-medium text-sm">
-                                  {guest.name}
-                                </span>
-                              </div>
+                          <ChevronsUpDown className="ml-2 h-4 w-4 opacity-50 shrink-0" />
+                        </Button>
+                      </PopoverTrigger>
 
-                              <div className="flex flex-row gap-1 text-xs text-muted-foreground">
-                                {/* Tags */}
-                                {guest.guestTag &&
-                                  guest.guestTag.length > 0 && (
-                                    <div className="flex items-center gap-1 flex-wrap">
-                                      <div className="flex gap-1 flex-wrap">
-                                        {guest.guestTag.map((gt) => (
+                      <PopoverContent className="w-[var(--radix-popover-trigger-width)] p-0">
+                        <Command shouldFilter={false}>
+                          <CommandInput
+                            value={searchQuery}
+                            onValueChange={setSearchQuery}
+                            placeholder={t("gift.form.search_guest")}
+                          />
+                          <CommandList>
+                            <CommandEmpty>
+                              {t("gift.form.no_guest_found")}
+                            </CommandEmpty>
+                            <CommandGroup>
+                              {filteredGuests.map((guest) => (
+                                <CommandItem
+                                  key={guest.id}
+                                  value={guest.name}
+                                  onSelect={() => {
+                                    handleGuestSelect(guest);
+                                    onSelect?.(guest);
+                                    setOpen(false);
+                                  }}
+                                  className="border-b border-gray-200 last:border-b-0" // add this line
+                                >
+                                  <div className="flex items-start gap-3 py-2">
+                                    {" "}
+                                    {/* add some vertical padding */}
+                                    <CircleCheck
+                                      className={cn(
+                                        "h-4 w-4 mt-0.5",
+                                        selectedGuest?.id === guest.id
+                                          ? "opacity-100"
+                                          : "opacity-0"
+                                      )}
+                                    />
+                                    <Avatar className="h-8 w-8">
+                                      {guest.image ? (
+                                        <AvatarImage src={guest.image} />
+                                      ) : (
+                                        <AvatarFallback className="font-bold text-[12px]">
+                                          {guest.name.slice(0, 2).toUpperCase()}
+                                        </AvatarFallback>
+                                      )}
+                                    </Avatar>
+                                    <div className="flex flex-col gap-1 min-w-0">
+                                      <span className="font-medium text-sm">
+                                        {guest.name}
+                                      </span>
+                                      <div className="flex gap-1 flex-wrap text-xs text-muted-foreground">
+                                        {guest.guestTag?.map((gt) => (
                                           <Badge
                                             key={gt.id}
                                             variant="secondary"
@@ -379,16 +394,7 @@ export function CreateEditGiftForm({ id }: { id: string }) {
                                             {gt.tag?.name_en}
                                           </Badge>
                                         ))}
-                                      </div>
-                                    </div>
-                                  )}
-
-                                {/* Groups */}
-                                {guest.guestGroup &&
-                                  guest.guestGroup.length > 0 && (
-                                    <div className="flex items-center gap-1 flex-wrap">
-                                      <div className="flex gap-1 flex-wrap">
-                                        {guest.guestGroup.map((gg) => (
+                                        {guest.guestGroup?.map((gg) => (
                                           <Badge
                                             key={gg.id}
                                             variant="outline"
@@ -399,13 +405,14 @@ export function CreateEditGiftForm({ id }: { id: string }) {
                                         ))}
                                       </div>
                                     </div>
-                                  )}
-                              </div>
-                            </div>
-                          </div>
-                        ))
-                      )}
-                    </div>
+                                  </div>
+                                </CommandItem>
+                              ))}
+                            </CommandGroup>
+                          </CommandList>
+                        </Command>
+                      </PopoverContent>
+                    </Popover>
 
                     {/* Error */}
                     {form.formState.errors.guestId && (
@@ -418,10 +425,11 @@ export function CreateEditGiftForm({ id }: { id: string }) {
                   <div className="space-y-2 sm:p-0 p-4">
                     {/* Payment Type */}
                     <div className="space-y-2">
-                      <Label>
+                      <Label className="text-sm font-medium">
                         {t("gift.form.payment_type")}
                         <RequiredMark />
                       </Label>
+
                       <RadioGroup
                         value={form.watch("payment_type")}
                         onValueChange={(value) =>
@@ -430,81 +438,117 @@ export function CreateEditGiftForm({ id }: { id: string }) {
                             value as "CASH" | "KHQR"
                           )
                         }
-                        className="flex gap-4"
+                        className="flex flex-wrap gap-3"
                       >
-                        {["CASH", "KHQR"].map((type) => (
-                          <div key={type} className="flex flex-1">
-                            <Label className="hover:bg-accent/50 flex flex-1 items-center justify-center rounded-lg border-2 p-2 has-[[aria-checked=true]]:border-primary has-[[aria-checked=true]]:bg-rose-50 dark:has-[[aria-checked=true]]:border-primary-900 dark:has-[[aria-checked=true]]:bg-primary-950 cursor-pointer">
-                              <RadioGroupItem
-                                value={type}
-                                id={type}
-                                className="hidden"
-                              />
-                              <div className="flex items-center justify-center gap-4">
-                                <p className="text-md font-bold">
-                                  {type === "CASH" ? "Cash" : "KHQR"}
-                                </p>
-                                <div className="text-muted-foreground flex-shrink-0">
-                                  {type === "CASH" ? (
-                                    <Receipt size={50} />
-                                  ) : (
-                                    <QrCode size={50} />
-                                  )}
-                                </div>
-                              </div>
-                            </Label>
-                          </div>
+                        {[
+                          {
+                            type: "CASH",
+                            label: "Cash",
+                            icon: <Receipt size={28} />,
+                          },
+                          {
+                            type: "KHQR",
+                            label: "KHQR",
+                            icon: <QrCode size={28} />,
+                          },
+                        ].map(({ type, label, icon }) => (
+                          <Label
+                            key={type}
+                            htmlFor={type}
+                            className={cn(
+                              "cursor-pointer rounded-lg border-2 px-4 py-2",
+                              "inline-flex items-center gap-2",
+                              "transition-colors duration-200",
+                              "hover:bg-accent/50",
+                              "has-[[aria-checked=true]]:border-primary has-[[aria-checked=true]]:bg-primary/5",
+                              "dark:has-[[aria-checked=true]]:border-primary-900 dark:has-[[aria-checked=true]]:bg-primary-950"
+                            )}
+                          >
+                            <RadioGroupItem
+                              value={type}
+                              id={type}
+                              className="hidden"
+                            />
+                            <div className="text-muted-foreground">{icon}</div>
+                            <span className="text-sm font-medium">{label}</span>
+                          </Label>
                         ))}
                       </RadioGroup>
 
                       {form.formState.errors.payment_type && (
-                        <p className="text-sm text-red-500">
+                        <p className="text-sm text-destructive">
                           {form.formState.errors.payment_type.message}
                         </p>
                       )}
                     </div>
 
                     {/* Currency Type */}
-                    <div className="space-y-2">
-                      <Label>
+                    <div className="w-full max-w-md space-y-2">
+                      <Label className="text-sm font-medium">
                         {t("gift.form.currency_type")} <RequiredMark />
                       </Label>
+
                       <RadioGroup
                         value={form.watch("currency_type")}
                         onValueChange={(value) =>
                           form.setValue("currency_type", value as "USD" | "KHR")
                         }
-                        className="grid grid-cols-2 gap-4" // two columns
+                        className="gap-4 flex flex-wrap"
                       >
                         {[
-                          { id: "USD", label: "USD ($)", desc: "US Dollar" },
+                          {
+                            id: "USD",
+                            label: t("gift.form.Dollar"),
+                            desc: "US Dollar",
+                          },
                           {
                             id: "KHR",
-                            label: "KHR (៛)",
+                            label: t("gift.form.Riel"),
                             desc: "Cambodian Riel",
                           },
                         ].map((currency) => (
                           <Label
                             key={currency.id}
-                            className="hover:bg-accent/50 flex flex-col items-start gap-1 rounded-lg border p-3 has-[[aria-checked=true]]:border-primary has-[[aria-checked=true]]:bg-rose-50 dark:has-[[aria-checked=true]]:border-primary-900 dark:has-[[aria-checked=true]]:bg-primary-950 cursor-pointer w-full"
+                            htmlFor={currency.id}
+                            className={cn(
+                              "cursor-pointer rounded-xl border-2 p-3 min-w-[150px]",
+                              "flex items-center gap-3 transition-all",
+                              "hover:bg-accent/50",
+                              "has-[[aria-checked=true]]:border-primary has-[[aria-checked=true]]:bg-primary/5",
+                              "dark:has-[[aria-checked=true]]:border-primary-900 dark:has-[[aria-checked=true]]:bg-primary-950"
+                            )}
                           >
                             <RadioGroupItem
                               value={currency.id}
                               id={currency.id}
-                              className="hidden data-[state=checked]:border-primary data-[state=checked]:bg-primary data-[state=checked]:text-white dark:data-[state=checked]:border-primary dark:data-[state=checked]:bg-primary"
+                              className="sr-only"
                             />
-                            <p className="text-sm font-medium">
-                              {currency.label}
-                            </p>
-                            <p className="text-xs text-muted-foreground">
-                              {currency.desc}
-                            </p>
+
+                            <span className="flex items-center gap-2">
+                              {/* Radio icon state */}
+                              <RadioGroupItem
+                                value={currency.id}
+                                id={currency.id}
+                                className="peer hidden"
+                              />
+                              <span className="text-primary peer-aria-checked:block hidden">
+                                <CircleCheck size={18} />
+                              </span>
+                              <span className="peer-aria-checked:hidden block text-muted-foreground">
+                                <Circle size={18} />
+                              </span>
+
+                              {/* Label text */}
+                              <span className="text-sm font-semibold">
+                                {currency.label}
+                              </span>
+                            </span>
                           </Label>
                         ))}
                       </RadioGroup>
 
                       {form.formState.errors.currency_type && (
-                        <p className="text-sm text-red-500">
+                        <p className="text-sm text-destructive">
                           {form.formState.errors.currency_type.message}
                         </p>
                       )}
@@ -512,45 +556,50 @@ export function CreateEditGiftForm({ id }: { id: string }) {
 
                     {/* Amount & Note */}
                     {form.watch("currency_type") === "KHR" && (
-                      <InputTextField
-                        label={
-                          t("gift.form.amount") +
-                          (form.watch("currency_type") === "USD"
-                            ? " ($)"
-                            : " (៛)")
-                        }
-                        required
+                      <CustomCurrencyInput
+                        label={t("gift.form.amount") + " (៛)"}
                         name="amount_khr"
                         placeholder={t("gift.form.amount_placeholder")}
-                        step={0.01}
+                        currency="KHR"
                         form={form}
                         disabled={loading}
                       />
                     )}
 
                     {form.watch("currency_type") === "USD" && (
-                      <InputTextField
-                        label={
-                          t("gift.form.amount") +
-                          (form.watch("currency_type") === "USD"
-                            ? " ($)"
-                            : " (៛)")
-                        }
+                      <CustomCurrencyInput
+                        label={t("gift.form.amount") + " ($)"}
                         name="amount_usd"
                         placeholder={t("gift.form.amount_placeholder")}
-                        step={0.01}
-                        required
+                        currency="USD"
                         form={form}
                         disabled={loading}
                       />
                     )}
-                    <TextareaField
-                      label={t("gift.form.note")}
-                      name="note"
-                      placeholder={t("gift.form.note_placeholder")}
-                      form={form}
-                      disabled={loading}
-                    />
+
+                    <div className="space-y-2">
+                      <label className="text-sm font-medium text-muted-foreground">
+                        {t("gift.form.note")}
+                      </label>
+
+                      <textarea
+                        {...form.register("note")}
+                        placeholder={t("gift.form.note_placeholder")}
+                        disabled={loading}
+                        className={cn(
+                          "w-full resize-none border-0 border-b-2 border-border bg-transparent py-2 px-0 text-sm outline-none",
+                          "focus:border-blue-600 focus:ring-0",
+                          "disabled:opacity-50 disabled:cursor-not-allowed"
+                        )}
+                        rows={4}
+                      />
+
+                      {form.formState.errors.note && (
+                        <p className="text-sm text-destructive">
+                          {form.formState.errors.note?.message as string}
+                        </p>
+                      )}
+                    </div>
                   </div>
                 </div>
 

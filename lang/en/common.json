@@ -517,7 +517,11 @@
       "amount_placeholder": "Enter amount",
       "cancel": "Cancel",
       "error_guest_required": "Guest is required",
-      "error_amount_required": "Amount is required"
+      "error_amount_required": "Amount is required",
+      "Riel": "Riel (៛)",
+      "Dollar": "Dollar ($)",
+      "search_guest": "Search guest...",
+      "no_guest_found": "No guest found"
     }
   },
   "add_template": {
