@@ -1,62 +1,53 @@
-import { columns } from "./components/columns";
+"use client";
+
+import { useTemplateColumns } from "./components/columns";
 import { DataTable } from "./components/data-table";
 import { Template } from "./data/schema";
-import { headers } from "next/headers";
+import { useEffect, useState } from "react";
+import { useSearchParams } from "next/navigation";
 import { IAPIResponse } from "@/interfaces/comon/api-response";
 
-async function getData(
-  page: number = 1,
-  pageSize: number = 10,
-  search: string = "",
-  sort: string = "",
-  order: string = ""
-) {
-  const response = await fetch(
-    `${process.env.NEXTAUTH_URL}/api/admin/template?page=${page}&per_page=${pageSize}&search=${search}&sort=${sort}&order=${order}`,
-    {
-      method: "GET",
-      headers: new Headers(await headers()),
-      cache: "no-store",
-    }
-  );
+export default function TemplatePage() {
+  const columns = useTemplateColumns();
 
-  if (!response.ok) {
-    throw new Error("Failed to fetch templates");
-  }
+  const searchParams = useSearchParams(); // ✅ use the hook in client component
 
-  const result: IAPIResponse<Template> = await response.json();
-  return result;
-}
+  const page = Number(searchParams.get("page")) || 1;
+  const pageSize = Number(searchParams.get("per_page")) || 10;
+  const search = searchParams.get("search") || "";
+  const sort = searchParams.get("sort") || "";
+  const order = searchParams.get("order") || "";
 
-export default async function TemplatePage({
-  searchParams,
-}: {
-  searchParams?: Promise<{
-    page?: string;
-    per_page?: string;
-    search?: string;
-    sort?: string;
-    order?: string;
-  }>;
-}) {
-  // ✅ await because searchParams is a Promise
-  const params = (await searchParams) ?? {};
+  const [data, setData] = useState<Template[]>([]);
+  const [total, setTotal] = useState(0);
+  const [pageCount, setPageCount] = useState(1);
 
-  const page = Number(params.page) || 1;
-  const pageSize = Number(params.per_page) || 10;
-  const search = params.search || "";
-  const sort = params.sort || "";
-  const order = params.order || "";
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        const res = await fetch(
+          `/api/admin/template?page=${page}&per_page=${pageSize}&search=${search}&sort=${sort}&order=${order}`,
+          { cache: "no-store" }
+        );
+        const result: IAPIResponse<Template> = await res.json();
+        setData(result.data);
+        setTotal(result.meta?.total ?? 0);
+        setPageCount(result.meta?.pageCount ?? 1);
+      } catch (error) {
+        console.error("Failed to fetch templates", error);
+      }
+    };
 
-  const { data, meta } = await getData(page, pageSize, search, sort, order);
+    fetchData();
+  }, [page, pageSize, search, sort, order]);
 
   return (
     <div className="h-full flex-1 flex-col gap-2 p-4">
       <DataTable
         data={data}
         columns={columns}
-        pageCount={meta?.pageCount ?? 1}
-        total={meta?.total ?? 0}
+        pageCount={pageCount}
+        total={total}
         serverPagination={true}
       />
     </div>

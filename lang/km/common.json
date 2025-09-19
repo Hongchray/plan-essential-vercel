@@ -109,6 +109,9 @@
       "create": "បង្កើតថ្មី"
     },
     "table": {
+      "add_new": "បន្ថែមថ្មី",
+      "search": "ស្វែងរក",
+
       "asc": "តូចទៅធំ",
       "desc": "ធំទៅតូច",
       "hide": "លាក់",
@@ -279,7 +282,10 @@
       "startDate": "ថ្ងៃចាប់ផ្ដើម",
       "location": "ទីតាំង",
       "status": "ស្ថានភាព",
-      "actions": "សកម្មភាព"
+      "actions": "សកម្មភាព",
+      "created_at": "បង្កើតនៅ",
+      "updated_at": "ធ្វើបច្ចុប្បន្នភាពនៅ",
+      "logo": "រូបតំណាង"
     }
   },
   "event_dashboard": {
@@ -618,7 +624,7 @@
       "role": "តួនាទី",
       "login_as": "ចូលជាមួយ",
       "logged_in_telegram": "បានចូលតាម Telegram",
-      "logged_in_phone": "បានចូលតាមទូរស័ព្ទ",
+      "logged_in_phone": "បានចូលតាមលេខទូរស័ព្ទ",
       "updated_at": "បានកែសម្រួលនៅ",
       "created_at": "បានបង្កើតនៅ",
       "actions": "សកម្មភាព",

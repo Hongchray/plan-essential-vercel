@@ -6,10 +6,12 @@ export const useExcelOperations = (eventId: string) => {
   const [isExporting, setIsExporting] = useState(false);
   const [isImporting, setIsImporting] = useState(false);
 
-  const exportGuestList = async () => {
+  const exportExpenseList = async () => {
     setIsExporting(true);
     try {
-      const response = await fetch(`/api/admin/event/${eventId}/guest/export`);
+      const response = await fetch(
+        `/api/admin/event/${eventId}/expense/export`
+      );
 
       if (!response.ok) {
         const error = await response.json();
@@ -21,7 +23,7 @@ export const useExcelOperations = (eventId: string) => {
       const url = window.URL.createObjectURL(blob);
       const a = document.createElement("a");
       a.href = url;
-      a.download = `guest-list-${eventId}-${
+      a.download = `Expense-list-${eventId}-${
         new Date().toISOString().split("T")[0]
       }.xlsx`;
       document.body.appendChild(a);
@@ -29,27 +31,30 @@ export const useExcelOperations = (eventId: string) => {
       window.URL.revokeObjectURL(url);
       document.body.removeChild(a);
 
-      toast.success("Guest list exported successfully");
+      toast.success("Expense list exported successfully");
     } catch (error) {
       toast.error(
-        error instanceof Error ? error.message : "Failed to export guest list"
+        error instanceof Error ? error.message : "Failed to export expense list"
       );
     } finally {
       setIsExporting(false);
     }
   };
 
-  const importGuestList = async (file: File) => {
+  const importExpensetList = async (file: File) => {
     setIsImporting(true);
     try {
       const formData = new FormData();
       formData.append("file", file);
       formData.append("eventId", eventId);
 
-      const response = await fetch(`/api/admin/event/${eventId}/guest/import`, {
-        method: "POST",
-        body: formData,
-      });
+      const response = await fetch(
+        `/api/admin/event/${eventId}/expense/import`,
+        {
+          method: "POST",
+          body: formData,
+        }
+      );
 
       const result = await response.json();
 
@@ -59,7 +64,7 @@ export const useExcelOperations = (eventId: string) => {
 
       // Show detailed results
       const messages = [
-        `Successfully imported ${result.imported} guests`,
+        `Successfully imported ${result.imported} expenses`,
         result.skipped > 0 ? `Skipped ${result.skipped} duplicates` : null,
       ].filter(Boolean);
 
@@ -73,7 +78,7 @@ export const useExcelOperations = (eventId: string) => {
       return result;
     } catch (error) {
       toast.error(
-        error instanceof Error ? error.message : "Failed to import guest list"
+        error instanceof Error ? error.message : "Failed to import expense list"
       );
       throw error;
     } finally {
@@ -84,7 +89,7 @@ export const useExcelOperations = (eventId: string) => {
   const downloadTemplate = async () => {
     try {
       const response = await fetch(
-        `/api/admin/event/${eventId}/guest/template`
+        `/api/admin/event/${eventId}/expense/template`
       );
 
       if (!response.ok) {
@@ -96,7 +101,7 @@ export const useExcelOperations = (eventId: string) => {
       const url = window.URL.createObjectURL(blob);
       const a = document.createElement("a");
       a.href = url;
-      a.download = "guest-import-template.xlsx";
+      a.download = "expense-import-template.xlsx";
       document.body.appendChild(a);
       a.click();
       window.URL.revokeObjectURL(url);
@@ -109,8 +114,8 @@ export const useExcelOperations = (eventId: string) => {
   };
 
   return {
-    exportGuestList,
-    importGuestList,
+    exportExpenseList,
+    importExpensetList,
     downloadTemplate,
     isExporting,
     isImporting,

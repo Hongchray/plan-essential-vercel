@@ -16,7 +16,7 @@ import {
 } from "next/navigation";
 import { useRef, useState } from "react";
 import { toast } from "sonner";
-import { useExcelOperations } from "@/hooks/use-guest-export-import";
+import { useExcelOperations } from "@/hooks/use-gift-export-import";
 import { GridLineTypeFunctionProps } from "recharts/types/cartesian/CartesianGrid";
 import { Gift } from "@/interfaces/gift";
 interface DataTableToolbarProps<TData> {
@@ -141,7 +141,12 @@ export function DataTableToolbar<TData>({
 
       {/* Right side: actions */}
       <div className="flex items-center gap-2">
-        <CreateEditGiftForm id="" />
+        <CreateEditGiftForm
+          id=""
+          onSelect={(guest) => {
+            console.log("Selected guest:", guest);
+          }}
+        />
 
         {/* Export + Delete */}
         <div className="hidden md:inline-flex -space-x-px rounded-md shadow-xs rtl:space-x-reverse">

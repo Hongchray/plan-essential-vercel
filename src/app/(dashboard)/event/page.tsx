@@ -1,25 +1,19 @@
-import { columns } from "./components/columns";
-import { DataTable } from "./components/data-table";
-import { Event } from "./data/schema";
-import EventCard from "./components/event-card";
-import CreateEventButton from "./components/create-button";
 import { prisma } from "@/lib/prisma";
 import { getServerSession } from "next-auth";
 import { authOptions } from "@/lib/authOptions";
 import EventUserView from "./components/event-user-view";
+import EventTableClient from "./components/event-table-client";
 import { Suspense } from "react";
 import { Loading } from "@/components/composable/loading/loading";
+
+// Get current logged-in user
 async function getCurrentUser() {
   const session = await getServerSession(authOptions);
-
   if (!session?.user) return null;
-
-  return {
-    id: session.user.id,
-    role: session.user.role,
-  };
+  return { id: session.user.id, role: session.user.role };
 }
 
+// Fetch events from DB
 async function getEvents(
   userId: string,
   role: string,
@@ -30,7 +24,6 @@ async function getEvents(
   order: "asc" | "desc"
 ) {
   const where: any = {};
-
   if (role !== "admin") where.userId = userId;
 
   if (search) {
@@ -41,7 +34,6 @@ async function getEvents(
   }
 
   const total = await prisma.event.count({ where });
-
   const data = await prisma.event.findMany({
     where,
     skip: (page - 1) * per_page,
@@ -49,10 +41,8 @@ async function getEvents(
     orderBy: { [sort]: order },
   });
 
-  // Map Prisma Event to DataTable-friendly type
   const tableData = data.map((e) => ({
     ...e,
-
     createdAt: e.createdAt.toISOString(),
     updatedAt: e.updatedAt.toISOString(),
     startTime: e.startTime?.toISOString() || "",
@@ -82,7 +72,6 @@ export default async function EventPage({
   const order = (resolved?.order as "asc" | "desc") || "desc";
 
   const user = await getCurrentUser();
-
   if (!user) return <div>Please log in to view events.</div>;
 
   const { data, meta } = await getEvents(
@@ -98,29 +87,11 @@ export default async function EventPage({
   return (
     <div className="h-full flex-1 flex-col gap-4 p-4">
       {user.role === "admin" ? (
-        <DataTable<any, any>
-          data={data}
-          columns={columns}
-          pageCount={meta?.pageCount ?? 1}
-          total={meta.total}
-          serverPagination={true}
-        />
+        <EventTableClient data={data} meta={meta} />
       ) : (
-        <div>
-          {data === null ? (
-            <div className="flex items-center justify-center">
-              <Loading variant="circle" size="lg" />
-            </div>
-          ) : data ? (
-            <Suspense>
-              <EventUserView data={data} />
-            </Suspense>
-          ) : (
-            <div className="text-center text-gray-500 p-4">
-              No event data available
-            </div>
-          )}
-        </div>
+        <Suspense fallback={<Loading variant="circle" size="lg" />}>
+          <EventUserView data={data} />
+        </Suspense>
       )}
     </div>
   );

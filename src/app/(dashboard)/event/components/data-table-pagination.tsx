@@ -8,7 +8,7 @@ import {
   ChevronsRight,
 } from "lucide-react";
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
-import { useCallback } from "react";
+import { useCallback, useState, useEffect } from "react";
 
 import { Button } from "@/components/ui/button";
 import {
@@ -32,6 +32,10 @@ export function DataTablePagination<TData>({
   serverPagination = false,
 }: DataTablePaginationProps<TData>) {
   const { t } = useTranslation("common");
+  const [mounted, setMounted] = useState(false);
+
+  useEffect(() => setMounted(true), []);
+
   const router = useRouter();
   const pathname = usePathname();
   const searchParams = useSearchParams();
@@ -52,34 +56,32 @@ export function DataTablePagination<TData>({
     const newSize = Number(value);
     if (serverPagination) {
       router.push(
-        `${pathname}?${createQueryString({
-          page: 1,
-          per_page: newSize,
-        })}`,
+        `${pathname}?${createQueryString({ page: 1, per_page: newSize })}`,
         { scroll: false }
       );
-    } else {
-      table.setPageSize(newSize);
-    }
+    } else table.setPageSize(newSize);
   };
 
   const currentPerPage = Number(searchParams.get("per_page")) || 10;
 
+  // Helper for translations
+  const translate = (key: string) => (mounted ? t(key) : key);
+
   return (
     <div className="flex items-center justify-between px-2">
       <div className="flex-1 text-sm text-muted-foreground">
-        <p>
-          {t("component.table.total")}:{" "}
+        <span>
+          {translate("component.table.total")}:{" "}
           <span className="font-bold text-primary">
-            {total} {t("component.table.records")}
+            {total} {translate("component.table.records")}
           </span>
-        </p>
+        </span>
       </div>
 
       <div className="flex items-center space-x-6 lg:space-x-8">
         <div className="flex items-center space-x-2">
           <p className="text-sm font-medium">
-            {t("component.table.rows_per_page")}
+            {translate("component.table.rows_per_page")}
           </p>
           <Select
             value={`${currentPerPage}`}
@@ -99,25 +101,27 @@ export function DataTablePagination<TData>({
         </div>
 
         <div className="flex w-[100px] items-center justify-center text-sm font-medium">
-          {t("component.table.page")}{" "}
-          {table.getState().pagination.pageIndex + 1} {t("component.table.of")}{" "}
-          {table.getPageCount()}
+          {translate("component.table.page")}{" "}
+          {table.getState().pagination.pageIndex + 1}{" "}
+          {translate("component.table.of")} {table.getPageCount()}
         </div>
 
         <div className="flex items-center space-x-2">
           <Button
             variant="outline"
             className="hidden h-8 w-8 p-0 lg:flex"
-            onClick={() => {
-              if (serverPagination)
-                router.push(`${pathname}?${createQueryString({ page: 1 })}`, {
-                  scroll: false,
-                });
-              else table.setPageIndex(0);
-            }}
+            onClick={() =>
+              serverPagination
+                ? router.push(`${pathname}?${createQueryString({ page: 1 })}`, {
+                    scroll: false,
+                  })
+                : table.setPageIndex(0)
+            }
             disabled={!table.getCanPreviousPage()}
           >
-            <span className="sr-only">{t("component.table.first_page")}</span>
+            <span className="sr-only">
+              {translate("component.table.first_page")}
+            </span>
             <ChevronsLeft />
           </Button>
 
@@ -137,7 +141,9 @@ export function DataTablePagination<TData>({
             }}
             disabled={!table.getCanPreviousPage()}
           >
-            <span className="sr-only">{t("component.table.prev_page")}</span>
+            <span className="sr-only">
+              {translate("component.table.prev_page")}
+            </span>
             <ChevronLeft />
           </Button>
 
@@ -155,26 +161,30 @@ export function DataTablePagination<TData>({
             }}
             disabled={!table.getCanNextPage()}
           >
-            <span className="sr-only">{t("component.table.next_page")}</span>
+            <span className="sr-only">
+              {translate("component.table.next_page")}
+            </span>
             <ChevronRight />
           </Button>
 
           <Button
             variant="outline"
             className="hidden h-8 w-8 p-0 lg:flex"
-            onClick={() => {
-              if (serverPagination)
-                router.push(
-                  `${pathname}?${createQueryString({
-                    page: table.getPageCount(),
-                  })}`,
-                  { scroll: false }
-                );
-              else table.setPageIndex(table.getPageCount() - 1);
-            }}
+            onClick={() =>
+              serverPagination
+                ? router.push(
+                    `${pathname}?${createQueryString({
+                      page: table.getPageCount(),
+                    })}`,
+                    { scroll: false }
+                  )
+                : table.setPageIndex(table.getPageCount() - 1)
+            }
             disabled={!table.getCanNextPage()}
           >
-            <span className="sr-only">{t("component.table.last_page")}</span>
+            <span className="sr-only">
+              {translate("component.table.last_page")}
+            </span>
             <ChevronsRight />
           </Button>
         </div>

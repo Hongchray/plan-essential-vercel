@@ -111,6 +111,8 @@
       "create": "Create"
     },
     "table": {
+      "search": "Search",
+      "add_new": "Add New",
       "asc": "Asc",
       "desc": "Desc",
       "hide": "Hide",
@@ -281,7 +283,10 @@
       "startDate": "Start Date",
       "location": "Location",
       "status": "Status",
-      "actions": "Actions"
+      "actions": "Actions",
+      "created_at": "Created At",
+      "updated_at": "Updated At",
+      "logo": "Image"
     }
   },
 
