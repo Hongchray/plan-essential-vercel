@@ -4,7 +4,7 @@ export default async function CreateTemplate({params,}: {params: Promise<{ id: s
   const { id } = await params;
 
   return (
-    <div className="p-5">
+    <div className="p-2 md:p-5">
       <CreateEditForm id={id} />
     </div>
   );

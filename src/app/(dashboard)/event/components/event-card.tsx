@@ -21,7 +21,7 @@ import { TrashIcon, MoreVerticalIcon } from "lucide-react";
 export default function EventCard({ event }: { event: Event }) {
   const { t } = useTranslation("common");
   return (
-    <div className="border rounded-lg p-4 shadow hover:shadow-lg transition flex flex-col justify-between">
+    <div className="border bg-white rounded-lg p-4 shadow hover:shadow-lg transition flex flex-col justify-between">
       <div>
         {event.image && (
           <img

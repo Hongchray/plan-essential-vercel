@@ -12,65 +12,102 @@ export async function POST(req: Request) {
     throw new Error("Not authenticated");
   }
 
-  const event = await prisma.event.create({
-    data: {
-      ...data,
-      userId: session.user.id,
-    },
-  });
+  // Extract schedule data from the request
+  const { schedule, ...eventData } = data;
 
-  //create event groups
-  await prisma.group.createMany({
-    data: [
-      {
-        name_en: GroupEnglish.GROOM_SIDE,
-        name_kh: GroupKhmer.GROOM_SIDE,
-        eventId: event.id,
+  try {
+    // Create event first
+    const event = await prisma.event.create({
+      data: {
+        ...eventData,
+        userId: session.user.id,
       },
-      {
-        name_en: GroupEnglish.BRIDE_SIDE,
-        name_kh: GroupKhmer.BRIDE_SIDE,
-        eventId: event.id,
-      },
-    ],
-  });
-  //create event tags
-  await prisma.tag.createMany({
-    data: [
-      {
-        name_en: TagEnglish.HIGH_SCHOOL_FRIEND,
-        name_kh: TagKhmer.HIGH_SCHOOL_FRIEND,
-        eventId: event.id,
-      },
-      {
-        name_en: TagEnglish.COLLEGE_FRIEND,
-        name_kh: TagKhmer.COLLEGE_FRIEND,
-        eventId: event.id,
-      },
-      {
-        name_en: TagEnglish.FRIEND,
-        name_kh: TagKhmer.FRIEND,
-        eventId: event.id,
-      },
-      {
-        name_en: TagEnglish.TEAMWORK,
-        name_kh: TagKhmer.TEAMWORK,
-        eventId: event.id,
-      },
-      {
-        name_en: TagEnglish.RELATIVE,
-        name_kh: TagKhmer.RELATIVE,
-        eventId: event.id,
-      },
-      {
-        name_en: TagEnglish.OTHERS,
-        name_kh: TagKhmer.OTHERS,
-        eventId: event.id,
-      },
-    ],
-  });
+    });
 
-  return NextResponse.json(event, { status: 200 });
+    // Create event groups
+    await prisma.group.createMany({
+      data: [
+        {
+          name_en: GroupEnglish.GROOM_SIDE,
+          name_kh: GroupKhmer.GROOM_SIDE,
+          eventId: event.id,
+        },
+        {
+          name_en: GroupEnglish.BRIDE_SIDE,
+          name_kh: GroupKhmer.BRIDE_SIDE,
+          eventId: event.id,
+        },
+      ],
+    });
+
+    // Create event tags
+    await prisma.tag.createMany({
+      data: [
+        {
+          name_en: TagEnglish.HIGH_SCHOOL_FRIEND,
+          name_kh: TagKhmer.HIGH_SCHOOL_FRIEND,
+          eventId: event.id,
+        },
+        {
+          name_en: TagEnglish.COLLEGE_FRIEND,
+          name_kh: TagKhmer.COLLEGE_FRIEND,
+          eventId: event.id,
+        },
+        {
+          name_en: TagEnglish.FRIEND,
+          name_kh: TagKhmer.FRIEND,
+          eventId: event.id,
+        },
+        {
+          name_en: TagEnglish.TEAMWORK,
+          name_kh: TagKhmer.TEAMWORK,
+          eventId: event.id,
+        },
+        {
+          name_en: TagEnglish.RELATIVE,
+          name_kh: TagKhmer.RELATIVE,
+          eventId: event.id,
+        },
+        {
+          name_en: TagEnglish.OTHERS,
+          name_kh: TagKhmer.OTHERS,
+          eventId: event.id,
+        },
+      ],
+    });
+
+    // Create schedule if provided
+    if (schedule && schedule.shifts && schedule.shifts.length > 0) {
+      await prisma.schedule.create({
+        data: {
+          eventId: event.id,
+          shifts: {
+            create: schedule.shifts.map((shift: any) => ({
+              name: shift.name,
+              date: shift.date,
+              timeLine: {
+                create: shift.timelines.map((timeline: any) => ({
+                  name: timeline.name,
+                  time: timeline.time,
+                })),
+              },
+            })),
+          },
+        },
+      });
+    }
+
+    return NextResponse.json(event, { status: 200 });
+  } catch (error) {
+    console.error("Error creating event:", error);
+    return NextResponse.json(
+      {
+        message: "Failed to create event",
+        error: error instanceof Error ? error.message : "Unknown error",
+      },
+      { status: 500 }
+    );
+  }
 }
 
 export async function GET(req: NextRequest) {
@@ -113,7 +150,19 @@ export async function GET(req: NextRequest) {
       skip: (page - 1) * per_page,
       take: per_page,
       orderBy: { [sort]: order },
-      include: { user: { select: { id: true, name: true, email: true } } },
+      include: {
+        user: { select: { id: true, name: true, email: true } },
+        // Include schedule data in list view (optional)
+        schedules: {
+          include: {
+            shifts: {
+              include: {
+                timeLine: true,
+              },
+            },
+          },
+        },
+      },
     });
 
     return NextResponse.json({

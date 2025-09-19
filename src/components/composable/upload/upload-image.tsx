@@ -147,7 +147,7 @@ const ImageUpload = React.forwardRef<HTMLInputElement, ImageUploadProps>(
     return (
       <div
         className={`flex flex-col items-start gap-4 ${
-          isEvent ? "w-[376px] h-[159px]" : "w-[180px]"
+          isEvent ? "w-full md:w-[376px] h-[159px]" : "w-[180px]"
         }`}
       >
         {/* Preview Area */}
@@ -158,7 +158,7 @@ const ImageUpload = React.forwardRef<HTMLInputElement, ImageUploadProps>(
               alt="Preview"
               width={150}
               height={150}
-              className="w-full h-full object-contain"
+              className="w-full h-full object-cover"
             />
           ) : (
             <div className="flex flex-col items-center justify-center gap-2">
@@ -174,7 +174,7 @@ const ImageUpload = React.forwardRef<HTMLInputElement, ImageUploadProps>(
         </div>
 
         {/* Upload Button */}
-        <div className="flex items-center gap-4 w-full">
+        <div className="flex items-center gap-4 md:w-full">
           <Button
             variant="outline"
             className="relative w-full"

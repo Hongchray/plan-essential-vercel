@@ -8,55 +8,55 @@ generator client {
 }
 
 model User {
-  id               String   @id @default(cuid())
-  email            String?
-  password         String
-  name             String?
-  username         String?
-  phone            String?  @unique
-  photoUrl         String?
-  role             String   @default("user")
-  otp_code         String?
-  otp_expires_at   DateTime?
-  phone_verified   Boolean  @default(false)
+  id                String     @id @default(cuid())
+  email             String?
+  password          String
+  name              String?
+  username          String?
+  phone             String?    @unique
+  photoUrl          String?
+  role              String     @default("user")
+  otp_code          String?
+  otp_expires_at    DateTime?
+  phone_verified    Boolean    @default(false)
   phone_verified_at DateTime?
-  telegramId       String?  @unique
-  createdAt        DateTime @default(now())
-  updatedAt        DateTime @updatedAt
-  events           Event[]
-  
+  telegramId        String?    @unique
+  createdAt         DateTime   @default(now())
+  updatedAt         DateTime   @updatedAt
+  events            Event[]
+  userPlan          UserPlan[]
+
   @@index([email])
   @@index([phone])
   @@index([telegramId])
 }
 
-
 model Event {
-  id        String   @id @default(cuid())
-  name      String
-  owner     String?
-  bride     String?
-  groom     String?
-  description      String?
-  image     String?
-  userId    String 
-  user      User     @relation(fields: [userId], references: [id])
-  status    String
-  type      String  // wedding , housewarming , birthday , anniversary
-  location  String?
-  latitude  String?
-  longitude String?
-  startTime DateTime
-  endTime   DateTime 
-  schedules Schedule[]
+  id             String          @id @default(cuid())
+  name           String
+  owner          String?
+  bride          String?
+  groom          String?
+  description    String?
+  image          String?
+  userId         String
+  user           User            @relation(fields: [userId], references: [id])
+  status         String
+  type           String // wedding , housewarming , birthday , anniversary
+  location       String?
+  latitude       String?
+  longitude      String?
+  startTime      DateTime
+  endTime        DateTime
+  schedules      Schedule[]
   eventTemplates EventTemplate[]
-  guests    Guest[]
-  tags      Tag[]
-  groups    Group[]
-  expenses  Expense[]
-  gifts Gift[]
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+  guests         Guest[]
+  tags           Tag[]
+  groups         Group[]
+  expenses       Expense[]
+  gifts          Gift[]
+  createdAt      DateTime        @default(now())
+  updatedAt      DateTime        @updatedAt
 
   @@index([userId])
 }
@@ -71,14 +71,14 @@ model Schedule {
 }
 
 model Shift {
-  id         String   @id @default(cuid())
+  id         String     @id @default(cuid())
   scheduleId String
-  schedule  Schedule @relation(fields: [scheduleId], references: [id])
-  name      String
-  date      DateTime
-  timeLine  Timeline[]
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+  schedule   Schedule   @relation(fields: [scheduleId], references: [id])
+  name       String
+  date       DateTime
+  timeLine   Timeline[]
+  createdAt  DateTime   @default(now())
+  updatedAt  DateTime   @updatedAt
 }
 
 model Timeline {
@@ -92,61 +92,61 @@ model Timeline {
 }
 
 model Template {
-  id        String   @id @default(cuid())
-  name      String
-  type      String  // wedding , housewarming , birthday , anniversary
-  image     String?
-  defaultConfig Json?
-  unique_name String @unique  //wedding.basic-template
+  id             String          @id @default(cuid())
+  name           String
+  type           String // wedding , housewarming , birthday , anniversary
+  image          String?
+  defaultConfig  Json?
+  unique_name    String          @unique //wedding.basic-template
   eventTemplates EventTemplate[]
-  createdAt DateTime @default(now())
-  status    String
-  updatedAt DateTime @updatedAt
+  createdAt      DateTime        @default(now())
+  status         String
+  updatedAt      DateTime        @updatedAt
 }
 
 model EventTemplate {
-  id        String   @id @default(cuid())
-  eventId   String
-  event     Event    @relation(fields: [eventId], references: [id])
+  id         String   @id @default(cuid())
+  eventId    String
+  event      Event    @relation(fields: [eventId], references: [id])
   templateId String
-  template  Template @relation(fields: [templateId], references: [id])
-  config    Json?
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+  template   Template @relation(fields: [templateId], references: [id])
+  config     Json?
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
 
   @@unique([eventId, templateId])
 }
 
 model Guest {
-  id        String   @id @default(cuid())
-  eventId   String
-  event     Event    @relation(fields: [eventId], references: [id])
-  name      String
-  email     String?
-  phone     String?
-  note      String?
-  address   String?
-  image     String?
-  status    String? @default("pending") //pending, confirmed, rejected
-  wishing_note String?
+  id               String       @id @default(cuid())
+  eventId          String
+  event            Event        @relation(fields: [eventId], references: [id])
+  name             String
+  email            String?
+  phone            String?
+  note             String?
+  address          String?
+  image            String?
+  status           String?      @default("pending") //pending, confirmed, rejected
+  wishing_note     String?
   number_of_guests Int?
-  is_invited Boolean @default(false)
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
-  guestTag GuestTag[]
-  guestGroup GuestGroup[]
-  gifts Gift[]
+  is_invited       Boolean      @default(false)
+  createdAt        DateTime     @default(now())
+  updatedAt        DateTime     @updatedAt
+  guestTag         GuestTag[]
+  guestGroup       GuestGroup[]
+  gifts            Gift[]
 }
 
 model Tag {
-  id        String   @id @default(cuid())
+  id        String     @id @default(cuid())
   name_en   String
   name_kh   String
   eventId   String
-  event     Event    @relation(fields: [eventId], references: [id])
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
-  guestTag GuestTag[]
+  event     Event      @relation(fields: [eventId], references: [id])
+  createdAt DateTime   @default(now())
+  updatedAt DateTime   @updatedAt
+  guestTag  GuestTag[]
 }
 
 model GuestTag {
@@ -160,13 +160,13 @@ model GuestTag {
 }
 
 model Group {
-  id        String   @id @default(cuid())
-  name_en   String
-  name_kh   String
-  eventId   String
-  event     Event    @relation(fields: [eventId], references: [id])
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+  id         String       @id @default(cuid())
+  name_en    String
+  name_kh    String
+  eventId    String
+  event      Event        @relation(fields: [eventId], references: [id])
+  createdAt  DateTime     @default(now())
+  updatedAt  DateTime     @updatedAt
   guestGroup GuestGroup[]
 }
 
@@ -189,38 +189,54 @@ model Expense {
   description   String?
   budget_amount Float            @default(0)
   actual_amount Float            @default(0)
-  payments      ExpensePayment[] 
+  payments      ExpensePayment[]
   createdAt     DateTime         @default(now())
   updatedAt     DateTime         @updatedAt
 }
 
 model ExpensePayment {
-  id         String   @id @default(cuid())
-  expenseId  String
-  expense    Expense  @relation(fields: [expenseId], references: [id])
-  name       String
-  amount     Float    @default(0)
-  paidAt     DateTime @default(now())
-  note       String?  
+  id        String   @id @default(cuid())
+  expenseId String
+  expense   Expense  @relation(fields: [expenseId], references: [id])
+  name      String
+  amount    Float    @default(0)
+  paidAt    DateTime @default(now())
+  note      String?
 }
 
-
 model Gift {
-  id        String   @id @default(cuid())
-  eventId   String
-  event     Event    @relation(fields: [eventId], references: [id])
-  guestId   String
-  guest     Guest    @relation(fields: [guestId], references: [id])
-  note      String?
+  id            String   @id @default(cuid())
+  eventId       String
+  event         Event    @relation(fields: [eventId], references: [id])
+  guestId       String
+  guest         Guest    @relation(fields: [guestId], references: [id])
+  note          String?
   payment_type  String
   currency_type String
   amount_khr    Float?
   amount_usd    Float?
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
 }
 
+model Plan {
+  id        String     @id @default(cuid())
+  name      String
+  price     Float?
+  userPlan  UserPlan[]
+  createdAt DateTime   @default(now())
+  updatedAt DateTime   @updatedAt
+}
 
-
-
-
+model UserPlan {
+  id                 String   @id @default(cuid())
+  userId             String
+  user               User     @relation(fields: [userId], references: [id])
+  planId             String
+  plan               Plan     @relation(fields: [planId], references: [id])
+  limit_guests       Int
+  limit_template     Int
+  limit_export_excel Boolean
+  createdAt          DateTime @default(now())
+  updatedAt          DateTime @updatedAt
+}
