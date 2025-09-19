@@ -13,6 +13,16 @@ interface GuestImportData {
   number_of_guests?: number;
   is_invited?: boolean;
 }
+interface ExpenseRow {
+  "Expense Name": string;
+  Description?: string;
+  "Budget Amount"?: number | string;
+  "Actual Amount"?: number | string;
+  "Payment Name"?: string;
+  "Payment Amount"?: number | string;
+  "Paid At"?: string;
+  "Payment Note"?: string;
+}
 
 // Excel column mapping
 const EXCEL_COLUMNS = {
@@ -20,6 +30,94 @@ const EXCEL_COLUMNS = {
   "Phone Number": "phone",
   Notes: "note",
 } as const;
+
+export async function exportExpenseToExcel(eventId: string): Promise<Buffer> {
+  try {
+    // Fetch expenses with payments
+    const expenses = await prisma.expense.findMany({
+      where: { eventId },
+      orderBy: { createdAt: "desc" },
+      include: {
+        payments: true, // include expense payments
+        event: true, // optional: include event info
+      },
+    });
+
+    // Transform data for Excel
+    const excelData: any[] = [];
+
+    expenses.forEach((expense, index) => {
+      if (expense.payments.length > 0) {
+        // Create a row for each payment
+        expense.payments.forEach((payment, pIndex) => {
+          excelData.push({
+            "No.": index + 1,
+            "Expense ID": expense.id,
+            "Expense Name": expense.name,
+            Description: expense.description || "",
+            "Budget Amount": expense.budget_amount,
+            "Actual Amount": expense.actual_amount,
+            "Payment Name": payment.name,
+            "Payment Amount": payment.amount,
+            "Paid At": payment.paidAt.toLocaleDateString(),
+            "Payment Note": payment.note || "",
+            "Created Date": expense.createdAt.toLocaleDateString(),
+            "Updated Date": expense.updatedAt.toLocaleDateString(),
+          });
+        });
+      } else {
+        // Row without payments
+        excelData.push({
+          "No.": index + 1,
+          "Expense ID": expense.id,
+          "Expense Name": expense.name,
+          Description: expense.description || "",
+          "Budget Amount": expense.budget_amount,
+          "Actual Amount": expense.actual_amount,
+          "Payment Name": "-",
+          "Payment Amount": 0,
+          "Paid At": "-",
+          "Payment Note": "-",
+          "Created Date": expense.createdAt.toLocaleDateString(),
+          "Updated Date": expense.updatedAt.toLocaleDateString(),
+        });
+      }
+    });
+
+    // Create workbook and worksheet
+    const workbook = XLSX.utils.book_new();
+    const worksheet = XLSX.utils.json_to_sheet(excelData);
+
+    // Auto-size columns (optional)
+    worksheet["!cols"] = [
+      { wch: 5 }, // No.
+      { wch: 25 }, // Expense ID
+      { wch: 25 }, // Expense Name
+      { wch: 30 }, // Description
+      { wch: 15 }, // Budget Amount
+      { wch: 15 }, // Actual Amount
+      { wch: 25 }, // Payment Name
+      { wch: 15 }, // Payment Amount
+      { wch: 15 }, // Paid At
+      { wch: 30 }, // Payment Note
+      { wch: 15 }, // Created Date
+      { wch: 15 }, // Updated Date
+    ];
+
+    XLSX.utils.book_append_sheet(workbook, worksheet, "Expenses");
+
+    // Generate Excel buffer
+    const excelBuffer = XLSX.write(workbook, {
+      bookType: "xlsx",
+      type: "buffer",
+    });
+
+    return excelBuffer;
+  } catch (error) {
+    console.error("Error exporting expenses to Excel:", error);
+    throw new Error("Failed to export expenses to Excel");
+  }
+}
 
 export async function exportGiftsToExcel(eventId: string): Promise<Buffer> {
   try {
@@ -305,6 +403,116 @@ export async function importGuestsFromExcel(
   }
 }
 
+function parseExpenseExcel(fileBuffer: Buffer) {
+  const workbook = XLSX.read(fileBuffer, { type: "buffer" });
+  const sheetName = workbook.SheetNames[0];
+  const worksheet = workbook.Sheets[sheetName];
+  const rows = XLSX.utils.sheet_to_json<ExpenseRow>(worksheet, { defval: "" });
+
+  return rows.map((row, index) => {
+    if (!row["Expense Name"]) {
+      throw new Error(`Row ${index + 2}: Expense name is required`);
+    }
+
+    return {
+      name: row["Expense Name"],
+      description: row["Description"] || "",
+      budget_amount: parseFloat(String(row["Budget Amount"] || "0")),
+      actual_amount: parseFloat(String(row["Actual Amount"] || "0")),
+      payment: row["Payment Name"]
+        ? {
+            name: row["Payment Name"],
+            amount: parseFloat(String(row["Payment Amount"] || "0")),
+            paidAt: row["Paid At"] ? new Date(row["Paid At"]) : new Date(),
+            note: row["Payment Note"] || "",
+          }
+        : null,
+    };
+  });
+}
+export async function importExpenseFromExcel(
+  eventId: string,
+  fileBuffer: Buffer
+): Promise<{
+  imported: number;
+  skipped: number;
+  errors: string[];
+}> {
+  try {
+    const expenseData = parseExpenseExcel(fileBuffer); // already normalized
+    const errors: string[] = [];
+    let imported = 0;
+    let skipped = 0;
+
+    await prisma.$transaction(async (tx) => {
+      for (let i = 0; i < expenseData.length; i++) {
+        const row = expenseData[i];
+
+        try {
+          // ✅ Check required field
+          if (!row.name) {
+            skipped++;
+            errors.push(`Row ${i + 2}: Missing "Expense Name"`);
+            continue;
+          }
+
+          // ✅ Check if expense already exists
+          const existingExpense = await tx.expense.findFirst({
+            where: {
+              eventId,
+              name: row.name,
+            },
+          });
+
+          if (existingExpense) {
+            skipped++;
+            errors.push(`Row ${i + 2}: Expense "${row.name}" already exists`);
+            continue;
+          }
+
+          // ✅ Create new expense
+          const newExpense = await tx.expense.create({
+            data: {
+              eventId,
+              name: row.name,
+              description: row.description || "",
+              budget_amount: row.budget_amount || 0,
+              actual_amount: row.actual_amount || 0,
+            },
+          });
+
+          // ✅ Create payment if provided
+          if (row.payment && row.payment.amount > 0) {
+            await tx.expensePayment.create({
+              data: {
+                expenseId: newExpense.id,
+                name: row.payment.name,
+                amount: row.payment.amount,
+                paidAt: row.payment.paidAt,
+                note: row.payment.note,
+              },
+            });
+          }
+
+          imported++;
+        } catch (error) {
+          skipped++;
+          errors.push(
+            `Row ${i + 2}: ${
+              error instanceof Error ? error.message : "Unknown error occurred"
+            }`
+          );
+        }
+      }
+    });
+
+    return { imported, skipped, errors };
+  } catch (error) {
+    console.error("Error importing expenses from Excel:", error);
+    throw new Error("Failed to import expenses from Excel");
+  }
+}
+
 // Generate Excel template for import
 export function generateGuestImportTemplate(): Buffer {
   const templateData = [
@@ -326,6 +534,53 @@ export function generateGuestImportTemplate(): Buffer {
   ];
 
   XLSX.utils.book_append_sheet(workbook, worksheet, "Guest Import Template");
+
+  return XLSX.write(workbook, {
+    bookType: "xlsx",
+    type: "buffer",
+  });
+}
+
+export function generateExpenseImportTemplate(): Buffer {
+  const templateData = [
+    {
+      "Expense Name": "ជួលសាល",
+      Description: "ជួលសាលសម្រាប់ព្រឹត្តិការណ៍",
+      "Budget Amount": 500,
+      "Actual Amount": 0,
+      "Payment Name": "កក់ប្រាក់",
+      "Payment Amount": 250,
+      "Paid At": "2025-09-19", // yyyy-mm-dd
+      "Payment Note": "កក់ដំបូង",
+    },
+    {
+      "Expense Name": "សេវាហូបចុក",
+      Description: "អាហារ និងភេសជ្ជៈ",
+      "Budget Amount": 1000,
+      "Actual Amount": 0,
+      "Payment Name": "",
+      "Payment Amount": "",
+      "Paid At": "",
+      "Payment Note": "",
+    },
+  ];
+
+  const workbook = XLSX.utils.book_new();
+  const worksheet = XLSX.utils.json_to_sheet(templateData);
+
+  // Column widths (same as export function)
+  worksheet["!cols"] = [
+    { wch: 25 }, // Expense Name
+    { wch: 30 }, // Description
+    { wch: 15 }, // Budget Amount
+    { wch: 15 }, // Actual Amount
+    { wch: 25 }, // Payment Name
+    { wch: 15 }, // Payment Amount
+    { wch: 15 }, // Paid At
+    { wch: 30 }, // Payment Note
+  ];
+
+  XLSX.utils.book_append_sheet(workbook, worksheet, "Expense Import Template");
 
   return XLSX.write(workbook, {
     bookType: "xlsx",

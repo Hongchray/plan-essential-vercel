@@ -6,7 +6,6 @@ import { IAPIResponse } from "@/interfaces/comon/api-response";
 import { Expense } from "@/interfaces/expense";
 import { Loading } from "@/components/composable/loading/loading";
 import { useTranslation } from "react-i18next";
-import TabExpenseMobile from "@/components/event/show-tabs/expense-table/tab-expense-mobile"; // <-- new mobile component
 
 async function getData(
   id: string,

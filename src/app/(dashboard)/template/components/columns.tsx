@@ -17,10 +17,10 @@ import { Button } from "@/components/ui/button";
 import { EditIcon, Trash2Icon, EyeIcon } from "lucide-react";
 import { ConfirmDialog } from "@/components/composable/dialog/confirm-dialog";
 import { useTranslation } from "react-i18next";
-
+import { formatDate } from "@/utils/date";
 const ActionsCell = ({ row }: { row: any }) => {
   const router = useRouter();
-  const { t } = useTranslation("common"); // ✅ hook at top level
+  const { t } = useTranslation("common");
 
   const deleteTemplate = async (id: string) => {
     try {
@@ -64,132 +64,121 @@ const ActionsCell = ({ row }: { row: any }) => {
     </div>
   );
 };
-export const columns: ColumnDef<Template>[] = [
-  {
-    id: "select",
-    header: ({ table }) => (
-      <Checkbox
-        checked={
-          table.getIsAllPageRowsSelected() ||
-          (table.getIsSomePageRowsSelected() && "indeterminate")
-        }
-        onCheckedChange={(value) => table.toggleAllPageRowsSelected(!!value)}
-        aria-label="Select all"
-        className="translate-y-[2px]"
-      />
-    ),
-    cell: ({ row }) => (
-      <Checkbox
-        checked={row.getIsSelected()}
-        onCheckedChange={(value) => row.toggleSelected(!!value)}
-        aria-label="Select row"
-        className="translate-y-[2px]"
-      />
-    ),
-    enableSorting: false,
-    enableHiding: false,
-  },
-
-  {
-    accessorKey: "image",
-    enableSorting: false,
-    header: () => {
-      const { t } = useTranslation("common");
-      return t("templates.table.image");
+export const useTemplateColumns = (): ColumnDef<Template>[] => {
+  // We no longer call t() here for the headers
+  return [
+    {
+      id: "select",
+      header: ({ table }) => (
+        <Checkbox
+          checked={
+            table.getIsAllPageRowsSelected() ||
+            (table.getIsSomePageRowsSelected() && "indeterminate")
+          }
+          onCheckedChange={(value) => table.toggleAllPageRowsSelected(!!value)}
+          aria-label="Select all"
+          className="translate-y-[2px]"
+        />
+      ),
+      cell: ({ row }) => (
+        <Checkbox
+          checked={row.getIsSelected()}
+          onCheckedChange={(value) => row.toggleSelected(!!value)}
+          aria-label="Select row"
+          className="translate-y-[2px]"
+        />
+      ),
+      enableSorting: false,
+      enableHiding: false,
     },
-    cell: ({ row }) => {
-      return (
-        <Avatar className="rounded h-[50px] ">
-          <AvatarImage src={row.getValue("image")} />
+
+    // Logo
+    {
+      accessorKey: "image",
+      enableSorting: false,
+      header: ({ column }) => (
+        <DataTableColumnHeader column={column} title="EventPage.table.logo" />
+      ),
+      cell: ({ row }) => (
+        <Avatar>
+          <AvatarImage src={row.getValue("image")} alt={row.getValue("name")} />
           <AvatarFallback>CN</AvatarFallback>
         </Avatar>
-      );
+      ),
     },
-  },
-  {
-    accessorKey: "name",
-    header: () => {
-      const { t } = useTranslation("common");
-      return t("templates.table.name");
-    },
-    cell: ({ row }) => {
-      return (
+
+    {
+      accessorKey: "name",
+      header: ({ column }) => (
+        <DataTableColumnHeader column={column} title="EventPage.table.name" />
+      ),
+      cell: ({ row }) => (
         <div className="flex gap-2">
-          <span className="max-w-[200px] truncate font-medium">
+          <Link
+            href={`/event/${row.original.id}`} // link to view page
+            className="max-w-[200px] truncate font-medium text-blue-600 hover:underline"
+          >
             {row.getValue("name")}
-          </span>
+          </Link>
         </div>
-      );
+      ),
     },
-  },
-  {
-    accessorKey: "type",
-    header: () => {
-      const { t } = useTranslation("common");
-      return t("templates.table.type");
+    {
+      accessorKey: "type",
+      header: ({ column }) => (
+        <DataTableColumnHeader column={column} title="EventPage.table.type" />
+      ),
+      cell: ({ row }) => (
+        <span className="max-w-[200px] truncate font-medium">
+          {row.getValue("type")}
+        </span>
+      ),
     },
-    cell: ({ row }) => {
-      return (
-        <div className="flex gap-2">
-          <span className="max-w-[200px] truncate font-medium">
-            {row.getValue("type")}
-          </span>
-        </div>
-      );
+    {
+      accessorKey: "status",
+      header: ({ column }) => (
+        <DataTableColumnHeader column={column} title="EventPage.table.status" />
+      ),
+      cell: ({ row }) => (
+        <span className="max-w-[200px] truncate font-medium">
+          {row.getValue("status")}
+        </span>
+      ),
     },
-  },
-  {
-    accessorKey: "status",
-    header: () => {
-      const { t } = useTranslation("common");
-      return t("templates.table.status");
-    },
-    cell: ({ row }) => {
-      return (
-        <div className="flex gap-2">
-          <span className="max-w-[200px] truncate font-medium">
-            {row.getValue("status")}
-          </span>
-        </div>
-      );
-    },
-  },
 
-  {
-    accessorKey: "updatedAt",
-    header: () => {
-      const { t } = useTranslation("common");
-      return t("templates.table.updatedAt");
+    {
+      accessorKey: "createdAt",
+      header: ({ column }) => (
+        <DataTableColumnHeader
+          column={column}
+          title="EventPage.table.created_at"
+        />
+      ),
+      cell: ({ row }) => (
+        <span className="max-w-[200px] truncate font-medium">
+          {formatDate(row.getValue("createdAt"))}
+        </span>
+      ),
     },
-    cell: ({ row }) => {
-      return (
-        <div className="flex gap-2">
-          <span className="max-w-[200px] truncate font-medium">
-            {row.getValue("updatedAt")}
-          </span>
-        </div>
-      );
-    },
-  },
-  {
-    accessorKey: "createdAt",
-    header: () => {
-      const { t } = useTranslation("common");
-      return t("templates.table.createdAt");
-    },
-    cell: ({ row }) => {
-      return (
-        <div className="flex gap-2">
-          <span className="max-w-[200px] truncate font-medium">
-            {row.getValue("createdAt")}
-          </span>
-        </div>
-      );
-    },
-  },
 
-  {
-    id: "actions",
-    cell: ({ row }) => <ActionsCell row={row} />,
-  },
-];
+    {
+      accessorKey: "updatedAt",
+      header: ({ column }) => (
+        <DataTableColumnHeader
+          column={column}
+          title="EventPage.table.updated_at"
+        />
+      ),
+      cell: ({ row }) => (
+        <span className="max-w-[200px] truncate font-medium">
+          {formatDate(row.getValue("updatedAt"))}
+        </span>
+      ),
+    },
+
+    {
+      id: "actions",
+      cell: ({ row }) => <ActionsCell row={row} />,
+    },
+  ];
+};

@@ -35,7 +35,12 @@ const ActionsCell = ({ row }: { row: any }) => {
 
   return (
     <div className="flex gap-2 justify-end items-center">
-      <CreateEditGiftForm id={row.original.id} />
+      <CreateEditGiftForm
+        id={row.original.id}
+        onSelect={(guest) => {
+          console.log("Selected guest:", guest);
+        }}
+      />
       <ConfirmDialog
         trigger={
           <Button size="icon" variant="destructive">

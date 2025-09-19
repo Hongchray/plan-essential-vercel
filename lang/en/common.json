@@ -111,6 +111,8 @@
       "create": "Create"
     },
     "table": {
+      "search": "Search",
+      "add_new": "Add New",
       "asc": "Asc",
       "desc": "Desc",
       "hide": "Hide",
@@ -281,7 +283,10 @@
       "startDate": "Start Date",
       "location": "Location",
       "status": "Status",
-      "actions": "Actions"
+      "actions": "Actions",
+      "created_at": "Created At",
+      "updated_at": "Updated At",
+      "logo": "Image"
     }
   },
 
@@ -517,7 +522,11 @@
       "amount_placeholder": "Enter amount",
       "cancel": "Cancel",
       "error_guest_required": "Guest is required",
-      "error_amount_required": "Amount is required"
+      "error_amount_required": "Amount is required",
+      "Riel": "Riel (៛)",
+      "Dollar": "Dollar ($)",
+      "search_guest": "Search guest...",
+      "no_guest_found": "No guest found"
     }
   },
   "add_template": {

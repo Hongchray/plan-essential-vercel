@@ -1,0 +1,213 @@
+// Excel Import Modal Component
+import React, { useRef, useState } from "react";
+import { Upload, Download, FileText, X } from "lucide-react";
+import { Button } from "@/components/ui/button";
+import { toast } from "sonner";
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from "@/components/ui/dialog";
+import { useExcelOperations } from "@/hooks/use-expense-export-import";
+import { useRouter } from "next/navigation";
+
+interface ExcelImportModalProps {
+  eventId: string;
+  onImportComplete?: () => void;
+  trigger?: React.ReactNode;
+}
+
+export const ExcelImportModal: React.FC<ExcelImportModalProps> = ({
+  eventId,
+  onImportComplete,
+  trigger,
+}) => {
+  const [isOpen, setIsOpen] = useState(false);
+  const [selectedFile, setSelectedFile] = useState<File | null>(null);
+  const [dragActive, setDragActive] = useState(false);
+  const fileInputRef = useRef<HTMLInputElement>(null);
+  const router = useRouter();
+
+  const { importExpensetList, downloadTemplate, isImporting } =
+    useExcelOperations(eventId);
+
+  const handleDrag = (e: React.DragEvent) => {
+    e.preventDefault();
+    e.stopPropagation();
+    if (e.type === "dragenter" || e.type === "dragover") {
+      setDragActive(true);
+    } else if (e.type === "dragleave") {
+      setDragActive(false);
+    }
+  };
+
+  const handleDrop = (e: React.DragEvent) => {
+    e.preventDefault();
+    e.stopPropagation();
+    setDragActive(false);
+
+    const files = e.dataTransfer.files;
+    if (files && files[0]) {
+      handleFileSelect(files[0]);
+    }
+  };
+
+  const handleFileSelect = (file: File) => {
+    if (
+      file.type ===
+        "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet" ||
+      file.type === "application/vnd.ms-excel" ||
+      file.name.endsWith(".xlsx") ||
+      file.name.endsWith(".xls")
+    ) {
+      setSelectedFile(file);
+    } else {
+      toast.error("Please select a valid Excel file (.xlsx or .xls)");
+    }
+  };
+
+  const handleFileInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const files = e.target.files;
+    if (files && files[0]) {
+      handleFileSelect(files[0]);
+    }
+  };
+
+  const handleImport = async () => {
+    if (!selectedFile) return;
+
+    try {
+      await importExpensetList(selectedFile);
+      setIsOpen(false);
+      setSelectedFile(null);
+      onImportComplete?.();
+      router.refresh();
+    } catch (error) {}
+  };
+
+  const handleCancel = () => {
+    setIsOpen(false);
+    setSelectedFile(null);
+  };
+
+  return (
+    <Dialog open={isOpen} onOpenChange={setIsOpen}>
+      <DialogTrigger asChild>
+        {trigger || (
+          <Button variant="outline">
+            <Upload className="h-4 w-4 mr-2" />
+            បញ្ចូល
+          </Button>
+        )}
+      </DialogTrigger>
+
+      <DialogContent className="sm:max-w-md">
+        <DialogHeader>
+          <DialogTitle>បញ្ចូលបញ្ជី</DialogTitle>
+          <DialogDescription>
+            ផ្ទុកឡើងឯកសារ Excel ដើម្បីនាំចូលភ្ញៀវ។
+            ទាញយកគំរូសម្រាប់ទម្រង់ត្រឹមត្រូវ។
+          </DialogDescription>
+        </DialogHeader>
+
+        <div className="space-y-4">
+          {/* Template Download */}
+          <div className="flex items-center justify-between p-3 bg-blue-50 rounded-lg">
+            <div className="flex items-center space-x-2">
+              <FileText className="h-4 w-4 text-blue-600" />
+              <span className="text-sm font-medium">ត្រូវការគំរូExcel?</span>
+            </div>
+            <Button
+              variant="ghost"
+              size="sm"
+              onClick={downloadTemplate}
+              className="text-blue-600 hover:text-blue-700"
+            >
+              <Download className="h-4 w-4 mr-1" />
+              ទាញយក
+            </Button>
+          </div>
+
+          {/* File Upload Area */}
+          <div
+            className={`relative border-2 border-dashed rounded-lg p-6 text-center transition-colors ${
+              dragActive
+                ? "border-blue-400 bg-blue-50"
+                : "border-gray-300 hover:border-gray-400"
+            }`}
+            onDragEnter={handleDrag}
+            onDragLeave={handleDrag}
+            onDragOver={handleDrag}
+            onDrop={handleDrop}
+          >
+            <input
+              ref={fileInputRef}
+              type="file"
+              accept=".xlsx,.xls"
+              onChange={handleFileInputChange}
+              className="absolute inset-0 w-full h-full opacity-0 cursor-pointer"
+            />
+
+            {selectedFile ? (
+              <div className="flex items-center justify-center space-x-2">
+                <FileText className="h-8 w-8 text-green-600" />
+                <div className="text-left">
+                  <p className="font-medium text-green-700">
+                    {selectedFile.name}
+                  </p>
+                  <p className="text-sm text-gray-500">
+                    {(selectedFile.size / 1024).toFixed(1)} KB
+                  </p>
+                </div>
+                <Button
+                  variant="ghost"
+                  size="sm"
+                  onClick={() => setSelectedFile(null)}
+                >
+                  <X className="h-4 w-4" />
+                </Button>
+              </div>
+            ) : (
+              <div>
+                <Upload className="mx-auto h-12 w-12 text-gray-400" />
+                <p className="mt-2 text-lg font-medium text-gray-900">
+                  ទម្លាក់ឯកសារ Excel របស់អ្នកនៅទីនេះ
+                </p>
+                <p className="mt-1 text-sm text-gray-600">
+                  ឬចុចដើម្បីរកមើល (.xlsx, .xls)
+                </p>
+              </div>
+            )}
+          </div>
+        </div>
+
+        <DialogFooter>
+          <Button variant="outline" onClick={handleCancel}>
+            <X />
+            បោះបង់
+          </Button>
+          <Button
+            onClick={handleImport}
+            disabled={!selectedFile || isImporting}
+          >
+            {isImporting ? (
+              <>
+                <div className="mr-2 h-4 w-4 animate-spin rounded-full border-2 border-background border-t-transparent" />
+                កំពុងផ្ទុក...
+              </>
+            ) : (
+              <>
+                <Upload className="mr-2 h-4 w-4" />
+                បញ្ចូល
+              </>
+            )}
+          </Button>
+        </DialogFooter>
+      </DialogContent>
+    </Dialog>
+  );
+};
