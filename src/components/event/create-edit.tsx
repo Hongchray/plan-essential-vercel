@@ -18,14 +18,30 @@ import { useTranslation } from "next-i18next";
 import { Label } from "@/components/ui/label";
 import { RequiredMark } from "../composable/required-mark";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Trash2, Plus, Clock, Calendar, Users, ChevronDown, ChevronUp, X } from "lucide-react";
-import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/components/ui/collapsible";
+import {
+  Trash2,
+  Plus,
+  Clock,
+  Calendar,
+  Users,
+  ChevronDown,
+  ChevronUp,
+  X,
+} from "lucide-react";
+import {
+  Collapsible,
+  CollapsibleContent,
+  CollapsibleTrigger,
+} from "@/components/ui/collapsible";
 
 // Timeline Schema
 const timelineSchema = z.object({
   id: z.string().optional(),
   name: z.string().min(1, "Timeline name is required"),
-  time: z.string().min(1, "Time is required").regex(/^([01]?[0-9]|2[0-3]):[0-5][0-9]$/, "Invalid time format (HH:MM)"),
+  time: z
+    .string()
+    .min(1, "Time is required")
+    .regex(/^([01]?[0-9]|2[0-3]):[0-5][0-9]$/, "Invalid time format (HH:MM)"),
 });
 
 // Shift Schema
@@ -36,7 +52,9 @@ const shiftSchema = z.object({
     required_error: "Date is required",
     invalid_type_error: "Invalid date",
   }),
-  timelines: z.array(timelineSchema).min(1, "At least one timeline item is required"),
+  timelines: z
+    .array(timelineSchema)
+    .min(1, "At least one timeline item is required"),
 });
 
 // Schedule Schema
@@ -69,18 +87,20 @@ export function CreateEditForm({ id }: { id?: string }) {
       location: z.string(),
       latitude: z.coerce.string().optional(),
       longitude: z.coerce.string().optional(),
-      startTime: z.string({
-        required_error: t("EventPage.error.startTimeRequired"),
-      })
-        .refine((val) => !isNaN(Date.parse(val)), {
+      startTime: z.coerce
+        .date({
+          required_error: t("EventPage.error.startTimeRequired"),
+        })
+        .refine((val: Date) => !isNaN(val.getTime()), {
           message: t("EventPage.error.startTimeInvalid"),
         })
         .transform((val) => new Date(val)),
 
-      endTime: z.string({
-        required_error: t("EventPage.error.endTimeRequired"),
-      })
-        .refine((val) => !isNaN(Date.parse(val)), {
+      endTime: z.coerce
+        .date({
+          required_error: t("EventPage.error.endTimeRequired"),
+        })
+        .refine((val: Date) => !isNaN(val.getTime()), {
           message: t("EventPage.error.endTimeInvalid"),
         })
         .transform((val) => new Date(val)),
@@ -117,7 +137,11 @@ export function CreateEditForm({ id }: { id?: string }) {
     },
   });
 
-  const { fields: shiftFields, append: appendShift, remove: removeShift } = useFieldArray({
+  const {
+    fields: shiftFields,
+    append: appendShift,
+    remove: removeShift,
+  } = useFieldArray({
     control: form.control,
     name: "schedule.shifts",
   });
@@ -169,23 +193,26 @@ export function CreateEditForm({ id }: { id?: string }) {
       if (data) {
         // Get the first schedule (assuming one schedule per event)
         const scheduleData = data.schedules?.[0];
-        
+
         // Transform the data to match form structure
         const formData = {
           ...data,
-          schedule: scheduleData ? {
-            id: scheduleData.id,
-            shifts: scheduleData.shifts?.map((shift: any) => ({
-              id: shift.id,
-              name: shift.name,
-              date: new Date(shift.date),
-              timelines: shift.timeLine?.map((timeline: any) => ({
-                id: timeline.id,
-                name: timeline.name,
-                time: timeline.time,
-              })) || [{ name: "", time: "" }],
-            })) || [],
-          } : { shifts: [] },
+          schedule: scheduleData
+            ? {
+                id: scheduleData.id,
+                shifts:
+                  scheduleData.shifts?.map((shift: any) => ({
+                    id: shift.id,
+                    name: shift.name,
+                    date: new Date(shift.date),
+                    timelines: shift.timeLine?.map((timeline: any) => ({
+                      id: timeline.id,
+                      name: timeline.name,
+                      time: timeline.time,
+                    })) || [{ name: "", time: "" }],
+                  })) || [],
+              }
+            : { shifts: [] },
         };
         form.reset(formData);
         if (scheduleData?.shifts?.length > 0) {
@@ -237,7 +264,10 @@ export function CreateEditForm({ id }: { id?: string }) {
         </h2>
       </div>
 
-      <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-3 sm:space-y-4">
+      <form
+        onSubmit={form.handleSubmit(onSubmit)}
+        className="space-y-3 sm:space-y-4"
+      >
         {/* Cover Image */}
         <div className="flex flex-col gap-1 mt-2">
           <Label>{t("EventPage.create.coverImage")}</Label>
@@ -383,7 +413,9 @@ export function CreateEditForm({ id }: { id?: string }) {
                 <CardTitle className="flex flex-row items-center justify-between gap-2">
                   <div className="flex items-center gap-3">
                     <Calendar className="w-5 h-5" />
-                    <span className="text-base sm:text-lg">របៀបវីរៈកម្មវិធី</span>
+                    <span className="text-base sm:text-lg">
+                      របៀបវីរៈកម្មវិធី
+                    </span>
                     {hasSchedule && (
                       <span className="text-xs sm:text-sm bg-blue-100 px-2 py-1 rounded">
                         {shiftFields.length} ពេល
@@ -398,13 +430,15 @@ export function CreateEditForm({ id }: { id?: string }) {
                 </CardTitle>
               </CardHeader>
             </CollapsibleTrigger>
-            
+
             <CollapsibleContent>
               <CardContent className="pt-0">
                 {!hasSchedule ? (
                   <div className="text-center py-4 sm:py-6">
                     <Calendar className="w-10 h-10 sm:w-12 sm:h-12 text-gray-400 mx-auto mb-2" />
-                    <p className="text-gray-600 mb-3 text-sm">មិនទាន់មានកម្មវិធី</p>
+                    <p className="text-gray-600 mb-3 text-sm">
+                      មិនទាន់មានកម្មវិធី
+                    </p>
                     <Button
                       type="button"
                       variant="outline"
@@ -413,7 +447,7 @@ export function CreateEditForm({ id }: { id?: string }) {
                       className="w-full sm:w-auto"
                     >
                       <Plus className="w-4 h-4 mr-2" />
-                       បន្ថែមពេល
+                      បន្ថែមពេល
                     </Button>
                   </div>
                 ) : (
@@ -472,8 +506,18 @@ interface ShiftCardProps {
   loading: boolean;
 }
 
-function ShiftCard({ shiftIndex, form, onRemove, canRemove, loading }: ShiftCardProps) {
-  const { fields: timelineFields, append: appendTimeline, remove: removeTimeline } = useFieldArray({
+function ShiftCard({
+  shiftIndex,
+  form,
+  onRemove,
+  canRemove,
+  loading,
+}: ShiftCardProps) {
+  const {
+    fields: timelineFields,
+    append: appendTimeline,
+    remove: removeTimeline,
+  } = useFieldArray({
     control: form.control,
     name: `schedule.shifts.${shiftIndex}.timelines`,
   });
@@ -522,7 +566,10 @@ function ShiftCard({ shiftIndex, form, onRemove, canRemove, loading }: ShiftCard
         <div className="space-y-2">
           <div className="space-y-2 pl-1 sm:pl-4">
             {timelineFields.map((timeline, timelineIndex) => (
-              <div key={timeline.id} className="flex flex-col sm:flex-row gap-2 items-stretch sm:items-end">
+              <div
+                key={timeline.id}
+                className="flex flex-col sm:flex-row gap-2 items-stretch sm:items-end"
+              >
                 <div className="flex-1">
                   <InputTextField
                     label="ឈ្មោះកម្មវិធី"
