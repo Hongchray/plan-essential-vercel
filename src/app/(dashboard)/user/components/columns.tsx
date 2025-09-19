@@ -156,37 +156,6 @@ export const useUserColumns = (): ColumnDef<User>[] => {
           .includes((value as string).toLowerCase());
       },
     },
-
-    {
-      accessorKey: "updatedAt",
-      header: ({ column }) => (
-        <DataTableColumnHeader
-          column={column}
-          title={t("user.table.updated_at")}
-        />
-      ),
-      cell: ({ row }) => (
-        <span className="max-w-[200px] truncate font-medium">
-          {row.getValue("updatedAt")}
-        </span>
-      ),
-    },
-
-    {
-      accessorKey: "createdAt",
-      header: ({ column }) => (
-        <DataTableColumnHeader
-          column={column}
-          title={t("user.table.created_at")}
-        />
-      ),
-      cell: ({ row }) => (
-        <span className="max-w-[200px] truncate font-medium">
-          {row.getValue("createdAt")}
-        </span>
-      ),
-    },
-
     {
       id: "actions",
       cell: ({ row }) => <ActionsCell row={row} />,

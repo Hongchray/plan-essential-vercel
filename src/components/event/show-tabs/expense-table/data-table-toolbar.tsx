@@ -109,39 +109,45 @@ export function DataTableToolbar<TData>({
           </Button>
         )}
       </div>
-      <div className="flex gap-4">
+      <div className="flex flex-wrap items-center gap-2">
+        {/* Add New Button: always visible */}
         <CreateEditForm id="" />
-        <div className="inline-flex w-fit -space-x-px rounded-md shadow-xs rtl:space-x-reverse">
+
+        {/* Actions: Upload, Download, Delete (hidden on small screens) */}
+        <div className="hidden sm:flex flex-wrap gap-2">
           <Button
-            className="rounded-none rounded-s-md shadow-none focus-visible:z-10"
+            className="rounded-md shadow-none focus-visible:z-10"
             variant="outline"
           >
             <Upload />
-            <span className="">បញ្ចូល Excel</span>
+            <span>បញ្ចូល Excel</span>
           </Button>
+
           <Button
-            className="rounded-none shadow-none focus-visible:z-10"
+            className="rounded-md shadow-none focus-visible:z-10"
             variant="outline"
           >
             <Download />
-            <span className="">ទាញយក</span>
+            <span>ទាញយក</span>
           </Button>
+
           <ConfirmDialog
             trigger={
               <Button
-                className="rounded-none rounded-e-md shadow-none focus-visible:z-10"
+                className="rounded-md shadow-none focus-visible:z-10"
                 variant="outline"
                 disabled={!hasSelectedRows || isDeleting}
               >
                 <Trash2Icon />
-                <span className="">លុប</span>
+                <span>លុប</span>
               </Button>
             }
             title={t("event_dashboard.guest.table.delete_title")}
             description={t("event_dashboard.guest.table.delete_description")}
-            onConfirm={() => handleDeleteSelected}
+            onConfirm={() => handleDeleteSelected()}
           />
         </div>
+
         <DataTableViewOptions table={table} />
       </div>
     </div>

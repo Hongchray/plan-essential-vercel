@@ -39,10 +39,7 @@ export function CreateEditForm({ id }: { id: string }) {
     image: z.string().nullable().optional(),
     name: z.string().min(1, { message: t("guest_form.message.name_required") }),
     email: z.string().nullable().optional(),
-    phone: z
-      .string()
-      .min(1, { message: t("guest_form.message.phone_required") })
-      .max(50, { message: t("guest_form.message.phone_max") }),
+    phone: z.string().nullable(),
     note: z.string().nullable().optional(),
     address: z.string().nullable().optional(),
     tags: z.array(z.string()).nullable().optional(),
@@ -157,8 +154,10 @@ export function CreateEditForm({ id }: { id: string }) {
         </Button>
       ) : (
         <Button size="sm" onClick={() => setDialogOpen(true)}>
-          <Plus/>
-         <span className="text-[12px] md:text-base">{t("guest_form.create_edit.add_new")}</span> 
+          <Plus />
+          <span className="text-[12px] md:text-base">
+            {t("guest_form.create_edit.add_new")}
+          </span>
         </Button>
       )}
       <Dialog open={dialogOpen} onOpenChange={setDialogOpen} modal>
@@ -173,7 +172,10 @@ export function CreateEditForm({ id }: { id: string }) {
               {t("guest_form.create_edit.fill_guest_details")}
             </DialogDescription>
           </DialogHeader>
-          <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-2 md:space-y-4 overflow-y-auto">
+          <form
+            onSubmit={form.handleSubmit(onSubmit)}
+            className="space-y-2 md:space-y-4 overflow-y-auto"
+          >
             {/* <div>
               <ImageUpload
                 label={t("guest_form.create_edit.photo")}
@@ -197,7 +199,7 @@ export function CreateEditForm({ id }: { id: string }) {
                 form={form}
                 disabled={loading}
               />
-        
+
               {/* <TextareaField
                 label={t("guest_form.create_edit.address")}
                 name="address" 
@@ -205,7 +207,7 @@ export function CreateEditForm({ id }: { id: string }) {
                 form={form}
                 disabled={loading}
               /> */}
-           
+
               <div>
                 <div className="flex justify-between items-center pt-2">
                   <Label>{t("guest_form.create_edit.groups")}</Label>
@@ -252,7 +254,7 @@ export function CreateEditForm({ id }: { id: string }) {
                     router.refresh();
                   }}
                 >
-                  <X/>
+                  <X />
                   {t("guest_form.create_edit.cancel")}
                 </Button>
                 <SubmitButton loading={loading} entityId={id} />

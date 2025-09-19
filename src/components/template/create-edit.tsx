@@ -121,7 +121,7 @@ export function CreateEditForm({ id }: { id?: string }) {
     setLoading(false);
   };
   return (
-    <div className="p-6 border rounded-md  bg-white  mx-auto">
+    <div className="p-6 border rounded-md  bg-white  mx-auto max-w-5xl">
       <div>
         <h2 className="text-xl font-bold pb-2">
           {id ? "Edit" : "Create"} Template

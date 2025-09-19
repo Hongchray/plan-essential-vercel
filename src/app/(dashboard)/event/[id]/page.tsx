@@ -62,7 +62,6 @@ export default function ShowEvent({
     setTab(value);
     router.replace(`/event/${eventId}#${value}`);
   };
-
   return (
     <div className="sm:p-4 p-2 sm:border-0 rounded-md mx-auto bg-transparent sm:bg-white">
       <div className="hidden sm:block">

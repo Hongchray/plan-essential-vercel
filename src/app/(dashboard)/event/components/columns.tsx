@@ -11,9 +11,11 @@ import { toast } from "sonner";
 import { useRouter } from "next/navigation";
 import { formatDateCustom } from "@/utils/date";
 import { Badge } from "@/components/ui/badge";
+import { useTranslation } from "react-i18next";
 
 const ActionsCell = ({ row }: { row: any }) => {
   const router = useRouter();
+  const { t } = useTranslation("common");
 
   const deleteEvent = async (id: string) => {
     try {
@@ -21,13 +23,13 @@ const ActionsCell = ({ row }: { row: any }) => {
         method: "DELETE",
       });
       if (res.ok) {
-        toast.success("Delete Event successfully");
+        toast.success(t("EventPage.message.delete_success"));
         router.refresh();
       } else {
-        toast.error("Error deleting Event");
+        toast.error(t("EventPage.message.delete_error"));
       }
     } catch (error) {
-      toast.error("Error deleting Event");
+      toast.error(t("EventPage.message.delete_error"));
     }
   };
 
@@ -38,24 +40,28 @@ const ActionsCell = ({ row }: { row: any }) => {
           <EyeIcon />
         </Button>
       </Link>
+
       <Link href={`/event/edit/${row.original.id}`}>
         <Button size="icon" variant="outline">
           <EditIcon />
         </Button>
       </Link>
+
       <ConfirmDialog
         trigger={
           <Button size="icon" variant="destructive">
             <Trash2Icon />
           </Button>
         }
-        title="Delete this file?"
-        description="This will permanently remove the file."
+        title={t("EventPage.message.delete_title")}
+        description={t("EventPage.message.delete_description")}
         onConfirm={() => deleteEvent(row.original.id)}
       />
     </div>
   );
 };
+
+export default ActionsCell;
 
 export const columns: ColumnDef<Event>[] = [
   {
@@ -84,9 +90,10 @@ export const columns: ColumnDef<Event>[] = [
   },
   {
     accessorKey: "name",
-    header: ({ column }) => (
-      <DataTableColumnHeader column={column} title="Name" />
-    ),
+    header: () => {
+      const { t } = useTranslation("common");
+      return t("EventPage.table.name");
+    },
     cell: ({ row }) => {
       return (
         <div className="flex gap-2">
@@ -101,9 +108,10 @@ export const columns: ColumnDef<Event>[] = [
   },
   {
     accessorKey: "type",
-    header: ({ column }) => (
-      <DataTableColumnHeader column={column} title="Type" />
-    ),
+    header: () => {
+      const { t } = useTranslation("common");
+      return t("EventPage.table.type");
+    },
     cell: ({ row }) => {
       return (
         <div className="flex gap-2">
@@ -116,9 +124,10 @@ export const columns: ColumnDef<Event>[] = [
   },
   {
     accessorKey: "startTime",
-    header: ({ column }) => (
-      <DataTableColumnHeader column={column} title="Start Date" />
-    ),
+    header: () => {
+      const { t } = useTranslation("common");
+      return t("EventPage.table.startDate");
+    },
     cell: ({ row }) => {
       return (
         <div className="flex gap-2">
@@ -146,9 +155,10 @@ export const columns: ColumnDef<Event>[] = [
   // },
   {
     accessorKey: "location",
-    header: ({ column }) => (
-      <DataTableColumnHeader column={column} title="Location" />
-    ),
+    header: () => {
+      const { t } = useTranslation("common");
+      return t("EventPage.table.location");
+    },
     cell: ({ row }) => {
       return (
         <div className="flex gap-2">
@@ -161,9 +171,10 @@ export const columns: ColumnDef<Event>[] = [
   },
   {
     accessorKey: "status",
-    header: ({ column }) => (
-      <DataTableColumnHeader column={column} title="Status" />
-    ),
+    header: () => {
+      const { t } = useTranslation("common");
+      return t("EventPage.table.status");
+    },
     cell: ({ row }) => {
       return (
         <div className="flex gap-2">
