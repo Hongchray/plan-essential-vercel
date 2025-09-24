@@ -16,7 +16,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-
+import { useSearchParams } from "next/navigation";
 export default function SimpleTemplate({
   config,
   data,
@@ -24,6 +24,8 @@ export default function SimpleTemplate({
   config: any;
   data: Event;
 }) {
+  const searchParams = useSearchParams();
+  const guestId = searchParams.get("guest");
   const [currentLanguage, setCurrentLanguage] = useState<"kh" | "en">("kh");
 
   // Get the current invitation data based on selected language
@@ -36,7 +38,32 @@ export default function SimpleTemplate({
     setCurrentLanguage((prev) => (prev === "kh" ? "en" : "kh"));
   };
 
-  const onSubmit = async (data: FormData) => {};
+  const onSubmit = async (data: FormData) => {
+    try {
+      const res = await fetch("/api/guest", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          guestId: guestId,
+          name: data.name,
+          message: data.message,
+          number_guest: data.number_guest,
+          status: data.status,
+        }),
+      });
+
+      if (!res.ok) {
+        throw new Error("Failed to submit");
+      }
+
+      const result = await res.json();
+      console.log("Guest updated:", result);
+    } catch (error) {
+      console.error("Error submitting form:", error);
+    }
+  };
 
   const formSchema = z.object({
     name: z.string().min(1, "ត្រូវការឈ្មោះ"),
@@ -440,67 +467,71 @@ export default function SimpleTemplate({
         </h2>
 
         {/* Form Send */}
-        <form
-          onSubmit={form.handleSubmit(onSubmit)}
-          className="space-y-3 sm:space-y-4 py-5 w-full px-5 flex flex-col items-center animate-fade-in animation-delay-300"
-        >
-          <Input
-            {...form.register("name")}
-            placeholder={currentLanguage === "kh" ? "ឈ្មោះ" : "Name"}
-            className="bg-[#A5AE79]/30 border-0 focus-visible:ring-0 rounded-lg text-[#A5AE79] placeholder:text-[#A5AE79] w-full hover:bg-[#A5AE79]/40 focus:scale-105 transition-all duration-300"
-          />
-          <Select {...form.register("status")}>
-            <SelectTrigger className="bg-[#A5AE79]/30 border-0 focus-visible:ring-0 rounded-lg text-[#A5AE79] placeholder:text-[#A5AE79] w-full hover:bg-[#A5AE79]/40 focus:scale-105 transition-all duration-300">
-              <SelectValue
-                placeholder={
-                  currentLanguage === "kh"
-                    ? "តើអ្នកចូលរួមអត់?"
-                    : "Will you attend?"
-                }
-              />
-            </SelectTrigger>
-            <SelectContent>
-              <SelectItem value="confirmed">
-                {currentLanguage === "kh" ? "ចូលរួម" : "Attending"}
-              </SelectItem>
-              <SelectItem value="rejected">
-                {currentLanguage === "kh" ? "បដិសេធ" : "Cannot attend"}
-              </SelectItem>
-            </SelectContent>
-          </Select>
-          <Input
-            {...form.register("number_guest")}
-            placeholder={
-              currentLanguage === "kh" ? "ចំនួនភ្ញៀវចូលរួម" : "Number of guests"
-            }
-            type="number"
-            className="bg-[#A5AE79]/30 border-0 focus-visible:ring-0 rounded-lg text-[#A5AE79] placeholder:text-[#A5AE79] w-full hover:bg-[#A5AE79]/40 focus:scale-105 transition-all duration-300"
-          />
-          <Textarea
-            {...form.register("message")}
-            placeholder={
-              currentLanguage === "kh" ? "សារជូនពរ" : "Greeting message"
-            }
-            className="bg-[#A5AE79]/30 border-0 focus-visible:ring-0 rounded-lg text-[#A5AE79] placeholder:text-[#A5AE79] w-full hover:bg-[#A5AE79]/40 focus:scale-105 transition-all duration-300"
-          />
-          <div className="text-[10px] text-center w-[200px] h-auto">
-            <button
-              type="submit"
-              className="text-[12px] text-center w-[200px] h-auto inline-block px-3 py-2 hover:scale-110 transform transition-all duration-300 active:scale-95"
-              style={{
-                color: "white",
-                fontFamily: "moul",
-                backgroundImage: "url('/template/arts/button-kbach.png')",
-                backgroundSize: "cover",
-                backgroundPosition: "center",
-                display: "inline-block",
-                borderRadius: "8px",
-              }}
-            >
-              {currentLanguage === "kh" ? "ផ្ញើរ" : "Send"}
-            </button>
-          </div>
-        </form>
+        {guestId && (
+          <form
+            onSubmit={form.handleSubmit(onSubmit)}
+            className="space-y-3 sm:space-y-4 py-5 w-full px-5 flex flex-col items-center animate-fade-in animation-delay-300"
+          >
+            <Input
+              {...form.register("name")}
+              placeholder={currentLanguage === "kh" ? "ឈ្មោះ" : "Name"}
+              className="bg-[#A5AE79]/30 border-0 focus-visible:ring-0 rounded-lg text-[#A5AE79] placeholder:text-[#A5AE79] w-full hover:bg-[#A5AE79]/40 focus:scale-105 transition-all duration-300"
+            />
+            <Select {...form.register("status")}>
+              <SelectTrigger className="bg-[#A5AE79]/30 border-0 focus-visible:ring-0 rounded-lg text-[#A5AE79] placeholder:text-[#A5AE79] w-full hover:bg-[#A5AE79]/40 focus:scale-105 transition-all duration-300">
+                <SelectValue
+                  placeholder={
+                    currentLanguage === "kh"
+                      ? "តើអ្នកចូលរួមអត់?"
+                      : "Will you attend?"
+                  }
+                />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="confirmed">
+                  {currentLanguage === "kh" ? "ចូលរួម" : "Attending"}
+                </SelectItem>
+                <SelectItem value="rejected">
+                  {currentLanguage === "kh" ? "បដិសេធ" : "Cannot attend"}
+                </SelectItem>
+              </SelectContent>
+            </Select>
+            <Input
+              {...form.register("number_guest")}
+              placeholder={
+                currentLanguage === "kh"
+                  ? "ចំនួនភ្ញៀវចូលរួម"
+                  : "Number of guests"
+              }
+              type="number"
+              className="bg-[#A5AE79]/30 border-0 focus-visible:ring-0 rounded-lg text-[#A5AE79] placeholder:text-[#A5AE79] w-full hover:bg-[#A5AE79]/40 focus:scale-105 transition-all duration-300"
+            />
+            <Textarea
+              {...form.register("message")}
+              placeholder={
+                currentLanguage === "kh" ? "សារជូនពរ" : "Greeting message"
+              }
+              className="bg-[#A5AE79]/30 border-0 focus-visible:ring-0 rounded-lg text-[#A5AE79] placeholder:text-[#A5AE79] w-full hover:bg-[#A5AE79]/40 focus:scale-105 transition-all duration-300"
+            />
+            <div className="text-[10px] text-center w-[200px] h-auto">
+              <button
+                type="submit"
+                className="text-[12px] text-center w-[200px] h-auto inline-block px-3 py-2 hover:scale-110 transform transition-all duration-300 active:scale-95"
+                style={{
+                  color: "white",
+                  fontFamily: "moul",
+                  backgroundImage: "url('/template/arts/button-kbach.png')",
+                  backgroundSize: "cover",
+                  backgroundPosition: "center",
+                  display: "inline-block",
+                  borderRadius: "8px",
+                }}
+              >
+                {currentLanguage === "kh" ? "ផ្ញើរ" : "Send"}
+              </button>
+            </div>
+          </form>
+        )}
 
         <div className="p-5 w-full flex flex-col gap-2 animate-fade-in animation-delay-500">
           <div className="bg-[#A5AE79]/30 p-5 rounded-lg hover:bg-[#A5AE79]/40 hover:scale-105 transition-all duration-300 animate-slide-in-left">

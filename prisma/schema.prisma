@@ -129,6 +129,7 @@ model Guest {
   image            String?
   status           String?      @default("pending") //pending, confirmed, rejected
   wishing_note     String?
+  sentAt           DateTime?
   number_of_guests Int?
   is_invited       Boolean      @default(false)
   createdAt        DateTime     @default(now())
