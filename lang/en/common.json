@@ -132,7 +132,9 @@
       "search_placeholder": "Search ...",
       "reset": "Reset",
       "view": "View",
-      "toggle_columns": "Toggle columns"
+      "toggle_columns": "Toggle columns",
+      "loadingMessage": "Fetching data...",
+      "noResults": "No results."
     },
     "confirm_dialog": {
       "title": "Are you sure?",
@@ -641,6 +643,40 @@
       "view": "View",
       "edit": "Edit",
       "delete": "Delete"
+    }
+  },
+
+  "template": {
+    "createTitle": "Create Template",
+    "editTitle": "Edit Template",
+    "coverImage": "Cover Image",
+    "name": "Name",
+    "namePlaceholder": "Enter name",
+    "uniqueName": "Unique Name",
+    "uniqueNamePlaceholder": "Enter unique name",
+    "chooseType": "Choose Template Type",
+    "chooseTypePlaceholder": "Choose Template Type",
+    "type": {
+      "wedding": "Wedding",
+      "housewarming": "Housewarming",
+      "birthday": "Birthday",
+      "anniversary": "Anniversary"
+    },
+    "status": "Status",
+    "defaultConfig": "Default Config",
+    "cancel": "Cancel",
+
+    "createSuccess": "Template created successfully",
+    "createError": "Error creating template",
+    "updateSuccess": "Template updated successfully",
+    "updateError": "Error updating template",
+    "getError": "Error fetching template",
+
+    "validation": {
+      "nameMin": "Name must be at least 3 characters",
+      "nameMax": "Name must be less than 50 characters",
+      "typeRequired": "Type is required",
+      "uniqueNameRequired": "Unique name is required"
     }
   }
 }

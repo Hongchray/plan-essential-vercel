@@ -13,65 +13,53 @@ import { toast } from "sonner";
 import { useRouter } from "next/navigation";
 import { useLoading } from "@/hooks/LoadingContext";
 import ImageUpload from "../composable/upload/upload-image";
-import { useTranslation } from "react-i18next";
-
-const formSchema = z.object({
-  name: z
-    .string()
-    .min(3, "Name must be at least 3 characters")
-    .max(50, "Name must be less than 50 characters"),
-  type: z.string().min(1, "Type is required"),
-  image: z.string(),
-  defaultConfig: z.any(),
-  status: z.string(),
-  unique_name: z.string().min(1, "Unique name is required"),
-});
-
-type FormData = z.infer<typeof formSchema>;
-
-async function createTemplate(data: FormData) {
-  const res = await fetch("/api/admin/template", {
-    method: "POST",
-    body: JSON.stringify(data),
-  });
-  if (res.ok) {
-    toast.success("Create Template successfully");
-  } else {
-    toast.error("Error create template");
-  }
-  return res;
-}
-async function updateTemplate(id: string, data: FormData) {
-  const res = await fetch(`/api/admin/template/${id}`, {
-    method: "PUT",
-    body: JSON.stringify(data),
-  });
-  if (res.ok) {
-    toast.success("Update Template successfully");
-  } else {
-    toast.error("Error update template");
-  }
-  return res;
-}
-async function getEditTemplate(id: string) {
-  const res = await fetch(`/api/admin/template/${id}`, {
-    method: "GET",
-    headers: {
-      "Content-Type": "application/json",
-    },
-  });
-  if (res.ok) {
-    return res.json();
-  } else {
-    toast.error("Error get template");
-  }
-}
+import { useTranslation } from "next-i18next";
 
 export function CreateEditForm({ id }: { id?: string }) {
   const { setOverlayLoading } = useLoading();
-  const { t } = useTranslation("common");
-
+  const { t, ready } = useTranslation("common");
+  const [isClient, setIsClient] = useState(false);
+  const [loading, setLoading] = useState(false);
   const router = useRouter();
+
+  // All hooks must be called before any conditional returns
+  // ✅ schema uses translations with fallback
+  const formSchema = z.object({
+    name: z
+      .string()
+      .min(
+        3,
+        ready
+          ? t("template.validation.nameMin")
+          : "Name must be at least 3 characters"
+      )
+      .max(
+        50,
+        ready
+          ? t("template.validation.nameMax")
+          : "Name must be less than 50 characters"
+      ),
+    type: z
+      .string()
+      .min(
+        1,
+        ready ? t("template.validation.typeRequired") : "Type is required"
+      ),
+    image: z.string(),
+    defaultConfig: z.any(),
+    status: z.string(),
+    unique_name: z
+      .string()
+      .min(
+        1,
+        ready
+          ? t("template.validation.uniqueNameRequired")
+          : "Unique name is required"
+      ),
+  });
+
+  type FormData = z.infer<typeof formSchema>;
+
   const form = useForm<FormData>({
     resolver: zodResolver(formSchema),
     defaultValues: {
@@ -83,6 +71,12 @@ export function CreateEditForm({ id }: { id?: string }) {
       unique_name: "",
     },
   });
+
+  // Ensure component only renders on client after translations are ready
+  useEffect(() => {
+    setIsClient(true);
+  }, []);
+
   useEffect(() => {
     const fetchTemplate = async () => {
       if (!id) return;
@@ -95,8 +89,61 @@ export function CreateEditForm({ id }: { id?: string }) {
       }
     };
     fetchTemplate();
-  }, [id, form]);
-  const [loading, setLoading] = useState(false);
+  }, [id, form, t, setOverlayLoading]);
+
+  // Don't render until we're on the client and translations are ready
+  if (!isClient || !ready) {
+    return (
+      <div className="p-6 border rounded-md bg-white mx-auto max-w-5xl">
+        <div className="animate-pulse">
+          <div className="h-8 bg-gray-200 rounded w-1/3 mb-4"></div>
+          <div className="space-y-4">
+            <div className="h-10 bg-gray-200 rounded"></div>
+            <div className="h-10 bg-gray-200 rounded"></div>
+            <div className="h-32 bg-gray-200 rounded"></div>
+          </div>
+        </div>
+      </div>
+    );
+  }
+
+  async function createTemplate(data: FormData) {
+    const res = await fetch("/api/admin/template", {
+      method: "POST",
+      body: JSON.stringify(data),
+    });
+    if (res.ok) {
+      toast.success(t("template.createSuccess"));
+    } else {
+      toast.error(t("template.createError"));
+    }
+    return res;
+  }
+  async function updateTemplate(id: string, data: FormData) {
+    const res = await fetch(`/api/admin/template/${id}`, {
+      method: "PUT",
+      body: JSON.stringify(data),
+    });
+    if (res.ok) {
+      toast.success(t("template.updateSuccess"));
+    } else {
+      toast.error(t("template.updateError"));
+    }
+    return res;
+  }
+  async function getEditTemplate(id: string) {
+    const res = await fetch(`/api/admin/template/${id}`, {
+      method: "GET",
+      headers: {
+        "Content-Type": "application/json",
+      },
+    });
+    if (res.ok) {
+      return res.json();
+    } else {
+      toast.error(t("template.getError"));
+    }
+  }
 
   const onSubmit = async (data: FormData) => {
     setLoading(true);
@@ -114,23 +161,24 @@ export function CreateEditForm({ id }: { id?: string }) {
       if (response.ok) {
         const json = await response.json();
         form.reset();
-        toast.success("Create Template successfully");
+        toast.success(t("template.createSuccess"));
         router.push(`/template/edit/${json?.id}`);
       }
     }
     setLoading(false);
   };
+
   return (
-    <div className="p-6 border rounded-md  bg-white  mx-auto max-w-5xl">
+    <div className="p-6 border rounded-md bg-white mx-auto max-w-5xl">
       <div>
         <h2 className="text-xl font-bold pb-2">
-          {id ? "Edit" : "Create"} Template
+          {id ? t("template.editTitle") : t("template.createTitle")}
         </h2>
       </div>
       <form onSubmit={form.handleSubmit(onSubmit)}>
         <div className="py-2">
           <ImageUpload
-            label={t("EventPage.create.coverImage")}
+            label={t("template.coverImage")}
             folder="/template/cover"
             {...form.register("image")}
             value={form.watch("image")}
@@ -138,33 +186,33 @@ export function CreateEditForm({ id }: { id?: string }) {
         </div>
         <div className="grid grid-cols-2 gap-2">
           <InputTextField
-            label="Name"
+            label={t("template.name")}
             name="name"
-            placeholder="Enter name"
+            placeholder={t("template.namePlaceholder")}
             form={form}
             disabled={loading}
           />
           <InputTextField
-            label="Unique Name"
+            label={t("template.uniqueName")}
             name="unique_name"
-            placeholder="Enter unique name"
+            placeholder={t("template.uniqueNamePlaceholder")}
             form={form}
             disabled={loading}
           />
           <SelectField
-            label="Choose Template Type"
+            label={t("template.chooseType")}
             name="type"
-            placeholder="Choose Template Type"
+            placeholder={t("template.chooseTypePlaceholder")}
             options={[
-              { label: "Wedding", value: "wedding" },
-              { label: "Housewarming", value: "housewarming" },
-              { label: "Birthday", value: "birthday" },
-              { label: "Anniversary", value: "anniversary" },
+              { label: t("template.type.wedding"), value: "wedding" },
+              { label: t("template.type.housewarming"), value: "housewarming" },
+              { label: t("template.type.birthday"), value: "birthday" },
+              { label: t("template.type.anniversary"), value: "anniversary" },
             ]}
             form={form}
           />
           <SwitchField
-            label="Status"
+            label={t("template.status")}
             name="status"
             trueValue="active"
             falseValue="inactive"
@@ -174,7 +222,7 @@ export function CreateEditForm({ id }: { id?: string }) {
         <div className="py-5">
           <CodeEditor
             language="json"
-            label="Default Config"
+            label={t("template.defaultConfig")}
             value={JSON.stringify(
               form.getValues().defaultConfig || {},
               null,
@@ -191,7 +239,7 @@ export function CreateEditForm({ id }: { id?: string }) {
             type="button"
             onClick={() => router.push("/template")}
           >
-            Cancel
+            {t("template.cancel")}
           </Button>
           <SubmitButton loading={loading} entityId={id} />
         </div>

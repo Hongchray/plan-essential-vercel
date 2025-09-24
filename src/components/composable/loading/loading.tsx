@@ -4,7 +4,7 @@ import { cn } from "@/lib/utils";
 
 interface LoadingProps {
   size?: "sm" | "md" | "lg";
-  variant?: "default" | "minimal" | "pulse" | "dots" | "circle";
+  variant?: "default" | "minimal" | "pulse" | "dots" | "circle" | "table";
   message?: string;
   className?: string;
 }
@@ -140,6 +140,38 @@ export const Loading = ({
             className={cn(iconSizes[size], "absolute inset-0 m-auto")}
           />
         </div>
+      </div>
+    );
+  }
+
+  if (variant === "table") {
+    return (
+      <div
+        className={cn(
+          "flex flex-col items-center justify-center py-4", // vertical layout
+          className
+        )}
+      >
+        <div className="relative flex items-center justify-center">
+          {/* Ping background */}
+          <div
+            className={cn(
+              "rounded-full bg-primary/20 animate-ping",
+              size === "sm" ? "h-4 w-4" : size === "md" ? "h-6 w-6" : "h-8 w-8"
+            )}
+          />
+          {/* Loading GIF */}
+          <img
+            src="/loading.gif"
+            alt="Loading..."
+            className={cn(iconSizes[size], "absolute inset-0 m-auto")}
+          />
+        </div>
+        {message && (
+          <span className="mt-2 text-sm font-medium text-muted-foreground text-center">
+            {message}
+          </span>
+        )}
       </div>
     );
   }

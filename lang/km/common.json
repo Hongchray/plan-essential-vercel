@@ -131,7 +131,9 @@
       "search_placeholder": "ស្វែងរក ...",
       "reset": "សម្អាត",
       "view": "មើល",
-      "toggle_columns": "បិទបង្ហាញជួរ"
+      "toggle_columns": "បិទបង្ហាញជួរ",
+      "loadingMessage": "កំពុងចាប់យកទិន្នន័យ...",
+      "noResults": "មិនមានទិន្នន័យ។"
     },
     "confirm_dialog": {
       "title": "តើ​អ្នក​ប្រាកដ​ទេ?",
@@ -631,6 +633,39 @@
       "view": "មើល",
       "edit": "កែសម្រួល",
       "delete": "លុប"
+    }
+  },
+  "template": {
+    "createTitle": "បង្កើតគំរូ",
+    "editTitle": "កែសម្រួលគំរូ",
+    "coverImage": "រូបភាពគម្រប",
+    "name": "ឈ្មោះ",
+    "namePlaceholder": "បញ្ចូលឈ្មោះ",
+    "uniqueName": "ឈ្មោះសម្គាល់ (ឧ. wedding_serey_both)",
+    "uniqueNamePlaceholder": "បញ្ចូលឈ្មោះសម្គាល់ (ឧ. wedding_serey_both)",
+    "chooseType": "ជ្រើសរើសប្រភេទគំរូ",
+    "chooseTypePlaceholder": "ជ្រើសរើសប្រភេទគំរូ",
+    "type": {
+      "wedding": "មង្គលការអាពាហ៍ពិពាហ៍",
+      "housewarming": "ពិធីចូលផ្ទះថ្មី",
+      "birthday": "ថ្ងៃកំណើត",
+      "anniversary": "គំរូខួប"
+    },
+    "status": "ស្ថានភាព",
+    "defaultConfig": "ការកំណត់លំនាំដើម",
+    "cancel": "បោះបង់",
+
+    "createSuccess": "បានបង្កើតគំរូដោយជោគជ័យ",
+    "createError": "កំហុសក្នុងការបង្កើតគំរូ",
+    "updateSuccess": "បានកែសម្រួលគំរូដោយជោគជ័យ",
+    "updateError": "កំហុសក្នុងការកែសម្រួលគំរូ",
+    "getError": "កំហុសក្នុងការទាញយកគំរូ",
+
+    "validation": {
+      "nameMin": "ឈ្មោះត្រូវតែមានយ៉ាងហោចណាស់ ៣ តួអក្សរ",
+      "nameMax": "ឈ្មោះត្រូវតែមានតិចជាង ៥០ តួអក្សរ",
+      "typeRequired": "ត្រូវការជ្រើសរើសប្រភេទ",
+      "uniqueNameRequired": "ត្រូវការបញ្ចូលឈ្មោះសម្គាល់ (ឧ. wedding_serey_both)"
     }
   }
 }
