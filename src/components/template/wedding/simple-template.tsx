@@ -214,7 +214,7 @@ export default function SimpleTemplate({
           </h2>
           <p
             className="leading-relaxed animate-fade-in animation-delay-500"
-            style={{ color: "#A5AE79" }}
+            style={{ color: config?.textColor }}
           >
             {currentInvitation?.invitation_message}
           </p>
@@ -271,7 +271,7 @@ export default function SimpleTemplate({
                               (timelineIndex + 1) * 150
                             }`}
                           >
-                            <div className="animate-bounce-gentle">
+                            <div className="">
                               <Image
                                 src="/template/arts/under-style1.png"
                                 alt=""
@@ -483,7 +483,7 @@ export default function SimpleTemplate({
             }
             className="bg-[#A5AE79]/30 border-0 focus-visible:ring-0 rounded-lg text-[#A5AE79] placeholder:text-[#A5AE79] w-full hover:bg-[#A5AE79]/40 focus:scale-105 transition-all duration-300"
           />
-          <div className="text-[10px] text-center w-[200px] h-auto animate-bounce-gentle">
+          <div className="text-[10px] text-center w-[200px] h-auto">
             <button
               type="submit"
               className="text-[12px] text-center w-[200px] h-auto inline-block px-3 py-2 hover:scale-110 transform transition-all duration-300 active:scale-95"
