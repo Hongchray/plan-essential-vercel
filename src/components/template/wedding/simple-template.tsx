@@ -2,6 +2,20 @@ import { useState } from "react";
 import { Event } from "@/interfaces/event";
 import Link from "next/link";
 import Image from "next/image";
+import z from "zod";
+import { useForm } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { Input } from "@/components/ui/input";
+import { Textarea } from "@/components/ui/textarea";
+import {
+  Select,
+  SelectContent,
+  SelectGroup,
+  SelectItem,
+  SelectLabel,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 export default function SimpleTemplate({
   config,
   data,
@@ -21,7 +35,25 @@ export default function SimpleTemplate({
   const toggleLanguage = () => {
     setCurrentLanguage((prev) => (prev === "kh" ? "en" : "kh"));
   };
+  const onSubmit = async (data: FormData) => {};
+  const formSchema = z.object({
+    name: z.string().min(1, "ត្រូវការឈ្មោះ"),
+    message: z.string().min(1, "ត្រូវការសារជូនពរ"),
+    number_guest: z.number().min(1, "ចំនួនភ្ញៀវ"),
+    status: z.string().min(1, "ប្រាប់ពីការចូលរួម"),
+  });
 
+  type FormData = z.infer<typeof formSchema>;
+
+  const form = useForm<FormData>({
+    resolver: zodResolver(formSchema),
+    defaultValues: {
+      name: "",
+      message: "",
+      number_guest: 1,
+      status: "confirmed",
+    },
+  });
   return (
     <div className="relative">
       {/* Language Switch Button - Fixed position */}
@@ -74,18 +106,18 @@ export default function SimpleTemplate({
                 style={{
                   color: config?.primaryColor,
                   fontFamily: "Great Vibes, Moul, sans-serif",
-                  textShadow: "8px 8px 5px rgba(0,0,0,0.8)",
+                  textShadow: "2px 2px 5px rgba(0,0,0,0.8)",
                 }}
               >
                 {currentInvitation?.main_title}
               </h1>
-              <div className="flex items-center justify-center gap-2 pt-6">
+              <div className="flex items-center justify-center gap-2 pt-9">
                 <div
-                  className="text-2xl font-semibold drop-shadow-lg"
+                  className="text-xl font-semibold drop-shadow-lg"
                   style={{
                     color: config?.primaryColor,
                     textShadow: "2px 2px 4px rgba(0,0,0,0.5)",
-                    fontFamily: "Great Vibes, Kantumruy Pro, sans-serif",
+                    fontFamily: "Great Vibes, Moul, sans-serif",
                   }}
                 >
                   {data.groom}
@@ -107,11 +139,11 @@ export default function SimpleTemplate({
                   </span>
                 </div>
                 <div
-                  className="text-2xl font-semibold drop-shadow-lg"
+                  className="text-xl font-semibold drop-shadow-lg"
                   style={{
                     color: config?.primaryColor,
                     textShadow: "2px 2px 4px rgba(0,0,0,0.5)",
-                    fontFamily: "Great Vibes, Kantumruy Pro, sans-serif",
+                    fontFamily: "Great Vibes, Moul, sans-serif",
                   }}
                 >
                   {data.bride}
@@ -169,17 +201,14 @@ export default function SimpleTemplate({
         </div>
 
         {/* Invitation Message Card */}
-        <div className="bg-white p-6 text-center">
+        <div className="p-6 text-center">
           <h2
             className="text-lg font-semibold mb-4"
-            style={{ color: config?.textColor }}
+            style={{ color: config?.textColor, fontFamily: "moul" }}
           >
             {currentInvitation?.invitation_title}
           </h2>
-          <p
-            className="text-sm leading-relaxed"
-            style={{ color: config?.textColor }}
-          >
+          <p className="leading-relaxed" style={{ color: "#A5AE79" }}>
             {currentInvitation?.invitation_message}
           </p>
         </div>
@@ -207,7 +236,7 @@ export default function SimpleTemplate({
             <div className="text-center mb-4">
               <p
                 className="text-[10px]"
-                style={{ color: config?.textColor, fontFamily: "moul" }}
+                style={{ color: "#A5AE79", fontFamily: "moul" }}
               >
                 កម្មវិធីថ្ងៃទី ១​ : ថ្ងៃអាទិត្យ ទី២១ ខែកញ្ញា ឆ្នាំ២០២៥
               </p>
@@ -215,50 +244,34 @@ export default function SimpleTemplate({
 
             <div className="space-y-3 text-sm">
               <div className="flex justify-between text-[10px] text-left">
-                <span
-                  style={{ color: config?.textColor, fontFamily: "moulpali" }}
-                >
+                <span style={{ color: "#A5AE79", fontFamily: "moulpali" }}>
                   វេលាម៉ោង ១ៈ០០ រសៀល
                 </span>
-                <span
-                  style={{ color: config?.textColor, fontFamily: "moulpali" }}
-                >
+                <span style={{ color: "#A5AE79", fontFamily: "moulpali" }}>
                   សែនក្រុងពិលី
                 </span>
               </div>
               <div className="flex justify-between text-[10px]">
-                <span
-                  style={{ color: config?.textColor, fontFamily: "moulpali" }}
-                >
+                <span style={{ color: "#A5AE79", fontFamily: "moulpali" }}>
                   វេលាម៉ោង ២ៈ០០ រសៀល
                 </span>
-                <span
-                  style={{ color: config?.textColor, fontFamily: "moulpali" }}
-                >
+                <span style={{ color: "#A5AE79", fontFamily: "moulpali" }}>
                   ពិធីសូត្រមន្តចម្រើនព្រះបរិត្ត
                 </span>
               </div>
               <div className="flex justify-between text-[10px]">
-                <span
-                  style={{ color: config?.textColor, fontFamily: "moulpali" }}
-                >
+                <span style={{ color: "#A5AE79", fontFamily: "moulpali" }}>
                   វេលាម៉ោង ២ៈ០០ រសៀល
                 </span>
-                <span
-                  style={{ color: config?.textColor, fontFamily: "moulpali" }}
-                >
+                <span style={{ color: "#A5AE79", fontFamily: "moulpali" }}>
                   ពិធីជាវខាន់ស្លា
                 </span>
               </div>
               <div className="flex justify-between text-[10px]">
-                <span
-                  style={{ color: config?.textColor, fontFamily: "moulpali" }}
-                >
+                <span style={{ color: "#A5AE79", fontFamily: "moulpali" }}>
                   វេលាម៉ោង ៥:០០ រសៀល
                 </span>
-                <span
-                  style={{ color: config?.textColor, fontFamily: "moulpali" }}
-                >
+                <span style={{ color: "#A5AE79", fontFamily: "moulpali" }}>
                   ពិធីចាក់ទឹកតែ
                 </span>
               </div>
@@ -267,7 +280,7 @@ export default function SimpleTemplate({
             <div className="text-center my-4">
               <p
                 className="text-[10px]"
-                style={{ color: config?.textColor, fontFamily: "moul" }}
+                style={{ color: "#A5AE79", fontFamily: "moul" }}
               >
                 កម្មវិធីថ្ងៃទី ១​ : ថ្ងៃអាទិត្យ ទី២១ ខែកញ្ញា ឆ្នាំ២០២៥
               </p>
@@ -275,50 +288,34 @@ export default function SimpleTemplate({
 
             <div className="space-y-3 text-sm">
               <div className="flex justify-between text-[10px] text-left">
-                <span
-                  style={{ color: config?.textColor, fontFamily: "moulpali" }}
-                >
+                <span style={{ color: "#A5AE79", fontFamily: "moulpali" }}>
                   វេលាម៉ោង ១ៈ០០ រសៀល
                 </span>
-                <span
-                  style={{ color: config?.textColor, fontFamily: "moulpali" }}
-                >
+                <span style={{ color: "#A5AE79", fontFamily: "moulpali" }}>
                   សែនក្រុងពិលី
                 </span>
               </div>
               <div className="flex justify-between text-[10px]">
-                <span
-                  style={{ color: config?.textColor, fontFamily: "moulpali" }}
-                >
+                <span style={{ color: "#A5AE79", fontFamily: "moulpali" }}>
                   វេលាម៉ោង ២ៈ០០ រសៀល
                 </span>
-                <span
-                  style={{ color: config?.textColor, fontFamily: "moulpali" }}
-                >
+                <span style={{ color: "#A5AE79", fontFamily: "moulpali" }}>
                   ពិធីសូត្រមន្តចម្រើនព្រះបរិត្ត
                 </span>
               </div>
               <div className="flex justify-between text-[10px]">
-                <span
-                  style={{ color: config?.textColor, fontFamily: "moulpali" }}
-                >
+                <span style={{ color: "#A5AE79", fontFamily: "moulpali" }}>
                   វេលាម៉ោង ២ៈ០០ រសៀល
                 </span>
-                <span
-                  style={{ color: config?.textColor, fontFamily: "moulpali" }}
-                >
+                <span style={{ color: "#A5AE79", fontFamily: "moulpali" }}>
                   ពិធីជាវខាន់ស្លា
                 </span>
               </div>
               <div className="flex justify-between text-[10px]">
-                <span
-                  style={{ color: config?.textColor, fontFamily: "moulpali" }}
-                >
+                <span style={{ color: "#A5AE79", fontFamily: "moulpali" }}>
                   វេលាម៉ោង ៥:០០ រសៀល
                 </span>
-                <span
-                  style={{ color: config?.textColor, fontFamily: "moulpali" }}
-                >
+                <span style={{ color: "#A5AE79", fontFamily: "moulpali" }}>
                   ពិធីចាក់ទឹកតែ
                 </span>
               </div>
@@ -409,6 +406,87 @@ export default function SimpleTemplate({
         >
           សារជូនពរ / GREETING MESSAGE
         </h2>
+
+        {/* Form Send */}
+        <form
+          onSubmit={form.handleSubmit(onSubmit)}
+          className="space-y-3 sm:space-y-4 py-5 w-full px-5 flex flex-col items-center"
+        >
+          <Input
+            {...form.register("name")}
+            placeholder="ឈ្មោះ"
+            className="bg-[#A5AE79]/30 border-0 focus-visible:ring-0 rounded-lg text-[#A5AE79] placeholder:text-[#A5AE79] w-full"
+          ></Input>
+          <Select {...form.register("status")}>
+            <SelectTrigger className="bg-[#A5AE79]/30 border-0 focus-visible:ring-0 rounded-lg text-[#A5AE79] placeholder:text-[#A5AE79] w-full">
+              <SelectValue />
+            </SelectTrigger>
+            <SelectContent>
+              <SelectItem value="confirmed">ចូលរួម</SelectItem>
+              <SelectItem value="rejected">បដិសេធ</SelectItem>
+            </SelectContent>
+          </Select>
+          <Input
+            {...form.register("number_guest")}
+            placeholder="Number guests"
+            type="number"
+            className="bg-[#A5AE79]/30 border-0 focus-visible:ring-0 rounded-lg text-[#A5AE79] placeholder:text-[#A5AE79] w-full"
+          ></Input>
+          <Textarea
+            {...form.register("message")}
+            placeholder="Message"
+            className="bg-[#A5AE79]/30 border-0 focus-visible:ring-0 rounded-lg text-[#A5AE79] placeholder:text-[#A5AE79] w-full"
+          />
+          <div className="text-[10px] text-center w-[200px] h-auto">
+            <button
+              type="submit"
+              className="text-[12px] text-center w-[200px] h-auto inline-block px-3 py-2"
+              style={{
+                color: "white",
+                fontFamily: "moul",
+                backgroundImage: "url('/template/arts/button-kbach.png')",
+                backgroundSize: "cover",
+                backgroundPosition: "center",
+                display: "inline-block",
+                borderRadius: "8px",
+              }}
+            >
+              Send
+            </button>
+          </div>
+        </form>
+        <div className="p-5 w-full flex flex-col gap-2">
+          <div className="bg-[#A5AE79]/30 p-5 rounded-lg">
+            <div className="text-[#A5AE79]">Mafixnsa</div>
+            <div className="border-b border-[#A5AE79]"></div>
+            <div className="text-center text-[#A5AE79] pt-5">
+              “Congratulations to you Sophat and Vouch 🤵‍♂️👰💍 May your journey
+              together be filled with endless love, laughter, and happiness.
+              Wishing you both a lifetime of shared dreams, cherished moments,
+              and unwavering support for one another. Here’s to a beautiful
+              beginning and a future filled with joy!”
+            </div>
+            <div className="text-center text-[#A5AE79] pt-5 text-xs">
+              18-09-2025 | 01:03PM
+            </div>
+          </div>
+          <div className="bg-[#A5AE79]/30 p-5 rounded-lg">
+            <div className="text-[#A5AE79]">បរមី</div>
+            <div className="border-b border-[#A5AE79]"></div>
+            <div className="text-center text-[#A5AE79] pt-5">“អបអរសាទរ”</div>
+            <div className="text-center text-[#A5AE79] pt-5 text-xs">
+              18-09-2025 | 01:03PM
+            </div>
+          </div>
+        </div>
+        <div className="py-2">
+          <Image
+            src="/template/arts/underbar kbach 1.png"
+            alt=""
+            width={200}
+            height={150}
+          ></Image>
+        </div>
       </div>
     </div>
   );

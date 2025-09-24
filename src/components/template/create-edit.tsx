@@ -14,6 +14,7 @@ import { useRouter } from "next/navigation";
 import { useLoading } from "@/hooks/LoadingContext";
 import ImageUpload from "../composable/upload/upload-image";
 import { useTranslation } from "react-i18next";
+import { X } from "lucide-react";
 
 const formSchema = z.object({
   name: z
@@ -191,6 +192,7 @@ export function CreateEditForm({ id }: { id?: string }) {
             type="button"
             onClick={() => router.push("/template")}
           >
+            <X />
             Cancel
           </Button>
           <SubmitButton loading={loading} entityId={id} />
