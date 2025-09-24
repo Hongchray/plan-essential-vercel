@@ -209,6 +209,7 @@
   },
 
   "EventPage": {
+    "title": "Event Management",
     "welcomeTitle": "Welcome! We're glad to have you here.",
     "welcomeSubtitle": "Explore your events below or create a new one to get started.",
     "view": "View",
@@ -627,6 +628,7 @@
     "loading_config": "Loading editor configuration..."
   },
   "user": {
+    "title": "User Management",
     "table": {
       "select_all": "Select All",
       "logo": "Logo",
@@ -647,6 +649,7 @@
   },
 
   "template": {
+    "title": "Template Management",
     "createTitle": "Create Template",
     "editTitle": "Edit Template",
     "coverImage": "Cover Image",

@@ -89,9 +89,7 @@ export default async function EventPage({
       {user.role === "admin" ? (
         <EventTableClient data={data} meta={meta} />
       ) : (
-        <Suspense fallback={<Loading variant="circle" size="lg" />}>
-          <EventUserView data={data} />
-        </Suspense>
+        <EventUserView data={data} />
       )}
     </div>
   );

@@ -13,10 +13,14 @@ interface UpdatePlanBody {
 // PUT /api/admin/user/[id]/plan/[planId] - Update user plan limits
 export async function PUT(
   request: NextRequest,
-  context: { params: { id: string; planId: string } } // ✅ params are plain object
+  context: any // Let Next.js infer types
 ) {
   try {
-    const { id: userId, planId: userPlanId } = context.params;
+    const { id: userId, planId: userPlanId } = context.params as {
+      id: string;
+      planId: string;
+    };
+
     const body: UpdatePlanBody = await request.json();
     const { limit_guests, limit_template, limit_export_excel } = body;
 
@@ -58,12 +62,12 @@ export async function PUT(
 }
 
 // DELETE /api/admin/user/[id]/plan/[planId] - Remove plan from user
-export async function DELETE(
-  request: NextRequest,
-  context: { params: { id: string; planId: string } } // ✅ params are plain object
-) {
+export async function DELETE(request: NextRequest, context: any) {
   try {
-    const { id: userId, planId: userPlanId } = context.params;
+    const { id: userId, planId: userPlanId } = context.params as {
+      id: string;
+      planId: string;
+    };
 
     const existingUserPlan = await prisma.userPlan.findUnique({
       where: { id: userPlanId },

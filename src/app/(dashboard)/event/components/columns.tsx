@@ -12,6 +12,8 @@ import { useRouter } from "next/navigation";
 import { formatDate } from "@/utils/date";
 import { useTranslation } from "react-i18next";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import { getAvatarColor, getInitials } from "@/utils/avatar";
+import { Badge } from "@/components/ui/badge";
 
 const ActionsCell = ({ row }: { row: any }) => {
   const router = useRouter();
@@ -62,6 +64,60 @@ const ActionsCell = ({ row }: { row: any }) => {
 };
 
 export default ActionsCell;
+
+export const MobileEventCard = ({
+  event,
+  onSelect,
+  isSelected,
+}: {
+  event: Event;
+  onSelect: (selected: boolean) => void;
+  isSelected: boolean;
+}) => {
+  const { t } = useTranslation("common");
+  const name: string = event.name ?? "";
+  const { bg, text } = getAvatarColor(name);
+
+  return (
+    <div className="bg-white border-t border-gray-200 p-2">
+      <div className="flex items-center gap-3">
+        <Avatar className="h-6 w-6 flex-shrink-0">
+          <AvatarImage src="/placeholder.svg" />
+          <AvatarFallback className={`${bg} ${text} font-bold text-[12px]`}>
+            {getInitials(name)}
+          </AvatarFallback>
+        </Avatar>
+
+        <div className="flex-1 min-w-0">
+          <div className="mb-2">
+            <h3 className="text-[12px] font-medium text-gray-900 truncate">
+              {name}
+            </h3>
+            {event.location && (
+              <p className="text-[10px] text-gray-500 truncate">
+                {event.location}
+              </p>
+            )}
+          </div>
+
+          <div className="flex gap-2 items-center">
+            {event.startTime && (
+              <>
+                <Badge variant="default" className="text-[10px]">
+                  {formatDate(event.startTime)}
+                </Badge>
+              </>
+            )}
+          </div>
+        </div>
+
+        <div className="flex-shrink-0">
+          <ActionsCell row={{ original: event }} />
+        </div>
+      </div>
+    </div>
+  );
+};
 
 export const useEventColumns = (): ColumnDef<Event>[] => {
   // We no longer call t() here for the headers

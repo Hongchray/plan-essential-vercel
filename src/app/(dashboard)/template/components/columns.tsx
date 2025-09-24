@@ -18,6 +18,8 @@ import { EditIcon, Trash2Icon, EyeIcon } from "lucide-react";
 import { ConfirmDialog } from "@/components/composable/dialog/confirm-dialog";
 import { useTranslation } from "react-i18next";
 import { formatDate } from "@/utils/date";
+import { getAvatarColor, getInitials } from "@/utils/avatar";
+
 const ActionsCell = ({ row }: { row: any }) => {
   const router = useRouter();
   const { t } = useTranslation("common");
@@ -64,6 +66,51 @@ const ActionsCell = ({ row }: { row: any }) => {
     </div>
   );
 };
+
+export const MobileTemplateCard = ({
+  template,
+  onSelect,
+  isSelected,
+}: {
+  template: Template;
+  onSelect: (selected: boolean) => void;
+  isSelected: boolean;
+}) => {
+  const { t } = useTranslation("common");
+  const name: string = template.name ?? "";
+  const { bg, text } = getAvatarColor(name);
+
+  return (
+    <div className="bg-white border-t border-gray-200 p-2">
+      <div className="flex items-center gap-3">
+        <Avatar className="h-6 w-6 flex-shrink-0">
+          <AvatarImage src="/placeholder.svg" />
+          <AvatarFallback className={`${bg} ${text} font-bold text-[12px]`}>
+            {getInitials(name)}
+          </AvatarFallback>
+        </Avatar>
+
+        <div className="flex-1 min-w-0">
+          <div className="mb-2">
+            <h3 className="text-[12px] font-medium text-gray-900 truncate">
+              {name}
+            </h3>
+            {template.status && (
+              <p className="text-[10px] text-gray-500 truncate">
+                {template.status}
+              </p>
+            )}
+          </div>
+        </div>
+
+        <div className="flex-shrink-0">
+          <ActionsCell row={{ original: template }} />
+        </div>
+      </div>
+    </div>
+  );
+};
+
 export const useTemplateColumns = (): ColumnDef<Template>[] => {
   // We no longer call t() here for the headers
   return [

@@ -178,8 +178,6 @@ export function DataTableToolbar<TData>({
             onConfirm={() => handleDeleteSelected()}
           />
         </div>
-
-        <DataTableViewOptions table={table} />
       </div>
     </div>
   );

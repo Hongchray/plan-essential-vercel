@@ -120,7 +120,7 @@ export const Loading = ({
     return (
       <div
         className={cn(
-          "fixed inset-0 z-50 flex items-center justify-center bg-white/50", // full screen overlay
+          "fixed inset-0 z-50 flex items-center justify-center pointer-events-none",
           className
         )}
       >
@@ -168,7 +168,10 @@ export const Loading = ({
           />
         </div>
         {message && (
-          <span className="mt-2 text-sm font-medium text-muted-foreground text-center">
+          <span
+            className="mt-2 text-sm font-medium text-muted-foreground text-center"
+            suppressHydrationWarning={true}
+          >
             {message}
           </span>
         )}

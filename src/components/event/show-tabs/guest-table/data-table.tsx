@@ -175,7 +175,7 @@ export function DataTable<TData, TValue>({
             <div className="flex items-center justify-center py-8">
               <Loading
                 variant="table"
-                size="sm"
+                size="lg"
                 message={t("component.table.loadingMessage")}
               />
             </div>
@@ -225,7 +225,7 @@ export function DataTable<TData, TValue>({
                   >
                     <Loading
                       variant="table"
-                      size="md"
+                      size="lg"
                       message={t("component.table.loadingMessage")}
                     />
                   </TableCell>

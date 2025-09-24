@@ -1,25 +1,18 @@
 import { NextRequest, NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
 
-export async function GET(
-  request: NextRequest,
-  context: { params: { id: string } }
-) {
-  const { id } = context.params;
+export async function GET(request: NextRequest, context: any) {
+  // cast params to correct type
+  const { id } = context.params as { id: string };
+
   try {
     const user = await prisma.user.findUnique({
-      where: {
-        id: id,
-      },
+      where: { id },
       include: {
-        events: true, // Include existing events relationship
+        events: true, // Include related events
         userPlan: {
-          include: {
-            plan: true,
-          },
-          orderBy: {
-            createdAt: "desc",
-          },
+          include: { plan: true },
+          orderBy: { createdAt: "desc" },
         },
       },
     });
@@ -31,10 +24,7 @@ export async function GET(
       );
     }
 
-    return NextResponse.json({
-      success: true,
-      data: user,
-    });
+    return NextResponse.json({ success: true, data: user });
   } catch (error) {
     console.error("Error fetching user:", error);
     return NextResponse.json(

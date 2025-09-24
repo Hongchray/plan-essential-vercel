@@ -4,12 +4,9 @@ import { PrismaClient } from "@prisma/client";
 const prisma = new PrismaClient();
 
 // GET /api/admin/user/[id]/plan
-export async function GET(
-  request: NextRequest,
-  context: { params: { userId: string } } // <-- params is a plain object
-) {
+export async function GET(request: NextRequest, context: any) {
   try {
-    const { userId } = context.params;
+    const { userId } = context.params as { userId: string }; // cast here
 
     const userPlans = await prisma.userPlan.findMany({
       where: { userId },
@@ -28,12 +25,9 @@ export async function GET(
 }
 
 // POST /api/admin/user/[id]/plan
-export async function POST(
-  request: NextRequest,
-  context: { params: { userId: string } } // <-- match GET
-) {
+export async function POST(request: NextRequest, context: any) {
   try {
-    const { userId } = context.params;
+    const { userId } = context.params as { userId: string }; // cast here
     const body = await request.json();
     const { planId, limit_guests, limit_template, limit_export_excel } = body;
 
