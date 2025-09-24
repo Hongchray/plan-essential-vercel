@@ -2,7 +2,7 @@
 import { useEffect, useMemo, useState } from "react";
 import { toast } from "sonner";
 import dynamic from "next/dynamic";
-import { Event } from "@/interfaces/event"
+import { Event } from "@/interfaces/event";
 // Dynamic templates
 const DynamicComponents = {
   WeddingSimpleTemplate: dynamic(() => import("./wedding/simple-template"), {
@@ -56,7 +56,7 @@ export default function Preview({ id }: { id: string }) {
     if (!id) return;
     getPreviewTemplate(id).then((data) => data && setTemplate(data));
     getEvent().then((data) => data && setEvent(data));
-  }, [id]); 
+  }, [id]);
 
   // Sample data
   if (!template) {
@@ -72,12 +72,9 @@ export default function Preview({ id }: { id: string }) {
     DynamicComponents[template.unique_name as TemplateName];
 
   return (
-    <div className=" min-h-screen">
+    <div className=" min-h-screen bg-gradient-to-br from-red-50 to-yellow-50">
       {ComponentToRender && (
-        <ComponentToRender
-          config={template.defaultConfig}
-          data={event}
-        />
+        <ComponentToRender config={template.defaultConfig} data={event} />
       )}
     </div>
   );

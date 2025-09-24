@@ -2,12 +2,16 @@ import ImageUpload from "@/components/composable/upload/upload-image";
 import React, { useState } from "react";
 import { TemplateEditorProps } from "@/interfaces/comon/template-editor-prop";
 import { useTranslation } from "react-i18next";
+import { Input } from "@/components/ui/input";
+import { Textarea } from "@/components/ui/textarea";
+
 export default function SimpleTemplateEditor({
   config,
   setConfig,
 }: TemplateEditorProps) {
   const [currentLanguage, setCurrentLanguage] = useState<"kh" | "en">("kh");
   const { t } = useTranslation("common");
+
   // Helper function to update top-level config properties
   const updateConfig = (key: string, value: string) => {
     setConfig((prev: any) => ({
@@ -29,18 +33,12 @@ export default function SimpleTemplateEditor({
     }));
   };
 
-  // Helper function to update ceremony times for specific language
-  const updateCeremonyTime = (timeField: string, value: string) => {
-    const invitationKey =
-      currentLanguage === "kh" ? "invitation_kh" : "invitation_en";
+  const updatePhotoGallery = (photoField: string, value: string) => {
     setConfig((prev: any) => ({
       ...prev,
-      [invitationKey]: {
-        ...prev[invitationKey],
-        ceremony_times: {
-          ...prev[invitationKey]?.ceremony_times,
-          [timeField]: value,
-        },
+      photo_gallary: {
+        ...prev.photo_gallary,
+        [photoField]: value,
       },
     }));
   };
@@ -125,18 +123,18 @@ export default function SimpleTemplateEditor({
               {t("template_editor.primary_color")}
             </label>
             <div className="flex items-center gap-2">
-              <input
+              <Input
                 type="color"
-                value={config.primaryColor || "#000000"}
+                value={config.primaryColor || "#ffffff"}
                 onChange={(e) => updateConfig("primaryColor", e.target.value)}
                 className="w-12 h-8 rounded border border-gray-300 cursor-pointer"
               />
-              <input
+              <Input
                 type="text"
-                value={config.primaryColor || "#000000"}
+                value={config.primaryColor || "#ffffff"}
                 onChange={(e) => updateConfig("primaryColor", e.target.value)}
                 className="flex-1 px-2 py-1 border border-gray-300 rounded text-sm"
-                placeholder="#000000"
+                placeholder="#ffffff"
               />
             </div>
           </div>
@@ -145,18 +143,18 @@ export default function SimpleTemplateEditor({
               {t("template_editor.text_color")}
             </label>
             <div className="flex items-center gap-2">
-              <input
+              <Input
                 type="color"
-                value={config.textColor || "#000000"}
+                value={config.textColor || "#eea62b"}
                 onChange={(e) => updateConfig("textColor", e.target.value)}
                 className="w-12 h-8 rounded border border-gray-300 cursor-pointer"
               />
-              <input
+              <Input
                 type="text"
-                value={config.textColor || "#000000"}
+                value={config.textColor || "#eea62b"}
                 onChange={(e) => updateConfig("textColor", e.target.value)}
                 className="flex-1 px-2 py-1 border border-gray-300 rounded text-sm"
-                placeholder="#000000"
+                placeholder="#eea62b"
               />
             </div>
           </div>
@@ -174,7 +172,7 @@ export default function SimpleTemplateEditor({
             <label className="block text-sm font-medium text-gray-700 mb-1">
               {t("template_editor.main_title")}
             </label>
-            <input
+            <Input
               type="text"
               value={currentInvitation?.main_title || ""}
               onChange={(e) => updateInvitation("main_title", e.target.value)}
@@ -186,37 +184,11 @@ export default function SimpleTemplateEditor({
               }
             />
           </div>
-          <div className="grid grid-cols-2 gap-3">
-            <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">
-                {t("template_editor.groom_name")}
-              </label>
-              <input
-                type="text"
-                value={currentInvitation?.groom_name || ""}
-                onChange={(e) => updateInvitation("groom_name", e.target.value)}
-                className="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                placeholder="Groom's name"
-              />
-            </div>
-            <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">
-                {t("template_editor.bride_name")}
-              </label>
-              <input
-                type="text"
-                value={currentInvitation?.bride_name || ""}
-                onChange={(e) => updateInvitation("bride_name", e.target.value)}
-                className="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                placeholder="Bride's name"
-              />
-            </div>
-          </div>
           <div>
             <label className="block text-sm font-medium text-gray-700 mb-1">
               {t("template_editor.subtitle")}
             </label>
-            <input
+            <Input
               type="text"
               value={currentInvitation?.subtitle || ""}
               onChange={(e) => updateInvitation("subtitle", e.target.value)}
@@ -232,12 +204,38 @@ export default function SimpleTemplateEditor({
             <label className="block text-sm font-medium text-gray-700 mb-1">
               {t("template_editor.date_time")}
             </label>
-            <input
+            <Input
               type="text"
               value={currentInvitation?.date_time || ""}
               onChange={(e) => updateInvitation("date_time", e.target.value)}
               className="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-transparent"
               placeholder="Wedding date and time"
+            />
+          </div>
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-1">
+              {t("template_editor.location")}
+            </label>
+            <Input
+              type="text"
+              value={currentInvitation?.location || ""}
+              onChange={(e) => updateInvitation("location", e.target.value)}
+              className="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+              placeholder="Wedding venue location"
+            />
+          </div>
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-1">
+              {t("template_editor.ceremony_date")}
+            </label>
+            <Input
+              type="text"
+              value={currentInvitation?.ceremony_date || ""}
+              onChange={(e) =>
+                updateInvitation("ceremony_date", e.target.value)
+              }
+              className="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+              placeholder={t("template_editor.ceremony_date")}
             />
           </div>
           <div>
@@ -267,7 +265,7 @@ export default function SimpleTemplateEditor({
             <label className="block text-sm font-medium text-gray-700 mb-1">
               {t("template_editor.message_title")}
             </label>
-            <input
+            <Input
               type="text"
               value={currentInvitation?.invitation_title || ""}
               onChange={(e) =>
@@ -281,7 +279,7 @@ export default function SimpleTemplateEditor({
             <label className="block text-sm font-medium text-gray-700 mb-1">
               {t("template_editor.invitation_message_content")}
             </label>
-            <textarea
+            <Textarea
               value={currentInvitation?.invitation_message || ""}
               onChange={(e) =>
                 updateInvitation("invitation_message", e.target.value)
@@ -305,7 +303,7 @@ export default function SimpleTemplateEditor({
             <label className="block text-sm font-medium text-gray-700 mb-1">
               {t("template_editor.details_title")}
             </label>
-            <input
+            <Input
               type="text"
               value={currentInvitation?.details_title || ""}
               onChange={(e) =>
@@ -317,146 +315,30 @@ export default function SimpleTemplateEditor({
           </div>
           <div>
             <label className="block text-sm font-medium text-gray-700 mb-1">
-              {t("template_editor.ceremony_date")}
+              Event Location
             </label>
-            <input
-              type="text"
-              value={currentInvitation?.ceremony_date || ""}
-              onChange={(e) =>
-                updateInvitation("ceremony_date", e.target.value)
-              }
-              className="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-              placeholder={t("template_editor.ceremony_date")}
-            />
-          </div>
-
-          {/* Ceremony Times */}
-          <div className="space-y-2">
-            <h5 className="text-sm font-medium text-gray-700">
-              {t("template_editor.ceremony_schedule")}{" "}
-            </h5>
-            <div className="grid grid-cols-2 gap-2">
-              <div>
-                <label className="block text-xs text-gray-600 mb-1">
-                  {t("template_editor.morning_time")}
-                </label>
-
-                <input
-                  type="text"
-                  value={currentInvitation?.ceremony_times?.morning || ""}
-                  onChange={(e) =>
-                    updateCeremonyTime("morning", e.target.value)
-                  }
-                  className="w-full px-2 py-1 border border-gray-300 rounded text-sm"
-                  placeholder={
-                    currentLanguage === "kh" ? "ម៉ោង ៦:០០ ព្រឹក" : "09:00 AM"
-                  }
-                />
-              </div>
-              <div>
-                <label className="block text-xs text-gray-600 mb-1">
-                  {t("template_editor.morning_desc")}
-                </label>
-
-                <input
-                  type="text"
-                  value={currentInvitation?.ceremony_times?.morning_desc || ""}
-                  onChange={(e) =>
-                    updateCeremonyTime("morning_desc", e.target.value)
-                  }
-                  className="w-full px-2 py-1 border border-gray-300 rounded text-sm"
-                  placeholder="Morning ceremony"
-                />
-              </div>
-              <div>
-                <label className="block text-xs text-gray-600 mb-1">
-                  {t("template_editor.afternoon_time")}
-                </label>
-
-                <input
-                  type="text"
-                  value={currentInvitation?.ceremony_times?.afternoon || ""}
-                  onChange={(e) =>
-                    updateCeremonyTime("afternoon", e.target.value)
-                  }
-                  className="w-full px-2 py-1 border border-gray-300 rounded text-sm"
-                  placeholder={
-                    currentLanguage === "kh" ? "ម៉ោង ៤:០០ រសៀល" : "02:00 PM"
-                  }
-                />
-              </div>
-              <div>
-                <label className="block text-xs text-gray-600 mb-1">
-                  {t("template_editor.afternoon_desc")}
-                </label>
-
-                <input
-                  type="text"
-                  value={
-                    currentInvitation?.ceremony_times?.afternoon_desc || ""
-                  }
-                  onChange={(e) =>
-                    updateCeremonyTime("afternoon_desc", e.target.value)
-                  }
-                  className="w-full px-2 py-1 border border-gray-300 rounded text-sm"
-                  placeholder="Afternoon ceremony"
-                />
-              </div>
-              <div>
-                <label className="block text-xs text-gray-600 mb-1">
-                  {t("template_editor.evening_time")}
-                </label>
-
-                <input
-                  type="text"
-                  value={currentInvitation?.ceremony_times?.evening || ""}
-                  onChange={(e) =>
-                    updateCeremonyTime("evening", e.target.value)
-                  }
-                  className="w-full px-2 py-1 border border-gray-300 rounded text-sm"
-                  placeholder={
-                    currentLanguage === "kh" ? "ម៉ោង ៧:០០ ល្ងាច" : "07:00 PM"
-                  }
-                />
-              </div>
-              <div>
-                <label className="block text-xs text-gray-600 mb-1">
-                  <label className="block text-xs text-gray-600 mb-1">
-                    {t("template_editor.evening_desc")}
-                  </label>
-                </label>
-                <input
-                  type="text"
-                  value={currentInvitation?.ceremony_times?.evening_desc || ""}
-                  onChange={(e) =>
-                    updateCeremonyTime("evening_desc", e.target.value)
-                  }
-                  className="w-full px-2 py-1 border border-gray-300 rounded text-sm"
-                  placeholder="Evening ceremony"
-                />
-              </div>
-            </div>
-          </div>
-
-          <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">
-              <label className="block text-sm font-medium text-gray-700 mb-1">
-                {t("template_editor.location")}
-              </label>
-            </label>
-            <input
-              type="text"
-              value={currentInvitation?.location || ""}
-              onChange={(e) => updateInvitation("location", e.target.value)}
-              className="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-              placeholder="Wedding venue location"
+            <ImageUpload
+              label="Event Map"
+              folder="/event/template/assets"
+              onChange={(e) => updateConfig("event_location", e.target.value)}
+              value={config?.event_location || ""}
             />
           </div>
           <div>
             <label className="block text-sm font-medium text-gray-700 mb-1">
-              <label className="block text-sm font-medium text-gray-700 mb-1">
-                {t("template_editor.details_background_image")}
-              </label>
+              Google Maps URL
+            </label>
+            <Input
+              type="url"
+              value={config?.map_url || ""}
+              onChange={(e) => updateConfig("map_url", e.target.value)}
+              className="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+              placeholder="https://maps.app.goo.gl/..."
+            />
+          </div>
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-1">
+              {t("template_editor.details_background_image")}
             </label>
             <ImageUpload
               label="Photo"
@@ -465,6 +347,60 @@ export default function SimpleTemplateEditor({
                 updateInvitation("details_background", e.target.value)
               }
               value={currentInvitation?.details_background || ""}
+            />
+          </div>
+        </div>
+      </div>
+
+      {/* Photo Gallery */}
+      <div className="space-y-3 p-4 bg-white rounded-lg shadow-sm">
+        <h4 className="font-semibold text-base flex items-center">
+          <span className="w-2 h-2 bg-pink-500 rounded-full mr-2"></span>
+          Photo Gallery ({langLabel})
+        </h4>
+        <div className="grid grid-cols-2 gap-3">
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-1">
+              Photo 1
+            </label>
+            <ImageUpload
+              label="Photo 1"
+              folder="/event/template/assets"
+              onChange={(e) => updatePhotoGallery("photo1", e.target.value)}
+              value={config?.photo_gallary?.photo1 || ""}
+            />
+          </div>
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-1">
+              Photo 2
+            </label>
+            <ImageUpload
+              label="Photo 2"
+              folder="/event/template/assets"
+              onChange={(e) => updatePhotoGallery("photo2", e.target.value)}
+              value={config?.photo_gallary?.photo2 || ""}
+            />
+          </div>
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-1">
+              Photo 3
+            </label>
+            <ImageUpload
+              label="Photo 3"
+              folder="/event/template/assets"
+              onChange={(e) => updatePhotoGallery("photo3", e.target.value)}
+              value={config?.photo_gallary?.photo3 || ""}
+            />
+          </div>
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-1">
+              Photo 4
+            </label>
+            <ImageUpload
+              label="Photo 4"
+              folder="/event/template/assets"
+              onChange={(e) => updatePhotoGallery("photo4", e.target.value)}
+              value={config?.photo_gallary?.photo4 || ""}
             />
           </div>
         </div>

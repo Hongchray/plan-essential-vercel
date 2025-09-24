@@ -13,7 +13,8 @@ import { toast } from "sonner";
 import { useRouter } from "next/navigation";
 import { useLoading } from "@/hooks/LoadingContext";
 import ImageUpload from "../composable/upload/upload-image";
-import { useTranslation } from "next-i18next";
+import { useTranslation } from "react-i18next";
+import { X } from "lucide-react";
 
 export function CreateEditForm({ id }: { id?: string }) {
   const { setOverlayLoading } = useLoading();
@@ -239,7 +240,7 @@ export function CreateEditForm({ id }: { id?: string }) {
             type="button"
             onClick={() => router.push("/template")}
           >
-            {t("template.cancel")}
+            Cancel
           </Button>
           <SubmitButton loading={loading} entityId={id} />
         </div>

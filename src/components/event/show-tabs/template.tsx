@@ -10,7 +10,7 @@ import { Button } from "@/components/ui/button";
 import { toast } from "sonner";
 import dynamic from "next/dynamic";
 import { Event } from "@/interfaces/event";
-import { Maximize2, Minimize2, X } from "lucide-react";
+import { Maximize2, Minimize2, Save, X } from "lucide-react";
 import {
   Select,
   SelectContent,
@@ -106,6 +106,7 @@ export default function TabTemplate({ paramId }: { paramId: string }) {
     setIsLoading(true);
     getEvent(paramId).then((data) => {
       if (data) {
+        setEvent(data);
       }
     });
     getPreviewTemplate(paramId).then((data) => {
@@ -265,14 +266,6 @@ export default function TabTemplate({ paramId }: { paramId: string }) {
           <div className="flex items-center gap-3">
             <Button
               size="sm"
-              onClick={handleResetDefault}
-              variant="secondary"
-              disabled={isSaving}
-            >
-              {t("templates.full_screen.reset_default")}
-            </Button>
-            <Button
-              size="sm"
               onClick={handleSave}
               disabled={isSaving}
               variant="default"
@@ -283,7 +276,10 @@ export default function TabTemplate({ paramId }: { paramId: string }) {
                   {t("templates.full_screen.saving")}
                 </div>
               ) : (
-                t("templates.full_screen.save")
+                <>
+                  <Save />
+                  {t("templates.default_screen.save")}
+                </>
               )}
             </Button>
             <Button
@@ -362,10 +358,6 @@ export default function TabTemplate({ paramId }: { paramId: string }) {
             </div>
             <div className="flex items-center gap-4">
               <span>{t("templates.full_screen.press_esc")}</span>
-              <span>
-                {t("templates.full_screen.last_modified")}:{" "}
-                {new Date().toLocaleTimeString()}
-              </span>
             </div>
           </div>
         </div>
@@ -403,10 +395,6 @@ export default function TabTemplate({ paramId }: { paramId: string }) {
                 {t("templates.default_screen.editor")}
               </div>
               <div className="flex items-center gap-2">
-                <div className="animate-pulse">
-                  {Object.keys(config).length > 0 ? "●" : "○"}{" "}
-                  {t("templates.default_screen.live")}
-                </div>
                 <Button
                   size="sm"
                   onClick={toggleFullscreenEditor}
@@ -447,14 +435,6 @@ export default function TabTemplate({ paramId }: { paramId: string }) {
                 </span>
 
                 <div className="flex items-center gap-2">
-                  <Button
-                    size="sm"
-                    onClick={handleResetDefault}
-                    variant="outline"
-                    disabled={isSaving}
-                  >
-                    {t("templates.default_screen.reset_default")}
-                  </Button>
                   <Button size="sm" onClick={handleSave} disabled={isSaving}>
                     {isSaving ? (
                       <div className="flex items-center gap-2">
@@ -462,7 +442,10 @@ export default function TabTemplate({ paramId }: { paramId: string }) {
                         {t("templates.default_screen.saving")}
                       </div>
                     ) : (
-                      t("templates.default_screen.save")
+                      <>
+                        <Save />
+                        {t("templates.default_screen.save")}
+                      </>
                     )}
                   </Button>
                 </div>
@@ -493,10 +476,6 @@ export default function TabTemplate({ paramId }: { paramId: string }) {
         <div>
           {t("templates.default_screen.template")}:{" "}
           {template.template?.unique_name} | ID: {template.id}
-        </div>
-        <div>
-          {t("templates.default_screen.last_modified")}:{" "}
-          {new Date().toLocaleTimeString()}
         </div>
       </div>
     </div>
