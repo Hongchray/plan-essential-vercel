@@ -1,15 +1,14 @@
 "use client";
 
 import { Table } from "@tanstack/react-table";
-import { PlusCircle, X } from "lucide-react";
+import { Plus, X } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { DataTableViewOptions } from "./data-table-view-options";
 import Link from "next/link";
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
-import { useRef, useState } from "react";
-// import { useClientPermissions } from "@/use-cases/use-client-permission";
-import { useEffect } from "react";
+import { useRef, useState, useEffect } from "react";
+import { useTranslation } from "react-i18next";
 
 interface DataTableToolbarProps<TData> {
   table: Table<TData>;
@@ -23,45 +22,42 @@ export function DataTableToolbar<TData>({
   const router = useRouter();
   const pathname = usePathname();
   const searchParams = useSearchParams();
-  const [searchValue, setSearchValue] = useState(
-    searchParams.get("search") || ""
-  );
+  const { t, i18n } = useTranslation("common");
+
+  const [mounted, setMounted] = useState(false);
+  const [searchValue, setSearchValue] = useState("");
   const timeoutRef = useRef<NodeJS.Timeout | null>(null);
 
-  // const { hasPermission } = useClientPermissions();
+  // Mark as mounted to avoid hydration mismatch
+  useEffect(() => {
+    setMounted(true);
+  }, []);
 
-  const [hasCreatePermission, setHasCreatePermission] = useState(false);
-  // useEffect(() => {
-  //   const canCreate = hasPermission("gameCreate");
-  //   setHasCreatePermission(canCreate);
-  // }, [hasPermission]);
+  // Only set searchValue after mounted
+  useEffect(() => {
+    if (mounted) {
+      setSearchValue(searchParams.get("search") || "");
+    }
+  }, [mounted, searchParams]);
 
   const handleSearch = (value: string) => {
     setSearchValue(value);
 
-    // Clear any existing timeout
-    if (timeoutRef.current) {
-      clearTimeout(timeoutRef.current);
-    }
+    if (timeoutRef.current) clearTimeout(timeoutRef.current);
 
-    // Set new timeout
     timeoutRef.current = setTimeout(() => {
       if (serverPagination) {
         const current = new URLSearchParams(Array.from(searchParams.entries()));
-
         if (value) {
           current.set("search", value);
-          current.set("page", "1"); // Reset to first page on new search
+          current.set("page", "1");
         } else {
           current.delete("search");
         }
-
-        const search = current.toString();
-        const query = search ? `?${search}` : "";
-
+        const query = current.toString() ? `?${current.toString()}` : "";
         router.push(`${pathname}${query}`, { scroll: false });
       }
-    }, 500); // 500ms delay
+    }, 500);
   };
 
   const handleReset = () => {
@@ -69,18 +65,21 @@ export function DataTableToolbar<TData>({
     if (serverPagination) {
       const current = new URLSearchParams(Array.from(searchParams.entries()));
       current.delete("search");
-      const search = current.toString();
-      const query = search ? `?${search}` : "";
+      const query = current.toString() ? `?${current.toString()}` : "";
       router.push(`${pathname}${query}`, { scroll: false });
     }
   };
+
+  // Only render client-dependent UI after mounted
+  if (!mounted) return null;
+
   return (
     <div className="flex items-center justify-between">
       <div className="flex flex-1 items-center space-x-2">
         <Input
-          placeholder="Search Games..."
+          placeholder={t("component.table.search")}
           value={searchValue}
-          onChange={(event) => handleSearch(event.target.value)}
+          onChange={(e) => handleSearch(e.target.value)}
           className="h-8 w-[150px] lg:w-[250px]"
         />
         {searchValue && (
@@ -94,10 +93,17 @@ export function DataTableToolbar<TData>({
           </Button>
         )}
       </div>
+
       <div className="flex gap-4">
-        {/* <Link href="/user/create">
-          <Button size="sm">Add New</Button>
-        </Link> */}
+        {/*
+        <Link href="/event/create" passHref>
+          <Button size="sm" asChild>
+            <div className="inline-flex items-center gap-1">
+              <Plus /> {t("component.table.add_new")}
+            </div>
+          </Button>
+        </Link>
+        */}
 
         <DataTableViewOptions table={table} />
       </div>

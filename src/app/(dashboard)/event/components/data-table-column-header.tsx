@@ -1,9 +1,8 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useEffect, useState } from "react";
+import { useTranslation } from "react-i18next";
 import { Column } from "@tanstack/react-table";
-import { ArrowDown, ArrowUp, ChevronsUpDown, EyeOff } from "lucide-react";
-
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
 import {
@@ -13,13 +12,12 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
+import { ArrowDown, ArrowUp, ChevronsUpDown, EyeOff } from "lucide-react";
 
-import { useTranslation } from "react-i18next";
-
-interface DataTableColumnHeaderProps<TData, TValue>
-  extends React.HTMLAttributes<HTMLDivElement> {
+interface DataTableColumnHeaderProps<TData, TValue> {
   column: Column<TData, TValue>;
-  title: string; // default title (can be English)
+  title: string;
+  className?: string;
 }
 
 export function DataTableColumnHeader<TData, TValue>({
@@ -27,15 +25,15 @@ export function DataTableColumnHeader<TData, TValue>({
   title,
   className,
 }: DataTableColumnHeaderProps<TData, TValue>) {
-  const { t } = useTranslation("common");
+  const { t, i18n } = useTranslation("common");
   const [mounted, setMounted] = useState(false);
 
-  useEffect(() => {
-    setMounted(true);
-  }, []);
+  // Only render on client to avoid SSR mismatch
+  useEffect(() => setMounted(true), []);
 
-  // Show placeholder title during SSR to avoid hydration mismatch
-  const displayTitle = mounted ? t(title) || title : title;
+  if (!mounted || !i18n.isInitialized) return null;
+
+  const displayTitle = t(title);
 
   if (!column.getCanSort()) {
     return <div className={cn(className)}>{displayTitle}</div>;
@@ -60,6 +58,7 @@ export function DataTableColumnHeader<TData, TValue>({
             )}
           </Button>
         </DropdownMenuTrigger>
+
         <DropdownMenuContent align="start">
           <DropdownMenuItem onClick={() => column.toggleSorting(false)}>
             <ArrowUp />

@@ -24,18 +24,22 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
-
+import { Loading } from "@/components/composable/loading/loading";
+import { useTranslation } from "next-i18next";
 import { DataTablePagination } from "./data-table-pagination";
 import { DataTableToolbar } from "./data-table-toolbar";
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
-import { MobileExpenseCard } from "@/components/event/show-tabs/expense-table/columns";
+import { MobileExpenseCard } from "./columns";
+import { Guest } from "@/interfaces/guest";
 import { Expense } from "@/interfaces/expense";
+
 interface DataTableProps<TData, TValue> {
   columns: ColumnDef<TData, TValue>[];
   data: TData[];
   pageCount: number;
   total: number;
   serverPagination: boolean;
+  loading?: boolean; // optional
 }
 
 export function DataTable<TData, TValue>({
@@ -44,10 +48,12 @@ export function DataTable<TData, TValue>({
   pageCount,
   total,
   serverPagination,
+  loading = false, // default to false
 }: DataTableProps<TData, TValue>) {
   const router = useRouter();
   const pathname = usePathname();
   const searchParams = useSearchParams();
+  const { t } = useTranslation("common");
 
   const [rowSelection, setRowSelection] = React.useState({});
   const [columnVisibility, setColumnVisibility] =
@@ -56,10 +62,23 @@ export function DataTable<TData, TValue>({
     []
   );
   const [sorting, setSorting] = React.useState<SortingState>([]);
+  const [isMobile, setIsMobile] = React.useState(false);
 
   // Get current values from URL
   const currentPage = Math.max(1, Number(searchParams.get("page")) || 1);
   const currentPerPage = Number(searchParams.get("per_page")) || 10;
+
+  // Check if screen is mobile
+  React.useEffect(() => {
+    const checkScreenSize = () => {
+      setIsMobile(window.innerWidth < 768); // md breakpoint
+    };
+
+    checkScreenSize();
+    window.addEventListener("resize", checkScreenSize);
+
+    return () => window.removeEventListener("resize", checkScreenSize);
+  }, []);
 
   const createQueryString = React.useCallback(
     (params: Record<string, string | number | null>) => {
@@ -97,18 +116,6 @@ export function DataTable<TData, TValue>({
       );
     }
   }, [sorting, router, currentPage, pathname, createQueryString]);
-
-  const [isMobile, setIsMobile] = React.useState(false);
-  React.useEffect(() => {
-    const checkScreenSize = () => {
-      setIsMobile(window.innerWidth < 768); // md breakpoint
-    };
-
-    checkScreenSize();
-    window.addEventListener("resize", checkScreenSize);
-
-    return () => window.removeEventListener("resize", checkScreenSize);
-  }, []);
 
   const table = useReactTable({
     data,
@@ -159,11 +166,21 @@ export function DataTable<TData, TValue>({
   });
 
   return (
-    <div className="space-y-4 bg-white p-5 rounded-lg border">
+    <div className="space-y-4 bg-white p-2 md:p-5 rounded-lg border">
       <DataTableToolbar table={table} serverPagination={serverPagination} />
+
+      {/* Mobile List View */}
       {isMobile ? (
         <div className="">
-          {table.getRowModel().rows?.length ? (
+          {loading ? (
+            <div className="flex items-center justify-center py-8">
+              <Loading
+                variant="table"
+                size="lg"
+                message={t("component.table.loadingMessage")}
+              />
+            </div>
+          ) : table.getRowModel().rows.length ? (
             table
               .getRowModel()
               .rows.map((row) => (
@@ -176,33 +193,45 @@ export function DataTable<TData, TValue>({
               ))
           ) : (
             <div className="text-center py-8 border border-dashed border-gray-300 rounded-lg">
-              <p className="text-gray-500">No results.</p>
+              <p className="text-gray-500">{t("component.table.noResults")}</p>
             </div>
           )}
         </div>
       ) : (
-        <div className="rounded-md border">
+        /* Desktop Table View */
+        <div className="rounded-md border relative">
           <Table>
             <TableHeader>
               {table.getHeaderGroups().map((headerGroup) => (
                 <TableRow key={headerGroup.id}>
-                  {headerGroup.headers.map((header) => {
-                    return (
-                      <TableHead key={header.id} colSpan={header.colSpan}>
-                        {header.isPlaceholder
-                          ? null
-                          : flexRender(
-                              header.column.columnDef.header,
-                              header.getContext()
-                            )}
-                      </TableHead>
-                    );
-                  })}
+                  {headerGroup.headers.map((header) => (
+                    <TableHead key={header.id} colSpan={header.colSpan}>
+                      {header.isPlaceholder
+                        ? null
+                        : flexRender(
+                            header.column.columnDef.header,
+                            header.getContext()
+                          )}
+                    </TableHead>
+                  ))}
                 </TableRow>
               ))}
             </TableHeader>
             <TableBody>
-              {table.getRowModel().rows?.length ? (
+              {loading ? (
+                <TableRow>
+                  <TableCell
+                    colSpan={columns.length}
+                    className="h-24 text-center"
+                  >
+                    <Loading
+                      variant="table"
+                      size="lg"
+                      message={t("component.table.loadingMessage")}
+                    />
+                  </TableCell>
+                </TableRow>
+              ) : table.getRowModel().rows.length ? (
                 table.getRowModel().rows.map((row) => (
                   <TableRow
                     key={row.id}
@@ -224,7 +253,7 @@ export function DataTable<TData, TValue>({
                     colSpan={columns.length}
                     className="h-24 text-center"
                   >
-                    No results.
+                    {t("component.table.noResults")}
                   </TableCell>
                 </TableRow>
               )}

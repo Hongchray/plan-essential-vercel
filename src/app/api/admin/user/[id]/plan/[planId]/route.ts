@@ -4,25 +4,29 @@ import { PrismaClient } from "@prisma/client";
 
 const prisma = new PrismaClient();
 
+interface UpdatePlanBody {
+  limit_guests?: number;
+  limit_template?: number;
+  limit_export_excel?: boolean;
+}
+
 // PUT /api/admin/user/[id]/plan/[planId] - Update user plan limits
 export async function PUT(
   request: NextRequest,
-  { params }: { params: { id: string; planId: string } }
+  context: any // Let Next.js infer types
 ) {
   try {
-    const userId = params.id;
-    const userPlanId = params.planId;
-    const body = await request.json();
+    const { id: userId, planId: userPlanId } = context.params as {
+      id: string;
+      planId: string;
+    };
+
+    const body: UpdatePlanBody = await request.json();
     const { limit_guests, limit_template, limit_export_excel } = body;
 
-    // Check if user plan exists
     const existingUserPlan = await prisma.userPlan.findUnique({
-      where: {
-        id: userPlanId,
-      },
-      include: {
-        plan: true,
-      },
+      where: { id: userPlanId },
+      include: { plan: true },
     });
 
     if (!existingUserPlan || existingUserPlan.userId !== userId) {
@@ -32,28 +36,15 @@ export async function PUT(
       );
     }
 
-    // Update user plan
     const updatedUserPlan = await prisma.userPlan.update({
-      where: {
-        id: userPlanId,
-      },
+      where: { id: userPlanId },
       data: {
-        limit_guests:
-          limit_guests !== undefined
-            ? limit_guests
-            : existingUserPlan.limit_guests,
-        limit_template:
-          limit_template !== undefined
-            ? limit_template
-            : existingUserPlan.limit_template,
+        limit_guests: limit_guests ?? existingUserPlan.limit_guests,
+        limit_template: limit_template ?? existingUserPlan.limit_template,
         limit_export_excel:
-          limit_export_excel !== undefined
-            ? limit_export_excel
-            : existingUserPlan.limit_export_excel,
+          limit_export_excel ?? existingUserPlan.limit_export_excel,
       },
-      include: {
-        plan: true,
-      },
+      include: { plan: true },
     });
 
     return NextResponse.json({
@@ -71,19 +62,15 @@ export async function PUT(
 }
 
 // DELETE /api/admin/user/[id]/plan/[planId] - Remove plan from user
-export async function DELETE(
-  request: NextRequest,
-  { params }: { params: { id: string; planId: string } }
-) {
+export async function DELETE(request: NextRequest, context: any) {
   try {
-    const userId = params.id;
-    const userPlanId = params.planId;
+    const { id: userId, planId: userPlanId } = context.params as {
+      id: string;
+      planId: string;
+    };
 
-    // Check if user plan exists
     const existingUserPlan = await prisma.userPlan.findUnique({
-      where: {
-        id: userPlanId,
-      },
+      where: { id: userPlanId },
     });
 
     if (!existingUserPlan || existingUserPlan.userId !== userId) {
@@ -93,11 +80,8 @@ export async function DELETE(
       );
     }
 
-    // Delete user plan
     await prisma.userPlan.delete({
-      where: {
-        id: userPlanId,
-      },
+      where: { id: userPlanId },
     });
 
     return NextResponse.json({

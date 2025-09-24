@@ -17,6 +17,7 @@ import { Button } from "@/components/ui/button";
 import { EditIcon, EyeIcon, Trash2Icon } from "lucide-react";
 import { ConfirmDialog } from "@/components/composable/dialog/confirm-dialog";
 import { useTranslation } from "react-i18next";
+import { getAvatarColor, getInitials } from "@/utils/avatar";
 
 const ActionsCell = ({ row }: { row: any }) => {
   const router = useRouter();
@@ -34,10 +35,53 @@ const ActionsCell = ({ row }: { row: any }) => {
   );
 };
 
+export const MobileUserCard = ({
+  user,
+  onSelect,
+  isSelected,
+}: {
+  user: User;
+  onSelect: (selected: boolean) => void;
+  isSelected: boolean;
+}) => {
+  const { t } = useTranslation("common");
+  const name: string = user.name ?? "";
+  const { bg, text } = getAvatarColor(name);
+
+  return (
+    <div className="bg-white border-t border-gray-200 p-2">
+      <div className="flex items-center gap-3">
+        <Avatar className="h-6 w-6 flex-shrink-0">
+          <AvatarImage src="/placeholder.svg" />
+          <AvatarFallback className={`${bg} ${text} font-bold text-[12px]`}>
+            {getInitials(name)}
+          </AvatarFallback>
+        </Avatar>
+
+        <div className="flex-1 min-w-0">
+          <div className="mb-2">
+            <h3 className="text-[12px] font-medium text-gray-900 truncate">
+              {name}
+            </h3>
+            {user.phone && (
+              <p className="text-[10px] text-gray-500 truncate">{user.phone}</p>
+            )}
+          </div>
+        </div>
+
+        <div className="flex-shrink-0">
+          <ActionsCell row={{ original: user }} />
+        </div>
+      </div>
+    </div>
+  );
+};
+
 export const useUserColumns = (): ColumnDef<User>[] => {
   const { t } = useTranslation("common");
 
   return [
+    // Logo
     {
       id: "select",
       header: ({ table }) => (
@@ -47,7 +91,7 @@ export const useUserColumns = (): ColumnDef<User>[] => {
             (table.getIsSomePageRowsSelected() && "indeterminate")
           }
           onCheckedChange={(value) => table.toggleAllPageRowsSelected(!!value)}
-          aria-label={t("user.table.select_all")}
+          aria-label="Select all"
           className="translate-y-[2px]"
         />
       ),
@@ -55,20 +99,18 @@ export const useUserColumns = (): ColumnDef<User>[] => {
         <Checkbox
           checked={row.getIsSelected()}
           onCheckedChange={(value) => row.toggleSelected(!!value)}
-          aria-label={t("user.table.select_all")}
+          aria-label="Select row"
           className="translate-y-[2px]"
         />
       ),
       enableSorting: false,
       enableHiding: false,
     },
-
-    // Logo
     {
       accessorKey: "photoUrl",
       enableSorting: false,
       header: ({ column }) => (
-        <DataTableColumnHeader column={column} title={t("user.table.logo")} />
+        <DataTableColumnHeader column={column} title="user.table.logo" />
       ),
       cell: ({ row }) => (
         <Avatar>
@@ -81,7 +123,7 @@ export const useUserColumns = (): ColumnDef<User>[] => {
     {
       accessorKey: "name",
       header: ({ column }) => (
-        <DataTableColumnHeader column={column} title={t("user.table.name")} />
+        <DataTableColumnHeader column={column} title="user.table.name" />
       ),
       cell: ({ row }) => (
         <div className="flex gap-2">
@@ -95,7 +137,7 @@ export const useUserColumns = (): ColumnDef<User>[] => {
     {
       accessorKey: "phone",
       header: ({ column }) => (
-        <DataTableColumnHeader column={column} title={t("user.table.phone")} />
+        <DataTableColumnHeader column={column} title="user.table.phone" />
       ),
       cell: ({ row }) => (
         <span className="max-w-[200px] truncate font-medium">
@@ -107,7 +149,7 @@ export const useUserColumns = (): ColumnDef<User>[] => {
     {
       accessorKey: "email",
       header: ({ column }) => (
-        <DataTableColumnHeader column={column} title={t("user.table.email")} />
+        <DataTableColumnHeader column={column} title="user.table.email" />
       ),
       cell: ({ row }) => (
         <span className="max-w-[200px] truncate font-medium">
@@ -119,7 +161,7 @@ export const useUserColumns = (): ColumnDef<User>[] => {
     {
       accessorKey: "role",
       header: ({ column }) => (
-        <DataTableColumnHeader column={column} title={t("user.table.role")} />
+        <DataTableColumnHeader column={column} title="user.table.role" />
       ),
       cell: ({ row }) => (
         <span className="max-w-[200px] truncate font-medium">
@@ -132,10 +174,7 @@ export const useUserColumns = (): ColumnDef<User>[] => {
       accessorKey: "telegramId",
       enableSorting: false,
       header: ({ column }) => (
-        <DataTableColumnHeader
-          column={column}
-          title={t("user.table.login_as")}
-        />
+        <DataTableColumnHeader column={column} title="user.table.login_as" />
       ),
       cell: ({ row }) => {
         const telegramId = row.getValue<string>("telegramId");

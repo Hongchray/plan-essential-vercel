@@ -24,7 +24,8 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
-
+import { Loading } from "@/components/composable/loading/loading";
+import { useTranslation } from "next-i18next";
 import { DataTablePagination } from "./data-table-pagination";
 import { DataTableToolbar } from "./data-table-toolbar";
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
@@ -37,6 +38,7 @@ interface DataTableProps<TData, TValue> {
   pageCount: number;
   total: number;
   serverPagination: boolean;
+  loading?: boolean; // optional
 }
 
 export function DataTable<TData, TValue>({
@@ -45,10 +47,12 @@ export function DataTable<TData, TValue>({
   pageCount,
   total,
   serverPagination,
+  loading = false, // default to false
 }: DataTableProps<TData, TValue>) {
   const router = useRouter();
   const pathname = usePathname();
   const searchParams = useSearchParams();
+  const { t } = useTranslation("common");
 
   const [rowSelection, setRowSelection] = React.useState({});
   const [columnVisibility, setColumnVisibility] =
@@ -70,9 +74,9 @@ export function DataTable<TData, TValue>({
     };
 
     checkScreenSize();
-    window.addEventListener('resize', checkScreenSize);
-    
-    return () => window.removeEventListener('resize', checkScreenSize);
+    window.addEventListener("resize", checkScreenSize);
+
+    return () => window.removeEventListener("resize", checkScreenSize);
   }, []);
 
   const createQueryString = React.useCallback(
@@ -163,49 +167,70 @@ export function DataTable<TData, TValue>({
   return (
     <div className="space-y-4 bg-white p-2 md:p-5 rounded-lg border">
       <DataTableToolbar table={table} serverPagination={serverPagination} />
-      
+
       {/* Mobile List View */}
       {isMobile ? (
         <div className="">
-          {table.getRowModel().rows?.length ? (
-            table.getRowModel().rows.map((row) => (
-              <MobileGuestCard
-                key={row.id}
-                guest={row.original as Guest}
-                isSelected={row.getIsSelected()}
-                onSelect={(selected) => row.toggleSelected(selected)}
+          {loading ? (
+            <div className="flex items-center justify-center py-8">
+              <Loading
+                variant="table"
+                size="lg"
+                message={t("component.table.loadingMessage")}
               />
-            ))
+            </div>
+          ) : table.getRowModel().rows.length ? (
+            table
+              .getRowModel()
+              .rows.map((row) => (
+                <MobileGuestCard
+                  key={row.id}
+                  guest={row.original as Guest}
+                  isSelected={row.getIsSelected()}
+                  onSelect={(selected) => row.toggleSelected(selected)}
+                />
+              ))
           ) : (
             <div className="text-center py-8 border border-dashed border-gray-300 rounded-lg">
-              <p className="text-gray-500">No results.</p>
+              <p className="text-gray-500">{t("component.table.noResults")}</p>
             </div>
           )}
         </div>
       ) : (
         /* Desktop Table View */
-        <div className="rounded-md border">
+        <div className="rounded-md border relative">
           <Table>
             <TableHeader>
               {table.getHeaderGroups().map((headerGroup) => (
                 <TableRow key={headerGroup.id}>
-                  {headerGroup.headers.map((header) => {
-                    return (
-                      <TableHead key={header.id} colSpan={header.colSpan}>
-                        {header.isPlaceholder
-                          ? null
-                          : flexRender(
-                              header.column.columnDef.header,
-                              header.getContext()
-                            )}
-                      </TableHead>
-                    );
-                  })}
+                  {headerGroup.headers.map((header) => (
+                    <TableHead key={header.id} colSpan={header.colSpan}>
+                      {header.isPlaceholder
+                        ? null
+                        : flexRender(
+                            header.column.columnDef.header,
+                            header.getContext()
+                          )}
+                    </TableHead>
+                  ))}
                 </TableRow>
               ))}
             </TableHeader>
             <TableBody>
-              {table.getRowModel().rows?.length ? (
+              {loading ? (
+                <TableRow>
+                  <TableCell
+                    colSpan={columns.length}
+                    className="h-24 text-center"
+                  >
+                    <Loading
+                      variant="table"
+                      size="lg"
+                      message={t("component.table.loadingMessage")}
+                    />
+                  </TableCell>
+                </TableRow>
+              ) : table.getRowModel().rows.length ? (
                 table.getRowModel().rows.map((row) => (
                   <TableRow
                     key={row.id}
@@ -227,7 +252,7 @@ export function DataTable<TData, TValue>({
                     colSpan={columns.length}
                     className="h-24 text-center"
                   >
-                    No results.
+                    {t("component.table.noResults")}
                   </TableCell>
                 </TableRow>
               )}
@@ -235,10 +260,10 @@ export function DataTable<TData, TValue>({
           </Table>
         </div>
       )}
-      
-      <DataTablePagination 
-        table={table} 
-        serverPagination={serverPagination} 
+
+      <DataTablePagination
+        table={table}
+        serverPagination={serverPagination}
         total={total}
       />
     </div>

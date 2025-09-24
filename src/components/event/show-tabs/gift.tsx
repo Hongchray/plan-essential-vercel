@@ -102,101 +102,112 @@ export default function TabGift({
   return (
     <div className="space-y-6">
       <h3 className="text-lg font-semibold mb-4">{t("gift.wedding_gifts")}</h3>
-      {loading ? (
-        <div className="flex items-center justify-center ">
-          <Loading variant="circle" size="lg" />
-        </div>
-      ) : (
-        <>
-          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-6 mb-6">
-            {/* Gifts Received */}
-            <div className="bg-gradient-to-br from-teal-100 to-teal-200 p-5 rounded-xl shadow-md hover:shadow-lg hover:scale-[1.02] transition-all duration-200">
-              <div className="flex items-center justify-between">
-                <Users className="w-8 h-8 text-teal-700" />
-                <div className="text-3xl font-extrabold text-teal-700">
-                  {loading ? (
-                    <Loading variant="minimal" message="" size="sm" />
-                  ) : (
-                    aggregates.received ?? 0
-                  )}
-                </div>
-              </div>
-              <div className="text-sm font-medium text-teal-900 mt-2">
-                {t("gift.received")}
+      <>
+        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-6 mb-6">
+          {/* Gifts Received */}
+          <div className="bg-gradient-to-br from-teal-100 to-teal-200 p-5 rounded-xl shadow-md hover:shadow-lg hover:scale-[1.02] transition-all duration-200">
+            <div className="flex items-center justify-between">
+              <Users className="w-8 h-8 text-teal-700" />
+              <div className="text-3xl font-extrabold text-teal-700">
+                {loading ? (
+                  <Loading
+                    variant="minimal"
+                    message={t("component.table.loadingMessage")}
+                    size="sm"
+                  />
+                ) : (
+                  aggregates.received ?? 0
+                )}
               </div>
             </div>
-
-            {/* Total Value (USD) */}
-            <div className="bg-gradient-to-br from-orange-100 to-orange-200 p-5 rounded-xl shadow-md hover:shadow-lg hover:scale-[1.02] transition-all duration-200">
-              <div className="flex items-center justify-between">
-                <DollarSign className="w-8 h-8 text-blue-600" />
-                <div className="text-3xl font-extrabold text-blue-700">
-                  {loading ? (
-                    <Loading variant="minimal" message="" size="sm" />
-                  ) : (
-                    currencyFormatters.usd(
-                      aggregates?.by_currency[1]?._sum?.amount_usd ?? 0
-                    )
-                  )}
-                </div>
-              </div>
-              <div className="text-sm font-medium text-blue-800 mt-2">
-                {t("gift.total_usd")}
-              </div>
-            </div>
-
-            {/* Total Value (KHR) */}
-            <div className="bg-gradient-to-br from-pink-100 to-pink-200 p-5 rounded-xl shadow-md hover:shadow-lg hover:scale-[1.02] transition-all duration-200">
-              <div className="flex items-center justify-between">
-                <p className="text-[35px] font-bold text-blue-600">៛</p>
-                <div className="text-3xl font-extrabold text-blue-700">
-                  {loading ? (
-                    <Loading variant="minimal" message="" size="sm" />
-                  ) : (
-                    currencyFormatters.khr(
-                      aggregates?.by_currency[0]?._sum?.amount_khr ?? 0
-                    )
-                  )}
-                </div>
-              </div>
-              <div className="text-sm font-medium text-blue-800 mt-2">
-                {t("gift.total_khr")}
-              </div>
-            </div>
-
-            {/* Total USD Equivalent */}
-            <div className="bg-gradient-to-br from-purple-50 to-purple-100 p-5 rounded-xl shadow-md hover:shadow-lg hover:scale-[1.02] transition-all duration-200">
-              <div className="flex items-center justify-between">
-                <TrendingUp className="w-8 h-8 text-blue-600" />
-                <div className="text-3xl font-extrabold text-blue-700">
-                  {loading ? (
-                    <Loading variant="minimal" message="" size="sm" />
-                  ) : (
-                    currencyFormatters.usd(
-                      aggregates?.total_amount_usd_equivalent ?? 0
-                    )
-                  )}
-                </div>
-              </div>
-              <div className="text-sm font-medium text-blue-800 mt-2">
-                {t("gift.total_usd_equivalent")}
-              </div>
-              <div className="text-xs text-blue-500 mt-1">
-                {t("gift.exchange_rate", { rate: EXCHANGE_RATES.USD_TO_KHR })}
-              </div>
+            <div className="text-sm font-medium text-teal-900 mt-2">
+              {t("gift.received")}
             </div>
           </div>
 
-          <h3 className="text-lg font-semibold mb-4">{t("gift.title")}</h3>
-          <DataTable
-            data={data}
-            columns={columns}
-            pageCount={meta.pageCount}
-            total={meta.total}
-            serverPagination={true}
-          />
-        </>
-      )}
+          {/* Total Value (USD) */}
+          <div className="bg-gradient-to-br from-orange-100 to-orange-200 p-5 rounded-xl shadow-md hover:shadow-lg hover:scale-[1.02] transition-all duration-200">
+            <div className="flex items-center justify-between">
+              <DollarSign className="w-8 h-8 text-blue-600" />
+              <div className="text-3xl font-extrabold text-blue-700">
+                {loading ? (
+                  <Loading
+                    variant="minimal"
+                    message={t("component.table.loadingMessage")}
+                    size="sm"
+                  />
+                ) : (
+                  currencyFormatters.usd(
+                    aggregates?.by_currency[1]?._sum?.amount_usd ?? 0
+                  )
+                )}
+              </div>
+            </div>
+            <div className="text-sm font-medium text-blue-800 mt-2">
+              {t("gift.total_usd")}
+            </div>
+          </div>
+
+          {/* Total Value (KHR) */}
+          <div className="bg-gradient-to-br from-pink-100 to-pink-200 p-5 rounded-xl shadow-md hover:shadow-lg hover:scale-[1.02] transition-all duration-200">
+            <div className="flex items-center justify-between">
+              <p className="text-[35px] font-bold text-blue-600">៛</p>
+              <div className="text-3xl font-extrabold text-blue-700">
+                {loading ? (
+                  <Loading
+                    variant="minimal"
+                    message={t("component.table.loadingMessage")}
+                    size="sm"
+                  />
+                ) : (
+                  currencyFormatters.khr(
+                    aggregates?.by_currency[0]?._sum?.amount_khr ?? 0
+                  )
+                )}
+              </div>
+            </div>
+            <div className="text-sm font-medium text-blue-800 mt-2">
+              {t("gift.total_khr")}
+            </div>
+          </div>
+
+          {/* Total USD Equivalent */}
+          <div className="bg-gradient-to-br from-purple-50 to-purple-100 p-5 rounded-xl shadow-md hover:shadow-lg hover:scale-[1.02] transition-all duration-200">
+            <div className="flex items-center justify-between">
+              <TrendingUp className="w-8 h-8 text-blue-600" />
+              <div className="text-3xl font-extrabold text-blue-700">
+                {loading ? (
+                  <Loading
+                    variant="minimal"
+                    message={t("component.table.loadingMessage")}
+                    size="sm"
+                  />
+                ) : (
+                  currencyFormatters.usd(
+                    aggregates?.total_amount_usd_equivalent ?? 0
+                  )
+                )}
+              </div>
+            </div>
+            <div className="text-sm font-medium text-blue-800 mt-2">
+              {t("gift.total_usd_equivalent")}
+            </div>
+            <div className="text-xs text-blue-500 mt-1">
+              {t("gift.exchange_rate", { rate: EXCHANGE_RATES.USD_TO_KHR })}
+            </div>
+          </div>
+        </div>
+
+        <h3 className="text-lg font-semibold mb-4">{t("gift.title")}</h3>
+        <DataTable
+          data={data}
+          columns={columns}
+          pageCount={meta.pageCount}
+          total={meta.total}
+          serverPagination={true}
+          loading={loading}
+        />
+      </>
     </div>
   );
 }
