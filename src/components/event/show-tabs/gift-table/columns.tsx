@@ -145,16 +145,36 @@ export const columns: ColumnDef<Gift>[] = [
       const { t } = useTranslation("common");
       return t("gift.table.guest_name");
     },
-    cell: ({ row }) => (
-      <div className="flex gap-2">
-        <span className="max-w-[350px] truncate text-primary font-medium">
-          {row.original.guest?.name}
+    cell: ({ row }) => {
+      const name: string = row.original.guest?.name ?? "";
+      const { bg, text } = getAvatarColor(name);
+      return (
+        <span className="max-w-[350px] truncate font-medium">
+          <div className="flex gap-2 items-center">
+            <Avatar>
+              <AvatarImage src="" />
+              <AvatarFallback className={`${bg} ${text} font-bold`}>
+                {getInitials(name)}
+              </AvatarFallback>
+            </Avatar>
+            {name}
+          </div>
         </span>
-        {row.original.guest?.phone && <span>({row.original.guest.phone})</span>}
-      </div>
+      );
+    },
+  },
+  {
+    accessorKey: "phone",
+    header: () => {
+      const { t } = useTranslation("common");
+      return t("event_dashboard.guest.table.phone");
+    },
+    cell: ({ row }) => (
+      <span className="max-w-[200px] truncate">
+        {row.original?.guest?.phone}
+      </span>
     ),
   },
-
   {
     accessorKey: "payment_type",
     header: () => {

@@ -12,6 +12,7 @@ import { useTranslation } from "react-i18next";
 import { EXCHANGE_RATES } from "@/utils/exchangeRates";
 import { Users, DollarSign, TrendingUp } from "lucide-react";
 import { IconMoneybagPlus } from "@tabler/icons-react";
+import { ScrollArea, ScrollBar } from "@/components/ui/scroll-area";
 
 interface GiftAggregates {
   received: number;
@@ -103,101 +104,126 @@ export default function TabGift({
     <div className="space-y-6">
       <h3 className="text-lg font-semibold mb-4">{t("gift.wedding_gifts")}</h3>
       <>
-        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-6 mb-6">
-          {/* Gifts Received */}
-          <div className="bg-gradient-to-br from-teal-100 to-teal-200 p-5 rounded-xl shadow-md hover:shadow-lg hover:scale-[1.02] transition-all duration-200">
-            <div className="flex items-center justify-between">
-              <Users className="w-8 h-8 text-teal-700" />
-              <div className="text-3xl font-extrabold text-teal-700">
-                {loading ? (
-                  <Loading
-                    variant="minimal"
-                    message={t("component.table.loadingMessage")}
-                    size="sm"
-                  />
-                ) : (
-                  aggregates.received ?? 0
-                )}
+        <ScrollArea>
+          <div className="flex gap-4 w-full  md:grid grid-cols-4  md:grid-cols-4 ">
+            {/* Gifts Received */}
+            <div className="flex-shrink-0 min-w-40 md:w-auto relative bg-gradient-to-br from-blue-50 to-blue-100 p-4 rounded-2xl  transition-all duration-300 border-blue-200/50">
+              <div className="flex items-center justify-between mb-3">
+                <div className="p-2 bg-blue-500/10 rounded-lg">
+                  <Users className="w-6 h-6 text-blue-600" />
+                </div>
+                <div className="text-right">
+                  <div className="text-2xl font-bold text-blue-700">
+                    {loading ? (
+                      <Loading
+                        variant="minimal"
+                        message={t("component.table.loadingMessage")}
+                        size="sm"
+                      />
+                    ) : (
+                      aggregates.received ?? 0
+                    )}
+                  </div>
+                </div>
+              </div>
+              <div className="text-sm font-medium text-blue-600">
+                {t("gift.received")}
               </div>
             </div>
-            <div className="text-sm font-medium text-teal-900 mt-2">
-              {t("gift.received")}
-            </div>
-          </div>
 
-          {/* Total Value (USD) */}
-          <div className="bg-gradient-to-br from-orange-100 to-orange-200 p-5 rounded-xl shadow-md hover:shadow-lg hover:scale-[1.02] transition-all duration-200">
-            <div className="flex items-center justify-between">
-              <DollarSign className="w-8 h-8 text-blue-600" />
-              <div className="text-3xl font-extrabold text-blue-700">
-                {loading ? (
-                  <Loading
-                    variant="minimal"
-                    message={t("component.table.loadingMessage")}
-                    size="sm"
-                  />
-                ) : (
-                  currencyFormatters.usd(
-                    aggregates?.by_currency[1]?._sum?.amount_usd ?? 0
-                  )
-                )}
+            {/* Total Value (USD) */}
+            <div className="flex-shrink-0 min-w-40 md:w-auto relative bg-gradient-to-br from-green-50 to-green-100 p-4 rounded-2xl  transition-all duration-300 border-green-200/50">
+              <div className="flex items-center justify-between mb-3">
+                <div className="p-2 bg-green-500/10 rounded-lg">
+                  <DollarSign className="w-6 h-6 text-green-600" />
+                </div>
+                <div className="text-right">
+                  <div className="text-2xl font-bold text-green-700">
+                    {loading ? (
+                      <Loading
+                        variant="minimal"
+                        message={t("component.table.loadingMessage")}
+                        size="sm"
+                      />
+                    ) : (
+                      currencyFormatters.usd(
+                        aggregates?.by_currency[1]?._sum?.amount_usd ?? 0
+                      )
+                    )}
+                  </div>
+                </div>
+              </div>
+              <div className="text-sm font-medium text-green-600">
+                {t("gift.total_usd")}
               </div>
             </div>
-            <div className="text-sm font-medium text-blue-800 mt-2">
-              {t("gift.total_usd")}
-            </div>
-          </div>
 
-          {/* Total Value (KHR) */}
-          <div className="bg-gradient-to-br from-pink-100 to-pink-200 p-5 rounded-xl shadow-md hover:shadow-lg hover:scale-[1.02] transition-all duration-200">
-            <div className="flex items-center justify-between">
-              <p className="text-[35px] font-bold text-blue-600">៛</p>
-              <div className="text-3xl font-extrabold text-blue-700">
-                {loading ? (
-                  <Loading
-                    variant="minimal"
-                    message={t("component.table.loadingMessage")}
-                    size="sm"
-                  />
-                ) : (
-                  currencyFormatters.khr(
-                    aggregates?.by_currency[0]?._sum?.amount_khr ?? 0
-                  )
-                )}
+            {/* Total Value (KHR) */}
+            <div className="flex-shrink-0 min-w-40 md:w-auto relative bg-gradient-to-br from-purple-50 to-purple-100 p-4 rounded-2xl  transition-all duration-300 border-purple-200/50">
+              <div className="flex items-center justify-between mb-3">
+                <div className="p-2 bg-purple-500/10 rounded-lg">
+                  <div
+                    className="text-xl font-bold text-purple-600 px-2 "
+                    style={{
+                      fontFamily: "Moul",
+                    }}
+                  >
+                    ៛
+                  </div>
+                </div>
+                <div className="text-right">
+                  <div className="text-2xl font-bold text-purple-700">
+                    {loading ? (
+                      <Loading
+                        variant="minimal"
+                        message={t("component.table.loadingMessage")}
+                        size="sm"
+                      />
+                    ) : (
+                      currencyFormatters.khr(
+                        aggregates?.by_currency[0]?._sum?.amount_khr ?? 0
+                      )
+                    )}
+                  </div>
+                </div>
+              </div>
+              <div className="text-sm font-medium text-purple-600">
+                {t("gift.total_khr")}
               </div>
             </div>
-            <div className="text-sm font-medium text-blue-800 mt-2">
-              {t("gift.total_khr")}
-            </div>
-          </div>
 
-          {/* Total USD Equivalent */}
-          <div className="bg-gradient-to-br from-purple-50 to-purple-100 p-5 rounded-xl shadow-md hover:shadow-lg hover:scale-[1.02] transition-all duration-200">
-            <div className="flex items-center justify-between">
-              <TrendingUp className="w-8 h-8 text-blue-600" />
-              <div className="text-3xl font-extrabold text-blue-700">
-                {loading ? (
-                  <Loading
-                    variant="minimal"
-                    message={t("component.table.loadingMessage")}
-                    size="sm"
-                  />
-                ) : (
-                  currencyFormatters.usd(
-                    aggregates?.total_amount_usd_equivalent ?? 0
-                  )
-                )}
+            {/* Total USD Equivalent */}
+            <div className="flex-shrink-0 min-w-40 md:w-auto relative bg-gradient-to-br from-red-50 to-red-100 p-4 rounded-2xl  transition-all duration-300 border-red-200/50">
+              <div className="flex items-center justify-between mb-3">
+                <div className="p-2 bg-red-500/10 rounded-lg">
+                  <TrendingUp className="w-6 h-6 text-red-600" />
+                </div>
+                <div className="text-right">
+                  <div className="text-2xl font-bold text-red-700">
+                    {loading ? (
+                      <Loading
+                        variant="minimal"
+                        message={t("component.table.loadingMessage")}
+                        size="sm"
+                      />
+                    ) : (
+                      currencyFormatters.usd(
+                        aggregates?.total_amount_usd_equivalent ?? 0
+                      )
+                    )}
+                  </div>
+                </div>
+              </div>
+              <div className="text-sm font-medium text-red-600 mb-1">
+                <span>{t("gift.total_usd_equivalent")}</span>
+                <span className="text-xs text-red-500">
+                  {t("gift.exchange_rate", { rate: EXCHANGE_RATES.USD_TO_KHR })}
+                </span>
               </div>
             </div>
-            <div className="text-sm font-medium text-blue-800 mt-2">
-              {t("gift.total_usd_equivalent")}
-            </div>
-            <div className="text-xs text-blue-500 mt-1">
-              {t("gift.exchange_rate", { rate: EXCHANGE_RATES.USD_TO_KHR })}
-            </div>
           </div>
-        </div>
-
+          <ScrollBar orientation="horizontal" />
+        </ScrollArea>
         <h3 className="text-lg font-semibold mb-4">{t("gift.title")}</h3>
         <DataTable
           data={data}
