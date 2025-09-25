@@ -87,7 +87,7 @@ export default function SimpleTemplate({
     }
   };
   useEffect(() => {
-    if (data) {
+    if (data.id) {
       getMessage();
     }
   }, [data]);
