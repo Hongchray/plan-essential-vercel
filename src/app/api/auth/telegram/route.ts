@@ -49,6 +49,32 @@ export async function POST(req: Request) {
       role: "user",
     },
   });
+  //check if user have plan
+
+  const userPlan = await prisma.userPlan.findMany({
+    where: {
+      userId: user.id,
+    },
+  });
+
+  if (!userPlan) {
+    const freePlan = await prisma.plan.findFirst({
+      where: {
+        price: 0,
+      },
+    });
+    if (freePlan) {
+      await prisma.userPlan.create({
+        data: {
+          userId: user.id,
+          planId: freePlan.id,
+          limit_guests: 350,
+          limit_template: 1,
+          limit_export_excel: false,
+        },
+      });
+    }
+  }
 
   // TODO: Start session / issue JWT here if needed
 

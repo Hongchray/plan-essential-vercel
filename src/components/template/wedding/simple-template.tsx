@@ -32,6 +32,24 @@ export default function SimpleTemplate({
   const [guests, setGuests] = useState<Guest[]>([]);
   const searchParams = useSearchParams();
   const guestId = searchParams.get("guest");
+  const [guest, setGuest] = useState<Guest>();
+  const getGuest = async (guestId: string, eventId: string) => {
+    try {
+      const res = await fetch(`/api/admin/event/${eventId}/guest/${guestId}`);
+
+      if (res.ok) {
+        const data = await res.json();
+        setGuest(data);
+      }
+    } catch (error) {
+      console.log(error);
+    }
+  };
+  useEffect(() => {
+    if (guestId) {
+      getGuest(guestId, data.id);
+    }
+  }, []);
   const [currentLanguage, setCurrentLanguage] = useState<"kh" | "en">("kh");
 
   // Get the current invitation data based on selected language
@@ -180,7 +198,7 @@ export default function SimpleTemplate({
                     fontFamily: "Great Vibes, Moul, sans-serif",
                   }}
                 >
-                  {currentInvitation?.groom_name || data.groom}
+                  {data.groom}
                 </div>
                 <div
                   className="text-lg "
@@ -206,7 +224,7 @@ export default function SimpleTemplate({
                     fontFamily: "Great Vibes, Moul, sans-serif",
                   }}
                 >
-                  {currentInvitation?.bride_name || data.bride}
+                  {data.bride}
                 </div>
               </div>
             </div>
@@ -223,7 +241,7 @@ export default function SimpleTemplate({
               </p>
 
               <div
-                className="text-[16px] text-center w-[280px] h-[80px] inline-flex items-center justify-center px-3 hover:scale-105 transition-transform duration-300 animate-fade-in"
+                className="text-[16px] text-center w-[320px] h-[80px] inline-flex items-center justify-center px-3 hover:scale-105 transition-transform duration-300 animate-fade-in"
                 style={{
                   fontFamily: "moul",
                   backgroundImage: "url('/template/arts/bar-kbach.jpg')",
@@ -233,7 +251,7 @@ export default function SimpleTemplate({
                   textShadow: "1px 1px 1px rgba(0,0,0,0.7)",
                 }}
               >
-                <span className="pb-4 text-white">លោក ហុង</span>
+                <span className="pb-6 text-white">{guest?.name}</span>
               </div>
               <p
                 className="text-[12px] drop- animate-fade-in animation-delay-700"
@@ -289,9 +307,9 @@ export default function SimpleTemplate({
             backgroundPosition: "center",
           }}
         >
-          <div className="absolute inset-0 bg-opacity-90"></div>
+          {/* <div className="absolute inset-0 bg-opacity-90"></div> */}
 
-          <div className="relative z-10 p-6 bg-black/10 backdrop-blur-[2px]">
+          <div className="relative z-10 p-6 bg-black/10 backdrop-blur-[2px] min-h-[600px]">
             <h2
               className="text-lg font-semibold text-center mb-4 animate-slide-down"
               style={{ color: config?.textColor, fontFamily: "moul" }}
