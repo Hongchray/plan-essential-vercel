@@ -87,8 +87,10 @@ export default function SimpleTemplate({
     }
   };
   useEffect(() => {
-    getMessage();
-  }, []);
+    if (data) {
+      getMessage();
+    }
+  }, [data]);
 
   const formSchema = z.object({
     name: z.string().optional(),
