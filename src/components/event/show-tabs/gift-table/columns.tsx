@@ -43,7 +43,7 @@ const ActionsCell = ({ row }: { row: any }) => {
       />
       <ConfirmDialog
         trigger={
-          <Button size="icon" variant="destructive">
+          <Button size="icon" variant="destructive" className="cursor-pointer">
             <Trash2Icon />
           </Button>
         }

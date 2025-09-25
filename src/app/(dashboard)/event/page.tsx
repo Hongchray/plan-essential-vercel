@@ -85,7 +85,7 @@ export default async function EventPage({
   );
 
   return (
-    <div className="h-full flex-1 flex-col gap-4 p-4">
+    <div className="h-full flex-1 flex-col gap-4">
       {user.role === "admin" ? (
         <EventTableClient data={data} meta={meta} />
       ) : (

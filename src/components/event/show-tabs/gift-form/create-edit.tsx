@@ -269,11 +269,16 @@ export function CreateEditGiftForm({
             size="icon"
             variant="outline"
             onClick={() => setDialogOpen(true)}
+            className="cursor-pointer"
           >
             <EditIcon />
           </Button>
         ) : (
-          <Button size="sm" onClick={() => setDialogOpen(true)}>
+          <Button
+            size="sm"
+            onClick={() => setDialogOpen(true)}
+            className="cursor-pointer"
+          >
             <PlusIcon />
             {t("gift.form.addNew")}
           </Button>
@@ -309,7 +314,7 @@ export function CreateEditGiftForm({
                         <Button
                           variant="outline"
                           role="combobox"
-                          className="flex justify-between w-full"
+                          className="flex justify-between w-full cursor-pointer"
                         >
                           {selectedGuest ? (
                             <div className="flex items-center gap-2">
@@ -609,6 +614,7 @@ export function CreateEditGiftForm({
                     <Button
                       variant="outline"
                       type="button"
+                      className="cursor-pointer"
                       onClick={() => {
                         form.reset();
                         setDialogOpen(false);

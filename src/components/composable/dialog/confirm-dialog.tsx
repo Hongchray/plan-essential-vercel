@@ -56,12 +56,20 @@ export function ConfirmDialog({
           </DialogDescription>
         </DialogHeader>
         <DialogFooter>
-          <Button variant="outline" onClick={handleCancel}>
-            <X/>
+          <Button
+            variant="outline"
+            onClick={handleCancel}
+            className="cursor-pointer"
+          >
+            <X />
             {cancelText ?? t("component.confirm_dialog.cancel")}
           </Button>
-          <Button variant="destructive" onClick={handleConfirm}>
-            <Check/>
+          <Button
+            variant="destructive"
+            onClick={handleConfirm}
+            className="cursor-pointer"
+          >
+            <Check />
             {confirmText ?? t("component.confirm_dialog.confirm")}
           </Button>
         </DialogFooter>

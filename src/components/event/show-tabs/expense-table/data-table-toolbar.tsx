@@ -123,7 +123,7 @@ export function DataTableToolbar<TData>({
           <Button
             variant="ghost"
             onClick={handleReset}
-            className="h-8 px-2 lg:px-3"
+            className="h-8 px-2 lg:px-3 cursor-pointer"
           >
             {t("component.table.reset")}
             <X className="ml-2 h-4 w-4" />
@@ -139,33 +139,33 @@ export function DataTableToolbar<TData>({
             trigger={
               <Button
                 size="sm"
-                className="rounded-none rounded-s-md  border-primary shadow-none focus-visible:z-10 text-primary hover:text-primary/80 hover:bg-primary/10"
+                className="rounded-none rounded-s-md  border-primary shadow-none focus-visible:z-10 text-primary hover:text-primary/80 hover:bg-primary/10 cursor-pointer "
                 variant="outline"
               >
                 <Upload />
-                <span className="">បញ្ចូល Excel</span>
+                <span>{t("component.table.import_excel")}</span>
               </Button>
             }
           />
           <Button
             size="sm"
             onClick={exportExpenseList}
-            className="rounded-none shadow-none border-primary focus-visible:z-10 text-primary hover:text-primary/80 hover:bg-primary/10"
+            className="rounded-none shadow-none border-primary focus-visible:z-10 text-primary hover:text-primary/80 hover:bg-primary/10 cursor-pointer"
             variant="outline"
           >
             <Download />
-            <span className="">ទាញយក</span>
+            <span>{t("component.table.export_excel")}</span>
           </Button>
           <ConfirmDialog
             trigger={
               <Button
                 size="sm"
-                className="rounded-none rounded-e-md border-primary shadow-none focus-visible:z-10 text-primary hover:text-primary/80 hover:bg-primary/10"
+                className="rounded-none rounded-e-md border-primary shadow-none focus-visible:z-10 text-primary hover:text-primary/80 hover:bg-primary/10 cursor-pointer"
                 variant="outline"
                 disabled={!hasSelectedRows || isDeleting}
               >
                 <Trash2Icon />
-                <span className="">លុប</span>
+                <span className="">{t("component.table.delete")}</span>
               </Button>
             }
             title={t("event_dashboard.guest.table.delete_title")}

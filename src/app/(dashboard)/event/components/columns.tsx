@@ -38,20 +38,20 @@ const ActionsCell = ({ row }: { row: any }) => {
   return (
     <div className="flex gap-2 items-end justify-end">
       <Link href={`/event/${row.original.id}`}>
-        <Button size="icon" variant="outline">
+        <Button size="icon" variant="outline" className="cursor-pointer">
           <EyeIcon />
         </Button>
       </Link>
 
       <Link href={`/event/edit/${row.original.id}`}>
-        <Button size="icon" variant="outline">
+        <Button size="icon" variant="outline" className="cursor-pointer">
           <EditIcon />
         </Button>
       </Link>
 
       <ConfirmDialog
         trigger={
-          <Button size="icon" variant="destructive">
+          <Button size="icon" variant="destructive" className="cursor-pointer">
             <Trash2Icon />
           </Button>
         }
@@ -183,11 +183,18 @@ export const useEventColumns = (): ColumnDef<Event>[] => {
       header: ({ column }) => (
         <DataTableColumnHeader column={column} title="EventPage.table.type" />
       ),
-      cell: ({ row }) => (
-        <span className="max-w-[200px] truncate font-medium">
-          {row.getValue("type")}
-        </span>
-      ),
+      cell: ({ row }) => {
+        const type = row.getValue("type") as string;
+
+        return (
+          <Badge
+            variant="secondary" // you can try: "default" | "secondary" | "outline" etc.
+            className="capitalize"
+          >
+            {type || "-"}
+          </Badge>
+        );
+      },
     },
 
     {
@@ -204,17 +211,27 @@ export const useEventColumns = (): ColumnDef<Event>[] => {
         </span>
       ),
     },
-
     {
       accessorKey: "status",
       header: ({ column }) => (
         <DataTableColumnHeader column={column} title="EventPage.table.status" />
       ),
-      cell: ({ row }) => (
-        <span className="max-w-[200px] truncate font-medium">
-          {row.getValue("status")}
-        </span>
-      ),
+      cell: ({ row }) => {
+        const status = row.getValue("status") as string;
+
+        const variant =
+          status === "active"
+            ? "secondary"
+            : status === "inactive"
+            ? "default"
+            : "outline"; // fallback
+
+        return (
+          <Badge variant={variant} className="capitalize">
+            {status || "-"}
+          </Badge>
+        );
+      },
     },
 
     {

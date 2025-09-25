@@ -40,7 +40,7 @@ const ActionsCell = ({ row }: { row: any }) => {
       <CreateEditForm id={row.original.id} />
       <ConfirmDialog
         trigger={
-          <Button size="icon" variant="destructive">
+          <Button size="icon" variant="destructive" className="cursor-pointer">
             <Trash2Icon />
           </Button>
         }
@@ -147,7 +147,12 @@ export const useExpenseColumns = (): ColumnDef<Expense>[] => {
 
     {
       accessorKey: "budget_amount",
-      header: t("expense.table.budget_amount"),
+      header: ({ column }) => (
+        <DataTableColumnHeader
+          column={column}
+          title={t("expense.table.budget_amount")}
+        />
+      ),
       cell: ({ row }) => (
         <div className="flex gap-2">
           <span className="max-w-[350px] truncate">
@@ -158,7 +163,12 @@ export const useExpenseColumns = (): ColumnDef<Expense>[] => {
     },
     {
       accessorKey: "actual_amount",
-      header: t("expense.table.actual_amount"),
+      header: ({ column }) => (
+        <DataTableColumnHeader
+          column={column}
+          title={t("expense.table.actual_amount")}
+        />
+      ),
       cell: ({ row }) => (
         <div className="flex gap-2">
           <span className="max-w-[350px] truncate">

@@ -18,6 +18,7 @@ export default function UserClientPage() {
   const search = searchParams.get("search") || "";
   const sort = searchParams.get("sort") || "";
   const order = searchParams.get("order") || "";
+  const [isClient, setIsClient] = useState(false);
 
   const columns = useUserColumns();
   const [data, setData] = useState<User[]>([]);
@@ -46,10 +47,12 @@ export default function UserClientPage() {
   }, [page, per_page, search, sort, order]);
 
   return (
-    <div className="space-y-6">
-      <h1 className="text-lg font-semibold mb-4">
-        {i18n.isInitialized ? t("user.title") : "User Management"}
-      </h1>
+    <div className="space-y-4">
+      {isClient && i18n.isInitialized ? (
+        <h1 className="text-xl font-bold">{t("user.title")}</h1>
+      ) : (
+        <h1 className="text-xl font-bold">User Management</h1>
+      )}{" "}
       <DataTable
         data={data}
         columns={columns}

@@ -5,7 +5,7 @@ import { Loading } from "@/components/composable/loading/loading";
 
 export default function UserPage() {
   return (
-    <Suspense fallback={<Loading />}>
+    <Suspense fallback={<Loading variant="circle" size="lg" />}>
       <UserClientPage />
     </Suspense>
   );

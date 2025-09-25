@@ -131,7 +131,7 @@ export function DataTableToolbar<TData>({
           <Button
             variant="ghost"
             onClick={handleReset}
-            className="h-8 px-2 lg:px-3"
+            className="h-8 px-2 lg:px-3 cursor-pointer"
           >
             {t("expense.reset")}
             <X className="ml-2 h-4 w-4" />
@@ -154,7 +154,7 @@ export function DataTableToolbar<TData>({
             size="sm"
             onClick={exportGiftList}
             disabled={isExporting}
-            className="rounded-none rounded-s-md border-primary shadow-none focus-visible:z-10 text-primary hover:text-primary/80 hover:bg-primary/10"
+            className="rounded-none rounded-s-md border-primary shadow-none focus-visible:z-10 text-primary hover:text-primary/80 hover:bg-primary/10 cursor-pointer"
             variant="outline"
           >
             <Download />
@@ -165,7 +165,7 @@ export function DataTableToolbar<TData>({
             trigger={
               <Button
                 size="sm"
-                className="rounded-none rounded-e-md border-primary shadow-none focus-visible:z-10 text-primary hover:text-primary/80 hover:bg-primary/10"
+                className="rounded-none rounded-e-md border-primary shadow-none focus-visible:z-10 text-primary hover:text-primary/80 hover:bg-primary/10 cursor-pointer"
                 variant="outline"
                 disabled={!hasSelectedRows || isDeleting}
               >

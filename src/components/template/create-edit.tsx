@@ -239,8 +239,9 @@ export function CreateEditForm({ id }: { id?: string }) {
             variant="outline"
             type="button"
             onClick={() => router.push("/template")}
+            className="cursor-pointer"
           >
-            Cancel
+            {t("component.button.cancel")}
           </Button>
           <SubmitButton loading={loading} entityId={id} />
         </div>

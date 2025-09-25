@@ -38,10 +38,9 @@ import {
   PartyPopper,
 } from "lucide-react";
 import { useEffect, useState } from "react";
-import DataLoading from "../composable/loading/dataloading";
 import { Loading } from "../composable/loading/loading";
 import { useTranslation } from "react-i18next";
-
+import { formatDate } from "@/utils/date";
 interface MonthlyData {
   month: string;
   users: number;
@@ -338,7 +337,7 @@ export default function DashboardPage() {
                       <TableCell>
                         <div className="flex items-center gap-2">
                           <Calendar className="h-4 w-4 text-muted-foreground" />
-                          {event.date}
+                          {formatDate(event.date)}
                         </div>
                       </TableCell>
                       <TableCell className="text-right">

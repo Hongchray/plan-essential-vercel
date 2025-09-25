@@ -8,7 +8,7 @@ import { Check, CheckCheck, Copy, Send, Trash2Icon } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { Badge } from "@/components/ui/badge";
 import { CreateEditForm } from "../guest-form/create-edit";
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import {
   Tooltip,
   TooltipContent,
@@ -100,8 +100,12 @@ const ActionsCell = ({ row }: { row: any }) => {
           <TooltipTrigger asChild>
             <PopoverTrigger asChild>
               {!row.original.is_invited ? (
-                <Button size="icon" variant="outline">
-                  <Send size={5}/>
+                <Button
+                  size="icon"
+                  variant="outline"
+                  className="cursor-pointer"
+                >
+                  <Send size={5} />
                 </Button>
               ) : (
                 <Button size="icon" variant="default">
@@ -168,9 +172,13 @@ const ActionsCell = ({ row }: { row: any }) => {
 
       <ConfirmDialog
         trigger={
-          <Button size="icon" variant="outline" className="border-red-500">
+          <Button
+            size="icon"
+            variant="outline"
+            className="border-red-500 cursor-pointer"
+          >
             <Trash2Icon className="text-red-700 " />
-          </Button> 
+          </Button>
         }
         title={t("event_dashboard.guest.table.delete_title")}
         description={t("event_dashboard.guest.table.delete_description")}
@@ -186,33 +194,45 @@ const MobileGuestCard = ({
   onSelect,
   isSelected,
 }: {
-  guest: Guest
-  onSelect: (selected: boolean) => void
-  isSelected: boolean
+  guest: Guest;
+  onSelect: (selected: boolean) => void;
+  isSelected: boolean;
 }) => {
-  const { t } = useTranslation("common")
-  const name: string = guest.name ?? ""
-  const { bg, text } = getAvatarColor(name)
+  const { t } = useTranslation("common");
+  const name: string = guest.name ?? "";
+  const { bg, text } = getAvatarColor(name);
 
   return (
     <div className="bg-white border-t border-gray-200 p-2">
       <div className="flex items-center gap-3">
         <Avatar className="h-6 w-6 flex-shrink-0">
           <AvatarImage src="/placeholder.svg" />
-          <AvatarFallback className={`${bg} ${text} font-bold text-[12px]`}>{getInitials(name)}</AvatarFallback>
+          <AvatarFallback className={`${bg} ${text} font-bold text-[12px]`}>
+            {getInitials(name)}
+          </AvatarFallback>
         </Avatar>
 
         <div className="flex-1 min-w-0">
           <div className="mb-2">
-            <h3 className="text-[12px] font-medium text-gray-900 truncate">{name}</h3>
-            {guest.phone && <p className="text-[10px] text-gray-500 truncate">{guest.phone}</p>}
+            <h3 className="text-[12px] font-medium text-gray-900 truncate">
+              {name}
+            </h3>
+            {guest.phone && (
+              <p className="text-[10px] text-gray-500 truncate">
+                {guest.phone}
+              </p>
+            )}
           </div>
 
           <div className="flex gap-2">
             {guest.guestGroup && guest.guestGroup.length > 0 && (
               <div className="flex flex-wrap gap-1 items-start">
                 {guest.guestGroup.map((group: any) => (
-                  <Badge key={group.id} variant="default" className="text-[10px]">
+                  <Badge
+                    key={group.id}
+                    variant="default"
+                    className="text-[10px]"
+                  >
                     {group.group?.name_kh}
                   </Badge>
                 ))}
@@ -222,7 +242,11 @@ const MobileGuestCard = ({
             {guest.guestTag && guest.guestTag.length > 0 && (
               <div className="flex flex-wrap gap-1 items-start">
                 {guest.guestTag.map((tag: any) => (
-                  <Badge key={tag.id} variant="secondary" className="text-[10px]">
+                  <Badge
+                    key={tag.id}
+                    variant="secondary"
+                    className="text-[10px]"
+                  >
                     {tag.tag?.name_kh}
                   </Badge>
                 ))}
@@ -236,8 +260,8 @@ const MobileGuestCard = ({
         </div>
       </div>
     </div>
-  )
-}
+  );
+};
 
 export function useGuestColumns(): ColumnDef<Guest>[] {
   const { t } = useTranslation("common");
@@ -276,19 +300,21 @@ export function useGuestColumns(): ColumnDef<Guest>[] {
         />
       ),
       cell: ({ row }) => {
-        const name: string = row.getValue("name") ?? '';
-        const { bg, text } = getAvatarColor(name)
+        const name: string = row.getValue("name") ?? "";
+        const { bg, text } = getAvatarColor(name);
         return (
           <span className="max-w-[350px] truncate font-medium">
             <div className="flex gap-2 items-center">
               <Avatar>
                 <AvatarImage src="" />
-                <AvatarFallback className={`${bg} ${text} font-bold`}>{getInitials(name)}</AvatarFallback>
+                <AvatarFallback className={`${bg} ${text} font-bold`}>
+                  {getInitials(name)}
+                </AvatarFallback>
               </Avatar>
               {name}
             </div>
           </span>
-        )
+        );
       },
     },
     {
@@ -342,7 +368,7 @@ export function useGuestColumns(): ColumnDef<Guest>[] {
             }
           `}
         >
-          {row.original.status && statusMap[row.original.status] || ""}
+          {(row.original.status && statusMap[row.original.status]) || ""}
         </Badge>
       ),
     },

@@ -27,7 +27,7 @@ const ActionsCell = ({ row }: { row: any }) => {
   return (
     <div className="flex gap-2 items-end justify-end">
       <Link href={`/user/${row.original.id}`}>
-        <Button size="icon" variant="outline">
+        <Button size="icon" variant="outline" className="cursor-pointer">
           <EyeIcon />
         </Button>
       </Link>
@@ -163,11 +163,22 @@ export const useUserColumns = (): ColumnDef<User>[] => {
       header: ({ column }) => (
         <DataTableColumnHeader column={column} title="user.table.role" />
       ),
-      cell: ({ row }) => (
-        <span className="max-w-[200px] truncate font-medium">
-          {row.getValue("role")}
-        </span>
-      ),
+      cell: ({ row }) => {
+        const role = (row.getValue("role") as string) || "";
+
+        const variant =
+          role === "admin"
+            ? "destructive" // red for admin
+            : role === "user"
+            ? "secondary" // gray for user
+            : "outline"; // fallback
+
+        return (
+          <Badge variant={variant} className="capitalize">
+            {role || "-"}
+          </Badge>
+        );
+      },
     },
 
     {

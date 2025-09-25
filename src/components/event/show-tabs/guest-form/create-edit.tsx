@@ -149,15 +149,18 @@ export function CreateEditForm({ id }: { id: string }) {
           size="icon"
           variant="outline"
           onClick={() => setDialogOpen(true)}
+          className="cursor-pointer"
         >
           <EditIcon />
         </Button>
       ) : (
-        <Button size="sm" onClick={() => setDialogOpen(true)}>
+        <Button
+          className="cursor-pointer"
+          size="sm"
+          onClick={() => setDialogOpen(true)}
+        >
           <Plus />
-          <span className="text-[12px] md:text-base">
-            {t("guest_form.create_edit.add_new")}
-          </span>
+          {t("guest_form.create_edit.add_new")}
         </Button>
       )}
       <Dialog open={dialogOpen} onOpenChange={setDialogOpen} modal>
@@ -248,6 +251,7 @@ export function CreateEditForm({ id }: { id: string }) {
                 <Button
                   variant="outline"
                   type="button"
+                  className="cursor-pointer"
                   onClick={() => {
                     form.reset();
                     setDialogOpen(false);

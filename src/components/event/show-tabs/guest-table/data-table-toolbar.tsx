@@ -1,12 +1,31 @@
 "use client";
 
+import React from "react";
 import { Table } from "@tanstack/react-table";
-import { CopyIcon, CropIcon, Download, EllipsisVerticalIcon, MousePointerIcon, PlusCircle, SearchIcon, SquareIcon, Trash2Icon, Upload, UploadCloud, X } from "lucide-react";
+import {
+  CopyIcon,
+  CropIcon,
+  Download,
+  EllipsisVerticalIcon,
+  MousePointerIcon,
+  PlusCircle,
+  SearchIcon,
+  SquareIcon,
+  Trash2Icon,
+  Upload,
+  UploadCloud,
+  X,
+} from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { DataTableViewOptions } from "./data-table-view-options";
 import Link from "next/link";
-import { useParams, usePathname, useRouter, useSearchParams } from "next/navigation";
+import {
+  useParams,
+  usePathname,
+  useRouter,
+  useSearchParams,
+} from "next/navigation";
 import { useRef, useState } from "react";
 import { useEffect } from "react";
 import { CreateEditForm } from "../guest-form/create-edit";
@@ -28,8 +47,8 @@ export function DataTableToolbar<TData>({
   const router = useRouter();
   const params = useParams();
   const pathname = usePathname();
-  //get id 
-  const eventId = params.id as string
+  //get id
+  const eventId = params.id as string;
   const searchParams = useSearchParams();
   const { t } = useTranslation("common");
 
@@ -79,15 +98,15 @@ export function DataTableToolbar<TData>({
     if (selectedCount === 0) return;
 
     try {
-      const selectedData = selectedRows.map(row => row.original as Guest);
+      const selectedData = selectedRows.map((row) => row.original as Guest);
       const ids = selectedData.map((item: Guest) => item.id);
       const eventId = selectedData[0]?.eventId;
-    
+
       // Call the DELETE API endpoint
-      const response = await fetch(`/api/admin/event/${eventId}/guest`, { 
-        method: 'DELETE',
+      const response = await fetch(`/api/admin/event/${eventId}/guest`, {
+        method: "DELETE",
         headers: {
-          'Content-Type': 'application/json',
+          "Content-Type": "application/json",
         },
         body: JSON.stringify({ ids }),
       });
@@ -95,12 +114,14 @@ export function DataTableToolbar<TData>({
       // Check if the request was successful
       if (!response.ok) {
         const errorData = await response.json();
-        throw new Error(errorData.error || errorData.message || 'Failed to delete records');
+        throw new Error(
+          errorData.error || errorData.message || "Failed to delete records"
+        );
       }
       table.resetRowSelection();
-      router.refresh()
+      router.refresh();
     } catch (error) {
-      console.log(error)
+      console.log(error);
     }
   };
 
@@ -110,9 +131,9 @@ export function DataTableToolbar<TData>({
   const selectedCount = selectedRows.length;
   const hasSelectedRows = selectedCount > 0;
 
-  const handleImportComplete = ()=>{
-      toast.success("បានបញ្ជូលជោគជ័យ")
-  } 
+  const handleImportComplete = () => {
+    toast.success("បានបញ្ជូលជោគជ័យ");
+  };
   const { exportGuestList, isExporting } = useExcelOperations(eventId);
 
   return (
@@ -120,18 +141,18 @@ export function DataTableToolbar<TData>({
       <div className="flex flex-1 items-center space-x-2">
         <div className="relative w-full max-w-sm">
           <SearchIcon className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
-            <Input
-              placeholder={t("component.table.search_placeholder")}
-              value={searchValue}
-              onChange={(event) => handleSearch(event.target.value)}
-              className="h-8 w-[150px] lg:w-[250px] pl-10 text-[12px] md:text-base"
+          <Input
+            placeholder={t("component.table.search_placeholder")}
+            value={searchValue}
+            onChange={(event) => handleSearch(event.target.value)}
+            className="h-8 w-[150px] lg:w-[250px] pl-10 text-[12px] md:text-base"
           />
         </div>
         {searchValue && (
           <Button
             variant="ghost"
             onClick={handleReset}
-            className="h-8 px-2 lg:px-3"
+            className="h-8 px-2 lg:px-3 cursor-pointer"
           >
             {t("component.table.reset")}
             <X className="ml-2 h-4 w-4" />
@@ -140,34 +161,47 @@ export function DataTableToolbar<TData>({
       </div>
       <div className="flex gap-4">
         <CreateEditForm id="" />
-        <div className='hidden  md:inline-flex w-fit -space-x-px rounded-md shadow-xs rtl:space-x-reverse'>
+        <div className="hidden  md:inline-flex w-fit -space-x-px rounded-md shadow-xs rtl:space-x-reverse">
           <ExcelImportModal
             eventId={eventId}
             onImportComplete={handleImportComplete}
             trigger={
-              <Button size="sm" className='rounded-none rounded-s-md  border-primary shadow-none focus-visible:z-10 text-primary hover:text-primary/80 hover:bg-primary/10' variant='outline'>
+              <Button
+                size="sm"
+                className="rounded-none rounded-s-md border-primary shadow-none focus-visible:z-10 text-primary hover:text-primary/80 hover:bg-primary/10 cursor-pointer"
+                variant="outline"
+              >
                 <Upload />
-                <span className=''>បញ្ចូល Excel</span>
+                <span>{t("component.table.import_excel")}</span>
               </Button>
             }
           />
-          <Button 
+
+          <Button
             size="sm"
             onClick={exportGuestList}
-            className='rounded-none shadow-none border-primary focus-visible:z-10 text-primary hover:text-primary/80 hover:bg-primary/10' variant='outline'>
+            className="rounded-none shadow-none border-primary focus-visible:z-10 text-primary hover:text-primary/80 hover:bg-primary/10 cursor-pointer"
+            variant="outline"
+          >
             <Download />
-            <span className="">ទាញយក</span>
+            <span>{t("component.table.export_excel")}</span>
           </Button>
+
           <ConfirmDialog
             trigger={
-              <Button size="sm" className='rounded-none rounded-e-md border-primary shadow-none focus-visible:z-10 text-primary hover:text-primary/80 hover:bg-primary/10' variant='outline' disabled={!hasSelectedRows || isDeleting}>
+              <Button
+                size="sm"
+                className="rounded-none rounded-e-md border-primary shadow-none focus-visible:z-10 text-primary hover:text-primary/80 hover:bg-primary/10 cursor-pointer"
+                variant="outline"
+                disabled={!hasSelectedRows || isDeleting}
+              >
                 <Trash2Icon />
-                <span className="">លុប</span>
+                <span>{t("component.table.delete")}</span>
               </Button>
             }
-            title={t("event_dashboard.guest.table.delete_title")}
-            description={t("event_dashboard.guest.table.delete_description")}
-            onConfirm={()=>handleDeleteSelected()}
+            title={t("component.table.delete_title")}
+            description={t("component.table.delete_description")}
+            onConfirm={() => handleDeleteSelected()}
           />
         </div>
       </div>

@@ -108,7 +108,8 @@
     "button": {
       "saving": "Saving...",
       "saveChanges": "Save Changes",
-      "create": "Create"
+      "create": "Create",
+      "cancel": "Cancel"
     },
     "table": {
       "search": "Search",
@@ -134,7 +135,24 @@
       "view": "View",
       "toggle_columns": "Toggle columns",
       "loadingMessage": "Fetching data...",
-      "noResults": "No results."
+      "noResults": "No results.",
+      "import_excel": "Import Excel",
+      "export_excel": "Export",
+      "delete": "Delete",
+      "delete_title": "Delete Guests",
+      "delete_description": "Are you sure you want to delete the selected guests?"
+    },
+    "export-excel": {
+      "upload": "Import",
+      "title": "Import List",
+      "description": "Upload an Excel file to import guests. Download the template to ensure the correct format.",
+      "need_template": "Need an Excel template?",
+      "download": "Download",
+      "drop_file": "Drop your Excel file here",
+      "browse": "or click to browse (.xlsx, .xls)",
+      "cancel": "Cancel",
+      "importing": "Importing...",
+      "import": "Import"
     },
     "confirm_dialog": {
       "title": "Are you sure?",

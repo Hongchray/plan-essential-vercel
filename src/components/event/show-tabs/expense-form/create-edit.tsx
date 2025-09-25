@@ -199,11 +199,16 @@ export function CreateEditForm({ id }: { id: string }) {
           size="icon"
           variant="outline"
           onClick={() => setDialogOpen(true)}
+          className="cursor-pointer"
         >
           <EditIcon />
         </Button>
       ) : (
-        <Button size="sm" onClick={() => setDialogOpen(true)}>
+        <Button
+          size="sm"
+          onClick={() => setDialogOpen(true)}
+          className="cursor-pointer"
+        >
           <PlusIcon />
           {t("expense.form.addNew")}
         </Button>
@@ -255,6 +260,7 @@ export function CreateEditForm({ id }: { id: string }) {
                   type="button"
                   variant="outline"
                   size="sm"
+                  className="cursor-pointer"
                   onClick={addPayment}
                   disabled={loading}
                 >
@@ -322,7 +328,7 @@ export function CreateEditForm({ id }: { id: string }) {
                                   e.stopPropagation();
                                   togglePaymentCollapse(index);
                                 }}
-                                className="h-8 w-8 p-0"
+                                className="h-8 w-8 p-0 cursor-pointer"
                               >
                                 {isCollapsed ? (
                                   <ChevronDownIcon className="w-4 h-4" />
@@ -334,7 +340,7 @@ export function CreateEditForm({ id }: { id: string }) {
                                 type="button"
                                 variant="outline"
                                 size="icon"
-                                className="h-8 w-8"
+                                className="h-8 w-8 cursor-pointer"
                                 onClick={(e) => {
                                   e.stopPropagation();
                                   remove(index);
@@ -418,6 +424,7 @@ export function CreateEditForm({ id }: { id: string }) {
                 <Button
                   variant="outline"
                   type="button"
+                  className="cursor-pointer"
                   onClick={() => {
                     form.reset();
                     setDialogOpen(false);

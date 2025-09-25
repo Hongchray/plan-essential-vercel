@@ -17,9 +17,9 @@ export default function EventUserView({ data }: { data: any[] }) {
 
   return (
     <div>
-      <div className="flex justify-between items-center mb-6">
+      <div className="flex justify-between items-center mb-4">
         <div>
-          <h1 className="text-2xl font-semibold mb-2 text-rose-700">
+          <h1 className="text-xl font-bold text-rose-700">
             {t("EventPage.welcome")}
           </h1>
           <p className="text-rose-600">{t("EventPage.explore")}</p>

@@ -5,7 +5,7 @@ import { Loading } from "@/components/composable/loading/loading"; // optional s
 
 export default function TemplatePage() {
   return (
-    <Suspense fallback={<Loading />}>
+    <Suspense fallback={<Loading variant="circle" />}>
       <TemplateClientPage />
     </Suspense>
   );

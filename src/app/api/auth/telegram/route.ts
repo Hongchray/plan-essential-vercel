@@ -44,7 +44,7 @@ export async function POST(req: Request) {
       name: data.first_name,
       username: data.username,
       email: `${data.id}@telegram.local`, // placeholder email
-      password: "", // Telegram login, password not required
+      password: "",
       photoUrl: data.photo_url,
       role: "user",
     },

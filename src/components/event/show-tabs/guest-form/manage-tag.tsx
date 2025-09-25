@@ -145,6 +145,7 @@ export function ManageTagForm({ callBack }: { callBack: () => void }) {
               type="button"
               disabled={loading}
               onClick={() => form.handleSubmit(onSubmit)()}
+              className="cursor-pointer"
             >
               <PlusIcon /> {t("guest_form.create_edit.add_tag")}
             </Button>
@@ -191,6 +192,7 @@ export function ManageTagForm({ callBack }: { callBack: () => void }) {
                           <Button
                             size="icon"
                             variant="ghost"
+                            className="cursor-pointer"
                             onClick={() => {
                               setEditId("");
                               editForm.reset();
@@ -202,6 +204,7 @@ export function ManageTagForm({ callBack }: { callBack: () => void }) {
                             size="icon"
                             variant="ghost"
                             type="button"
+                            className="cursor-pointer"
                             disabled={loading}
                             onClick={() => editForm.handleSubmit(onUpdate)()}
                           >
@@ -230,6 +233,7 @@ export function ManageTagForm({ callBack }: { callBack: () => void }) {
                           <Button
                             size="icon"
                             variant="ghost"
+                            className="cursor-pointer"
                             onClick={() => {
                               setEditId(tag.id);
                               editForm.reset(tag);
@@ -239,7 +243,11 @@ export function ManageTagForm({ callBack }: { callBack: () => void }) {
                           </Button>
                           <ConfirmDialog
                             trigger={
-                              <Button size="icon" variant="ghost">
+                              <Button
+                                size="icon"
+                                variant="ghost"
+                                className="cursor-pointer"
+                              >
                                 <Trash2Icon className="text-red-600" />
                               </Button>
                             }
@@ -267,12 +275,13 @@ export function ManageTagForm({ callBack }: { callBack: () => void }) {
               <Button
                 variant="outline"
                 type="button"
+                className="cursor-pointer"
                 onClick={() => {
                   form.reset();
                   setDialogOpen(false);
                 }}
               >
-                Cancel
+                {t("guest_form.create_edit.cancel")}
               </Button>
             </div>
           </DialogFooter>

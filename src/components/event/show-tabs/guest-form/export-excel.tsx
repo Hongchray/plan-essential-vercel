@@ -1,8 +1,9 @@
-// Excel Import Modal Component
-import React, { useRef, useState } from 'react';
-import { Upload, Download, FileText, X } from 'lucide-react';
-import { Button } from '@/components/ui/button';
-import { toast } from 'sonner'; 
+"use client";
+
+import React, { useRef, useState } from "react";
+import { Upload, Download, FileText, X } from "lucide-react";
+import { Button } from "@/components/ui/button";
+import { toast } from "sonner";
 import {
   Dialog,
   DialogContent,
@@ -11,9 +12,10 @@ import {
   DialogHeader,
   DialogTitle,
   DialogTrigger,
-} from '@/components/ui/dialog';
-import { useExcelOperations } from '@/hooks/use-guest-export-import';
-import { useRouter } from  "next/navigation";
+} from "@/components/ui/dialog";
+import { useExcelOperations } from "@/hooks/use-guest-export-import";
+import { useRouter } from "next/navigation";
+import { useTranslation } from "react-i18next";
 
 interface ExcelImportModalProps {
   eventId: string;
@@ -24,22 +26,24 @@ interface ExcelImportModalProps {
 export const ExcelImportModal: React.FC<ExcelImportModalProps> = ({
   eventId,
   onImportComplete,
-  trigger
+  trigger,
 }) => {
+  const { t } = useTranslation("common");
   const [isOpen, setIsOpen] = useState(false);
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
   const [dragActive, setDragActive] = useState(false);
   const fileInputRef = useRef<HTMLInputElement>(null);
   const router = useRouter();
-  
-  const { importGuestList, downloadTemplate, isImporting } = useExcelOperations(eventId);
+
+  const { importGuestList, downloadTemplate, isImporting } =
+    useExcelOperations(eventId);
 
   const handleDrag = (e: React.DragEvent) => {
     e.preventDefault();
     e.stopPropagation();
-    if (e.type === 'dragenter' || e.type === 'dragover') {
+    if (e.type === "dragenter" || e.type === "dragover") {
       setDragActive(true);
-    } else if (e.type === 'dragleave') {
+    } else if (e.type === "dragleave") {
       setDragActive(false);
     }
   };
@@ -48,7 +52,7 @@ export const ExcelImportModal: React.FC<ExcelImportModalProps> = ({
     e.preventDefault();
     e.stopPropagation();
     setDragActive(false);
-    
+
     const files = e.dataTransfer.files;
     if (files && files[0]) {
       handleFileSelect(files[0]);
@@ -56,13 +60,16 @@ export const ExcelImportModal: React.FC<ExcelImportModalProps> = ({
   };
 
   const handleFileSelect = (file: File) => {
-    if (file.type === 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' ||
-        file.type === 'application/vnd.ms-excel' ||
-        file.name.endsWith('.xlsx') ||
-        file.name.endsWith('.xls')) {
+    if (
+      file.type ===
+        "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet" ||
+      file.type === "application/vnd.ms-excel" ||
+      file.name.endsWith(".xlsx") ||
+      file.name.endsWith(".xls")
+    ) {
       setSelectedFile(file);
     } else {
-      toast.error('Please select a valid Excel file (.xlsx or .xls)');
+      toast.error("Please select a valid Excel file (.xlsx or .xls)");
     }
   };
 
@@ -81,9 +88,8 @@ export const ExcelImportModal: React.FC<ExcelImportModalProps> = ({
       setIsOpen(false);
       setSelectedFile(null);
       onImportComplete?.();
-      router.refresh()
-    } catch (error) {
-    }
+      router.refresh();
+    } catch (error) {}
   };
 
   const handleCancel = () => {
@@ -96,17 +102,17 @@ export const ExcelImportModal: React.FC<ExcelImportModalProps> = ({
       <DialogTrigger asChild>
         {trigger || (
           <Button variant="outline">
-            <Upload className="h-4 w-4 mr-2" />
-            បញ្ចូល 
+            <Upload className="h-4 w-4 mr-2 cursor-pointer" />
+            {t("component.export-excel.upload")}
           </Button>
         )}
       </DialogTrigger>
-      
+
       <DialogContent className="sm:max-w-md">
         <DialogHeader>
-          <DialogTitle>បញ្ចូលបញ្ជី</DialogTitle>
+          <DialogTitle>{t("component.export-excel.title")}</DialogTitle>
           <DialogDescription>
-            ផ្ទុកឡើងឯកសារ Excel ដើម្បីនាំចូលភ្ញៀវ។ ទាញយកគំរូសម្រាប់ទម្រង់ត្រឹមត្រូវ។
+            {t("component.export-excel.description")}
           </DialogDescription>
         </DialogHeader>
 
@@ -115,16 +121,18 @@ export const ExcelImportModal: React.FC<ExcelImportModalProps> = ({
           <div className="flex items-center justify-between p-3 bg-blue-50 rounded-lg">
             <div className="flex items-center space-x-2">
               <FileText className="h-4 w-4 text-blue-600" />
-              <span className="text-sm font-medium">ត្រូវការគំរូExcel?</span>
+              <span className="text-sm font-medium">
+                {t("component.export-excel.need_template")}
+              </span>
             </div>
             <Button
               variant="ghost"
               size="sm"
               onClick={downloadTemplate}
-              className="text-blue-600 hover:text-blue-700"
+              className="text-blue-600 hover:text-blue-700 cursor-pointer"
             >
               <Download className="h-4 w-4 mr-1" />
-              ទាញយក
+              {t("component.export-excel.download")}
             </Button>
           </div>
 
@@ -132,8 +140,8 @@ export const ExcelImportModal: React.FC<ExcelImportModalProps> = ({
           <div
             className={`relative border-2 border-dashed rounded-lg p-6 text-center transition-colors ${
               dragActive
-                ? 'border-blue-400 bg-blue-50'
-                : 'border-gray-300 hover:border-gray-400'
+                ? "border-blue-400 bg-blue-50"
+                : "border-gray-300 hover:border-gray-400"
             }`}
             onDragEnter={handleDrag}
             onDragLeave={handleDrag}
@@ -147,12 +155,14 @@ export const ExcelImportModal: React.FC<ExcelImportModalProps> = ({
               onChange={handleFileInputChange}
               className="absolute inset-0 w-full h-full opacity-0 cursor-pointer"
             />
-            
+
             {selectedFile ? (
               <div className="flex items-center justify-center space-x-2">
                 <FileText className="h-8 w-8 text-green-600" />
-                <div className='text-left'>
-                  <p className="font-medium text-green-700">{selectedFile.name}</p>
+                <div className="text-left">
+                  <p className="font-medium text-green-700">
+                    {selectedFile.name}
+                  </p>
                   <p className="text-sm text-gray-500">
                     {(selectedFile.size / 1024).toFixed(1)} KB
                   </p>
@@ -161,6 +171,7 @@ export const ExcelImportModal: React.FC<ExcelImportModalProps> = ({
                   variant="ghost"
                   size="sm"
                   onClick={() => setSelectedFile(null)}
+                  className="cursor-pointer"
                 >
                   <X className="h-4 w-4" />
                 </Button>
@@ -169,10 +180,10 @@ export const ExcelImportModal: React.FC<ExcelImportModalProps> = ({
               <div>
                 <Upload className="mx-auto h-12 w-12 text-gray-400" />
                 <p className="mt-2 text-lg font-medium text-gray-900">
-                  ទម្លាក់ឯកសារ Excel របស់អ្នកនៅទីនេះ
+                  {t("component.export-excel.drop_file")}
                 </p>
                 <p className="mt-1 text-sm text-gray-600">
-                  ឬចុចដើម្បីរកមើល (.xlsx, .xls)
+                  {t("component.export-excel.browse")}
                 </p>
               </div>
             )}
@@ -180,23 +191,28 @@ export const ExcelImportModal: React.FC<ExcelImportModalProps> = ({
         </div>
 
         <DialogFooter>
-          <Button variant="outline" onClick={handleCancel}>
-            <X/>
-            បោះបង់
+          <Button
+            variant="outline"
+            onClick={handleCancel}
+            className="cursor-pointer"
+          >
+            <X />
+            {t("component.export-excel.cancel")}
           </Button>
           <Button
             onClick={handleImport}
             disabled={!selectedFile || isImporting}
+            className="cursor-pointer"
           >
             {isImporting ? (
               <>
                 <div className="mr-2 h-4 w-4 animate-spin rounded-full border-2 border-background border-t-transparent" />
-                កំពុងផ្ទុក...
+                {t("component.export-excel.importing")}
               </>
             ) : (
               <>
                 <Upload className="mr-2 h-4 w-4" />
-                បញ្ចូល
+                {t("component.export-excel.import")}
               </>
             )}
           </Button>

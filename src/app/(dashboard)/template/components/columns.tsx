@@ -44,18 +44,18 @@ const ActionsCell = ({ row }: { row: any }) => {
   return (
     <div className="flex gap-2 items-end justify-end">
       <Link href={`/preview/${row.original.id}`}>
-        <Button size="icon" variant="outline">
+        <Button size="icon" variant="outline" className="cursor-pointer">
           <EyeIcon />
         </Button>
       </Link>
       <Link href={`/template/edit/${row.original.id}`}>
-        <Button size="icon" variant="outline">
+        <Button size="icon" variant="outline" className="cursor-pointer">
           <EditIcon />
         </Button>
       </Link>
       <ConfirmDialog
         trigger={
-          <Button size="icon" variant="destructive">
+          <Button size="icon" variant="destructive" className="cursor-pointer">
             <Trash2Icon />
           </Button>
         }
@@ -175,22 +175,34 @@ export const useTemplateColumns = (): ColumnDef<Template>[] => {
       header: ({ column }) => (
         <DataTableColumnHeader column={column} title="EventPage.table.type" />
       ),
-      cell: ({ row }) => (
-        <span className="max-w-[200px] truncate font-medium">
-          {row.getValue("type")}
-        </span>
-      ),
+      cell: ({ row }) => {
+        const type = row.getValue("type") as string;
+
+        return (
+          <Badge variant="secondary" className="capitalize">
+            {type || "-"}
+          </Badge>
+        );
+      },
     },
     {
       accessorKey: "status",
       header: ({ column }) => (
         <DataTableColumnHeader column={column} title="EventPage.table.status" />
       ),
-      cell: ({ row }) => (
-        <span className="max-w-[200px] truncate font-medium">
-          {row.getValue("status")}
-        </span>
-      ),
+      cell: ({ row }) => {
+        const status = (row.getValue("status") as string) || "";
+
+        let variant: "default" | "secondary" | "outline" = "outline";
+        if (status === "active") variant = "default";
+        else if (status === "inactive") variant = "secondary";
+
+        return (
+          <Badge variant={variant} className="capitalize">
+            {status || "-"}
+          </Badge>
+        );
+      },
     },
 
     {

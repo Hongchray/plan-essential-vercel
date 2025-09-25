@@ -28,8 +28,8 @@ import { ConfirmDialog } from "@/components/composable/dialog/confirm-dialog";
 import { Spining } from "@/components/composable/loading/loading";
 import { useTranslation } from "react-i18next";
 const guestFormSchema = z.object({
-  name_en: z.string().min(1, "guest_form.create_edit.name_en is required"),
-  name_kh: z.string().min(1, "guest_form.create_edit.name_kh is required"),
+  name_en: z.string().min(1, "Name en is required"),
+  name_kh: z.string().min(1, "Name km is required"),
 });
 type GuestFormData = z.infer<typeof guestFormSchema>;
 
@@ -146,6 +146,7 @@ export function ManageGroupForm({ callBack }: { callBack: () => void }) {
               type="button"
               disabled={loading}
               onClick={() => form.handleSubmit(onSubmit)()}
+              className="cursor-pointer"
             >
               <PlusIcon /> {t("guest_form.create_edit.add_group")}
             </Button>
@@ -198,6 +199,7 @@ export function ManageGroupForm({ callBack }: { callBack: () => void }) {
                               setEditId("");
                               editForm.reset();
                             }}
+                            className="cursor-pointer"
                           >
                             <XIcon />
                           </Button>
@@ -207,6 +209,7 @@ export function ManageGroupForm({ callBack }: { callBack: () => void }) {
                             type="button"
                             disabled={loading}
                             onClick={() => editForm.handleSubmit(onUpdate)()}
+                            className="cursor-pointer"
                           >
                             <Check className="text-green-600" />
                           </Button>
@@ -236,12 +239,17 @@ export function ManageGroupForm({ callBack }: { callBack: () => void }) {
                               setEditId(group.id);
                               editForm.reset(group);
                             }}
+                            className="cursor-pointer"
                           >
                             <PencilLine className="text-primary" />
                           </Button>
                           <ConfirmDialog
                             trigger={
-                              <Button size="icon" variant="ghost">
+                              <Button
+                                size="icon"
+                                variant="ghost"
+                                className="cursor-pointer"
+                              >
                                 <Trash2Icon className="text-red-600" />
                               </Button>
                             }
@@ -271,6 +279,7 @@ export function ManageGroupForm({ callBack }: { callBack: () => void }) {
               <Button
                 variant="outline"
                 type="button"
+                className="cursor-pointer"
                 onClick={() => {
                   form.reset();
                   setDialogOpen(false);

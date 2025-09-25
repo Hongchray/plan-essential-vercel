@@ -28,14 +28,11 @@ export default function EventTableClient({ data, meta }: Props) {
 
   return (
     <div className="space-y-4">
-      {/* Table Header */}
       {isClient && i18n.isInitialized ? (
-        <h2 className="text-xl font-bold">{t("EventPage.title")}</h2>
+        <h1 className="text-xl font-bold">{t("EventPage.title")}</h1>
       ) : (
-        <h2 className="text-xl font-bold">Event Management</h2>
-      )}
-
-      {/* Show loading inside table if loading */}
+        <h1 className="text-xl font-bold">Event Management</h1>
+      )}{" "}
       <DataTable<any, any>
         data={loading ? [] : data} // empty while loading
         columns={columns}
@@ -43,8 +40,6 @@ export default function EventTableClient({ data, meta }: Props) {
         total={meta.total}
         serverPagination={true}
         loading={loading} // pass state to table loader
-        // optional: you can render a custom loader inside table
-        // e.g., <Loading variant="table" size="lg" message="Loading events..." />
       />
     </div>
   );
