@@ -10,15 +10,16 @@ export interface Guest {
   phone?: string;
   note?: string;
   address?: string;
-  guestTag?: GuestTag[];       
-  guestGroup?: GuestGroup[];   
+  guestTag?: GuestTag[];
+  guestGroup?: GuestGroup[];
   image?: string;
   status?: GuestStatus;
   wishing_note?: string;
   number_of_guests?: number;
+  sentAt?: string;
   is_invited?: boolean;
-  createdAt: string; 
-  updatedAt: string; 
+  createdAt: string;
+  updatedAt: string;
 }
 
 export interface GuestTag {
@@ -27,7 +28,7 @@ export interface GuestTag {
   tagId: string;
   createdAt: string;
   updatedAt: string;
-  tag?: Tag; 
+  tag?: Tag;
 }
 
 export interface GuestGroup {
@@ -36,5 +37,5 @@ export interface GuestGroup {
   groupId: string;
   createdAt: string;
   updatedAt: string;
-  group?: Group; 
+  group?: Group;
 }

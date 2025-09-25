@@ -19,18 +19,34 @@ import {
   PopoverContent,
   PopoverTrigger,
 } from "@/components/ui/popover";
-import { useState } from "react";
+import { useEffect, useState, useCallback } from "react";
 import { toast } from "sonner";
 import { ConfirmDialog } from "@/components/composable/dialog/confirm-dialog";
 import { useTranslation } from "react-i18next";
-import Image from "next/image";
 import { getAvatarColor, getInitials } from "@/utils/avatar";
 import { GuestStatusKH } from "@/enums/guests";
+import { Input } from "@/components/ui/input";
+import { Textarea } from "@/components/ui/textarea";
 
 const statusMap: Record<string, GuestStatusKH> = {
   pending: GuestStatusKH.PENDING,
   confirmed: GuestStatusKH.CONFIRMED,
   rejected: GuestStatusKH.REJECTED,
+};
+
+const getDefaultEventTemplate = async (eventId: string) => {
+  try {
+    const res = await fetch(`/api/admin/event/${eventId}/template/default`);
+    if (res.ok) {
+      return await res.json();
+    } else {
+      console.error("Failed to fetch event template:", res.statusText);
+      return null;
+    }
+  } catch (error) {
+    console.error("Error fetching event template:", error);
+    return null;
+  }
 };
 
 const ActionsCell = ({ row }: { row: any }) => {
@@ -49,6 +65,7 @@ const ActionsCell = ({ row }: { row: any }) => {
         toast.error(t("event_dashboard.guest.table.toast.delete_error"));
       }
     } catch (error) {
+      console.error("Error deleting guest:", error);
       toast.error(t("event_dashboard.guest.table.toast.delete_error"));
     }
   };
@@ -68,28 +85,55 @@ const ActionsCell = ({ row }: { row: any }) => {
         toast.error(t("event_dashboard.guest.table.toast.invite_error"));
       }
     } catch (error) {
+      console.error("Error sending invite:", error);
       toast.error(t("event_dashboard.guest.table.toast.invite_error"));
     }
   };
 
   const [copied, setCopied] = useState(false);
-  const invLink = "http://localhost:3000/preview/cmerywzjq0001ulfmu7ahau2o";
+  const [templateId, setTemplateId] = useState("");
+
+  // Memoize the template fetching function
+  const fetchTemplate = useCallback(async (eventId: string) => {
+    const data = await getDefaultEventTemplate(eventId);
+    if (data?.id) {
+      setTemplateId(data.id);
+    }
+  }, []);
+
+  // Safe window access for SSR
+  const getInviteLink = () => {
+    if (typeof window === "undefined") return "";
+    return `${window.location.origin}/preview/${templateId}/event/${row.original.eventId}?guest=${row.original.id}`;
+  };
+
+  const invLink = getInviteLink();
 
   const handleCopy = async () => {
     try {
-      await navigator.clipboard.writeText(invLink);
+      // Use modern clipboard API with fallback
+      if (navigator.clipboard && window.isSecureContext) {
+        await navigator.clipboard.writeText(invLink);
+      } else {
+        // Fallback for older browsers or non-secure contexts
+        const textArea = document.createElement("textarea");
+        textArea.value = invLink;
+        textArea.style.position = "fixed";
+        textArea.style.left = "-999999px";
+        textArea.style.top = "-999999px";
+        document.body.appendChild(textArea);
+        textArea.focus();
+        textArea.select();
+        document.execCommand("copy");
+        document.body.removeChild(textArea);
+      }
+
       setCopied(true);
       await inviteLink(row.original.id);
       setTimeout(() => setCopied(false), 2000);
     } catch (err) {
-      const textArea = document.createElement("textarea");
-      textArea.value = invLink;
-      document.body.appendChild(textArea);
-      textArea.select();
-      document.execCommand("copy");
-      document.body.removeChild(textArea);
-      setCopied(true);
-      setTimeout(() => setCopied(false), 2000);
+      console.error("Failed to copy text:", err);
+      toast.error("Failed to copy invitation link");
     }
   };
 
@@ -103,13 +147,17 @@ const ActionsCell = ({ row }: { row: any }) => {
                 <Button
                   size="icon"
                   variant="outline"
-                  className="cursor-pointer"
+                  onClick={() => fetchTemplate(row.original.eventId)}
                 >
-                  <Send size={5} />
+                  <Send className="h-4 w-4" />
                 </Button>
               ) : (
-                <Button size="icon" variant="default">
-                  <CheckCheck />
+                <Button
+                  size="icon"
+                  variant="default"
+                  onClick={() => fetchTemplate(row.original.eventId)}
+                >
+                  <CheckCheck className="h-4 w-4" />
                 </Button>
               )}
             </PopoverTrigger>
@@ -128,18 +176,19 @@ const ActionsCell = ({ row }: { row: any }) => {
               {t("event_dashboard.guest.table.invite_link")}
             </p>
             <div className="flex gap-2 items-center">
-              <input
-                type="text"
+              <Textarea
                 value={invLink}
+                disabled={!templateId}
                 readOnly
                 className="flex-1 px-3 py-2 border border-gray-300 rounded-md bg-gray-50 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
               />
-              <button
+              <Button
                 onClick={handleCopy}
+                disabled={!templateId}
                 className={`p-2 rounded-md transition-colors ${
                   copied
                     ? "bg-green-100 text-green-600"
-                    : "bg-gray-100 text-gray-600 hover:bg-gray-200"
+                    : "bg-rose-100 text-rose-600 hover:bg-rose-200"
                 }`}
                 title={
                   copied
@@ -148,7 +197,7 @@ const ActionsCell = ({ row }: { row: any }) => {
                 }
               >
                 {copied ? <Check size={16} /> : <Copy size={16} />}
-              </button>
+              </Button>
             </div>
             {copied && (
               <p className="text-sm text-green-600 mt-1">
@@ -195,8 +244,8 @@ const MobileGuestCard = ({
   isSelected,
 }: {
   guest: Guest;
-  onSelect: (selected: boolean) => void;
   isSelected: boolean;
+  onSelect: (selected: boolean) => void;
 }) => {
   const { t } = useTranslation("common");
   const name: string = guest.name ?? "";
@@ -205,8 +254,18 @@ const MobileGuestCard = ({
   return (
     <div className="bg-white border-t border-gray-200 p-2">
       <div className="flex items-center gap-3">
+        <Checkbox
+          checked={isSelected}
+          onCheckedChange={onSelect}
+          aria-label={t("event_dashboard.guest.table.select_row")}
+          className="translate-y-[2px]"
+        />
+
         <Avatar className="h-6 w-6 flex-shrink-0">
           <AvatarImage src="/placeholder.svg" />
+          <AvatarFallback className={`${bg} ${text} font-bold text-[12px]`}>
+            {getInitials(name)}
+          </AvatarFallback>
           <AvatarFallback className={`${bg} ${text} font-bold text-[12px]`}>
             {getInitials(name)}
           </AvatarFallback>
@@ -214,6 +273,14 @@ const MobileGuestCard = ({
 
         <div className="flex-1 min-w-0">
           <div className="mb-2">
+            <h3 className="text-[12px] font-medium text-gray-900 truncate">
+              {name}
+            </h3>
+            {guest.phone && (
+              <p className="text-[10px] text-gray-500 truncate">
+                {guest.phone}
+              </p>
+            )}
             <h3 className="text-[12px] font-medium text-gray-900 truncate">
               {name}
             </h3>
@@ -302,11 +369,15 @@ export function useGuestColumns(): ColumnDef<Guest>[] {
       cell: ({ row }) => {
         const name: string = row.getValue("name") ?? "";
         const { bg, text } = getAvatarColor(name);
+
         return (
           <span className="max-w-[350px] truncate font-medium">
             <div className="flex gap-2 items-center">
               <Avatar>
                 <AvatarImage src="" />
+                <AvatarFallback className={`${bg} ${text} font-bold`}>
+                  {getInitials(name)}
+                </AvatarFallback>
                 <AvatarFallback className={`${bg} ${text} font-bold`}>
                   {getInitials(name)}
                 </AvatarFallback>
@@ -328,7 +399,7 @@ export function useGuestColumns(): ColumnDef<Guest>[] {
       accessorKey: "guestGroup",
       header: t("event_dashboard.guest.table.groups"),
       cell: ({ row }) => (
-        <div className="flex gap-2">
+        <div className="flex gap-2 flex-wrap">
           {row.original?.guestGroup?.map((group: any) => (
             <Badge key={group.id} variant="default">
               {group.group?.name_kh}
@@ -341,7 +412,7 @@ export function useGuestColumns(): ColumnDef<Guest>[] {
       accessorKey: "guestTag",
       header: t("event_dashboard.guest.table.tags"),
       cell: ({ row }) => (
-        <div className="flex gap-2">
+        <div className="flex gap-2 flex-wrap">
           {row.original?.guestTag?.map((tag: any) => (
             <Badge key={tag.id} variant="secondary">
               {tag.tag?.name_kh}
@@ -368,6 +439,7 @@ export function useGuestColumns(): ColumnDef<Guest>[] {
             }
           `}
         >
+          {(row.original.status && statusMap[row.original.status]) || ""}
           {(row.original.status && statusMap[row.original.status]) || ""}
         </Badge>
       ),

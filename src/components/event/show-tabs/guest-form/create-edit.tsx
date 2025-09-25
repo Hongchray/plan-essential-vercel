@@ -255,7 +255,6 @@ export function CreateEditForm({ id }: { id: string }) {
                   onClick={() => {
                     form.reset();
                     setDialogOpen(false);
-                    router.refresh();
                   }}
                 >
                   <X />

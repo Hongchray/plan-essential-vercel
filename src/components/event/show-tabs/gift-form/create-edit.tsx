@@ -25,6 +25,7 @@ import {
   Check,
   ChevronsUpDown,
   Search,
+  X,
 } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { Label } from "@/components/ui/label";
@@ -342,14 +343,19 @@ export function CreateEditGiftForm({
                         </Button>
                       </PopoverTrigger>
 
-                      <PopoverContent className="w-[var(--radix-popover-trigger-width)] p-0">
+                      <PopoverContent className="w-[var(--radix-popover-trigger-width)] p-0 max-h-96">
                         <Command shouldFilter={false}>
                           <CommandInput
                             value={searchQuery}
                             onValueChange={setSearchQuery}
                             placeholder={t("gift.form.search_guest")}
                           />
-                          <CommandList>
+                          <CommandList
+                            className="max-h-60 overflow-y-auto"
+                            onWheel={(e) => {
+                              e.stopPropagation();
+                            }}
+                          >
                             <CommandEmpty>
                               {t("gift.form.no_guest_found")}
                             </CommandEmpty>
@@ -363,16 +369,21 @@ export function CreateEditGiftForm({
                                     onSelect?.(guest);
                                     setOpen(false);
                                   }}
-                                  className="border-b border-gray-200 last:border-b-0" // add this line
+                                  className={cn(
+                                    "border mt-1",
+                                    selectedGuest?.id === guest.id
+                                      ? "!bg-rose-50 !hover:bg-rose-50 !text-primary !hover:text-primary border-rose-500 border-2"
+                                      : " "
+                                  )}
                                 >
-                                  <div className="flex items-start gap-3 py-2">
+                                  <div className="flex items-center gap-3 py-2">
                                     {" "}
                                     {/* add some vertical padding */}
                                     <CircleCheck
                                       className={cn(
                                         "h-4 w-4 mt-0.5",
                                         selectedGuest?.id === guest.id
-                                          ? "opacity-100"
+                                          ? "opacity-100 text-primary"
                                           : "opacity-0"
                                       )}
                                     />
@@ -390,22 +401,22 @@ export function CreateEditGiftForm({
                                         {guest.name}
                                       </span>
                                       <div className="flex gap-1 flex-wrap text-xs text-muted-foreground">
+                                        {guest.guestGroup?.map((gg) => (
+                                          <Badge
+                                            key={gg.id}
+                                            variant="default"
+                                            className="text-[10px] px-2 py-0.5"
+                                          >
+                                            {gg.group?.name_kh}
+                                          </Badge>
+                                        ))}
                                         {guest.guestTag?.map((gt) => (
                                           <Badge
                                             key={gt.id}
                                             variant="secondary"
                                             className="text-[10px] px-2 py-0.5"
                                           >
-                                            {gt.tag?.name_en}
-                                          </Badge>
-                                        ))}
-                                        {guest.guestGroup?.map((gg) => (
-                                          <Badge
-                                            key={gg.id}
-                                            variant="outline"
-                                            className="text-[10px] px-2 py-0.5"
-                                          >
-                                            {gg.group?.name_en}
+                                            {gt.tag?.name_kh}
                                           </Badge>
                                         ))}
                                       </div>
@@ -618,9 +629,9 @@ export function CreateEditGiftForm({
                       onClick={() => {
                         form.reset();
                         setDialogOpen(false);
-                        router.refresh();
                       }}
                     >
+                      <X />
                       {t("gift.form.cancel")}
                     </Button>
                     <SubmitButton loading={loading} entityId={id} />

@@ -10,7 +10,7 @@ import { Button } from "@/components/ui/button";
 import { toast } from "sonner";
 import dynamic from "next/dynamic";
 import { Event } from "@/interfaces/event";
-import { Maximize2, Minimize2, Save, X } from "lucide-react";
+import { Check, Cog, Maximize2, Minimize2, Save, X } from "lucide-react";
 import {
   Select,
   SelectContent,
@@ -162,6 +162,39 @@ export default function TabTemplate({ paramId }: { paramId: string }) {
       console.error("Save error:", error);
     } finally {
       setIsSaving(false);
+    }
+  };
+
+  const setDefaultTemplate = async () => {
+    try {
+      const response = await fetch(
+        `/api/admin/event/${paramId}/template/${template.id}/default`,
+        {
+          method: "PUT",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({}),
+        }
+      );
+
+      if (!response.ok) {
+        throw new Error("Failed to save");
+      }
+
+      toast.success(t("templates.save_success"));
+      getPreviewTemplate(paramId).then((data) => {
+        if (data) {
+          setEventTemplate(data);
+          setTemplate(data[0]);
+          setConfig(data[0].config);
+        }
+        setIsLoading(false);
+      });
+    } catch (error) {
+      toast.error(t("templates.save_failed"));
+      console.error("Save error:", error);
+    } finally {
     }
   };
 
@@ -370,7 +403,7 @@ export default function TabTemplate({ paramId }: { paramId: string }) {
       <h3 className="text-lg font-semibold mb-4">
         {t("templates.default_screen.my_templates")}
       </h3>
-      <div>
+      <div className="flex gap-2">
         <Select value={template.id} onValueChange={handleTemplateSwitch}>
           <SelectTrigger className="w-[280px] border-dashed border-2">
             <SelectValue
@@ -385,6 +418,17 @@ export default function TabTemplate({ paramId }: { paramId: string }) {
             ))}
           </SelectContent>
         </Select>
+        <Button onClick={setDefaultTemplate}>
+          {template.isDefault ? (
+            <>
+              <Check /> <div>បានប្រើ</div>
+            </>
+          ) : (
+            <>
+              <Cog /> <div>ដាក់ប្រើ</div>
+            </>
+          )}
+        </Button>
       </div>
       <div className="h-[750px] border-dashed border-3 rounded">
         <ResizablePanelGroup direction="horizontal">

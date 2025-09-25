@@ -23,6 +23,18 @@ export async function POST(req: Request) {
         userId: session.user.id,
       },
     });
+    const template = await prisma.template.findFirst();
+    //event template
+    if (template) {
+      await prisma.eventTemplate.create({
+        data: {
+          eventId: event.id,
+          templateId: template.id,
+          config: template.defaultConfig || {},
+          isDefault: true,
+        },
+      });
+    }
 
     // Create event groups
     await prisma.group.createMany({
