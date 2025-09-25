@@ -21,10 +21,18 @@ export const metadata: Metadata = {
     icon: "/favicon.ico",
   },
 };
-export default function RootLayout({ children }: { children: React.ReactNode }) {
+export default function RootLayout({
+  children,
+}: {
+  children: React.ReactNode;
+}) {
   return (
     <html>
       <head>
+        <link
+          rel="stylesheet"
+          href="https://fonts.googleapis.com/css2?family=Dangrek&family=Roboto&family=Pacifico&family=Montserrat&family=Ovo&family=Kantumruy+Pro&family=Great+Vibes&family=Dancing+Script&family=Moul&family=Battambang&family=Fasthand&family=Moulpali&family=Wix+Madefor+Display:wght@400;500;600;700&display=swap"
+        />
         <link
           href="https://fonts.googleapis.com/css2?family=Inter:wght@400;700&display=swap"
           rel="stylesheet"
