@@ -16,6 +16,10 @@ export async function GET(req: NextRequest) {
       wishing_note: { not: null },
       sentAt: { not: null },
     },
+    orderBy: {
+      sentAt: "desc",
+    },
+    take: 10,
   });
   if (!guests)
     return NextResponse.json({ message: "No guests found" }, { status: 404 });
