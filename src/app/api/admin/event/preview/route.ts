@@ -2,7 +2,35 @@ import { prisma } from "@/lib/prisma";
 import { NextRequest, NextResponse } from "next/server";
 
 export async function GET(req: NextRequest) {
-  //get first event
+  const eventId = req.nextUrl.searchParams.get("eventId");
+
+  if (eventId) {
+    // If eventId is provided, try to find that specific event
+    const event = await prisma.event.findUnique({
+      where: {
+        id: eventId,
+      },
+      include: {
+        schedules: {
+          include: {
+            shifts: {
+              include: {
+                timeLine: true,
+              },
+            },
+          },
+        },
+      },
+    });
+
+    if (!event) {
+      return NextResponse.json({ message: "Event not found" }, { status: 404 });
+    }
+
+    return NextResponse.json(event, { status: 200 });
+  }
+
+  // If no eventId is provided, get the first available event
   const event = await prisma.event.findFirst({
     include: {
       schedules: {
@@ -16,8 +44,11 @@ export async function GET(req: NextRequest) {
       },
     },
   });
-  if (!event)
+
+  if (!event) {
     return NextResponse.json({ message: "No event found" }, { status: 404 });
+  }
+
   return NextResponse.json(event, { status: 200 });
 }
 
