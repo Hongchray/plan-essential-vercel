@@ -378,9 +378,6 @@ export function useGuestColumns(): ColumnDef<Guest>[] {
                 <AvatarFallback className={`${bg} ${text} font-bold`}>
                   {getInitials(name)}
                 </AvatarFallback>
-                <AvatarFallback className={`${bg} ${text} font-bold`}>
-                  {getInitials(name)}
-                </AvatarFallback>
               </Avatar>
               {name}
             </div>
@@ -439,7 +436,6 @@ export function useGuestColumns(): ColumnDef<Guest>[] {
             }
           `}
         >
-          {(row.original.status && statusMap[row.original.status]) || ""}
           {(row.original.status && statusMap[row.original.status]) || ""}
         </Badge>
       ),
