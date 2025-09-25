@@ -22,7 +22,7 @@ const ScrollNavigationBar = () => {
   // Navigation sections with icons
   const sections = [
     { id: "main", label: "Home", icon: Home, labelKh: "ដើម" },
-    { id: "invitation", label: "Invitation", icon: Heart, labelKh: "អញ្ជើញ" },
+    // { id: "invitation", label: "Invitation", icon: Heart, labelKh: "អញ្ជើញ" },
     { id: "schedule", label: "Schedule", icon: Calendar, labelKh: "កម្មវិធី" },
     { id: "location", label: "Location", icon: MapPin, labelKh: "ទីតាំង" },
     { id: "gallery", label: "Photos", icon: Camera, labelKh: "រូបភាព" },
@@ -43,7 +43,7 @@ const ScrollNavigationBar = () => {
       // Get actual section positions
       const sections = [
         "main",
-        "invitation",
+        // "invitation",
         "schedule",
         "location",
         "gallery",
@@ -96,7 +96,7 @@ const ScrollNavigationBar = () => {
       {/* Main Navigation Bar */}
       <div className="fixed bottom-6 left-1/2 transform -translate-x-1/2 z-50">
         <div className="bg-white/95 backdrop-blur-sm border border-gray-200 rounded-full px-4 py-2 shadow-lg">
-          <div className="flex items-center gap-1">
+          <div className="flex items-center gap-2">
             {sections.map((section, index) => {
               const Icon = section.icon;
               const isActive = activeSection === section.id;
