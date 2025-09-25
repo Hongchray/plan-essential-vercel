@@ -1,9 +1,9 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Event } from "@/interfaces/event";
 import Link from "next/link";
 import Image from "next/image";
 import z from "zod";
-import { useForm } from "react-hook-form";
+import { Controller, useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
@@ -17,6 +17,11 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { useSearchParams } from "next/navigation";
+import { Guest } from "@/interfaces/guest";
+import { formatDateCustom, formatDateTime } from "@/utils/date";
+import { GuestStatus } from "@/enums/guests";
+import { toast } from "sonner";
+import ScrollNavigationBar from "../scroll-navigation-bar";
 export default function SimpleTemplate({
   config,
   data,
@@ -24,6 +29,7 @@ export default function SimpleTemplate({
   config: any;
   data: Event;
 }) {
+  const [guests, setGuests] = useState<Guest[]>([]);
   const searchParams = useSearchParams();
   const guestId = searchParams.get("guest");
   const [currentLanguage, setCurrentLanguage] = useState<"kh" | "en">("kh");
@@ -40,7 +46,7 @@ export default function SimpleTemplate({
 
   const onSubmit = async (data: FormData) => {
     try {
-      const res = await fetch("/api/guest", {
+      const res = await fetch("/api/admin/event/preview", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -59,16 +65,35 @@ export default function SimpleTemplate({
       }
 
       const result = await res.json();
-      console.log("Guest updated:", result);
+      getMessage();
+      toast.success("អ្នកបានផ្ញើសារជូនពរដោយជោគជ័យ");
     } catch (error) {
-      console.error("Error submitting form:", error);
+      toast.error("អ្នកបានផ្ញើសារជូនពបរាជ័យ");
     }
   };
+  const getMessage = async () => {
+    try {
+      const res = await fetch(
+        `/api/admin/event/preview/message?eventId=${data.id}`
+      );
+      if (!res.ok) {
+        throw new Error("Failed to get message");
+      }
+      const response = await res.json();
+      setGuests(response);
+    } catch (error) {
+      console.error("Error getting message:", error);
+      return "";
+    }
+  };
+  useEffect(() => {
+    getMessage();
+  }, []);
 
   const formSchema = z.object({
-    name: z.string().min(1, "ត្រូវការឈ្មោះ"),
+    name: z.string().optional(),
     message: z.string().min(1, "ត្រូវការសារជូនពរ"),
-    number_guest: z.number().min(1, "ចំនួនភ្ញៀវ"),
+    number_guest: z.coerce.number().min(1, "ចំនួនភ្ញៀវ"),
     status: z.string().min(1, "ប្រាប់ពីការចូលរួម"),
   });
 
@@ -80,12 +105,13 @@ export default function SimpleTemplate({
       name: "",
       message: "",
       number_guest: 1,
-      status: "confirmed",
+      status: GuestStatus.CONFIRMED,
     },
   });
 
   return (
     <div className="relative">
+      <ScrollNavigationBar />
       {/* Language Switch Button - Fixed position with animation */}
       <div className="fixed top-4 right-4 z-50 animate-fade-in">
         <button
@@ -123,6 +149,7 @@ export default function SimpleTemplate({
       <div className="space-y-6 max-w-md mx-auto">
         {/* Main Header Card */}
         <div
+          id="main"
           className="relative h-[600px] bg-cover bg-center flex flex-col justify-start items-center text-center px-6  overflow-hidden w-full py-8 animate-fade-in-up"
           style={{
             backgroundImage: `url(${currentInvitation?.main_background})`,
@@ -232,7 +259,10 @@ export default function SimpleTemplate({
         </div>
 
         {/* Invitation Message Card */}
-        <div className="p-6 text-center animate-fade-in-up animation-delay-300 hover: transition-shadow duration-300">
+        <div
+          id="invitation"
+          className="p-6 text-center animate-fade-in-up animation-delay-300 hover: transition-shadow duration-300"
+        >
           <h2
             className="text-lg font-semibold mb-4 animate-slide-in-left"
             style={{ color: config?.textColor, fontFamily: "moul" }}
@@ -247,8 +277,9 @@ export default function SimpleTemplate({
           </p>
         </div>
 
-        {/* Event Details Card */}
+        {/* Event schedule Card */}
         <div
+          id="schedule"
           className="relative min-h-[600px] bg-cover bg-center  overflow-hidden animate-fade-in-up animation-delay-700"
           style={{
             backgroundImage: `url(${currentInvitation?.details_background})`,
@@ -347,7 +378,10 @@ export default function SimpleTemplate({
       </div>
 
       {/* Event Location */}
-      <div className="mt-5 mx-auto max-w-md flex flex-col items-center animate-fade-in-up animation-delay-1200">
+      <div
+        id="location"
+        className="mt-5 mx-auto max-w-md flex flex-col items-center animate-fade-in-up animation-delay-1200"
+      >
         <h2
           className="text-lg font-semibold text-center mb-4 animate-slide-in-left"
           style={{ color: config?.textColor, fontFamily: "moul" }}
@@ -389,7 +423,10 @@ export default function SimpleTemplate({
       </div>
 
       {/* Photo Gallery */}
-      <div className="mt-5 mx-auto max-w-md flex flex-col items-center animate-fade-in-up animation-delay-1400">
+      <div
+        id="gallery"
+        className="mt-5 mx-auto max-w-md flex flex-col items-center animate-fade-in-up animation-delay-1400"
+      >
         <h2
           className="text-lg font-semibold text-center mb-4 animate-slide-in-right"
           style={{ color: config?.textColor, fontFamily: "moul" }}
@@ -458,7 +495,10 @@ export default function SimpleTemplate({
       </div>
 
       {/* Greeting Messages */}
-      <div className="mt-5 mx-auto max-w-md flex flex-col items-center animate-fade-in-up animation-delay-1600">
+      <div
+        id="messages"
+        className="mt-5 mx-auto max-w-md flex flex-col items-center animate-fade-in-up animation-delay-1600"
+      >
         <h2
           className="text-lg font-semibold text-center mb-4 animate-slide-in-left"
           style={{ color: config?.textColor, fontFamily: "moul" }}
@@ -472,30 +512,37 @@ export default function SimpleTemplate({
             onSubmit={form.handleSubmit(onSubmit)}
             className="space-y-3 sm:space-y-4 py-5 w-full px-5 flex flex-col items-center animate-fade-in animation-delay-300"
           >
-            <Input
+            {/* <Input
               {...form.register("name")}
               placeholder={currentLanguage === "kh" ? "ឈ្មោះ" : "Name"}
               className="bg-[#A5AE79]/30 border-0 focus-visible:ring-0 rounded-lg text-[#A5AE79] placeholder:text-[#A5AE79] w-full hover:bg-[#A5AE79]/40 focus:scale-105 transition-all duration-300"
+            /> */}
+            <Controller
+              name="status"
+              control={form.control}
+              render={({ field }) => (
+                <Select onValueChange={field.onChange} value={field.value}>
+                  <SelectTrigger className="bg-[#A5AE79]/30 border-0 focus-visible:ring-0 rounded-lg text-[#A5AE79] placeholder:text-[#A5AE79] w-full hover:bg-[#A5AE79]/40 focus:scale-105 transition-all duration-300">
+                    <SelectValue
+                      className="text-[#A5AE79] placeholder:text-[#A5AE79]"
+                      placeholder={
+                        currentLanguage === "kh"
+                          ? "តើអ្នកចូលរួមអត់?"
+                          : "Will you attend?"
+                      }
+                    />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value={GuestStatus.CONFIRMED}>
+                      {currentLanguage === "kh" ? "ចូលរួម" : "Attending"}
+                    </SelectItem>
+                    <SelectItem value={GuestStatus.REJECTED}>
+                      {currentLanguage === "kh" ? "បដិសេធ" : "Cannot attend"}
+                    </SelectItem>
+                  </SelectContent>
+                </Select>
+              )}
             />
-            <Select {...form.register("status")}>
-              <SelectTrigger className="bg-[#A5AE79]/30 border-0 focus-visible:ring-0 rounded-lg text-[#A5AE79] placeholder:text-[#A5AE79] w-full hover:bg-[#A5AE79]/40 focus:scale-105 transition-all duration-300">
-                <SelectValue
-                  placeholder={
-                    currentLanguage === "kh"
-                      ? "តើអ្នកចូលរួមអត់?"
-                      : "Will you attend?"
-                  }
-                />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="confirmed">
-                  {currentLanguage === "kh" ? "ចូលរួម" : "Attending"}
-                </SelectItem>
-                <SelectItem value="rejected">
-                  {currentLanguage === "kh" ? "បដិសេធ" : "Cannot attend"}
-                </SelectItem>
-              </SelectContent>
-            </Select>
             <Input
               {...form.register("number_guest")}
               placeholder={
@@ -534,28 +581,27 @@ export default function SimpleTemplate({
         )}
 
         <div className="p-5 w-full flex flex-col gap-2 animate-fade-in animation-delay-500">
-          <div className="bg-[#A5AE79]/30 p-5 rounded-lg hover:bg-[#A5AE79]/40 hover:scale-105 transition-all duration-300 animate-slide-in-left">
-            <div className="text-[#A5AE79]">Mafixnsa</div>
-            <div className="border-b border-[#A5AE79]"></div>
-            <div className="text-center text-[#A5AE79] pt-5">
-              "Congratulations to you Sophat and Vouch 🤵‍♂️👰💍 May your journey
-              together be filled with endless love, laughter, and happiness.
-              Wishing you both a lifetime of shared dreams, cherished moments,
-              and unwavering support for one another. Here's to a beautiful
-              beginning and a future filled with joy!"
-            </div>
-            <div className="text-center text-[#A5AE79] pt-5 text-xs">
-              18-09-2025 | 01:03PM
-            </div>
-          </div>
-          <div className="bg-[#A5AE79]/30 p-5 rounded-lg hover:bg-[#A5AE79]/40 hover:scale-105 transition-all duration-300 animate-slide-in-right animation-delay-300">
-            <div className="text-[#A5AE79]">បរមី</div>
-            <div className="border-b border-[#A5AE79]"></div>
-            <div className="text-center text-[#A5AE79] pt-5">"អបអរសាទរ"</div>
-            <div className="text-center text-[#A5AE79] pt-5 text-xs">
-              18-09-2025 | 01:03PM
-            </div>
-          </div>
+          {guests &&
+            guests.map((guest, key) => {
+              return (
+                <div
+                  key={key}
+                  className="bg-[#A5AE79]/30 p-5 rounded-lg hover:bg-[#A5AE79]/40 hover:scale-105 transition-all duration-300 animate-slide-in-left"
+                >
+                  <div className="text-[#A5AE79]">{guest?.name}</div>
+                  <div className="border-b border-[#A5AE79]"></div>
+                  <div className="text-center text-[#A5AE79] pt-5">
+                    "{guest?.wishing_note}"
+                  </div>
+                  <div className="text-center text-[#A5AE79] pt-5 text-xs">
+                    {formatDateCustom(
+                      guest?.sentAt ?? "",
+                      "DD-MM-YYYY | HH:mmA"
+                    )}
+                  </div>
+                </div>
+              );
+            })}
         </div>
 
         <div className="py-2 animate-fade-in animation-delay-800">
