@@ -15,11 +15,9 @@ export async function PUT(
   await prisma.eventTemplate.updateMany({
     where: {
       eventId: eventId,
-      id: { not: templateId },
+      NOT: { id: templateId },
     },
-    data: {
-      isDefault: false,
-    },
+    data: { isDefault: false },
   });
 
   if (eventTemplate) {
