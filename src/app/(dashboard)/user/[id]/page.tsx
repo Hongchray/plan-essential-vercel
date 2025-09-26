@@ -46,6 +46,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import type { UserPlan, Plan } from "@/interfaces/plan";
 import { Role } from "@/enums/roles";
 import { Loading } from "@/components/composable/loading/loading";
+import { useTranslation } from "react-i18next";
 interface UserProfile {
   id: string;
   email: string;
@@ -74,6 +75,7 @@ export default function UserPage() {
   const [planDialogOpen, setPlanDialogOpen] = useState(false);
   const [editPlanDialogOpen, setEditPlanDialogOpen] = useState(false);
   const [selectedPlan, setSelectedPlan] = useState("");
+  const { t } = useTranslation("common");
   const [planLimits, setPlanLimits] = useState({
     limit_guests: 0,
     limit_template: 0,
@@ -227,14 +229,16 @@ export default function UserPage() {
         <Card className="w-full max-w-md">
           <CardContent className="pt-6 text-center">
             <User className="h-12 w-12 mx-auto text-muted-foreground mb-4" />
-            <h3 className="text-lg font-semibold mb-2">User Not Found</h3>
+            <h3 className="text-lg font-semibold mb-2">
+              {t("user.detail.notFoundTitle")}
+            </h3>
             <p className="text-muted-foreground mb-4">
-              The requested user could not be found.
+              {t("user.detail.notFoundMessage")}
             </p>
             <Link href="/user">
               <Button variant="outline">
                 <ArrowLeft className="h-4 w-4 mr-2" />
-                Back to Users
+                {t("user.detail.backToUsers")}
               </Button>
             </Link>
           </CardContent>
@@ -251,14 +255,14 @@ export default function UserPage() {
           <Link href="/user">
             <Button variant="ghost" size="sm">
               <ArrowLeft className="h-4 w-4 mr-2" />
-              Back
+              {t("user.detail.back")}
             </Button>
           </Link>
           <div>
-            <h1 className="text-3xl font-bold tracking-tight">User Details</h1>
-            <p className="text-muted-foreground">
-              Manage user information, plans, and activity
-            </p>
+            <h1 className="text-3xl font-bold tracking-tight">
+              {t("user.detail.title")}
+            </h1>
+            <p className="text-muted-foreground">{t("user.detail.subtitle")}</p>
           </div>
         </div>
 
@@ -272,7 +276,9 @@ export default function UserPage() {
                   {user.photoUrl ? (
                     <img
                       src={user.photoUrl || "/placeholder.svg"}
-                      alt={user.name || user.username || "User"}
+                      alt={
+                        user.name || user.username || t("user.detail.noName")
+                      }
                       className="w-24 h-24 rounded-full object-cover border-4 border-background shadow-lg"
                     />
                   ) : (
@@ -282,7 +288,7 @@ export default function UserPage() {
                   )}
                   <div>
                     <h2 className="text-xl font-semibold">
-                      {user.name || "No Name"}
+                      {user.name || t("user.detail.noName")}
                     </h2>
                     <p className="text-muted-foreground">{user.email}</p>
                     <Badge variant="secondary" className="mt-2 capitalize">
@@ -298,28 +304,28 @@ export default function UserPage() {
               <CardHeader>
                 <CardTitle className="text-lg flex items-center gap-2">
                   <Mail className="h-5 w-5" />
-                  Contact Information
+                  {t("user.detail.contactInfo")}
                 </CardTitle>
               </CardHeader>
               <CardContent className="space-y-4">
                 <InfoItem
                   icon={<User className="h-4 w-4" />}
-                  label="Username"
+                  label={t("user.detail.username")}
                   value={user.username}
                 />
                 <InfoItem
                   icon={<Phone className="h-4 w-4" />}
-                  label="Phone"
+                  label={t("user.detail.phone")}
                   value={user.phone}
                 />
                 <InfoItem
                   icon={<Mail className="h-4 w-4" />}
-                  label="Email"
+                  label={t("user.detail.email")}
                   value={user.email}
                 />
                 <InfoItem
                   icon={<Shield className="h-4 w-4" />}
-                  label="Role"
+                  label={t("user.detail.role")}
                   value={
                     <Badge variant="outline" className="capitalize">
                       {user.role}
@@ -334,28 +340,30 @@ export default function UserPage() {
               <CardHeader>
                 <CardTitle className="text-lg flex items-center gap-2">
                   <Clock className="h-5 w-5" />
-                  Account Details
+                  {t("user.detail.accountDetails")}
                 </CardTitle>
               </CardHeader>
               <CardContent className="space-y-4">
                 <InfoItem
                   icon={<Calendar className="h-4 w-4" />}
-                  label="Created"
+                  label={t("user.detail.created")}
                   value={new Date(user.createdAt).toLocaleDateString()}
                 />
                 <InfoItem
                   icon={<Clock className="h-4 w-4" />}
-                  label="Last Updated"
+                  label={t("user.detail.lastUpdated")}
                   value={new Date(user.updatedAt).toLocaleDateString()}
                 />
                 <InfoItem
                   icon={<Phone className="h-4 w-4" />}
-                  label="Phone Verified"
+                  label={t("user.detail.phoneVerified")}
                   value={
                     <Badge
                       variant={user.phone_verified ? "default" : "secondary"}
                     >
-                      {user.phone_verified ? "Verified" : "Not Verified"}
+                      {user.phone_verified
+                        ? t("user.detail.verified")
+                        : t("user.detail.notVerified")}
                     </Badge>
                   }
                 />
@@ -382,26 +390,32 @@ export default function UserPage() {
                       <DialogTrigger asChild>
                         <Button>
                           <Plus className="h-4 w-4 mr-2" />
-                          Assign Plan
+                          {t("user.detail.assignPlan")}
                         </Button>
                       </DialogTrigger>
                       <DialogContent className="sm:max-w-md">
                         <DialogHeader>
-                          <DialogTitle>Assign Plan to User</DialogTitle>
+                          <DialogTitle>
+                            {" "}
+                            {t("user.detail.assignPlanTitle")}
+                          </DialogTitle>
                           <DialogDescription>
-                            Select a plan and configure the limits for this
-                            user.
+                            {t("user.detail.assignPlanDescription")}
                           </DialogDescription>
                         </DialogHeader>
                         <div className="space-y-4 py-4">
                           <div className="space-y-2">
-                            <Label htmlFor="plan">Plan</Label>
+                            <Label htmlFor="plan">
+                              {t("user.detail.plan")}
+                            </Label>
                             <Select
                               value={selectedPlan}
                               onValueChange={setSelectedPlan}
                             >
                               <SelectTrigger>
-                                <SelectValue placeholder="Select a plan" />
+                                <SelectValue
+                                  placeholder={t("user.detail.selectPlan")}
+                                />
                               </SelectTrigger>
                               <SelectContent>
                                 {plans.map((plan) => (
@@ -415,7 +429,9 @@ export default function UserPage() {
                           </div>
                           <div className="grid grid-cols-2 gap-4">
                             <div className="space-y-2">
-                              <Label htmlFor="guests">Guest Limit</Label>
+                              <Label htmlFor="guests">
+                                {t("user.detail.guestLimit")}
+                              </Label>
                               <Input
                                 id="guests"
                                 type="number"
@@ -430,7 +446,9 @@ export default function UserPage() {
                               />
                             </div>
                             <div className="space-y-2">
-                              <Label htmlFor="templates">Template Limit</Label>
+                              <Label htmlFor="templates">
+                                {t("user.detail.templateLimit")}
+                              </Label>
                               <Input
                                 id="templates"
                                 type="number"
@@ -446,7 +464,9 @@ export default function UserPage() {
                             </div>
                           </div>
                           <div className="flex items-center justify-between">
-                            <Label htmlFor="excel">Excel Export</Label>
+                            <Label htmlFor="excel">
+                              {t("user.detail.excelExportSSS")}
+                            </Label>
                             <Switch
                               id="excel"
                               checked={planLimits.limit_export_excel}
@@ -467,7 +487,7 @@ export default function UserPage() {
                             {submitting && (
                               <Loader2 className="h-4 w-4 animate-spin mr-2" />
                             )}
-                            Assign Plan
+                            {t("user.detail.assignPlan")}
                           </Button>
                         </DialogFooter>
                       </DialogContent>
@@ -498,7 +518,9 @@ export default function UserPage() {
                                 <div className="flex items-center gap-2">
                                   <Users className="h-4 w-4 text-muted-foreground" />
                                   <span className="text-sm">
-                                    <span className="font-medium">Guests:</span>{" "}
+                                    <span className="font-medium">
+                                      {t("user.detail.guests")}:
+                                    </span>{" "}
                                     {userPlan.limit_guests}
                                   </span>
                                 </div>
@@ -519,7 +541,7 @@ export default function UserPage() {
                                   )}
                                   <span className="text-sm">
                                     <span className="font-medium">
-                                      Excel Export
+                                      {t("user.detail.excelExport")}
                                     </span>
                                   </span>
                                 </div>
@@ -555,10 +577,10 @@ export default function UserPage() {
                     <div className="text-center py-12">
                       <Shield className="h-12 w-12 mx-auto text-muted-foreground mb-4" />
                       <h3 className="text-lg font-semibold mb-2">
-                        No Plans Assigned
+                        {t("user.detail.noPlans")}
                       </h3>
                       <p className="text-muted-foreground mb-4">
-                        This user doesn't have any plans assigned yet.
+                        {t("user.detail.noPlansDescription")}
                       </p>
                       <Dialog
                         open={planDialogOpen}
@@ -567,26 +589,31 @@ export default function UserPage() {
                         <DialogTrigger asChild>
                           <Button>
                             <Plus className="h-4 w-4 mr-2" />
-                            Assign First Plan
+                            {t("user.detail.assignPlan")}
                           </Button>
                         </DialogTrigger>
                         <DialogContent className="sm:max-w-md">
                           <DialogHeader>
-                            <DialogTitle>Assign Plan to User</DialogTitle>
+                            <DialogTitle>
+                              {t("user.detail.assignPlanTitle")}
+                            </DialogTitle>
                             <DialogDescription>
-                              Select a plan and configure the limits for this
-                              user.
+                              {t("user.detail.assignPlanDescription")}
                             </DialogDescription>
                           </DialogHeader>
                           <div className="space-y-4 py-4">
                             <div className="space-y-2">
-                              <Label htmlFor="plan">Plan</Label>
+                              <Label htmlFor="plan">
+                                {t("user.detail.plan")}
+                              </Label>
                               <Select
                                 value={selectedPlan}
                                 onValueChange={setSelectedPlan}
                               >
                                 <SelectTrigger>
-                                  <SelectValue placeholder="Select a plan" />
+                                  <SelectValue
+                                    placeholder={t("user.detail.selectPlan")}
+                                  />
                                 </SelectTrigger>
                                 <SelectContent>
                                   {plans.map((plan) => (
@@ -600,7 +627,9 @@ export default function UserPage() {
                             </div>
                             <div className="grid grid-cols-2 gap-4">
                               <div className="space-y-2">
-                                <Label htmlFor="guests">Guest Limit</Label>
+                                <Label htmlFor="guests">
+                                  {t("user.detail.guestLimit")}
+                                </Label>
                                 <Input
                                   id="guests"
                                   type="number"
@@ -616,7 +645,7 @@ export default function UserPage() {
                               </div>
                               <div className="space-y-2">
                                 <Label htmlFor="templates">
-                                  Template Limit
+                                  {t("user.detail.templateLimit")}
                                 </Label>
                                 <Input
                                   id="templates"
@@ -633,7 +662,9 @@ export default function UserPage() {
                               </div>
                             </div>
                             <div className="flex items-center justify-between">
-                              <Label htmlFor="excel">Excel Export</Label>
+                              <Label htmlFor="excel">
+                                {t("user.detail.excelExport")}
+                              </Label>
                               <Switch
                                 id="excel"
                                 checked={planLimits.limit_export_excel}
@@ -654,7 +685,7 @@ export default function UserPage() {
                               {submitting && (
                                 <Loader2 className="h-4 w-4 animate-spin mr-2" />
                               )}
-                              Assign Plan
+                              {t("user.detail.assignPlan")}
                             </Button>
                           </DialogFooter>
                         </DialogContent>
@@ -670,7 +701,7 @@ export default function UserPage() {
               <CardHeader>
                 <CardTitle className="text-xl flex items-center gap-2">
                   <Calendar className="h-5 w-5" />
-                  Recent Events
+                  {t("user.detail.recentEvents")}
                 </CardTitle>
               </CardHeader>
               <CardContent>
@@ -727,7 +758,7 @@ export default function UserPage() {
                                 </Badge>
                                 <Link href={`/event/edit/${event.id}`}>
                                   <Button size="sm" variant="outline">
-                                    View Event
+                                    {t("user.detail.viewEvent")}
                                   </Button>
                                 </Link>
                               </div>
@@ -740,9 +771,12 @@ export default function UserPage() {
                 ) : (
                   <div className="text-center py-12">
                     <Calendar className="h-12 w-12 mx-auto text-muted-foreground mb-4" />
-                    <h3 className="text-lg font-semibold mb-2">No Events</h3>
+                    <h3 className="text-lg font-semibold mb-2">
+                      {" "}
+                      {t("user.detail.noEvents")}
+                    </h3>
                     <p className="text-muted-foreground">
-                      This user hasn't created any events yet.
+                      {t("user.detail.noEventsDescription")}
                     </p>
                   </div>
                 )}
@@ -755,16 +789,19 @@ export default function UserPage() {
         <Dialog open={editPlanDialogOpen} onOpenChange={setEditPlanDialogOpen}>
           <DialogContent className="sm:max-w-md">
             <DialogHeader>
-              <DialogTitle>Edit Plan Limits</DialogTitle>
+              <DialogTitle>{t("user.detail.editPlanTitle")}</DialogTitle>
               <DialogDescription>
-                Update the limits for{" "}
-                {editingUserPlan ? editingUserPlan.plan.name : ""}.
+                {t("user.detail.editPlanDescription", {
+                  planName: editingUserPlan ? editingUserPlan.plan.name : "",
+                })}
               </DialogDescription>
             </DialogHeader>
             <div className="space-y-4 py-4">
               <div className="grid grid-cols-2 gap-4">
                 <div className="space-y-2">
-                  <Label htmlFor="edit-guests">Guest Limit</Label>
+                  <Label htmlFor="edit-guests">
+                    {t("user.detail.guestLimit")}
+                  </Label>
                   <Input
                     id="edit-guests"
                     type="number"
@@ -778,7 +815,9 @@ export default function UserPage() {
                   />
                 </div>
                 <div className="space-y-2">
-                  <Label htmlFor="edit-templates">Template Limit</Label>
+                  <Label htmlFor="edit-templates">
+                    {t("user.detail.templateLimit")}
+                  </Label>
                   <Input
                     id="edit-templates"
                     type="number"
@@ -793,7 +832,9 @@ export default function UserPage() {
                 </div>
               </div>
               <div className="flex items-center justify-between">
-                <Label htmlFor="edit-excel">Excel Export</Label>
+                <Label htmlFor="edit-excel">
+                  {t("user.detail.excelExport")}
+                </Label>
                 <Switch
                   id="edit-excel"
                   checked={planLimits.limit_export_excel}
@@ -811,7 +852,7 @@ export default function UserPage() {
                 {submitting && (
                   <Loader2 className="h-4 w-4 animate-spin mr-2" />
                 )}
-                Update Plan
+                {t("user.detail.updatePlan")}
               </Button>
             </DialogFooter>
           </DialogContent>

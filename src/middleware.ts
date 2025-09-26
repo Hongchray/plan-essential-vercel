@@ -13,6 +13,7 @@ const PUBLIC_ROUTES = [
   "/error/403",
   "/preview",
   "/loading",
+  "/profile",
 ];
 function isPublicPath(pathname: string): boolean {
   return pathname.startsWith("/preview");

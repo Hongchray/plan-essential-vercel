@@ -66,10 +66,10 @@ export default function ShowEvent({
     <div className="sm:p-4 p-2 sm:border-0 rounded-md mx-auto bg-transparent sm:bg-white">
       <div className="hidden sm:block">
         <Tabs className="" value={tab} onValueChange={handleChange}>
-          <TabsList className="h-full p-2 gap-2">
+          <TabsList className="h-full p-2 gap-2 ">
             <TabsTrigger
               value="dashboard"
-              className="w-[80px] flex flex-col gap-1 py-3 px-2 transition-all duration-300 ease-in-out hover:bg-background/80 data-[state=active]:bg-background data-[state=active]:shadow-sm data-[state=active]:scale-105"
+              className="w-[200px] flex flex-col gap-1 py-3 px-2 transition-all duration-300 ease-in-out hover:bg-background/80 data-[state=active]:bg-background data-[state=active]:shadow-sm data-[state=active]:scale-105"
             >
               <LayoutDashboard
                 className={`h-4 w-4 transition-all duration-300 ${
@@ -242,7 +242,7 @@ export default function ShowEvent({
       </div>
       <div className="block sm:hidden ">
         <Tabs value={tab} onValueChange={handleChange}>
-          <TabsList className=" w-full h-full flex gap-1 bg-white p-2">
+          <TabsList className=" w-full h-full flex gap-1  p-2">
             {[
               {
                 value: "dashboard",
@@ -280,7 +280,7 @@ export default function ShowEvent({
                 <TabsTrigger
                   key={item.value}
                   value={item.value}
-                  className="flex-1 flex flex-col items-center justify-center gap-1 py-3 px-2 min-h-[70px] transition-all duration-300 ease-in-out hover:bg-background/80 data-[state=active]:bg-background data-[state=active]:shadow-sm data-[state=active]:scale-105"
+                  className=" flex-1 flex flex-col items-center justify-center gap-1 py-3 px-2 min-h-[70px]  transition-all duration-300 ease-in-out hover:bg-background/80 data-[state=active]:bg-background data-[state=active]:shadow-sm data-[state=active]:scale-105"
                 >
                   <Icon
                     className={`h-4 w-4 transition-all duration-300 ${

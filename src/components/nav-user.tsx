@@ -41,7 +41,7 @@ export function NavUser() {
   };
 
   return (
-    <SidebarMenu>
+    <SidebarMenu className="min-w-[150px] md:min-w-[200px] lg:min-w-[220px]">
       <SidebarMenuItem>
         <DropdownMenu>
           <DropdownMenuTrigger asChild>
@@ -62,8 +62,8 @@ export function NavUser() {
 
               {/* Name & Phone */}
               <div className="grid flex-1 text-left text-xs sm:text-sm leading-tight sm:leading-tight">
-                <span className="font-medium">{user.name}</span>
-                <span>{user.phone}</span>
+                <span className="font-medium truncate">{user.name}</span>
+                <span className="truncate">{user.phone}</span>
               </div>
 
               {/* Chevron */}
@@ -88,8 +88,7 @@ export function NavUser() {
                 </Avatar>
                 <div className="grid flex-1 text-left text-xs sm:text-sm leading-tight sm:leading-tight">
                   <span className="font-medium">{user.name}</span>
-                  <span>{user.phone}</span>
-                  {user.username && <span>{user.username}</span>}
+                  <span className="truncate">{user.phone}</span>
                   {user.role && <span className="capitalize">{user.role}</span>}
                   {user.telegramId && <span>{user.telegramId}</span>}
                 </div>

@@ -59,6 +59,8 @@ export default function TabExpense({
 
   return (
     <div className="space-y-6">
+      <h3 className="text-lg font-semibold mb-4">{t("expense.title")}</h3>
+
       <DataTable
         data={data}
         columns={columns}
