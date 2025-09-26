@@ -172,7 +172,7 @@ export default function SimpleTemplate({
           id="main"
           className="relative h-[600px] bg-cover bg-center flex flex-col justify-start items-center text-center px-6  overflow-hidden w-full py-8 animate-fade-in-up"
           style={{
-            backgroundImage: `url(${currentInvitation?.main_background})`,
+            backgroundImage: `url(${config?.main_background})`,
             backgroundSize: "cover",
             backgroundPosition: "center",
           }}
@@ -302,7 +302,7 @@ export default function SimpleTemplate({
           id="schedule"
           className="relative min-h-[600px] bg-cover bg-center  overflow-hidden animate-fade-in-up animation-delay-700"
           style={{
-            backgroundImage: `url(${currentInvitation?.details_background})`,
+            backgroundImage: `url(${config?.details_background})`,
             backgroundSize: "cover",
             backgroundPosition: "center",
           }}

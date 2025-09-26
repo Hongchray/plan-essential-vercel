@@ -266,21 +266,10 @@ const MobileGuestCard = ({
           <AvatarFallback className={`${bg} ${text} font-bold text-[12px]`}>
             {getInitials(name)}
           </AvatarFallback>
-          <AvatarFallback className={`${bg} ${text} font-bold text-[12px]`}>
-            {getInitials(name)}
-          </AvatarFallback>
         </Avatar>
 
         <div className="flex-1 min-w-0">
           <div className="mb-2">
-            <h3 className="text-[12px] font-medium text-gray-900 truncate">
-              {name}
-            </h3>
-            {guest.phone && (
-              <p className="text-[10px] text-gray-500 truncate">
-                {guest.phone}
-              </p>
-            )}
             <h3 className="text-[12px] font-medium text-gray-900 truncate">
               {name}
             </h3>
@@ -378,9 +367,6 @@ export function useGuestColumns(): ColumnDef<Guest>[] {
                 <AvatarFallback className={`${bg} ${text} font-bold`}>
                   {getInitials(name)}
                 </AvatarFallback>
-                <AvatarFallback className={`${bg} ${text} font-bold`}>
-                  {getInitials(name)}
-                </AvatarFallback>
               </Avatar>
               {name}
             </div>
@@ -439,7 +425,6 @@ export function useGuestColumns(): ColumnDef<Guest>[] {
             }
           `}
         >
-          {(row.original.status && statusMap[row.original.status]) || ""}
           {(row.original.status && statusMap[row.original.status]) || ""}
         </Badge>
       ),
