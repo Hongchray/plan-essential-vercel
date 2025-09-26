@@ -224,7 +224,7 @@ export default function SimpleTemplateEditor({
               placeholder="Wedding venue location"
             />
           </div>
-          <div>
+          {/* <div>
             <label className="block text-sm font-medium text-gray-700 mb-1">
               {t("template_editor.ceremony_date")}
             </label>
@@ -237,7 +237,7 @@ export default function SimpleTemplateEditor({
               className="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-transparent"
               placeholder={t("template_editor.ceremony_date")}
             />
-          </div>
+          </div> */}
           <div>
             <label className="block text-sm font-medium text-gray-700 mb-1">
               {t("template_editor.main_background_image")}
@@ -245,10 +245,8 @@ export default function SimpleTemplateEditor({
             <ImageUpload
               label="Photo"
               folder="/event/template/assets"
-              onChange={(e) =>
-                updateInvitation("main_background", e.target.value)
-              }
-              value={currentInvitation?.main_background || ""}
+              onChange={(e) => updateConfig("main_background", e.target.value)}
+              value={config?.main_background || ""}
             />
           </div>
         </div>
@@ -344,9 +342,9 @@ export default function SimpleTemplateEditor({
               label="Photo"
               folder="/event/template/assets"
               onChange={(e) =>
-                updateInvitation("details_background", e.target.value)
+                updateConfig("details_background", e.target.value)
               }
-              value={currentInvitation?.details_background || ""}
+              value={config?.details_background || ""}
             />
           </div>
         </div>
