@@ -26,11 +26,13 @@ import {
   useSidebar,
 } from "@/components/ui/sidebar";
 import { signOut } from "next-auth/react";
+import { useRouter } from "next/navigation";
 import { useSession } from "next-auth/react";
 
 export function NavUser() {
   const { data: session } = useSession();
   const user = session?.user;
+  const router = useRouter();
 
   const { isMobile } = useSidebar();
 
@@ -77,14 +79,19 @@ export function NavUser() {
             align="end"
             sideOffset={4}
           >
-            <DropdownMenuLabel className="p-0 font-normal">
+            <DropdownMenuLabel
+              className="p-0 font-normal cursor-pointer hover:bg-gray-100"
+              onClick={() => router.push("/profile")}
+            >
               <div className="flex flex-col sm:flex-row items-start sm:items-center gap-1 sm:gap-2 px-1 py-1.5 sm:px-2 sm:py-2 text-left text-xs sm:text-sm">
                 <Avatar className="h-6 w-6 sm:h-8 sm:w-8 rounded-lg">
                   <AvatarImage
                     src={user.photoUrl ?? undefined}
                     alt={user.name ?? undefined}
                   />
-                  <AvatarFallback className="rounded-lg">CN</AvatarFallback>
+                  <AvatarFallback className="rounded-lg">
+                    {user.name ? user.name.charAt(0).toUpperCase() : "?"}
+                  </AvatarFallback>
                 </Avatar>
                 <div className="grid flex-1 text-left text-xs sm:text-sm leading-tight sm:leading-tight">
                   <span className="font-medium">{user.name}</span>
@@ -94,7 +101,6 @@ export function NavUser() {
                 </div>
               </div>
             </DropdownMenuLabel>
-
             <DropdownMenuSeparator />
 
             <DropdownMenuGroup>

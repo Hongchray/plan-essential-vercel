@@ -125,95 +125,65 @@ export async function DELETE(
 ) {
   try {
     const { id } = await context.params;
-    const event = await prisma.event.findUnique({
-      where: { id },
-    });
 
-    if (event) {
-      // Delete in proper order to handle foreign key constraints
+    // Find the event first
+    const event = await prisma.event.findUnique({ where: { id } });
+    if (!event) {
+      return NextResponse.json({ message: "Event not found" }, { status: 404 });
+    }
 
-      // Delete timeline records first
+    // Delete everything in proper order inside a transaction
+    await prisma.$transaction(async (prisma) => {
+      // 1️⃣ Delete timeline records
       await prisma.timeline.deleteMany({
-        where: {
-          shift: {
-            schedule: {
-              eventId: id,
-            },
-          },
-        },
+        where: { shift: { schedule: { eventId: id } } },
       });
 
-      // Delete shift records
+      // 2️⃣ Delete shift records
       await prisma.shift.deleteMany({
-        where: {
-          schedule: {
-            eventId: id,
-          },
-        },
+        where: { schedule: { eventId: id } },
       });
 
-      // Delete schedule records
+      // 3️⃣ Delete schedules
       await prisma.schedule.deleteMany({
-        where: {
-          eventId: id,
-        },
+        where: { eventId: id },
+      });
+
+      // 4️⃣ Delete guest-related child records first
+
+      // Delete gifts for guests of this event
+      await prisma.gift.deleteMany({
+        where: { guest: { eventId: id } },
+      });
+
+      // Delete guest tags
+      await prisma.guestTag.deleteMany({
+        where: { tag: { eventId: id } },
       });
 
       // Delete guest group associations
       await prisma.guestGroup.deleteMany({
-        where: {
-          group: {
-            eventId: id,
-          },
-        },
-      });
-
-      // Delete guest tag associations
-      await prisma.guestTag.deleteMany({
-        where: {
-          tag: {
-            eventId: id,
-          },
-        },
+        where: { group: { eventId: id } },
       });
 
       // Delete guests
       await prisma.guest.deleteMany({
-        where: {
-          eventId: id,
-        },
+        where: { eventId: id },
       });
 
-      // Delete event groups
-      await prisma.group.deleteMany({
-        where: {
-          eventId: id,
-        },
-      });
+      // 5️⃣ Delete event-level collections
+      await prisma.group.deleteMany({ where: { eventId: id } });
+      await prisma.tag.deleteMany({ where: { eventId: id } });
+      await prisma.eventTemplate.deleteMany({ where: { eventId: id } });
 
-      // Delete event tags
-      await prisma.tag.deleteMany({
-        where: {
-          eventId: id,
-        },
-      });
+      // 6️⃣ Finally delete the event itself
+      await prisma.event.delete({ where: { id } });
+    });
 
-      // Delete event templates
-      await prisma.eventTemplate.deleteMany({
-        where: {
-          eventId: id,
-        },
-      });
-
-      // Finally delete the event
-      await prisma.event.delete({
-        where: { id },
-      });
-
-      return NextResponse.json(event, { status: 200 });
-    } else {
-      return NextResponse.json({ message: "event not found" }, { status: 404 });
-    }
+    return NextResponse.json(
+      { message: "Event deleted successfully" },
+      { status: 200 }
+    );
   } catch (error) {
     console.error("Error deleting event:", error);
     return NextResponse.json(

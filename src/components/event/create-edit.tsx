@@ -28,6 +28,7 @@ import {
   ChevronUp,
   X,
 } from "lucide-react";
+import { EventType } from "@/enums/event";
 import {
   Collapsible,
   CollapsibleContent,
@@ -77,9 +78,11 @@ export function CreateEditForm({ id }: { id?: string }) {
         .string()
         .min(1, t("EventPage.error.nameRequired"))
         .max(50, t("EventPage.error.nameMax")),
-      type: z.string().min(1, t("EventPage.error.typeRequired")),
-      bride: z.string().min(1, t("EventPage.error.brideRequired")),
-      groom: z.string().min(1, t("EventPage.error.groomRequired")),
+      type: z.nativeEnum(EventType, {
+        errorMap: () => ({ message: t("EventPage.error.typeRequired") }),
+      }),
+      bride: z.string().optional(),
+      groom: z.string().optional(),
       image: z.string().nullable(),
       status: z.string(),
       description: z.string(),
@@ -95,7 +98,6 @@ export function CreateEditForm({ id }: { id?: string }) {
           message: t("EventPage.error.startTimeInvalid"),
         })
         .transform((val) => new Date(val)),
-
       endTime: z.coerce
         .date({
           required_error: t("EventPage.error.endTimeRequired"),
@@ -110,6 +112,32 @@ export function CreateEditForm({ id }: { id?: string }) {
     .refine((data) => data.endTime >= data.startTime, {
       path: ["endTime"],
       message: t("EventPage.error.endTimeAfterStart"),
+    })
+    .superRefine((data, ctx) => {
+      if (data.type === EventType.WEDDING) {
+        if (!data.bride) {
+          ctx.addIssue({
+            code: "custom",
+            path: ["bride"],
+            message: t("EventPage.error.brideRequired"),
+          });
+        }
+        if (!data.groom) {
+          ctx.addIssue({
+            code: "custom",
+            path: ["groom"],
+            message: t("EventPage.error.groomRequired"),
+          });
+        }
+      } else {
+        if (!data.owner) {
+          ctx.addIssue({
+            code: "custom",
+            path: ["owner"],
+            message: t("EventPage.error.ownerRequired"),
+          });
+        }
+      }
     });
 
   type FormData = z.infer<typeof formSchema>;
@@ -118,7 +146,7 @@ export function CreateEditForm({ id }: { id?: string }) {
     resolver: zodResolver(formSchema),
     defaultValues: {
       name: "",
-      type: "wedding",
+      type: EventType.WEDDING,
       image: "",
       status: "active",
       description: "",
@@ -228,21 +256,34 @@ export function CreateEditForm({ id }: { id?: string }) {
 
   const onSubmit = async (data: FormData) => {
     setLoading(true);
-    if (id) {
-      const res = await updateEvent(id, data);
+    try {
+      let res;
+      if (id) {
+        res = await updateEvent(id, data);
+      } else {
+        res = await createEvent(data);
+      }
+
       if (res.ok) {
         const json = await res.json();
-        router.push(`/event/edit/${json.id}`);
+        console.log("Success response:", json);
+
+        if (id) {
+          router.push(`/event/edit/${json.id}`);
+        } else {
+          form.reset();
+          router.push(`/event/edit/${json.id}`);
+        }
+      } else {
+        // 👇 Log what backend actually sent
+        const errorText = await res.text();
+        console.error("Create/Update failed:", res.status, errorText);
       }
-    } else {
-      const res = await createEvent(data);
-      if (res.ok) {
-        const json = await res.json();
-        form.reset();
-        router.push(`/event/edit/${json.id}`);
-      }
+    } catch (err) {
+      console.error("Network or unexpected error:", err);
+    } finally {
+      setLoading(false);
     }
-    setLoading(false);
   };
 
   const addShift = () => {
@@ -302,22 +343,28 @@ export function CreateEditForm({ id }: { id?: string }) {
               className="w-full"
               required
               options={[
-                { label: t("EventPage.create.wedding"), value: "wedding" },
+                {
+                  label: t("EventPage.create.wedding"),
+                  value: EventType.WEDDING,
+                },
                 {
                   label: t("EventPage.create.housewarming"),
-                  value: "housewarming",
+                  value: EventType.HOUSEWARMING,
                 },
-                { label: t("EventPage.create.birthday"), value: "birthday" },
+                {
+                  label: t("EventPage.create.birthday"),
+                  value: EventType.BIRTHDAY,
+                },
                 {
                   label: t("EventPage.create.anniversary"),
-                  value: "anniversary",
+                  value: EventType.ANNIVERSARY,
                 },
               ]}
               form={form}
             />
           </div>
 
-          {form.getValues("type") !== "wedding" && (
+          {form.getValues("type") !== EventType.WEDDING && (
             <div className="sm:col-span-2">
               <InputTextField
                 label={t("EventPage.create.owner")}
@@ -329,7 +376,7 @@ export function CreateEditForm({ id }: { id?: string }) {
             </div>
           )}
 
-          {form.getValues("type") === "wedding" && (
+          {form.getValues("type") === EventType.WEDDING && (
             <>
               <div className="sm:col-span-1">
                 <InputTextField

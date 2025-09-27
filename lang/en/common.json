@@ -284,8 +284,10 @@
       "startTimeInvalid": "Start time must be a valid date",
       "endTimeRequired": "End time is required",
       "endTimeInvalid": "End time must be a valid date",
-      "endTimeAfterStart": "End time must be after start time"
+      "endTimeAfterStart": "End time must be after start time",
+      "ownerRequired": "Owner name is required"
     },
+
     "message": {
       "createSuccess": "Event created successfully",
       "createError": "Failed to create event",

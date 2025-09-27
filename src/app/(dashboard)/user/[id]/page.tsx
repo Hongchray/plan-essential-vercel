@@ -465,7 +465,7 @@ export default function UserPage() {
                           </div>
                           <div className="flex items-center justify-between">
                             <Label htmlFor="excel">
-                              {t("user.detail.excelExportSSS")}
+                              {t("user.detail.excelExport")}
                             </Label>
                             <Switch
                               id="excel"

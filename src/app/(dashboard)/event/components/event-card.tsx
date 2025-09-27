@@ -18,8 +18,28 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { formatDate } from "@/utils/date";
 import { TrashIcon, MoreVerticalIcon } from "lucide-react";
+import { toast } from "sonner";
+import { useRouter } from "next/navigation";
+import { ConfirmDialog } from "@/components/composable/dialog/confirm-dialog";
 export default function EventCard({ event }: { event: Event }) {
   const { t } = useTranslation("common");
+  const router = useRouter();
+  const deleteEvent = async (id: string) => {
+    try {
+      const res = await fetch(`/api/admin/event/${id}`, {
+        method: "DELETE",
+      });
+      if (res.ok) {
+        toast.success(t("EventPage.message.delete_success"));
+        router.refresh();
+      } else {
+        toast.error(t("EventPage.message.delete_error"));
+      }
+    } catch (error) {
+      toast.error(t("EventPage.message.delete_error"));
+    }
+  };
+
   return (
     <div className="border bg-white rounded-lg p-4 shadow hover:shadow-lg transition flex flex-col justify-between">
       <div>
@@ -100,17 +120,20 @@ export default function EventCard({ event }: { event: Event }) {
               </DropdownMenuItem>
 
               {/* Delete */}
-              <DropdownMenuItem
-                onClick={() => {
-                  if (confirm(t("EventPage.deleteConfirm"))) {
-                    // Call your delete API here
-                    console.log("Delete event", event.id);
-                  }
-                }}
-              >
-                <TrashIcon className="w-4 h-4 mr-2 text-red-500" />
-                {t("EventPage.delete")}
-              </DropdownMenuItem>
+              <ConfirmDialog
+                trigger={
+                  <DropdownMenuItem
+                    onSelect={(e) => e.preventDefault()} // ⬅️ keep menu open so dialog can show
+                    className="text-red-600 cursor-pointer focus:text-red-600 focus:bg-red-50"
+                  >
+                    <TrashIcon className="w-4 h-4 mr-2 text-red-500" />
+                    {t("EventPage.delete")}
+                  </DropdownMenuItem>
+                }
+                title={t("EventPage.message.delete_title")}
+                description={t("EventPage.message.delete_description")}
+                onConfirm={() => deleteEvent(event.id)}
+              />
             </DropdownMenuContent>
           </DropdownMenu>
         </div>
