@@ -3,23 +3,21 @@ import { prisma } from "@/lib/prisma";
 
 export async function PUT(
   req: NextRequest,
-  context: { params: Promise<{ eventId: string; templateId: string }> }
+  context: { params: Promise<{ id: string; templateId: string }> }
 ) {
-  const { eventId, templateId } = await context.params;
+  const { id, templateId } = await context.params;
   const eventTemplate = await prisma.eventTemplate.update({
-    where: { id: templateId },
+    where: { id: templateId, eventId: id },
     data: {
       isDefault: true,
     },
   });
   await prisma.eventTemplate.updateMany({
     where: {
-      eventId: eventId,
-      id: { not: templateId },
+      eventId: id,
+      NOT: { id: templateId },
     },
-    data: {
-      isDefault: false,
-    },
+    data: { isDefault: false },
   });
 
   if (eventTemplate) {
