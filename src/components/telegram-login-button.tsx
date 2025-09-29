@@ -39,7 +39,7 @@ export default function TelegramLogin() {
         botName={botUsername}
         dataOnauth={handleTelegramResponse}
         buttonSize="large"
-        requestAccess="write"
+        requestAccess={true}
       />
     </div>
   );
