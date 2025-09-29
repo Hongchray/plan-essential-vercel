@@ -9,14 +9,16 @@ export async function GET(
   const eventTemplate = await prisma.eventTemplate.findMany({
     where: { eventId: id },
     include: {
-        template: true
-    }
+      template: true,
+    },
   });
 
   if (eventTemplate) {
     return NextResponse.json(eventTemplate, { status: 200 });
   } else {
-    return NextResponse.json({ message: "template not found" }, { status: 404 });
+    return NextResponse.json(
+      { message: "template not found" },
+      { status: 404 }
+    );
   }
 }
-
