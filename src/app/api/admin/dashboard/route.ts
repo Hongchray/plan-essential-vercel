@@ -96,18 +96,18 @@ async function getEventsRaw() {
 
 async function getMonthlyData() {
   const months = [
-    "Jan",
-    "Feb",
-    "Mar",
-    "Apr",
-    "May",
-    "Jun",
-    "Jul",
-    "Aug",
-    "Sep",
-    "Oct",
-    "Nov",
-    "Dec",
+    "jan",
+    "feb",
+    "mar",
+    "apr",
+    "may",
+    "jun",
+    "jul",
+    "aug",
+    "sep",
+    "oct",
+    "nov",
+    "dec",
   ];
   const monthlyData = months.map((month) => ({
     month,
@@ -128,18 +128,18 @@ async function getMonthlyDataRaw() {
   });
 
   const months = [
-    "Jan",
-    "Feb",
-    "Mar",
-    "Apr",
-    "May",
-    "Jun",
-    "Jul",
-    "Aug",
-    "Sep",
-    "Oct",
-    "Nov",
-    "Dec",
+    "jan",
+    "feb",
+    "mar",
+    "apr",
+    "may",
+    "jun",
+    "jul",
+    "aug",
+    "sep",
+    "oct",
+    "nov",
+    "dec",
   ];
 
   return months.map((month, i) => ({
@@ -177,7 +177,7 @@ async function getWeeklyActivityRaw() {
     counts[day] = (counts[day] || 0) + 1;
   });
 
-  const days = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
+  const days = ["sun", "mon", "tue", "wed", "thu", "fri", "sat"];
 
   return days.map((day, i) => ({
     day,
@@ -211,6 +211,7 @@ async function getUpcomingEventsRaw() {
     user: e.user
       ? `${e.user.name ?? "No Name"} (${e.user.phone ?? "No Phone"})`
       : "Unknown",
+
     description: e.description,
     type: e.type,
   }));

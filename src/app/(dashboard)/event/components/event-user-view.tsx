@@ -1,6 +1,6 @@
 "use client";
 
-import { useTranslation } from "next-i18next";
+import { useTranslation } from "react-i18next";
 import EventCard from "../components/event-card";
 import CreateEventButton from "../components/create-button";
 import { useState, useEffect } from "react";

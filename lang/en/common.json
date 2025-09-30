@@ -206,6 +206,7 @@
   },
 
   "dashboard": {
+    "users": "Users",
     "totalUsers": "Total Users",
     "fromLastMonth": "from last month",
     "totalTemplates": "Total Templates",
@@ -223,7 +224,30 @@
     "eventName": "Event Name",
     "userName": "User Name",
     "eventDate": "Event Date",
-    "eventLocation": "Event Location"
+    "eventLocation": "Event Location",
+    "months": {
+      "jan": "January",
+      "feb": "February",
+      "mar": "March",
+      "apr": "April",
+      "may": "May",
+      "jun": "June",
+      "jul": "July",
+      "aug": "August",
+      "sep": "September",
+      "oct": "October",
+      "nov": "November",
+      "dec": "December"
+    },
+    "days": {
+      "sun": "Sunday",
+      "mon": "Monday",
+      "tue": "Tuesday",
+      "wed": "Wednesday",
+      "thu": "Thursday",
+      "fri": "Friday",
+      "sat": "Saturday"
+    }
   },
 
   "EventPage": {
@@ -268,7 +292,18 @@
       "status": "Status",
       "cancel": "Cancel",
       "submit": "Create",
-      "update": "Update"
+      "update": "Update",
+      "timeline": {
+        "name_required": "Timeline name is required",
+        "time_required": "Time is required",
+        "invalid_time_format": "Invalid time format (HH:MM)"
+      },
+      "shift": {
+        "name_required": "Shift name is required",
+        "date_required": "Date is required",
+        "date_invalid": "Invalid date",
+        "timeline_required": "At least one timeline item is required"
+      }
     },
     "error": {
       "nameRequired": "Name is required",
@@ -677,6 +712,7 @@
       "noName": "No Name",
       "contactInfo": "Contact Information",
       "username": "Username",
+      "plan_management": "Plan Management",
       "phone": "Phone",
       "email": "Email",
       "role": "Role",

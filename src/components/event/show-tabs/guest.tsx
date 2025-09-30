@@ -6,6 +6,7 @@ import { IAPIResponse } from "@/interfaces/comon/api-response";
 import { Guest } from "@/interfaces/guest";
 import { Loading } from "@/components/composable/loading/loading";
 import { useTranslation } from "react-i18next";
+import { useSession } from "next-auth/react";
 
 async function getData(
   id: string,
@@ -36,6 +37,7 @@ export default function TabGuest({
   const [meta, setMeta] = useState({ total: 0, pageCount: 1 });
   const [loading, setLoading] = useState(true);
   const { t } = useTranslation("common");
+  const { data: session } = useSession();
 
   useEffect(() => {
     async function fetchData() {
@@ -48,6 +50,8 @@ export default function TabGuest({
         const search = params.search || "";
         const sort = params.sort || "";
         const order = params.order || "";
+        const user = session?.user?.plans;
+
         const result = await getData(id, page, pageSize, search, sort, order);
         setData(result.data);
         setMeta(result.meta);

@@ -76,12 +76,12 @@ export const columns: ColumnDef<Plan>[] = [
   },
   {
     accessorKey: "price",
-    header: 'តម្លៃ',
+    header: "តម្លៃ",
     cell: ({ row }) => {
       return (
         <div className="flex gap-2">
           <span className="max-w-[200px] truncate font-medium">
-            {currencyFormatters.usd(row.getValue("price")??0)}
+            {currencyFormatters.usd(row.getValue("price") ?? 0)}
           </span>
         </div>
       );

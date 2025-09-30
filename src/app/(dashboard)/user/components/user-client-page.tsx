@@ -27,6 +27,7 @@ export default function UserClientPage() {
 
   useEffect(() => {
     const fetchData = async () => {
+      setIsClient(true);
       setLoading(true);
       try {
         const res = await fetch(

@@ -9,7 +9,7 @@ import {
   Calendar1Icon,
   MapPin,
 } from "lucide-react";
-import { useTranslation } from "next-i18next";
+import { useTranslation } from "react-i18next";
 import {
   DropdownMenu,
   DropdownMenuContent,
