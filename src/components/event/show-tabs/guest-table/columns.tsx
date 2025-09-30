@@ -377,9 +377,14 @@ export function useGuestColumns(): ColumnDef<Guest>[] {
     {
       accessorKey: "phone",
       header: t("event_dashboard.guest.table.phone"),
-      cell: ({ row }) => (
-        <span className="max-w-[200px] truncate">{row.getValue("phone")}</span>
-      ),
+      cell: ({ row }) => {
+        const phone = row.getValue("phone") as string | null | undefined;
+        return (
+          <span className="max-w-[200px] truncate">
+            {phone && phone.trim() !== "" ? phone : "N/A"}
+          </span>
+        );
+      },
     },
     {
       accessorKey: "guestGroup",
@@ -428,6 +433,18 @@ export function useGuestColumns(): ColumnDef<Guest>[] {
           {(row.original.status && statusMap[row.original.status]) || ""}
         </Badge>
       ),
+    },
+    {
+      accessorKey: "note",
+      header: t("event_dashboard.guest.table.note"),
+      cell: ({ row }) => {
+        const note = row.getValue("note") as string | null | undefined;
+        return (
+          <span className="max-w-[200px] truncate">
+            {note && note.trim() !== "" ? note : "N/A"}
+          </span>
+        );
+      },
     },
     {
       id: "actions",

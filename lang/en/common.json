@@ -375,6 +375,7 @@
         "status": "Status",
         "invite": "Invite",
         "invited": "Invited",
+        "note": "Note",
         "invite_link": "Invite link",
         "copy_to_clipboard": "Copy to clipboard",
         "copied": "Copied!",

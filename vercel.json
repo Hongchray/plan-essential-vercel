@@ -15,7 +15,15 @@
     "PLASGATE_API_X_SECRET": "$5$rounds=535000$8vo/oPD.IOWw2V8a$VfRQo64bp8cfzinWYKd2ziV8Q1abPY3cbi7UEmKlSw/",
     "PLASGATE_SENDER": "PlasGateUAT",
     "TELEGRAM_BOT_TOKEN": "8198530187:AAGnNMwSTrQ5_NuSfNESm4OKG_AJHBAq75M",
-    "NEXT_PUBLIC_TELEGRAM_BOT_USERNAME": "essential_plan_bot"
+    "NEXT_PUBLIC_TELEGRAM_BOT_USERNAME": "essential_plan_bot",
+    "DO_DIRECTORY": "plan-essential",
+    "DO_BUCKET": "focuz-staging-space",
+    "DO_USE_PATH_STYLE_ENDPOINT": "false",
+    "DO_DEFAULT_REGION": "sgp1",
+    "DO_ACCESS_KEY_ID": "DO8019D332MZ9D3NN63W",
+    "DO_SECRET_ACCESS_KEY": "Md+4Emb9OzlQhkgN5t4yrK9Y05PqJkgFoFglZrdBp3E",
+    "DO_URL": "https://focuz-staging-space.sgp1.digitaloceanspaces.com",
+    "DO_ENDPOINT": "https://sgp1.digitaloceanspaces.com"
   },
   "build": {
     "env": {
@@ -27,7 +35,15 @@
       "PLASGATE_API_X_SECRET": "$5$rounds=535000$8vo/oPD.IOWw2V8a$VfRQo64bp8cfzinWYKd2ziV8Q1abPY3cbi7UEmKlSw/",
       "PLASGATE_SENDER": "PlasGateUAT",
       "TELEGRAM_BOT_TOKEN": "8198530187:AAGnNMwSTrQ5_NuSfNESm4OKG_AJHBAq75M",
-      "NEXT_PUBLIC_TELEGRAM_BOT_USERNAME": "essential_plan_bot"
+      "NEXT_PUBLIC_TELEGRAM_BOT_USERNAME": "essential_plan_bot",
+      "DO_DIRECTORY": "plan-essential",
+      "DO_BUCKET": "focuz-staging-space",
+      "DO_USE_PATH_STYLE_ENDPOINT": "false",
+      "DO_DEFAULT_REGION": "sgp1",
+      "DO_ACCESS_KEY_ID": "DO8019D332MZ9D3NN63W",
+      "DO_SECRET_ACCESS_KEY": "Md+4Emb9OzlQhkgN5t4yrK9Y05PqJkgFoFglZrdBp3E",
+      "DO_URL": "https://focuz-staging-space.sgp1.digitaloceanspaces.com",
+      "DO_ENDPOINT": "https://sgp1.digitaloceanspaces.com"
     }
   }
 }
