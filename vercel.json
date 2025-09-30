@@ -8,26 +8,26 @@
   ],
   "env": {
     "DATABASE_URL": "postgres://neondb_owner:npg_dxwyaZS67blf@ep-falling-dawn-a1wpuqfd-pooler.ap-southeast-1.aws.neon.tech/neondb?sslmode=require",
-    "NEXTAUTH_URL": "https://plan-essential-vercel.vercel.app",
+    "NEXTAUTH_URL": "https://planessential.vercel.app",
     "NEXTAUTH_SECRET": "IDblej89YNPQ2SOPp7uFKUIYL5Wf2LKLP5rkwFjs/os=",
     "PLASGATE_API_URL": "https://cloudapi.plasgate.com/rest/send",
     "PLASGATE_API_PRIVATE_KEY": "DTCR5uNrMFIjTVr1QmDhe__Vzk9BSFf9XmHAWt0TUel_vZPyFkFQgKIOk-OP0uro2fv5h-SDmMucQTeJyk4R5A",
     "PLASGATE_API_X_SECRET": "$5$rounds=535000$8vo/oPD.IOWw2V8a$VfRQo64bp8cfzinWYKd2ziV8Q1abPY3cbi7UEmKlSw/",
     "PLASGATE_SENDER": "PlasGateUAT",
-    "TELEGRAM_BOT_TOKEN": "8198530187:AAGnNMwSTrQ5_NuSfNESm4OKG_AJHBAq75M",
-    "NEXT_PUBLIC_TELEGRAM_BOT_USERNAME": "essential_plan_bot"
+    "TELEGRAM_BOT_TOKEN": "8390118169:AAHJMWJYH_UOiWun5MFBzvMby9ECPq6eaLk",
+    "NEXT_PUBLIC_TELEGRAM_BOT_USERNAME": "planessentail_test_bot"
   },
   "build": {
     "env": {
       "DATABASE_URL": "postgres://neondb_owner:npg_dxwyaZS67blf@ep-falling-dawn-a1wpuqfd-pooler.ap-southeast-1.aws.neon.tech/neondb?sslmode=require",
-      "NEXTAUTH_URL": "https://plan-essential-vercel.vercel.app",
+      "NEXTAUTH_URL": "https://planessential.vercel.app",
       "NEXTAUTH_SECRET": "IDblej89YNPQ2SOPp7uFKUIYL5Wf2LKLP5rkwFjs/os=",
       "PLASGATE_API_URL": "https://cloudapi.plasgate.com/rest/send",
       "PLASGATE_API_PRIVATE_KEY": "DTCR5uNrMFIjTVr1QmDhe__Vzk9BSFf9XmHAWt0TUel_vZPyFkFQgKIOk-OP0uro2fv5h-SDmMucQTeJyk4R5A",
       "PLASGATE_API_X_SECRET": "$5$rounds=535000$8vo/oPD.IOWw2V8a$VfRQo64bp8cfzinWYKd2ziV8Q1abPY3cbi7UEmKlSw/",
       "PLASGATE_SENDER": "PlasGateUAT",
-      "TELEGRAM_BOT_TOKEN": "8198530187:AAGnNMwSTrQ5_NuSfNESm4OKG_AJHBAq75M",
-      "NEXT_PUBLIC_TELEGRAM_BOT_USERNAME": "essential_plan_bot"
+      "TELEGRAM_BOT_TOKEN": "8390118169:AAHJMWJYH_UOiWun5MFBzvMby9ECPq6eaLk",
+      "NEXT_PUBLIC_TELEGRAM_BOT_USERNAME": "planessentail_test_bot"
     }
   }
 }
