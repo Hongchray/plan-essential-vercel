@@ -136,7 +136,7 @@ export function CreateEditForm({ id }: { id?: string }) {
             type="button"
             onClick={() => router.push("/plan")}
           >
-            <X/>
+            <X />
             Cancel
           </Button>
           <SubmitButton loading={loading} entityId={id} />

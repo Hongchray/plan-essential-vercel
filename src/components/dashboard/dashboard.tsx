@@ -41,6 +41,7 @@ import { useEffect, useState } from "react";
 import { Loading } from "../composable/loading/loading";
 import { useTranslation } from "react-i18next";
 import { formatDate } from "@/utils/date";
+import { formatCurrency } from "@/utils/currency";
 interface MonthlyData {
   month: string;
   users: number;
@@ -217,7 +218,7 @@ export default function DashboardPage() {
               <ChartContainer
                 config={{
                   users: {
-                    label: "Users",
+                    label: t("dashboard.users"),
                     color: "hsl(var(--chart-1))",
                   },
                 }}
@@ -226,9 +227,20 @@ export default function DashboardPage() {
                 <ResponsiveContainer width="100%" height="100%">
                   <AreaChart data={monthlyData}>
                     <CartesianGrid strokeDasharray="3 3" />
-                    <XAxis dataKey="month" />
+                    <XAxis
+                      dataKey="month"
+                      tickFormatter={(key) => t(`dashboard.months.${key}`)}
+                    />
                     <YAxis />
-                    <ChartTooltip content={<ChartTooltipContent />} />
+                    <ChartTooltip
+                      content={
+                        <ChartTooltipContent
+                          labelFormatter={(label) =>
+                            t(`dashboard.months.${label}`)
+                          }
+                        />
+                      }
+                    />
                     <Area
                       type="monotone"
                       dataKey="users"
@@ -261,7 +273,7 @@ export default function DashboardPage() {
               <ChartContainer
                 config={{
                   events: {
-                    label: "Events",
+                    label: t("dashboard.events"),
                     color: "hsl(var(--chart-2))",
                   },
                 }}
@@ -270,9 +282,20 @@ export default function DashboardPage() {
                 <ResponsiveContainer width="100%" height="100%" className="p-0">
                   <BarChart data={weeklyActivity}>
                     <CartesianGrid strokeDasharray="3 3" />
-                    <XAxis dataKey="day" />
+                    <XAxis
+                      dataKey="day"
+                      tickFormatter={(key) => t(`dashboard.days.${key}`)}
+                    />
                     <YAxis />
-                    <ChartTooltip content={<ChartTooltipContent />} />
+                    <ChartTooltip
+                      content={
+                        <ChartTooltipContent
+                          labelFormatter={(label) =>
+                            t(`dashboard.days.${label}`)
+                          }
+                        />
+                      }
+                    />
                     <Bar
                       dataKey="events"
                       fill="var(--color-chart-2)"

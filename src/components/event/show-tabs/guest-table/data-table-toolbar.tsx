@@ -14,6 +14,7 @@ import {
   Trash2Icon,
   Upload,
   UploadCloud,
+  User2Icon,
   X,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
@@ -35,6 +36,8 @@ import { Guest } from "@/interfaces/guest";
 import { ExcelImportModal } from "../guest-form/export-excel";
 import { toast } from "sonner";
 import { useExcelOperations } from "@/hooks/use-guest-export-import";
+import { useSession } from "next-auth/react";
+
 interface DataTableToolbarProps<TData> {
   table: Table<TData>;
   serverPagination?: boolean;
@@ -51,11 +54,24 @@ export function DataTableToolbar<TData>({
   const eventId = params.id as string;
   const searchParams = useSearchParams();
   const { t } = useTranslation("common");
+  const { data: session } = useSession();
+  const limitGuests = session?.user?.plans?.[0]?.limit_guests ?? 0;
+  const [totalGuests, setTotalGuests] = useState<number>(0);
 
   const [searchValue, setSearchValue] = useState(
     searchParams.get("search") || ""
   );
   const timeoutRef = useRef<NodeJS.Timeout | null>(null);
+
+  useEffect(() => {
+    const fetchGuestCount = async () => {
+      const res = await fetch(`/api/admin/event/${eventId}/guest-count`);
+      const data = await res.json();
+      setTotalGuests(data.totalGuests);
+    };
+
+    fetchGuestCount();
+  }, [eventId]);
 
   const handleSearch = (value: string) => {
     setSearchValue(value);
@@ -160,7 +176,13 @@ export function DataTableToolbar<TData>({
         )}
       </div>
       <div className="flex gap-4">
-        <CreateEditForm id="" />
+        {/* Only show the button if totalGuests < limitGuests */}
+        {totalGuests < limitGuests && <CreateEditForm id="" />}
+
+        <div className="ml-2 text-md text-gray-500 flex items-center">
+          <User2Icon /> {totalGuests}/{limitGuests}
+        </div>
+
         <div className="hidden  md:inline-flex w-fit -space-x-px rounded-md shadow-xs rtl:space-x-reverse">
           <ExcelImportModal
             eventId={eventId}

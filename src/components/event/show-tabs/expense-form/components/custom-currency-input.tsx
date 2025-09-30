@@ -16,16 +16,16 @@ interface CustomCurrencyInputProps {
   className?: string;
 }
 
-export function CustomCurrencyInput({
+export const CustomCurrencyInput: React.FC<CustomCurrencyInputProps> = ({
   label,
   name,
   form,
   currency = "USD",
   placeholder = "0.00",
   disabled = false,
-  required = false, // 👈 default false
+  required = false,
   className,
-}: CustomCurrencyInputProps) {
+}) => {
   const value = form.watch(name) ?? 0;
   const [inputValue, setInputValue] = useState(value.toString());
   const [isFocused, setIsFocused] = useState(false);
@@ -45,12 +45,10 @@ export function CustomCurrencyInput({
 
   return (
     <div className={cn("space-y-2", className)}>
-      {/* Label */}
       <label className="text-sm font-medium text-muted-foreground">
         {label} {required && <RequiredMark />}
       </label>
 
-      {/* Input with currency symbol */}
       <div
         className={cn(
           "relative flex items-center border-b-2 transition-colors",
@@ -76,7 +74,6 @@ export function CustomCurrencyInput({
         />
       </div>
 
-      {/* Error message */}
       {form.formState.errors[name] && (
         <p className="text-sm text-destructive">
           {form.formState.errors[name]?.message as string}
@@ -84,4 +81,4 @@ export function CustomCurrencyInput({
       )}
     </div>
   );
-}
+};

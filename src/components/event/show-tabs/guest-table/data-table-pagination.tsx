@@ -44,9 +44,9 @@ export function DataTablePagination<TData>({
     };
 
     checkScreenSize();
-    window.addEventListener('resize', checkScreenSize);
-    
-    return () => window.removeEventListener('resize', checkScreenSize);
+    window.addEventListener("resize", checkScreenSize);
+
+    return () => window.removeEventListener("resize", checkScreenSize);
   }, []);
 
   const createQueryString = useCallback(
@@ -131,7 +131,7 @@ export function DataTablePagination<TData>({
             </span>
           </div>
           <p className="text-sm text-muted-foreground">
-            <span className="font-medium text-foreground">{total}</span> {" "}
+            <span className="font-medium text-foreground">{total}</span>{" "}
             {t("component.table.records")}
           </p>
 
@@ -142,7 +142,9 @@ export function DataTablePagination<TData>({
               if (serverPagination) {
                 const currentPageNum = Number(searchParams.get("page")) || 1;
                 router.push(
-                  `${pathname}?${createQueryString({ page: currentPageNum + 1 })}`,
+                  `${pathname}?${createQueryString({
+                    page: currentPageNum + 1,
+                  })}`,
                   { scroll: false }
                 );
               } else table.nextPage();
@@ -154,8 +156,6 @@ export function DataTablePagination<TData>({
             <ChevronRight className="h-4 w-4" />
           </Button>
         </div>
-
-     
       </div>
     );
   }
@@ -195,8 +195,7 @@ export function DataTablePagination<TData>({
         </div>
 
         <div className="flex w-[100px] items-center justify-center text-sm font-medium">
-          {t("component.table.page")}{" "}
-          {currentPage} {t("component.table.of")}{" "}
+          {t("component.table.page")} {currentPage} {t("component.table.of")}{" "}
           {totalPages}
         </div>
 
@@ -244,7 +243,9 @@ export function DataTablePagination<TData>({
               if (serverPagination) {
                 const currentPageNum = Number(searchParams.get("page")) || 1;
                 router.push(
-                  `${pathname}?${createQueryString({ page: currentPageNum + 1 })}`,
+                  `${pathname}?${createQueryString({
+                    page: currentPageNum + 1,
+                  })}`,
                   { scroll: false }
                 );
               } else table.nextPage();

@@ -10,7 +10,7 @@ export function formatDate(date: string | number | Date, format = "medium") {
   if (!date) return "";
 
   const d = new Date(date);
-  if (isNaN(d.getTime())) return "Invalid Date";
+  if (isNaN(d.getTime())) return "Invalid Datettt";
 
   const options = {
     short: {
@@ -121,7 +121,7 @@ export function formatRelativeTime(date: string | number | Date) {
   if (!date) return "";
 
   const d = new Date(date);
-  if (isNaN(d.getTime())) return "Invalid Date";
+  if (isNaN(d.getTime())) return "Invalid Datetttt";
 
   const now = new Date();
   const diffInMs = d.getTime() - now.getTime();
@@ -163,7 +163,7 @@ export function formatDateCustom(
   if (!date) return "";
 
   const d = new Date(date);
-  if (isNaN(d.getTime())) return "Invalid Date";
+  if (isNaN(d.getTime())) return "Invalid Datetttt";
 
   const year = d.getFullYear();
   const month = String(d.getMonth() + 1).padStart(2, "0");

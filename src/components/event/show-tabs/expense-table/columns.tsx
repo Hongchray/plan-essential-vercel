@@ -10,7 +10,7 @@ import { toast } from "sonner";
 import { useRouter } from "next/navigation";
 import { CreateEditForm } from "../expense-form/create-edit";
 import { currencyFormatters } from "@/utils/currency";
-import { useTranslation } from "next-i18next";
+import { useTranslation } from "react-i18next";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Badge } from "@/components/ui/badge";
 import { getAvatarColor, getInitials } from "@/utils/avatar";

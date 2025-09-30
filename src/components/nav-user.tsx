@@ -43,7 +43,7 @@ export function NavUser() {
   };
 
   return (
-    <SidebarMenu className="min-w-[150px] md:min-w-[200px] lg:min-w-[220px]">
+    <SidebarMenu className="min-w-[170px] max-w-[250px]">
       <SidebarMenuItem>
         <DropdownMenu>
           <DropdownMenuTrigger asChild>

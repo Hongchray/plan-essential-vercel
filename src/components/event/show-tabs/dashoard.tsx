@@ -25,7 +25,7 @@ import {
   ChartTooltip,
   ChartTooltipContent,
 } from "@/components/ui/chart";
-import { useTranslation } from "next-i18next";
+import { useTranslation } from "react-i18next";
 import { EXCHANGE_RATES } from "@/utils/exchangeRates";
 
 import { useEffect, useState } from "react";

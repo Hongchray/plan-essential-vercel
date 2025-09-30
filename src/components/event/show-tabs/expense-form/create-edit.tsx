@@ -20,6 +20,8 @@ import { useParams, useRouter } from "next/navigation";
 import { useTranslation } from "react-i18next";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { currencyFormatters, formatCurrency } from "@/utils/currency";
+import { CustomCurrencyInput } from "./components/custom-currency-input";
+import { Separator } from "@/components/ui/separator";
 import {
   Collapsible,
   CollapsibleContent,
@@ -214,7 +216,7 @@ export function CreateEditForm({ id }: { id: string }) {
         </Button>
       )}
       <Dialog open={dialogOpen} onOpenChange={setDialogOpen} modal>
-        <DialogContent className="sm:max-w-4xl max-h-[90vh] overflow-y-auto">
+        <DialogContent className="sm:max-w-4xl max-h-[90vh] overflow-y-auto p-4">
           <DialogHeader>
             <DialogTitle>
               {id ? t("expense.form.editTitle") : t("expense.form.addTitle")}
@@ -239,14 +241,14 @@ export function CreateEditForm({ id }: { id: string }) {
                 form={form}
                 disabled={loading}
               />
-              <InputTextField
+              <Separator />
+              <CustomCurrencyInput
                 label={t("expense.form.budget")}
                 name="budget_amount"
                 placeholder={t("expense.form.amount_placeholder")}
-                type="number"
-                step={0.01}
                 form={form}
                 disabled={loading}
+                required
               />
             </div>
 
@@ -370,7 +372,7 @@ export function CreateEditForm({ id }: { id: string }) {
                       </CollapsibleTrigger>
                       <CollapsibleContent>
                         <CardContent className="space-y-4 pt-0">
-                          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                          <div className="grid grid-cols-1 gap-4">
                             <InputTextField
                               label={t("expense.form.payments.name")}
                               name={`payments.${index}.name`}
@@ -380,14 +382,12 @@ export function CreateEditForm({ id }: { id: string }) {
                               form={form}
                               disabled={loading}
                             />
-                            <InputTextField
+                            <CustomCurrencyInput
                               label={t("expense.form.payments.amount")}
                               name={`payments.${index}.amount`}
                               placeholder={t(
                                 "expense.form.payments.amount_placeholder"
                               )}
-                              type="number"
-                              step={0.01}
                               form={form}
                               disabled={loading}
                             />

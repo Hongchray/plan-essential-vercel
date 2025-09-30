@@ -3,43 +3,11 @@ import { AuthOptions } from "next-auth";
 import CredentialsProvider from "next-auth/providers/credentials";
 import { compare } from "bcryptjs";
 import crypto from "crypto";
-
+import { User } from "@/interfaces/user";
 // Extend NextAuth types to include all user fields
 declare module "next-auth" {
   interface Session {
-    user: {
-      id: string;
-      name?: string | null;
-      email?: string | null;
-      username?: string | null;
-      photoUrl?: string | null;
-      phone?: string | null;
-      role: string;
-      telegramId?: string | null;
-      otp_code?: string | null;
-      otp_expires_at?: Date | null;
-      phone_verified?: boolean;
-      phone_verified_at?: Date | null;
-      createdAt?: Date;
-      updatedAt?: Date;
-    };
-  }
-
-  interface User {
-    id: string;
-    name?: string | null;
-    email?: string | null;
-    username?: string | null;
-    photoUrl?: string | null;
-    phone?: string | null;
-    role: string;
-    telegramId?: string | null;
-    otp_code?: string | null;
-    otp_expires_at?: Date | null;
-    phone_verified?: boolean;
-    phone_verified_at?: Date | null;
-    createdAt?: Date;
-    updatedAt?: Date;
+    user: User;
   }
 }
 
@@ -72,6 +40,11 @@ export const authOptions: AuthOptions = {
         if (!credentials?.phone || !credentials?.password) return null;
         const user = await prisma.user.findUnique({
           where: { phone: credentials.phone },
+          include: {
+            userPlan: {
+              include: { plan: true },
+            },
+          },
         });
         if (!user) return null;
         if (!(await compare(credentials.password, user.password))) return null;
@@ -91,6 +64,14 @@ export const authOptions: AuthOptions = {
           phone_verified_at: user.phone_verified_at ?? null,
           createdAt: user.createdAt,
           updatedAt: user.updatedAt,
+          plans: user.userPlan.map((up) => ({
+            id: up.plan.id,
+            name: up.plan.name,
+            price: up.plan.price,
+            limit_guests: up.limit_guests,
+            limit_template: up.limit_template,
+            limit_export_excel: up.limit_export_excel,
+          })),
         };
       },
     }),
@@ -186,7 +167,9 @@ export const authOptions: AuthOptions = {
   },
   callbacks: {
     async jwt({ token, user }) {
-      if (user) Object.assign(token, user);
+      if (user) {
+        Object.assign(token, user);
+      }
       return token;
     },
     async session({ session, token }) {
@@ -206,15 +189,12 @@ export const authOptions: AuthOptions = {
           phone_verified_at: token.phone_verified_at as Date | null,
           createdAt: token.createdAt as Date,
           updatedAt: token.updatedAt as Date,
+          plans: (token.plans as any[]) ?? [],
         };
       }
       return session;
     },
-    async redirect({ url, baseUrl }) {
-      if (url.startsWith("/")) return `${baseUrl}${url}`;
-      else if (new URL(url).origin === baseUrl) return url;
-      return baseUrl;
-    },
   },
+
   debug: false,
 };

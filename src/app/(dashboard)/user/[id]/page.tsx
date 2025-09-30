@@ -381,7 +381,7 @@ export default function UserPage() {
                   <div className="flex items-center justify-between">
                     <CardTitle className="text-xl flex items-center gap-2">
                       <Shield className="h-5 w-5" />
-                      Plan Management
+                      {t("user.detail.plan_management")}
                     </CardTitle>
                     <Dialog
                       open={planDialogOpen}

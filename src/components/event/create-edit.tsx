@@ -14,7 +14,7 @@ import { useLoading } from "@/hooks/LoadingContext";
 import { TextareaField } from "../composable/input/input-textarea-text-field";
 import { DatePickerField } from "../composable/date/date-picker";
 import ImageUpload from "../composable/upload/upload-image";
-import { useTranslation } from "next-i18next";
+import { useTranslation } from "react-i18next";
 import { Label } from "@/components/ui/label";
 import { RequiredMark } from "../composable/required-mark";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -28,6 +28,8 @@ import {
   ChevronUp,
   X,
 } from "lucide-react";
+import { TFunction } from "i18next";
+
 import { EventType } from "@/enums/event";
 import {
   Collapsible,
@@ -35,34 +37,36 @@ import {
   CollapsibleTrigger,
 } from "@/components/ui/collapsible";
 
-// Timeline Schema
-const timelineSchema = z.object({
-  id: z.string().optional(),
-  name: z.string().min(1, "Timeline name is required"),
-  time: z
-    .string()
-    .min(1, "Time is required")
-    .regex(/^([01]?[0-9]|2[0-3]):[0-5][0-9]$/, "Invalid time format (HH:MM)"),
-});
+export const createSchemas = (t: TFunction) => {
+  const timelineSchema = z.object({
+    id: z.string().optional(),
+    name: z.string().min(1, t("timeline.name_required")),
+    time: z
+      .string()
+      .min(1, t("timeline.time_required"))
+      .regex(
+        /^([01]?[0-9]|2[0-3]):[0-5][0-9]$/,
+        t("timeline.invalid_time_format")
+      ),
+  });
 
-// Shift Schema
-const shiftSchema = z.object({
-  id: z.string().optional(),
-  name: z.string().min(1, "Shift name is required"),
-  date: z.coerce.date({
-    required_error: "Date is required",
-    invalid_type_error: "Invalid date",
-  }),
-  timelines: z
-    .array(timelineSchema)
-    .min(1, "At least one timeline item is required"),
-});
+  const shiftSchema = z.object({
+    id: z.string().optional(),
+    name: z.string().min(1, t("shift.name_required")),
+    date: z.coerce.date({
+      required_error: t("shift.date_required"),
+      invalid_type_error: t("shift.date_invalid"),
+    }),
+    timelines: z.array(timelineSchema).min(1, t("shift.timeline_required")),
+  });
 
-// Schedule Schema
-const scheduleSchema = z.object({
-  id: z.string().optional(),
-  shifts: z.array(shiftSchema),
-});
+  const scheduleSchema = z.object({
+    id: z.string().optional(),
+    shifts: z.array(shiftSchema),
+  });
+
+  return { timelineSchema, shiftSchema, scheduleSchema };
+};
 
 export function CreateEditForm({ id }: { id?: string }) {
   const { t } = useTranslation("common");
@@ -71,6 +75,7 @@ export function CreateEditForm({ id }: { id?: string }) {
   const [loading, setLoading] = useState(false);
   const [mounted, setMounted] = useState(false);
   const [scheduleOpen, setScheduleOpen] = useState(false);
+  const { scheduleSchema } = createSchemas(t);
 
   const formSchema = z
     .object({

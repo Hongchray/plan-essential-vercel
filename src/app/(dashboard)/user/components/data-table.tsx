@@ -25,7 +25,7 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import { Loading } from "@/components/composable/loading/loading";
-import { useTranslation } from "next-i18next";
+import { useTranslation } from "react-i18next";
 import { DataTablePagination } from "./data-table-pagination";
 import { DataTableToolbar } from "./data-table-toolbar";
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
