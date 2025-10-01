@@ -30,6 +30,42 @@ export async function GET(req: NextRequest) {
     return NextResponse.json(event, { status: 200 });
   }
 
+  const slug = req.nextUrl.searchParams.get("slug");
+
+  if (slug) {
+    // If slug is provided, try to find that specific event
+    const event = await prisma.event.findUnique({
+      where: {
+        slug,
+      },
+      include: {
+        schedules: {
+          include: {
+            shifts: {
+              include: {
+                timeLine: true,
+              },
+            },
+          },
+        },
+        eventTemplates: {
+          where: {
+            isDefault: true,
+          },
+          include: {
+            template: true,
+          },
+        },
+      },
+    });
+
+    if (!event) {
+      return NextResponse.json({ message: "Event not found" }, { status: 404 });
+    }
+
+    return NextResponse.json(event, { status: 200 });
+  }
+
   // If no eventId is provided, get the first available event
   const event = await prisma.event.findFirst({
     include: {

@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
+import { getUniqueSlug } from "@/utils/generate-slug";
 
 export async function GET(
   req: NextRequest,
@@ -49,11 +50,15 @@ export async function PUT(
 
     // Extract schedule data from the request
     const { schedule, ...eventData } = data;
+    const slug = await getUniqueSlug(eventData.name);
 
     // Update event data first
     const event = await prisma.event.update({
       where: { id },
-      data: eventData,
+      data: {
+        ...eventData,
+        slug: slug,
+      },
     });
 
     // Handle schedule update/creation

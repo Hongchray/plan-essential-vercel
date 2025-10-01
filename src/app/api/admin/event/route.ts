@@ -4,6 +4,7 @@ import { prisma } from "@/lib/prisma";
 import { NextRequest, NextResponse } from "next/server";
 import { getServerSession } from "next-auth"; // if using NextAuth
 import { authOptions } from "@/lib/authOptions"; // your auth config
+import { getUniqueSlug } from "@/utils/generate-slug";
 export async function POST(req: Request) {
   const data = await req.json();
   const session = await getServerSession(authOptions);
@@ -15,12 +16,14 @@ export async function POST(req: Request) {
   // Extract schedule data from the request
   const { schedule, ...eventData } = data;
 
+  const slug = await getUniqueSlug(eventData.name);
   try {
     // Create event first
     const event = await prisma.event.create({
       data: {
         ...eventData,
         userId: session.user.id,
+        slug: slug,
       },
     });
     const template = await prisma.template.findFirst();
