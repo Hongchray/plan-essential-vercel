@@ -56,6 +56,9 @@ export function DataTableToolbar<TData>({
   const { t } = useTranslation("common");
   const { data: session } = useSession();
   const limitGuests = session?.user?.plans?.[0]?.limit_guests ?? 0;
+  const limitExportExcel =
+    session?.user?.plans?.[0]?.limit_export_excel ?? false;
+
   const [totalGuests, setTotalGuests] = useState<number>(0);
 
   const [searchValue, setSearchValue] = useState(
@@ -176,12 +179,13 @@ export function DataTableToolbar<TData>({
         )}
       </div>
       <div className="flex gap-4">
-        {/* Only show the button if totalGuests < limitGuests */}
-        {totalGuests < limitGuests && <CreateEditForm id="" />}
-
         <div className="ml-2 text-md text-gray-500 flex items-center">
           <User2Icon /> {totalGuests}/{limitGuests}
         </div>
+
+        {(session?.user?.role === "admin" || totalGuests < limitGuests) && (
+          <CreateEditForm id="" />
+        )}
 
         <div className="hidden  md:inline-flex w-fit -space-x-px rounded-md shadow-xs rtl:space-x-reverse">
           <ExcelImportModal
@@ -199,15 +203,17 @@ export function DataTableToolbar<TData>({
             }
           />
 
-          <Button
-            size="sm"
-            onClick={exportGuestList}
-            className="rounded-none shadow-none border-primary focus-visible:z-10 text-primary hover:text-primary/80 hover:bg-primary/10 cursor-pointer"
-            variant="outline"
-          >
-            <Download />
-            <span>{t("component.table.export_excel")}</span>
-          </Button>
+          {(limitExportExcel || session?.user?.role === "admin") && (
+            <Button
+              size="sm"
+              onClick={exportGuestList}
+              className="rounded-none shadow-none border-primary focus-visible:z-10 text-primary hover:text-primary/80 hover:bg-primary/10 cursor-pointer"
+              variant="outline"
+            >
+              <Download />
+              <span>{t("component.table.export_excel")}</span>
+            </Button>
+          )}
 
           <ConfirmDialog
             trigger={

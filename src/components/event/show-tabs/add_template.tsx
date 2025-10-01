@@ -9,6 +9,7 @@ import { Badge } from "@/components/ui/badge";
 import { Loading } from "@/components/composable/loading/loading";
 import Link from "next/link";
 import { useTranslation } from "react-i18next";
+import { useSession } from "next-auth/react";
 
 interface Template {
   id: string;
@@ -26,6 +27,9 @@ export default function TabAddTemplate() {
   const [templates, setTemplates] = useState<Template[]>([]);
   const [loading, setLoading] = useState(true);
   const { t } = useTranslation("common");
+  const [totalTemplate, setTotalTemplate] = useState<number>(0);
+  const { data: session } = useSession();
+  const limitTemplate = session?.user?.plans?.[0]?.limit_template ?? 0;
 
   useEffect(() => {
     if (!eventId) return;
@@ -43,6 +47,17 @@ export default function TabAddTemplate() {
         setLoading(false);
       }
     }
+    async function fetchTemplateCount() {
+      try {
+        const res = await fetch(`/api/admin/event/${eventId}/template-count`);
+        const data = await res.json();
+        setTotalTemplate(data.totalTemplates); // <-- store count
+      } catch (error) {
+        console.error("Error fetching template count:", error);
+      }
+    }
+
+    fetchTemplateCount();
     fetchTemplates();
   }, [eventId]);
 
@@ -58,6 +73,11 @@ export default function TabAddTemplate() {
     return <div>{t("add_template.no_templates")}</div>;
   }
   const handleSelectTemplate = async (templateId: string) => {
+    if (session?.user?.role !== "admin" && totalTemplate >= limitTemplate) {
+      toast.error(t("add_template.limit_reached"));
+      return;
+    }
+
     try {
       const res = await fetch(`/api/admin/event/${eventId}/add-template`, {
         method: "POST",
@@ -70,11 +90,15 @@ export default function TabAddTemplate() {
       if (data.success) {
         toast.success(t("add_template.template_added"));
 
+        // Update template list
         setTemplates((prev) =>
           prev.map((tpl) =>
             tpl.id === templateId ? { ...tpl, added: true } : tpl
           )
         );
+
+        // ✅ Increase totalTemplate count
+        setTotalTemplate((prev) => prev + 1);
       } else {
         toast.error(
           t("add_template.template_add_failed", { message: data.message })
@@ -89,8 +113,17 @@ export default function TabAddTemplate() {
   return (
     <div>
       <div>
-        <h3 className="text-lg font-semibold mb-4">
+        <h3 className="text-lg font-semibold mb-4 flex items-center gap-2">
           {t("add_template.title")}
+          <span className="text-sm text-gray-500">
+            {totalTemplate}/{limitTemplate}
+          </span>
+          {totalTemplate >= limitTemplate &&
+            session?.user?.role !== "admin" && (
+              <Badge variant="destructive" className="text-xs">
+                {t("add_template.limit_reached")}
+              </Badge>
+            )}
         </h3>
       </div>
       <div className="grid grid-cols-1 lg:grid-cols-3 xl:grid-cols-4 2xl:grid-cols-6 gap-4 xl:gap-6 p-6">
@@ -136,7 +169,19 @@ export default function TabAddTemplate() {
               {/* Action Button */}
               <div className="mt-6 flex gap-2 w-full  justify-between">
                 <Button
-                  onClick={() => handleSelectTemplate(tpl.id)}
+                  onClick={() => {
+                    // Only block if NOT admin
+                    if (
+                      session?.user?.role !== "admin" &&
+                      totalTemplate >= limitTemplate
+                    ) {
+                      toast.error(t("add_template.limit_reached"));
+                      return; // stop normal users when limit reached
+                    }
+
+                    // Admins skip the check and can always add
+                    handleSelectTemplate(tpl.id);
+                  }}
                   disabled={tpl.added}
                 >
                   {tpl.added ? (

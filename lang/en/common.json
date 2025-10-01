@@ -597,7 +597,8 @@
     "already_added": "Already Added",
     "select_template": "Select Template",
     "preview": "Preview",
-    "no_preview": "No Preview"
+    "no_preview": "No Preview",
+    "limit_reached": "Template limit reached. Please upgrade your plan to add more templates."
   },
   "templates": {
     "switch_to": "Switched to",
