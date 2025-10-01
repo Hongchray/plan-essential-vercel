@@ -3,6 +3,9 @@ export interface Plan {
   name: string;
   price: number;
   userPlan: UserPlan;
+  limit_guests: number;
+  limit_template: number;
+  limit_export_excel: boolean;
   createdAt: string;
   updatedAt: string;
 }

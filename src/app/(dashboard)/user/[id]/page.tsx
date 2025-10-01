@@ -410,7 +410,23 @@ export default function UserPage() {
                             </Label>
                             <Select
                               value={selectedPlan}
-                              onValueChange={setSelectedPlan}
+                              onValueChange={(planId) => {
+                                setSelectedPlan(planId);
+
+                                // auto-fill recommended limits from selected plan
+                                const selected = plans.find(
+                                  (p) => p.id === planId
+                                );
+                                if (selected) {
+                                  setPlanLimits({
+                                    limit_guests: selected.limit_guests ?? 0,
+                                    limit_template:
+                                      selected.limit_template ?? 0,
+                                    limit_export_excel:
+                                      selected.limit_export_excel ?? false,
+                                  });
+                                }
+                              }}
                             >
                               <SelectTrigger>
                                 <SelectValue
@@ -819,7 +835,7 @@ export default function UserPage() {
                     {t("user.detail.templateLimit")}
                   </Label>
                   <Input
-                    id="edit-templates"
+                    id="templates"
                     type="number"
                     value={planLimits.limit_template}
                     onChange={(e) =>
@@ -836,7 +852,7 @@ export default function UserPage() {
                   {t("user.detail.excelExport")}
                 </Label>
                 <Switch
-                  id="edit-excel"
+                  id="excel"
                   checked={planLimits.limit_export_excel}
                   onCheckedChange={(checked) =>
                     setPlanLimits({

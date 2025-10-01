@@ -227,6 +227,9 @@ model Plan {
   name      String
   price     Float?
   userPlan  UserPlan[]
+  limit_guests       Int @default(100)
+  limit_template     Int @default(1)
+  limit_export_excel Boolean @default(false)
   createdAt DateTime   @default(now())
   updatedAt DateTime   @updatedAt
 }
