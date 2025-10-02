@@ -3,9 +3,15 @@ import { useEffect, useState } from "react";
 import { toast } from "sonner";
 import dynamic from "next/dynamic";
 import { Event } from "@/interfaces/event";
+import { LanguageProvider } from "@/hooks/LanguageContext";
+
 // Dynamic templates
 const DynamicComponents = {
   WeddingSimpleTemplate: dynamic(() => import("./wedding/simple-template"), {
+    loading: () => <LoadingScreen />,
+    ssr: false,
+  }),
+  WeddingSpecialTemplate: dynamic(() => import("./wedding/special-template"), {
     loading: () => <LoadingScreen />,
     ssr: false,
   }),
@@ -31,6 +37,7 @@ async function getPreviewTemplate(id: string) {
     return null;
   }
 }
+
 async function getPreviewEventTemplate(eventId: string, id: string) {
   try {
     const res = await fetch(`/api/admin/event/${eventId}/template/${id}`);
@@ -41,6 +48,7 @@ async function getPreviewEventTemplate(eventId: string, id: string) {
     return null;
   }
 }
+
 async function getEvent(id: string) {
   try {
     const res = await fetch(`/api/admin/event/preview?eventId=${id}`);
@@ -52,51 +60,121 @@ async function getEvent(id: string) {
   }
 }
 
+async function getEventBySlug(slug: string) {
+  try {
+    const res = await fetch(`/api/admin/event/preview?slug=${slug}`);
+    if (!res.ok) throw new Error("Failed to fetch invitation");
+    return await res.json();
+  } catch {
+    toast.error("Error getting invitation");
+    return null;
+  }
+}
+
+enum TemplateName {
+  WeddingSimpleTemplate = "WeddingSimpleTemplate",
+  WeddingSpecialTemplate = "WeddingSpecialTemplate",
+}
+
 export default function Preview({
   templateId,
   eventId,
+  slug,
 }: {
-  templateId: string;
-  eventId: string;
+  templateId?: string;
+  eventId?: string;
+  slug?: string;
 }) {
   const [template, setTemplate] = useState<any>(null);
-  const [event, setEvent] = useState<Event>({} as Event);
+  const [event, setEvent] = useState<Event | null>(null);
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    if (!templateId) return;
-    if (eventId) {
-      getPreviewEventTemplate(eventId, templateId).then(
-        (data) => data && setTemplate(data)
-      );
-    }
-    if (!eventId) {
-      getPreviewTemplate(templateId).then((data) => data && setTemplate(data));
-    }
-    getEvent(eventId).then((data) => data && setEvent(data));
-  }, [templateId, eventId]);
+    const fetchData = async () => {
+      setLoading(true);
 
-  if (!template) {
+      // Priority 1: slug (fetches both event and template)
+      if (slug) {
+        const data = await getEventBySlug(slug);
+        if (data) {
+          setEvent(data);
+          if (data.eventTemplates?.[0]) {
+            setTemplate(data.eventTemplates[0]);
+          }
+        }
+        setLoading(false);
+        return;
+      }
+
+      // Priority 2: eventId + templateId (fetch both separately)
+      if (eventId && templateId) {
+        const [eventData, templateData] = await Promise.all([
+          getEvent(eventId),
+          getPreviewEventTemplate(eventId, templateId),
+        ]);
+        if (eventData) setEvent(eventData);
+        if (templateData) setTemplate(templateData);
+        setLoading(false);
+        return;
+      }
+
+      // Priority 3: just eventId (fetch event only)
+      if (!slug) {
+        const eventData = await getEvent(eventId || "");
+        if (eventData) {
+          setEvent(eventData);
+        }
+      }
+
+      // Priority 4: just templateId (fetch template only)
+      if (templateId) {
+        const templateData = await getPreviewTemplate(templateId);
+        if (templateData) setTemplate(templateData);
+        setLoading(false);
+        return;
+      }
+
+      setLoading(false);
+    };
+
+    fetchData();
+  }, [templateId, eventId, slug]);
+
+  if (loading || !template) {
     return <LoadingScreen />;
   }
 
-  enum TemplateName {
-    WeddingSimpleTemplate = "WeddingSimpleTemplate",
-  }
-  let ComponentToRender =
-    DynamicComponents[template.unique_name as TemplateName];
-  if (eventId) {
-    ComponentToRender =
-      DynamicComponents[template.template.unique_name as TemplateName];
+  const templateUniqueName =
+    eventId || slug
+      ? template.template?.unique_name
+      : templateId
+      ? template?.unique_name
+      : undefined;
+
+  const ComponentToRender = templateUniqueName
+    ? DynamicComponents[templateUniqueName as TemplateName]
+    : null;
+
+  if (!ComponentToRender) {
+    return (
+      <div className="flex items-center justify-center min-h-screen">
+        <p className="text-red-600">Template component not found</p>
+      </div>
+    );
   }
 
+  const config =
+    eventId || slug
+      ? template?.config
+      : templateId
+      ? template?.defaultConfig
+      : undefined;
+
   return (
-    <div className="min-h-screen bg-gradient-to-br from-red-50 to-yellow-50">
-      {ComponentToRender &&
-        (eventId ? (
-          <ComponentToRender config={template.config} data={event} />
-        ) : (
-          <ComponentToRender config={template.defaultConfig} data={event} />
-        ))}
+    <div className="min-h-screen bg-gradient-to-br from-red-50 to-yellow-50 ">
+      <LanguageProvider>
+        <ComponentToRender config={config} data={event || ({} as Event)} />
+      </LanguageProvider>
     </div>
   );
 }

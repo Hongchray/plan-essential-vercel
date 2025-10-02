@@ -1,6 +1,7 @@
 export interface Event {
   id: string;
   name: string;
+  slug: string;
   owner: string;
   bride: string;
   groom: string;

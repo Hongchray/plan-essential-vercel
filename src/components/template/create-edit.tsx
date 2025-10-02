@@ -90,7 +90,7 @@ export function CreateEditForm({ id }: { id?: string }) {
       }
     };
     fetchTemplate();
-  }, [id, form, t, setOverlayLoading]);
+  }, [id, form]);
 
   // Don't render until we're on the client and translations are ready
   if (!isClient || !ready) {

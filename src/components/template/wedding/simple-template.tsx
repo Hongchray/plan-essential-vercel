@@ -22,6 +22,7 @@ import { formatDateCustom, formatDateTime } from "@/utils/date";
 import { GuestStatus } from "@/enums/guests";
 import { toast } from "sonner";
 import ScrollNavigationBar from "../scroll-navigation-bar";
+import { useLanguage } from "@/hooks/LanguageContext";
 export default function SimpleTemplate({
   config,
   data,
@@ -50,17 +51,14 @@ export default function SimpleTemplate({
       getGuest(guestId, data.id);
     }
   }, []);
-  const [currentLanguage, setCurrentLanguage] = useState<"kh" | "en">("kh");
+  // const [currentLanguage, setCurrentLanguage] = useState<"kh" | "en">("kh");
+  const { currentLanguage, toggleLanguage } = useLanguage();
 
   // Get the current invitation data based on selected language
   const currentInvitation =
     currentLanguage === "kh"
       ? config?.invitation_kh || config?.invitation
       : config?.invitation_en || config?.invitation;
-
-  const toggleLanguage = () => {
-    setCurrentLanguage((prev) => (prev === "kh" ? "en" : "kh"));
-  };
 
   const onSubmit = async (data: FormData) => {
     try {
