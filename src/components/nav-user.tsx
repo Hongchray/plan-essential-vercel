@@ -28,12 +28,12 @@ import {
 import { signOut } from "next-auth/react";
 import { useRouter } from "next/navigation";
 import { useSession } from "next-auth/react";
-
+import { useTranslation } from "react-i18next";
 export function NavUser() {
   const { data: session } = useSession();
   const user = session?.user;
   const router = useRouter();
-
+  const { t } = useTranslation("common");
   const { isMobile } = useSidebar();
 
   if (!user) return null; // user not logged in
@@ -101,9 +101,9 @@ export function NavUser() {
                 </div>
               </div>
             </DropdownMenuLabel>
-            <DropdownMenuSeparator />
+            {/* <DropdownMenuSeparator /> */}
 
-            <DropdownMenuGroup>
+            {/* <DropdownMenuGroup>
               <DropdownMenuItem className="text-xs sm:text-sm flex items-center gap-1 sm:gap-2">
                 <Sparkles className="h-3 w-3 sm:h-4 sm:w-4" />
                 Upgrade to Pro
@@ -125,7 +125,7 @@ export function NavUser() {
                 <Bell className="h-3 w-3 sm:h-4 sm:w-4" />
                 Notification
               </DropdownMenuItem>
-            </DropdownMenuGroup>
+            </DropdownMenuGroup> */}
 
             <DropdownMenuSeparator />
 
@@ -134,7 +134,7 @@ export function NavUser() {
               className="text-xs sm:text-sm flex items-center gap-1 sm:gap-2"
             >
               <LogOut className="h-3 w-3 sm:h-4 sm:w-4" />
-              Log out
+              {t("profile.logout")}
             </DropdownMenuItem>
           </DropdownMenuContent>
         </DropdownMenu>

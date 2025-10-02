@@ -22,6 +22,32 @@ async function main() {
     });
   }
 
+  await prisma.plan.createMany({
+    data: [
+      {
+        name: "ឥតគិតថ្លៃ",
+        price: 0,
+        limit_guests: 50,
+        limit_template: 1,
+        limit_export_excel: false,
+      },
+      {
+        name: "ប្រណិត",
+        price: 200,
+        limit_guests: 200,
+        limit_template: 5,
+        limit_export_excel: true,
+      },
+      {
+        name: "អធិកអធម",
+        price: 500,
+        limit_guests: 1000,
+        limit_template: 20,
+        limit_export_excel: true,
+      },
+    ],
+  });
+
   const weddingTemplate = await prisma.template.create({
     data: {
       unique_name: "elegant-wedding", // Adding required unique_name field

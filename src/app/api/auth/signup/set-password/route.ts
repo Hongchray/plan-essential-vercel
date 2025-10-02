@@ -25,6 +25,7 @@ export async function POST(req: NextRequest) {
     const body = await req.json();
     const { phone, password, name } = passwordSchema.parse(body);
 
+    // Find user by phone
     const user = await prisma.user.findUnique({ where: { phone } });
     if (!user) {
       return NextResponse.json(
@@ -33,9 +34,10 @@ export async function POST(req: NextRequest) {
       );
     }
 
-    // Hash password
+    // Hash the password
     const hashedPassword = await bcrypt.hash(password, 10);
 
+    // Update user info
     const updatedUser = await prisma.user.update({
       where: { phone },
       data: {
@@ -44,26 +46,21 @@ export async function POST(req: NextRequest) {
       },
     });
 
-    //check if user have plan
-
-    const userPlan = await prisma.userPlan.findMany({
-      where: {
-        userId: user.id,
-      },
+    // Check if user already has a plan
+    const userPlan = await prisma.userPlan.findFirst({
+      where: { userId: user.id },
     });
 
+    // Assign free plan if no plan exists
     if (!userPlan) {
-      const freePlan = await prisma.plan.findFirst({
-        where: {
-          price: 0,
-        },
-      });
+      const freePlan = await prisma.plan.findFirst({ where: { price: 0 } });
+
       if (freePlan) {
         await prisma.userPlan.create({
           data: {
             userId: user.id,
             planId: freePlan.id,
-            limit_guests: 350,
+            limit_guests: 50, // default limits
             limit_template: 1,
             limit_export_excel: false,
           },
@@ -78,12 +75,14 @@ export async function POST(req: NextRequest) {
     });
   } catch (err: any) {
     console.error("❌ Set Password error:", err);
+
     if (err instanceof z.ZodError) {
       return NextResponse.json(
         { error: err.errors[0].message },
         { status: 400 }
       );
     }
+
     return NextResponse.json(
       { error: "setup_password.error_server" },
       { status: 500 }

@@ -1,5 +1,6 @@
 "use client";
 
+import { Loading } from "@/components/composable/loading/loading";
 import { useEffect, useState } from "react";
 
 interface UserProfile {
@@ -36,7 +37,12 @@ export default function ProfilePage() {
     fetchProfile();
   }, []);
 
-  if (loading) return <p className="p-4">Loading profile...</p>;
+  if (loading)
+    return (
+      <p className="p-4">
+        <Loading variant="circle" />
+      </p>
+    );
   if (!profile) return <p className="p-4">No profile found.</p>;
 
   return (

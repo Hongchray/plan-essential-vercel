@@ -254,6 +254,8 @@
     "title": "Event Management",
     "welcomeTitle": "Welcome! We're glad to have you here.",
     "welcomeSubtitle": "Explore your events below or create a new one to get started.",
+    "noEventsTitle": "No events yet",
+    "noEventsDescription": "You haven’t created any events. Start by creating your first one!",
     "view": "View",
     "add_new": "Add New",
     "dashboard": "Dashboard",
@@ -355,7 +357,7 @@
       "guest": "Guests",
       "expense": "Expenses",
       "wedding_gift": "Wedding Gift",
-      "invite_template": "Invite's Template",
+      "invite_template": "Template",
       "add_template": "Add Template"
     },
     "title": "Wedding Dashboard",
@@ -553,6 +555,7 @@
     "title": "List of Gifts",
     "total_usd_equivalent": "Total as USD",
     "exchange_rate": "Exchange rate: 1 USD = {{rate}} KHR",
+    "as_riel": "as Riel",
     "table": {
       "guest_name": "Guest Name",
       "note": "Note",
@@ -742,7 +745,7 @@
       "noEvents": "No Events",
       "noEventsDescription": "This user hasn't created any events yet.",
       "editPlanTitle": "Edit Plan Limits",
-      "editPlanDescription": "Update the limits for {planName}.",
+      "editPlanDescription": "Update the limits for",
       "updatePlan": "Update Plan"
     }
   },
@@ -780,5 +783,28 @@
       "typeRequired": "Type is required",
       "uniqueNameRequired": "Unique name is required"
     }
+  },
+  "profile": {
+    "noProfile": "No profile found.",
+    "noEmail": "No email",
+    "noLocation": "No location",
+    "phone": "Phone",
+    "username": "Username",
+    "role": "Role",
+    "joined": "Joined",
+    "events": "Events",
+    "plans": "Plans",
+    "tabProfile": "Profile",
+    "tabEvents": "Events",
+    "tabPlans": "Plans",
+    "email": "Email",
+    "addNewEvent": "Add New Event",
+    "guestLimit": "Guest Limit",
+    "templateLimit": "Template Limit",
+    "excelExport": "Excel Export",
+    "yes": "Yes",
+    "no": "No",
+    "noEvents": "No Events",
+    "logout": "Logout"
   }
 }
