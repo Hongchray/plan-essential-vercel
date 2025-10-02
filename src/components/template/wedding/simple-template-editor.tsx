@@ -4,12 +4,13 @@ import { TemplateEditorProps } from "@/interfaces/comon/template-editor-prop";
 import { useTranslation } from "react-i18next";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
+import { useLanguage } from "@/hooks/LanguageContext";
 
 export default function SimpleTemplateEditor({
   config,
   setConfig,
 }: TemplateEditorProps) {
-  const [currentLanguage, setCurrentLanguage] = useState<"kh" | "en">("kh");
+  const { currentLanguage, toggleLanguage } = useLanguage();
   const { t } = useTranslation("common");
 
   // Helper function to update top-level config properties
@@ -55,10 +56,6 @@ export default function SimpleTemplateEditor({
       </div>
     );
   }
-
-  const toggleLanguage = () => {
-    setCurrentLanguage((prev) => (prev === "kh" ? "en" : "kh"));
-  };
 
   const langLabel =
     currentLanguage === "kh"

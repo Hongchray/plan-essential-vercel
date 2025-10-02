@@ -20,6 +20,7 @@ import {
 } from "@/components/ui/select";
 import { useTranslation } from "react-i18next";
 import { Loading } from "@/components/composable/loading/loading";
+import { LanguageProvider } from "@/hooks/LanguageContext";
 // Dynamic templates
 const PreviewComponents = {
   WeddingSimpleTemplate: dynamic(
@@ -336,51 +337,53 @@ export default function TabTemplate({ paramId }: { paramId: string }) {
         </div>
 
         {/* Fullscreen Editor Content */}
-        <div className="bg-gray-50">
-          <div className=" mx-auto">
-            <ResizablePanelGroup direction="horizontal">
-              {/* Editor Panel */}
-              <ResizablePanel defaultSize={30} minSize={25}>
-                <div className="p-8 h-[calc(100vh-80px)] overflow-y-auto bg-gray-50 mb-8">
-                  {EditorToRender && config !== undefined ? (
-                    <EditorToRender config={config} setConfig={setConfig} />
-                  ) : (
-                    <div className="text-center text-gray-500 mt-8">
-                      <p>{t("templates.full_screen.editor_not_available")}</p>
-                      <p className="text-sm mt-2">
-                        {t("templates.full_screen.template")}:{" "}
-                        {template.template?.unique_name}
-                      </p>
-                    </div>
-                  )}
-                </div>
-              </ResizablePanel>
-
-              <ResizableHandle withHandle />
-
-              {/* Preview Panel */}
-              <ResizablePanel defaultSize={70} minSize={40}>
-                <div className="h-[calc(100vh-80px)] overflow-y-auto">
-                  <div className=" min-h-full pb-[50px]">
-                    {ComponentToRender && config !== undefined ? (
-                      <ComponentToRender config={config} data={event} />
+        <LanguageProvider>
+          <div className="bg-gray-50">
+            <div className=" mx-auto">
+              <ResizablePanelGroup direction="horizontal">
+                {/* Editor Panel */}
+                <ResizablePanel defaultSize={30} minSize={25}>
+                  <div className="p-8 h-[calc(100vh-80px)] overflow-y-auto bg-gray-50 mb-8">
+                    {EditorToRender && config !== undefined ? (
+                      <EditorToRender config={config} setConfig={setConfig} />
                     ) : (
-                      <div className="flex items-center justify-center h-full">
-                        <p className="text-gray-500">
-                          {t("templates.full_screen.preview_not_available")}
-                        </p>
-                        <p className="text-sm text-gray-400 mt-2">
-                          {t("templates.full_screen.component")}:{" "}
+                      <div className="text-center text-gray-500 mt-8">
+                        <p>{t("templates.full_screen.editor_not_available")}</p>
+                        <p className="text-sm mt-2">
+                          {t("templates.full_screen.template")}:{" "}
                           {template.template?.unique_name}
                         </p>
                       </div>
                     )}
                   </div>
-                </div>
-              </ResizablePanel>
-            </ResizablePanelGroup>
+                </ResizablePanel>
+
+                <ResizableHandle withHandle />
+
+                {/* Preview Panel */}
+                <ResizablePanel defaultSize={70} minSize={40}>
+                  <div className="h-[calc(100vh-80px)] overflow-y-auto">
+                    <div className=" min-h-full pb-[50px]">
+                      {ComponentToRender && config !== undefined ? (
+                        <ComponentToRender config={config} data={event} />
+                      ) : (
+                        <div className="flex items-center justify-center h-full">
+                          <p className="text-gray-500">
+                            {t("templates.full_screen.preview_not_available")}
+                          </p>
+                          <p className="text-sm text-gray-400 mt-2">
+                            {t("templates.full_screen.component")}:{" "}
+                            {template.template?.unique_name}
+                          </p>
+                        </div>
+                      )}
+                    </div>
+                  </div>
+                </ResizablePanel>
+              </ResizablePanelGroup>
+            </div>
           </div>
-        </div>
+        </LanguageProvider>
 
         {/* Fullscreen Footer */}
         <div className="absolute bottom-0 left-0 right-0 bg-gray-100 border-t px-6 py-3">
@@ -431,89 +434,91 @@ export default function TabTemplate({ paramId }: { paramId: string }) {
         </Button>
       </div>
       <div className="h-[750px] border-dashed border-3 rounded">
-        <ResizablePanelGroup direction="horizontal">
-          {/* Editor Panel */}
-          <ResizablePanel defaultSize={30} minSize={25}>
-            <div className="p-2 border-b shadow-md bg-gray-800 text-white h-[50px] flex items-center justify-between rounded-tl">
-              <div className="font-bold">
-                {t("templates.default_screen.editor")}
-              </div>
-              <div className="flex items-center gap-2">
-                <Button
-                  size="sm"
-                  onClick={toggleFullscreenEditor}
-                  variant="ghost"
-                  className="text-white hover:bg-gray-700 p-1 h-8 w-8"
-                  title={t("templates.default_screen.fullscreen_editor")}
-                >
-                  <Maximize2 className="h-4 w-4" />
-                </Button>
-              </div>
-            </div>
-            <div className="px-4 py-6 h-[calc(100%-50px)] overflow-y-auto bg-gray-50">
-              {EditorToRender && config !== undefined ? (
-                <EditorToRender config={config} setConfig={setConfig} />
-              ) : (
-                <div className="text-center text-gray-500 mt-8">
-                  <p>{t("templates.default_screen.editor_not_available")}</p>
-                  <p className="text-sm mt-2">
-                    {t("templates.default_screen.template")}:{" "}
-                    {template.template?.unique_name}
-                  </p>
+        <LanguageProvider>
+          <ResizablePanelGroup direction="horizontal">
+            {/* Editor Panel */}
+            <ResizablePanel defaultSize={30} minSize={25}>
+              <div className="p-2 border-b shadow-md bg-gray-800 text-white h-[50px] flex items-center justify-between rounded-tl">
+                <div className="font-bold">
+                  {t("templates.default_screen.editor")}
                 </div>
-              )}
-            </div>
-          </ResizablePanel>
-
-          <ResizableHandle withHandle />
-
-          {/* Preview Panel */}
-          <ResizablePanel defaultSize={70} minSize={40}>
-            <div className="p-2 border-b shadow h-[50px] flex items-center justify-between bg-white">
-              <span className="font-bold">
-                {t("templates.default_screen.preview_template")}
-              </span>
-              <div className="flex items-center gap-2">
-                <span className="text-xs text-gray-500">
-                  {template.template?.name || template.template?.unique_name}
-                </span>
-
                 <div className="flex items-center gap-2">
-                  <Button size="sm" onClick={handleSave} disabled={isSaving}>
-                    {isSaving ? (
-                      <div className="flex items-center gap-2">
-                        <div className="w-3 h-3 border border-white border-t-transparent rounded-full animate-spin"></div>
-                        {t("templates.default_screen.saving")}
-                      </div>
-                    ) : (
-                      <>
-                        <Save />
-                        {t("templates.default_screen.save")}
-                      </>
-                    )}
+                  <Button
+                    size="sm"
+                    onClick={toggleFullscreenEditor}
+                    variant="ghost"
+                    className="text-white hover:bg-gray-700 p-1 h-8 w-8"
+                    title={t("templates.default_screen.fullscreen_editor")}
+                  >
+                    <Maximize2 className="h-4 w-4" />
                   </Button>
                 </div>
               </div>
-            </div>
-            <div className="h-[calc(100%-50px)] overflow-y-auto">
-              <div className="bg-gradient-to-br from-red-50 to-yellow-50 min-h-full">
-                {ComponentToRender && config !== undefined ? (
-                  <ComponentToRender config={config} data={event} />
+              <div className="px-4 py-6 h-[calc(100%-50px)] overflow-y-auto bg-gray-50">
+                {EditorToRender && config !== undefined ? (
+                  <EditorToRender config={config} setConfig={setConfig} />
                 ) : (
-                  <div className="flex items-center justify-center h-full">
-                    <p className="text-gray-500">
-                      {t("templates.default_screen.preview_not_available")}
-                    </p>
-                    <p className="text-sm text-gray-400 mt-2">
-                      {t("templates.default_screen.component")}:{" "}
+                  <div className="text-center text-gray-500 mt-8">
+                    <p>{t("templates.default_screen.editor_not_available")}</p>
+                    <p className="text-sm mt-2">
+                      {t("templates.default_screen.template")}:{" "}
                       {template.template?.unique_name}
                     </p>
                   </div>
                 )}
               </div>
-            </div>
-          </ResizablePanel>
-        </ResizablePanelGroup>
+            </ResizablePanel>
+
+            <ResizableHandle withHandle />
+
+            {/* Preview Panel */}
+            <ResizablePanel defaultSize={70} minSize={40}>
+              <div className="p-2 border-b shadow h-[50px] flex items-center justify-between bg-white">
+                <span className="font-bold">
+                  {t("templates.default_screen.preview_template")}
+                </span>
+                <div className="flex items-center gap-2">
+                  <span className="text-xs text-gray-500">
+                    {template.template?.name || template.template?.unique_name}
+                  </span>
+
+                  <div className="flex items-center gap-2">
+                    <Button size="sm" onClick={handleSave} disabled={isSaving}>
+                      {isSaving ? (
+                        <div className="flex items-center gap-2">
+                          <div className="w-3 h-3 border border-white border-t-transparent rounded-full animate-spin"></div>
+                          {t("templates.default_screen.saving")}
+                        </div>
+                      ) : (
+                        <>
+                          <Save />
+                          {t("templates.default_screen.save")}
+                        </>
+                      )}
+                    </Button>
+                  </div>
+                </div>
+              </div>
+              <div className="h-[calc(100%-50px)] overflow-y-auto">
+                <div className="bg-gradient-to-br from-red-50 to-yellow-50 min-h-full">
+                  {ComponentToRender && config !== undefined ? (
+                    <ComponentToRender config={config} data={event} />
+                  ) : (
+                    <div className="flex items-center justify-center h-full">
+                      <p className="text-gray-500">
+                        {t("templates.default_screen.preview_not_available")}
+                      </p>
+                      <p className="text-sm text-gray-400 mt-2">
+                        {t("templates.default_screen.component")}:{" "}
+                        {template.template?.unique_name}
+                      </p>
+                    </div>
+                  )}
+                </div>
+              </div>
+            </ResizablePanel>
+          </ResizablePanelGroup>
+        </LanguageProvider>
       </div>
       {/* Status Bar */}
       <div className="flex justify-between items-center text-xs text-gray-500 px-2">

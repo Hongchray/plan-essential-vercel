@@ -3,10 +3,15 @@ import { useEffect, useState } from "react";
 import { toast } from "sonner";
 import dynamic from "next/dynamic";
 import { Event } from "@/interfaces/event";
+import { LanguageProvider } from "@/hooks/LanguageContext";
 
 // Dynamic templates
 const DynamicComponents = {
   WeddingSimpleTemplate: dynamic(() => import("./wedding/simple-template"), {
+    loading: () => <LoadingScreen />,
+    ssr: false,
+  }),
+  WeddingSpecialTemplate: dynamic(() => import("./wedding/special-template"), {
     loading: () => <LoadingScreen />,
     ssr: false,
   }),
@@ -68,6 +73,7 @@ async function getEventBySlug(slug: string) {
 
 enum TemplateName {
   WeddingSimpleTemplate = "WeddingSimpleTemplate",
+  WeddingSpecialTemplate = "WeddingSpecialTemplate",
 }
 
 export default function Preview({
@@ -165,8 +171,10 @@ export default function Preview({
       : undefined;
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-red-50 to-yellow-50">
-      <ComponentToRender config={config} data={event || ({} as Event)} />
+    <div className="min-h-screen bg-gradient-to-br from-red-50 to-yellow-50 ">
+      <LanguageProvider>
+        <ComponentToRender config={config} data={event || ({} as Event)} />
+      </LanguageProvider>
     </div>
   );
 }
