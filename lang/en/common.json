@@ -111,6 +111,18 @@
       "create": "Create",
       "cancel": "Cancel"
     },
+    "time_picker": {
+      "placeholder": "Select time",
+      "select_time": "Select Time",
+      "hour": "Hour",
+      "minutes": "Minutes",
+      "period": "Period",
+      "am": "AM",
+      "pm": "PM",
+      "cancel": "Cancel",
+      "set_time": "Set Time",
+      "eating_time": "Eating Time"
+    },
     "table": {
       "search": "Search",
       "add_new": "Add New",
@@ -295,6 +307,8 @@
       "cancel": "Cancel",
       "submit": "Create",
       "update": "Update",
+      "eating_time": "Eating Time",
+
       "timeline": {
         "name_required": "Timeline name is required",
         "time_required": "Time is required",
@@ -346,7 +360,8 @@
       "actions": "Actions",
       "created_at": "Created At",
       "updated_at": "Updated At",
-      "logo": "Image"
+      "logo": "Image",
+      "eating_time": "Eating Time"
     }
   },
 
@@ -428,7 +443,8 @@
         },
         "select_all": "Select all",
         "select_row": "Select row",
-        "actions": "Actions"
+        "actions": "Actions",
+        "wishing_note": "Wish"
       }
     }
   },
@@ -785,6 +801,7 @@
     }
   },
   "profile": {
+    "edit": "Edit",
     "noProfile": "No profile found.",
     "noEmail": "No email",
     "noLocation": "No location",
@@ -805,6 +822,13 @@
     "yes": "Yes",
     "no": "No",
     "noEvents": "No Events",
-    "logout": "Logout"
+    "logout": "Logout",
+    "Image": "Image",
+    "imageSize": "200x200",
+    "name": "Name",
+    "editProfile": "Edit Profile",
+    "save": "Save",
+    "saving": "Saving...",
+    "cancel": "Cancel"
   }
 }

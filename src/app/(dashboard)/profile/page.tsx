@@ -8,7 +8,8 @@ import { Loading } from "@/components/composable/loading/loading";
 import { Button } from "@/components/ui/button";
 import { useTranslation } from "react-i18next";
 import { useRouter } from "next/navigation";
-
+import { Pencil, Plus } from "lucide-react";
+import { formatDate } from "@/utils/date";
 interface Event {
   id: string;
   name: string;
@@ -84,7 +85,16 @@ export default function ProfilePage() {
   return (
     <div className="p-6 max-w-6xl mx-auto space-y-6">
       {/* Profile Header */}
-      <Card className="flex flex-col md:flex-row items-center md:items-start space-y-4 md:space-y-0 md:space-x-6 p-6 bg-white shadow-lg rounded-xl border border-gray-200 hover:shadow-xl transition-transform duration-200">
+      <Card className="relative flex flex-col md:flex-row items-center md:items-start space-y-4 md:space-y-0 md:space-x-6 p-6 bg-white shadow-lg rounded-xl border border-gray-200 hover:shadow-xl transition-transform duration-200">
+        {/* Edit Button */}
+        <Button
+          onClick={() => router.push(`/profile/${profile.id}`)}
+          className="absolute top-4 right-4 px-4 py-2 text-sm font-medium text-white transition-colors cursor-pointer  rounded-lg shadow"
+        >
+          <Pencil className="w-4 h-4 mr-2 inline-block" />
+          {t("profile.edit")}
+        </Button>
+
         {/* Profile Image */}
         {profile.photoUrl ? (
           <img
@@ -115,9 +125,7 @@ export default function ProfilePage() {
           </p>
           <p className="text-sm text-gray-500 mt-1">
             {t("profile.joined")}:{" "}
-            {profile.createdAt
-              ? new Date(profile.createdAt).toLocaleDateString()
-              : "-"}
+            {profile.createdAt ? formatDate(profile.createdAt) : "-"}
           </p>
 
           {/* Optional Stats */}
@@ -126,7 +134,8 @@ export default function ProfilePage() {
               {t("profile.events")}: {profile.events.length}
             </span>
             <span className="px-3 py-1 bg-gray-100 text-gray-800 text-sm rounded-full shadow-sm">
-              {t("profile.plans")}: {profile.userPlan[0].plan.name}
+              {t("profile.plans")}:{" "}
+              {profile.userPlan?.[0]?.plan?.name ?? "No plan"}
             </span>
           </div>
         </div>
@@ -147,12 +156,15 @@ export default function ProfilePage() {
           >
             {t("profile.tabEvents")}
           </TabsTrigger>
-          <TabsTrigger
-            value="plans"
-            className="text-gray-700 font-medium data-[state=active]:bg-gray-100 data-[state=active]:shadow-md data-[state=active]:text-gray-900 rounded-lg px-4 py-2 transition-all cursor-pointer"
-          >
-            {t("profile.tabPlans")}
-          </TabsTrigger>
+
+          {profile.role !== "admin" && (
+            <TabsTrigger
+              value="plans"
+              className="text-gray-700 font-medium data-[state=active]:bg-gray-100 data-[state=active]:shadow-md data-[state=active]:text-gray-900 rounded-lg px-4 py-2 transition-all cursor-pointer"
+            >
+              {t("profile.tabPlans")}
+            </TabsTrigger>
+          )}
         </TabsList>
 
         {/* Profile Tab */}
@@ -171,10 +183,13 @@ export default function ProfilePage() {
                 {t("profile.username")}:{" "}
                 <span className="font-normal">{profile.username || "-"}</span>
               </p>
-              <p className="text-gray-800 font-semibold">
-                {t("profile.role")}:{" "}
-                <span className="font-normal">{profile.role}</span>
+              <p className="text-gray-800 font-semibold flex items-center gap-2">
+                {t("profile.role")}:
+                <span className="px-2 py-1 rounded-full bg-indigo-100 text-indigo-800 text-xs font-medium uppercase">
+                  {profile.role}
+                </span>
               </p>
+
               <p className="text-gray-600 font-medium">
                 {t("profile.joined")}:{" "}
                 <span className="font-normal">
@@ -190,7 +205,8 @@ export default function ProfilePage() {
                   {t("profile.events")}: {profile.events.length}
                 </span>
                 <span className="px-3 py-1 bg-gray-100 text-gray-800 text-sm rounded-full shadow-sm">
-                  {t("profile.plans")}: {profile.userPlan[0].plan.name}
+                  {t("profile.plans")}:{" "}
+                  {profile.userPlan?.[0]?.plan?.name ?? "No plan"}
                 </span>
               </div>
             </div>

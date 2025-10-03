@@ -28,8 +28,9 @@ import {
   ChevronUp,
   X,
 } from "lucide-react";
-import { TFunction } from "i18next";
 
+import { TFunction } from "i18next";
+import { TimePicker } from "@/components/composable/date/time-picker";
 import { EventType } from "@/enums/event";
 import {
   Collapsible,
@@ -42,12 +43,10 @@ export const createSchemas = (t: TFunction) => {
     id: z.string().optional(),
     name: z.string().min(1, t("timeline.name_required")),
     time: z
-      .string()
-      .min(1, t("timeline.time_required"))
-      .regex(
-        /^([01]?[0-9]|2[0-3]):[0-5][0-9]$/,
-        t("timeline.invalid_time_format")
-      ),
+      .string({
+        required_error: t("timeline.time_required"),
+      })
+      .min(1, t("timeline.time_required")),
   });
 
   const shiftSchema = z.object({
@@ -95,6 +94,11 @@ export function CreateEditForm({ id }: { id?: string }) {
       location: z.string(),
       latitude: z.coerce.string().optional(),
       longitude: z.coerce.string().optional(),
+      eating_time: z
+        .string({
+          required_error: t("EventPage.error.eatingTimeRequired"),
+        })
+        .min(1, t("EventPage.error.eatingTimeRequired")),
       startTime: z.coerce
         .date({
           required_error: t("EventPage.error.startTimeRequired"),
@@ -103,21 +107,24 @@ export function CreateEditForm({ id }: { id?: string }) {
           message: t("EventPage.error.startTimeInvalid"),
         })
         .transform((val) => new Date(val)),
-      endTime: z.coerce
-        .date({
-          required_error: t("EventPage.error.endTimeRequired"),
-        })
-        .refine((val: Date) => !isNaN(val.getTime()), {
-          message: t("EventPage.error.endTimeInvalid"),
-        })
-        .transform((val) => new Date(val)),
+      endTime: z.preprocess(
+        (val) => (val === "" || val === undefined ? null : val),
+        z.date().nullable().optional()
+      ),
       owner: z.coerce.string().optional(),
       schedule: scheduleSchema.optional(),
     })
-    .refine((data) => data.endTime >= data.startTime, {
-      path: ["endTime"],
-      message: t("EventPage.error.endTimeAfterStart"),
-    })
+    .refine(
+      (data) =>
+        data.endTime === null ||
+        data.endTime === undefined ||
+        data.endTime >= data.startTime,
+      {
+        path: ["endTime"],
+        message: t("EventPage.error.endTimeAfterStart"),
+      }
+    )
+
     .superRefine((data, ctx) => {
       if (data.type === EventType.WEDDING) {
         if (!data.bride) {
@@ -146,21 +153,21 @@ export function CreateEditForm({ id }: { id?: string }) {
     });
 
   type FormData = z.infer<typeof formSchema>;
-
   const form = useForm<FormData>({
-    resolver: zodResolver(formSchema),
+    resolver: zodResolver(formSchema) as any,
     defaultValues: {
       name: "",
       type: EventType.WEDDING,
-      image: "",
+      image: null,
       status: "active",
       description: "",
       userId: "",
       location: "",
       latitude: "",
       longitude: "",
-      startTime: undefined,
-      endTime: undefined,
+      startTime: new Date(),
+      endTime: null,
+      eating_time: "",
       owner: "",
       bride: "",
       groom: "",
@@ -258,7 +265,6 @@ export function CreateEditForm({ id }: { id?: string }) {
   }, [id]);
 
   if (!mounted) return null;
-
   const onSubmit = async (data: FormData) => {
     setLoading(true);
     try {
@@ -417,13 +423,17 @@ export function CreateEditForm({ id }: { id?: string }) {
           </div>
 
           <div className="sm:col-span-1">
-            <DatePickerField
-              label={t("EventPage.create.endDate")}
-              name="endTime"
-              placeholder={t("EventPage.create.endDatePlaceholder")}
-              form={form}
-              required
+            <TimePicker
+              label={t("EventPage.create.eating_time")}
+              value={form.watch("eating_time") ?? ""}
+              onChange={(val) => form.setValue("eating_time", val)}
             />
+
+            {form.formState.errors.eating_time && (
+              <p className="text-red-500 text-sm mt-1">
+                {form.formState.errors.eating_time.message}
+              </p>
+            )}
           </div>
 
           <div className="sm:col-span-1">
@@ -616,11 +626,11 @@ function ShiftCard({
         </div>
 
         <div className="space-y-2">
-          <div className="space-y-2 pl-1 sm:pl-4">
+          <div className="space-y-2 pl-1 sm:pl-4 border-l-3 border-gray-300 border-dashed">
             {timelineFields.map((timeline, timelineIndex) => (
               <div
                 key={timeline.id}
-                className="flex flex-col sm:flex-row gap-2 items-stretch sm:items-end"
+                className="flex flex-col sm:flex-row gap-2 items-stretch sm:items-end "
               >
                 <div className="flex-1">
                   <InputTextField
@@ -633,15 +643,36 @@ function ShiftCard({
                   />
                 </div>
                 <div className="w-full sm:w-32">
-                  <InputTextField
-                    label="ម៉ោង"
-                    name={`schedule.shifts.${shiftIndex}.timelines.${timelineIndex}.time`}
-                    placeholder="07:00"
-                    form={form}
-                    disabled={loading}
-                    required
-                  />
+                  <div className="sm:col-span-1">
+                    <TimePicker
+                      label="ម៉ោង"
+                      // placeholder="07:00"
+                      value={form.watch(
+                        `schedule.shifts.${shiftIndex}.timelines.${timelineIndex}.time`
+                      )}
+                      onChange={(val) =>
+                        form.setValue(
+                          `schedule.shifts.${shiftIndex}.timelines.${timelineIndex}.time`,
+                          val,
+                          { shouldValidate: true, shouldTouch: true }
+                        )
+                      }
+                      disabled={loading}
+                    />
+
+                    {form.formState.errors.schedule?.shifts?.[shiftIndex]
+                      ?.timelines?.[timelineIndex]?.time && (
+                      <p className="text-red-500 text-sm mt-1">
+                        {
+                          form.formState.errors.schedule.shifts?.[shiftIndex]
+                            ?.timelines?.[timelineIndex]?.time
+                            ?.message as string
+                        }
+                      </p>
+                    )}
+                  </div>
                 </div>
+
                 {timelineFields.length > 1 && (
                   <Button
                     type="button"

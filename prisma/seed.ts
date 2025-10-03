@@ -52,7 +52,7 @@ async function main() {
     data: {
       unique_name: "elegant-wedding", // Adding required unique_name field
       name: "Elegant Wedding",
-      type: "wedding",
+      type: "Wedding",
       image: "https://theapka.com/storage/01J45Z76636PDX9JANP0FTWRGE.png",
       defaultConfig: {
         background: "/templates/wedding/bg.jpg",
@@ -107,6 +107,7 @@ async function main() {
       longitude: "104.9282",
       startTime: new Date("2025-12-01T14:00:00Z"),
       endTime: new Date("2025-12-01T22:00:00Z"),
+      eating_time: "05:00 PM", // 5 PM
       schedules: {
         create: [
           {

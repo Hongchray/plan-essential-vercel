@@ -248,6 +248,20 @@ export const useEventColumns = (): ColumnDef<Event>[] => {
         </span>
       ),
     },
+    {
+      accessorKey: "eating_time",
+      header: ({ column }) => (
+        <DataTableColumnHeader
+          column={column}
+          title="EventPage.table.eating_time"
+        />
+      ),
+      cell: ({ row }) => (
+        <span className="max-w-[200px] truncate font-medium">
+          {row.getValue("eating_time")}
+        </span>
+      ),
+    },
 
     {
       accessorKey: "createdAt",
