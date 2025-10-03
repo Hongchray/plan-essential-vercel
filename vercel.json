@@ -6,6 +6,7 @@
       "use": "@vercel/next"
     }
   ],
+
   "env": {
     "DATABASE_URL": "postgres://neondb_owner:npg_dxwyaZS67blf@ep-falling-dawn-a1wpuqfd-pooler.ap-southeast-1.aws.neon.tech/neondb?sslmode=require",
     "NEXTAUTH_URL": "https://planessential.vercel.app",
