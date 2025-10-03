@@ -49,7 +49,7 @@ model Event {
   longitude      String?
   startTime      DateTime
   endTime        DateTime?
-  eating_time    String
+  eating_time    String? 
   schedules      Schedule[]
   eventTemplates EventTemplate[]
   guests         Guest[]
