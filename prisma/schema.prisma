@@ -49,7 +49,7 @@ model Event {
   longitude      String?
   startTime      DateTime
   endTime        DateTime?
-  eating_time    String? 
+  eating_time    String?
   schedules      Schedule[]
   eventTemplates EventTemplate[]
   guests         Guest[]
@@ -224,15 +224,15 @@ model Gift {
 }
 
 model Plan {
-  id        String     @id @default(cuid())
-  name      String
-  price     Float?
-  userPlan  UserPlan[]
-  limit_guests       Int @default(100)
-  limit_template     Int @default(1)
-  limit_export_excel Boolean @default(false)
-  createdAt DateTime   @default(now())
-  updatedAt DateTime   @updatedAt
+  id                 String     @id @default(cuid())
+  name               String
+  price              Float?
+  userPlan           UserPlan[]
+  limit_guests       Int        @default(100)
+  limit_template     Int        @default(1)
+  limit_export_excel Boolean    @default(false)
+  createdAt          DateTime   @default(now())
+  updatedAt          DateTime   @updatedAt
 }
 
 model UserPlan {
