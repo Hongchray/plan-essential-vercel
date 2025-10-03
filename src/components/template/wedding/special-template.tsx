@@ -4,7 +4,6 @@ import { useEffect, useState } from "react";
 import { Event } from "@/interfaces/event";
 import { useLanguage } from "@/hooks/LanguageContext";
 import Image from "next/image";
-import AOS from "aos";
 import { formatDateCustom } from "@/utils/date";
 import { Guest } from "@/interfaces/guest";
 import { Controller, useForm } from "react-hook-form";
@@ -13,7 +12,7 @@ import { GuestStatus } from "@/enums/guests";
 import { toast } from "sonner";
 import { Textarea } from "@/components/ui/textarea";
 import { zodResolver } from "@hookform/resolvers/zod";
-import "aos/dist/aos.css";
+import { motion } from "motion/react";
 import z from "zod";
 import {
   Select,
@@ -25,6 +24,7 @@ import {
 import { Input } from "@/components/ui/input";
 import ScrollNavigationBar from "../scroll-navigation-bar";
 import ScrollNavigationBarInPage from "../scroll-navigation-bar-in-page";
+
 export default function SpecialTemplate({
   config,
   data,
@@ -50,38 +50,6 @@ export default function SpecialTemplate({
     setIsWelcomeOpen(false);
   };
 
-  useEffect(() => {
-    // Initialize AOS with proper configuration
-    AOS.init({
-      duration: 800,
-      easing: "ease-in-out",
-      once: false,
-      mirror: false, // Set to false to prevent potential issues
-      offset: 120, // Explicitly set default offset
-      disable: false, // Ensure AOS is enabled
-    });
-
-    const scrollContainer = document.getElementById("scroll-container");
-
-    if (scrollContainer) {
-      // Use refresh instead of refreshHard
-      const handleScroll = () => {
-        AOS.refresh();
-      };
-
-      scrollContainer.addEventListener("scroll", handleScroll);
-
-      // Refresh AOS after a brief delay to ensure DOM is ready
-      const refreshTimer = setTimeout(() => {
-        AOS.refresh();
-      }, 100);
-
-      return () => {
-        scrollContainer.removeEventListener("scroll", handleScroll);
-        clearTimeout(refreshTimer);
-      };
-    }
-  }, []);
   // Play music when isOpen becomes true
   useEffect(() => {
     if (isOpen && !musicStarted) {
@@ -227,14 +195,44 @@ export default function SpecialTemplate({
       status: GuestStatus.CONFIRMED,
     },
   });
+
+  // Animation variants for reusable animations
+  const fadeUpVariant = {
+    initial: { opacity: 0, y: 60 },
+    animate: { opacity: 1, y: 0 },
+  };
+
+  const scaleInVariant = {
+    initial: { opacity: 0, scale: 0.8 },
+    animate: { opacity: 1, scale: 1 },
+  };
+
+  const slideInLeftVariant = {
+    initial: { opacity: 0, x: -60 },
+    animate: { opacity: 1, x: 0 },
+  };
+
+  const slideInRightVariant = {
+    initial: { opacity: 0, x: 60 },
+    animate: { opacity: 1, x: 0 },
+  };
+
+  const staggerContainer = {
+    animate: {
+      transition: {
+        staggerChildren: 0.1,
+      },
+    },
+  };
+
   return (
-    <div className="relative min-h-screen max-w-xl mx-auto ">
+    <div className="relative min-h-screen max-w-xl mx-auto">
       {/* Background music */}
       {isOpen && (
         <audio id="welcome-music" loop src="/template/audios/music1.mp3" />
       )}
 
-      {/* Front evelop */}
+      {/* Front envelope */}
       {!isOpen && (
         <div className="front-evelop h-screen">
           {/* Background video */}
@@ -243,36 +241,52 @@ export default function SpecialTemplate({
             loop
             muted
             playsInline
-            className="absolute top-0 left-0 w-full h-full object-cover "
+            className="absolute top-0 left-0 w-full h-full object-cover"
           >
             <source src="/template/videos/background1.webm" type="video/webm" />
           </video>
 
           {/* Overlay content */}
-          <div className="relative z-10 flex items-center justify-around h-full flex-col gap-4 ">
-            <div className="flex flex-col items-center justify-center gap-4">
-              <Image
-                src="/template/arts/tgt.png"
-                alt="logo"
-                width={200}
-                height={200}
-                className="animate-fade-up"
-              />
-              <h1
-                className="text-3xl font-bold bg-gradient-to-r from-yellow-400 via-yellow-300 to-yellow-600 bg-clip-text text-transparent p-2 animate-fade-up-delay-100"
+          <div className="relative z-10 flex items-center justify-around h-full flex-col gap-4">
+            <motion.div
+              className="flex flex-col items-center justify-center gap-4"
+              initial="initial"
+              animate="animate"
+              variants={staggerContainer}
+            >
+              <motion.div
+                variants={fadeUpVariant}
+                transition={{ duration: 0.8, ease: "easeOut" }}
+              >
+                <Image
+                  src="/template/arts/tgt.png"
+                  alt="logo"
+                  width={200}
+                  height={200}
+                  className="drop-shadow-2xl"
+                />
+              </motion.div>
+
+              <motion.h1
+                className="text-3xl font-bold bg-gradient-to-r from-yellow-400 via-yellow-300 to-yellow-600 bg-clip-text text-transparent p-2"
                 style={{ fontFamily: "moul" }}
+                variants={fadeUpVariant}
+                transition={{ duration: 0.8, delay: 0.2, ease: "easeOut" }}
               >
                 សិរីមង្គលអាពាហ៍ពិពាហ៍
-              </h1>
+              </motion.h1>
 
-              <h2
-                className="text-xl font-bold bg-gradient-to-r from-yellow-400 via-yellow-300 to-yellow-600 bg-clip-text text-transparent p-1 animate-fade-up-delay-200"
+              <motion.h2
+                className="text-xl font-bold bg-gradient-to-r from-yellow-400 via-yellow-300 to-yellow-600 bg-clip-text text-transparent p-1"
                 style={{ fontFamily: "moul" }}
+                variants={fadeUpVariant}
+                transition={{ duration: 0.8, delay: 0.4, ease: "easeOut" }}
               >
                 សូមគោរពអញ្ជើញ
-              </h2>
-              <div
-                className="mt-5 text-[16px] text-center min-w-[250px] md:min-w-[320px] min-h-[100px] max-h-[100px]  max-w-[600px] truncate inline-flex items-center justify-center px-3 hover:scale-105 transition-transform duration-300 animate-fade-up-delay-300"
+              </motion.h2>
+
+              <motion.div
+                className="mt-5 text-[16px] text-center min-w-[250px] md:min-w-[320px] min-h-[100px] max-h-[100px] max-w-[600px] truncate inline-flex items-center justify-center px-3"
                 style={{
                   fontFamily: "moul",
                   backgroundImage: "url('/template/arts/bar-kbach.jpg')",
@@ -281,23 +295,31 @@ export default function SpecialTemplate({
                   borderRadius: "8px",
                   textShadow: "1px 1px 1px rgba(0,0,0,0.4)",
                 }}
+                variants={fadeUpVariant}
+                transition={{ duration: 0.8, delay: 0.6, ease: "easeOut" }}
+                whileHover={{ scale: 1.05 }}
+                whileTap={{ scale: 0.95 }}
               >
                 <span
-                  className="pt-3  min-w-[250px] md:min-w-[320px]  min-h-[80px] max-h-[100px]  max-w-[600px] truncate mx-8"
+                  className="pt-3 min-w-[250px] md:min-w-[320px] min-h-[80px] max-h-[100px] max-w-[600px] truncate mx-8"
                   style={{
                     color: "white",
                     fontFamily: "moul",
                   }}
                 >
-                  លោក មករា​ និងភរិយា
+                  លោក មករា និងភរិយា
                 </span>
-              </div>
-            </div>
+              </motion.div>
+            </motion.div>
 
-            <div className="text-[10px] text-center w-[200px] md:w-[280px] md:h-[50px] animate-fade-up-delay-400 mb-8">
-              <button
+            <motion.div
+              className="text-[10px] text-center w-[200px] md:w-[280px] md:h-[50px] mb-8"
+              variants={fadeUpVariant}
+              transition={{ duration: 0.8, delay: 0.8, ease: "easeOut" }}
+            >
+              <motion.button
                 onClick={() => setIsOpen(true)}
-                className="animate-zoom-in-out cursor-pointer transform md:text-[14px] text-center w-[200px] md:w-[280px] md:h-[50px] inline-block px-3 py-2 hover:scale-110 transition-all duration-300"
+                className="cursor-pointer transform md:text-[14px] text-center w-[200px] md:w-[280px] md:h-[50px] inline-block px-3 py-2"
                 style={{
                   color: "white",
                   fontFamily: "moul",
@@ -306,12 +328,25 @@ export default function SpecialTemplate({
                   backgroundPosition: "center",
                   borderRadius: "8px",
                 }}
+                whileHover={{
+                  scale: 1.1,
+                  transition: { duration: 0.2 },
+                }}
+                whileTap={{ scale: 0.95 }}
+                animate={{
+                  scale: [1, 1.05, 1],
+                }}
+                transition={{
+                  duration: 2,
+                  repeat: Infinity,
+                  ease: "easeInOut",
+                }}
               >
                 {currentLanguage === "kh"
                   ? "សូមចុចដើម្បីបើកសំបុត្រ"
                   : "Please click to open"}
-              </button>
-            </div>
+              </motion.button>
+            </motion.div>
           </div>
         </div>
       )}
@@ -319,7 +354,6 @@ export default function SpecialTemplate({
       {/* Welcome video */}
       {isOpen && isWelcomeOpen && (
         <div className="welcome-video h-screen">
-          {/* Background video */}
           <video
             id="welcome-video"
             autoPlay
@@ -336,7 +370,7 @@ export default function SpecialTemplate({
         <div className="front-evelop h-screen relative overflow-hidden">
           <ScrollNavigationBarInPage />
 
-          {/* Background video - stays in place within container */}
+          {/* Background video */}
           <div className="absolute top-0 left-0 w-full h-full">
             <video
               autoPlay
@@ -358,21 +392,35 @@ export default function SpecialTemplate({
             className="relative z-10 h-full overflow-y-auto overflow-x-hidden scrollbar-hide flex flex-col items-center"
             style={{ scrollbarWidth: "none", msOverflowStyle: "none" }}
           >
-            <div id="main" className="flex flex-col items-center">
+            <motion.div
+              id="main"
+              className="flex flex-col items-center w-full"
+              initial="initial"
+              whileInView="animate"
+              viewport={{ once: false, margin: "-50px" }}
+              variants={staggerContainer}
+            >
               {/* Groom and Bride Name */}
-              <div className="flex flex-col items-center justify-center gap-4 animate-fade-up  mt-8">
+              <motion.div
+                className="flex flex-col items-center justify-center gap-4 mt-8"
+                variants={fadeUpVariant}
+                transition={{ duration: 0.8 }}
+              >
                 <Image
                   src="/template/contents/txt0.png"
                   alt="image"
                   width={600}
                   height={200}
                 />
-              </div>
+              </motion.div>
 
-              <div className="text-[10px] text-center w-[200px] md:w-[280px] md:h-[50px] animate-fade-up-delay-100 mb-8">
-                <button
-                  onClick={() => setIsOpen(true)}
-                  className="animate-zoom-in-out cursor-pointer transform md:text-[14px] text-center w-[200px] md:w-[280px] md:h-[50px] inline-block px-3 py-2 hover:scale-110 transition-all duration-300"
+              <motion.div
+                className="text-[10px] text-center w-[200px] md:w-[280px] md:h-[50px] mb-8"
+                variants={fadeUpVariant}
+                transition={{ duration: 0.8, delay: 0.2 }}
+              >
+                <motion.button
+                  className="cursor-pointer transform md:text-[14px] text-center w-[200px] md:w-[280px] md:h-[50px] inline-block px-3 py-2"
                   style={{
                     color: "white",
                     fontFamily: "moul",
@@ -381,17 +429,23 @@ export default function SpecialTemplate({
                     backgroundPosition: "center",
                     borderRadius: "8px",
                   }}
+                  whileHover={{ scale: 1.1 }}
+                  whileTap={{ scale: 0.95 }}
                 >
                   {currentLanguage === "kh"
                     ? "ដាក់ក្នុងប្រតិទិន"
                     : "Add to the calendar"}
-                </button>
-              </div>
-            </div>
+                </motion.button>
+              </motion.div>
+            </motion.div>
+
             {/* Invitation */}
-            <div
+            <motion.div
               id="invitation"
-              className="animate-fade-up-delay-200 fade-scroll"
+              initial={{ opacity: 0, y: 60 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: false }}
+              transition={{ duration: 0.8, ease: "easeOut" }}
             >
               <Image
                 src="/template/contents/txt01.png"
@@ -399,133 +453,157 @@ export default function SpecialTemplate({
                 width={600}
                 height={200}
               />
-            </div>
-            {/* Countdown Event  */}
-            <div className="w-full max-w-2xl mx-auto animate-fade-up-delay-300">
+            </motion.div>
+
+            {/* Countdown Event */}
+            <motion.div
+              className="w-full max-w-2xl mx-auto"
+              initial={{ opacity: 0, scale: 0.9 }}
+              whileInView={{ opacity: 1, scale: 1 }}
+              viewport={{ once: false }}
+              transition={{ duration: 0.6, ease: "easeOut" }}
+            >
               <div className="relative w-full">
-                <img
+                <motion.img
                   src="/template/contents/pre-wedding.jpg"
                   alt="Event countdown"
                   className="w-full h-auto object-cover rounded"
+                  whileHover={{ scale: 1.02 }}
+                  transition={{ duration: 0.3 }}
                 />
                 {/* Countdown */}
-                <div className="absolute inset-0 flex items-start justify-center  bg-opacity-10 rounded pb-">
+                <div className="absolute inset-0 flex items-start justify-center bg-opacity-10 rounded">
                   <div className="text-center text-white px-4 pt-8">
-                    <h2 className="text-2xl md:text-4xl font-bold mb-2 tracking-wide">
+                    <motion.h2
+                      className="text-2xl md:text-4xl font-bold mb-2 tracking-wide"
+                      initial={{ opacity: 0, y: 30 }}
+                      whileInView={{ opacity: 1, y: 0 }}
+                      viewport={{ once: false }}
+                      transition={{ duration: 0.6 }}
+                    >
                       ចំនួនថ្ងៃរាប់ថយក្រោយ
-                    </h2>
-                    <h3 className="text-lg md:text-xl font-semibold mb-6 text-white">
+                    </motion.h2>
+                    <motion.h3
+                      className="text-lg md:text-xl font-semibold mb-6 text-white"
+                      initial={{ opacity: 0, y: 30 }}
+                      whileInView={{ opacity: 1, y: 0 }}
+                      viewport={{ once: false }}
+                      transition={{ duration: 0.6, delay: 0.1 }}
+                    >
                       Event Countdown
-                    </h3>
+                    </motion.h3>
 
                     {/* Countdown Timer */}
-                    <div className="flex gap-4 md:gap-6 justify-center">
-                      <div className="flex flex-col items-center bg-[#A5AE79]/70 backdrop-blur-sm rounded-lg p-3 md:p-4 min-w-[70px] md:min-w-[90px]">
-                        <span className="text-3xl md:text-3xl font-bold">
-                          {timeLeft.days}
-                        </span>
-                        <span
-                          className="text-xs md:text-sm uppercase mt-1"
-                          style={{ fontFamily: "moul" }}
+                    <motion.div
+                      className="flex gap-4 md:gap-6 justify-center"
+                      variants={staggerContainer}
+                      initial="initial"
+                      whileInView="animate"
+                      viewport={{ once: false }}
+                    >
+                      {[
+                        { value: timeLeft.days, label: "ថ្ងៃ" },
+                        { value: timeLeft.hours, label: "ម៉ោង" },
+                        { value: timeLeft.minutes, label: "នាទី" },
+                        { value: timeLeft.seconds, label: "វិនាទី" },
+                      ].map((item, index) => (
+                        <motion.div
+                          key={index}
+                          className="flex flex-col items-center bg-[#A5AE79]/70 backdrop-blur-sm rounded-lg p-3 md:p-4 min-w-[70px] md:min-w-[90px]"
+                          variants={scaleInVariant}
+                          transition={{ duration: 0.5, delay: index * 0.1 }}
+                          whileHover={{ scale: 1.1, y: -5 }}
                         >
-                          ថ្ងៃ
-                        </span>
-                      </div>
-
-                      <div className="flex flex-col items-center bg-[#A5AE79]/70 backdrop-blur-sm rounded-lg p-3 md:p-4 min-w-[70px] md:min-w-[90px]">
-                        <span className="text-2xl md:text-3xl font-bold">
-                          {timeLeft.hours}
-                        </span>
-                        <span
-                          className="text-xs md:text-sm uppercase mt-1"
-                          style={{ fontFamily: "moul" }}
-                        >
-                          ម៉ោង
-                        </span>
-                      </div>
-
-                      <div className="flex flex-col items-center bg-[#A5AE79]/70 bg-opacity-20 backdrop-blur-sm rounded-lg p-3 md:p-4 min-w-[70px] md:min-w-[90px]">
-                        <span className="text-2xl md:text-3xl font-bold">
-                          {timeLeft.minutes}
-                        </span>
-                        <span
-                          className="text-xs md:text-sm uppercase mt-1"
-                          style={{ fontFamily: "moul" }}
-                        >
-                          នាទី
-                        </span>
-                      </div>
-
-                      <div className="flex flex-col items-center bg-[#A5AE79]/70 bg-opacity-20 backdrop-blur-sm rounded-lg p-3 md:p-4 min-w-[70px] md:min-w-[90px]">
-                        <span className="text-2xl md:text-3xl font-bold">
-                          {timeLeft.seconds}
-                        </span>
-                        <span
-                          className="text-xs md:text-sm uppercase mt-1"
-                          style={{ fontFamily: "moul" }}
-                        >
-                          វិនាទី
-                        </span>
-                      </div>
-                    </div>
+                          <span className="text-3xl md:text-3xl font-bold">
+                            {item.value}
+                          </span>
+                          <span
+                            className="text-xs md:text-sm uppercase mt-1"
+                            style={{ fontFamily: "moul" }}
+                          >
+                            {item.label}
+                          </span>
+                        </motion.div>
+                      ))}
+                    </motion.div>
                   </div>
                 </div>
               </div>
-            </div>
+            </motion.div>
+
             {/* Event Agenda */}
-            <div id="schedule" className="py-5">
-              <h2
-                className="text-2xl font-semibold text-center  animate-slide-down py-2"
+            <motion.div
+              id="schedule"
+              className="py-5 w-full"
+              initial="initial"
+              whileInView="animate"
+              viewport={{ once: false }}
+              variants={staggerContainer}
+            >
+              <motion.h2
+                className="text-2xl font-semibold text-center py-2"
                 style={{ color: "#dfab24", fontFamily: "moul" }}
+                variants={fadeUpVariant}
               >
                 {currentInvitation?.details_title ||
                   (currentLanguage === "kh"
                     ? "របៀបវារៈកម្មវិធី"
                     : "EVENT AGENDA")}
-              </h2>
-              <div className="animate-fade-up-delay-400">
+              </motion.h2>
+
+              <motion.div variants={slideInLeftVariant}>
                 <Image
                   src="/template/contents/txt02.png"
                   alt="image"
                   width={600}
                   height={200}
                 />
-              </div>
-              <div className="animate-fade-up-delay-500">
+              </motion.div>
+
+              <motion.div variants={slideInRightVariant}>
                 <Image
                   src="/template/contents/txt02.1.png"
                   alt="image"
                   width={600}
                   height={200}
                 />
-              </div>
-            </div>
+              </motion.div>
+            </motion.div>
 
             {/* Location */}
-            <div
+            <motion.div
               id="location"
-              className="animate-fade-up flex flex-col items-center"
+              className="flex flex-col items-center w-full"
+              initial={{ opacity: 0, y: 60 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: false }}
+              transition={{ duration: 0.8 }}
             >
-              <h2
-                className="text-2xl font-semibold text-center  animate-slide-down py-2"
+              <motion.h2
+                className="text-2xl font-semibold text-center py-2"
                 style={{ color: "#dfab24", fontFamily: "moul" }}
               >
                 {currentInvitation?.details_title ||
                   (currentLanguage === "kh"
                     ? "ទីតាំងប្រារព្ធកម្មវិធី"
                     : "EVENT LOCATION")}
-              </h2>
-              <Image
-                src="/template/contents/txt3.png"
-                alt="image"
-                width={600}
-                height={200}
-              />
+              </motion.h2>
 
-              <div className="text-[10px] text-center w-[200px] md:w-[280px] md:h-[50px] animate-fade-up-delay-100 mb-8">
-                <button
-                  onClick={() => setIsOpen(true)}
-                  className="animate-zoom-in-out cursor-pointer transform md:text-[14px] text-center w-[200px] md:w-[280px] md:h-[50px] inline-block px-3 py-2 hover:scale-110 transition-all duration-300"
+              <motion.div
+                whileHover={{ scale: 1.03 }}
+                transition={{ duration: 0.3 }}
+              >
+                <Image
+                  src="/template/contents/txt3.png"
+                  alt="image"
+                  width={600}
+                  height={200}
+                />
+              </motion.div>
+
+              <motion.div className="text-[10px] text-center w-[200px] md:w-[280px] md:h-[50px] mb-8">
+                <motion.button
+                  className="cursor-pointer transform md:text-[14px] text-center w-[200px] md:w-[280px] md:h-[50px] inline-block px-3 py-2"
                   style={{
                     color: "white",
                     fontFamily: "moul",
@@ -534,88 +612,107 @@ export default function SpecialTemplate({
                     backgroundPosition: "center",
                     borderRadius: "8px",
                   }}
+                  whileHover={{ scale: 1.1 }}
+                  whileTap={{ scale: 0.95 }}
                 >
                   {currentLanguage === "kh"
                     ? "បើកមើលក្នុង Google Map"
                     : "Google Map"}
-                </button>
-              </div>
-            </div>
+                </motion.button>
+              </motion.div>
+            </motion.div>
+
             {/* Gallery */}
-            <div id="gallery">
-              <h2
-                className="text-2xl font-semibold text-center  animate-slide-down py-2"
+            <motion.div
+              id="gallery"
+              className="w-full"
+              initial="initial"
+              whileInView="animate"
+              viewport={{ once: false }}
+            >
+              <motion.h2
+                className="text-2xl font-semibold text-center py-2"
                 style={{ color: "#dfab24", fontFamily: "moul" }}
+                initial={{ opacity: 0, y: 30 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: false }}
+                transition={{ duration: 0.6 }}
               >
                 {currentInvitation?.details_title ||
                   (currentLanguage === "kh" ? "វិចិត្រសាល" : "GALLERY")}
-              </h2>
-              <div className="grid grid-cols-2 gap-4 p-2">
-                <div data-aos="fade-up">
-                  <Image
-                    src="/template/groom_bride/Frame-Photo 1.png"
-                    data-aos="fade-up"
-                    data-aos-anchor-placement="center-center"
-                    alt="image"
-                    width={280}
-                    height={200}
-                  />
-                </div>
-                <div className="animate-fade-up-delay-200">
-                  <Image
-                    src="/template/groom_bride/Frame-Photo 2.png"
-                    alt="image"
-                    width={280}
-                    height={200}
-                  />
-                </div>
-                <div className="animate-fade-up-delay-300">
-                  <Image
-                    src="/template/groom_bride/Frame-Photo 1.png"
-                    alt="image"
-                    width={280}
-                    height={200}
-                  />
-                </div>
-                <div className="animate-fade-up-delay-400">
-                  <Image
-                    src="/template/groom_bride/Frame-Photo 2.png"
-                    alt="image"
-                    width={280}
-                    height={200}
-                  />
-                </div>
-              </div>
-            </div>
-            {/* Messages */}
+              </motion.h2>
 
-            <div className="animate-fade-up">
+              <motion.div
+                className="grid grid-cols-2 gap-4 p-2"
+                variants={staggerContainer}
+              >
+                {[
+                  "/template/groom_bride/Frame-Photo 1.png",
+                  "/template/groom_bride/Frame-Photo 2.png",
+                  "/template/groom_bride/Frame-Photo 1.png",
+                  "/template/groom_bride/Frame-Photo 2.png",
+                ].map((src, index) => (
+                  <motion.div
+                    key={index}
+                    variants={scaleInVariant}
+                    whileHover={{
+                      scale: 1.05,
+                      rotate: index % 2 === 0 ? -1 : 1,
+                      transition: { duration: 0.3 },
+                    }}
+                    whileTap={{ scale: 0.95 }}
+                  >
+                    <Image
+                      src={src}
+                      alt={`Gallery image ${index + 1}`}
+                      width={280}
+                      height={200}
+                      className="rounded-lg "
+                    />
+                  </motion.div>
+                ))}
+              </motion.div>
+            </motion.div>
+
+            {/* Messages Header */}
+            <motion.div
+              initial={{ opacity: 0, y: 50 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: false }}
+              transition={{ duration: 0.8 }}
+            >
               <Image
                 src="/template/contents/txt5.png"
                 alt="image"
                 width={600}
                 height={200}
               />
-            </div>
-            {/* wishing comments */}
+            </motion.div>
+
             {/* Greeting Messages */}
-            <div
+            <motion.div
               id="messages"
-              className="mt-5 mx-auto w-full md:px-5 flex flex-col items-center animate-fade-in-up animation-delay-1600"
+              className="mt-5 mx-auto w-full md:px-5 flex flex-col items-center"
+              initial="initial"
+              whileInView="animate"
+              viewport={{ once: false }}
+              variants={staggerContainer}
             >
-              <h2
-                className="text-2xl font-semibold text-center  animate-slide-down py-2"
+              <motion.h2
+                className="text-2xl font-semibold text-center py-2"
                 style={{ color: "#dfab24", fontFamily: "moul" }}
+                variants={fadeUpVariant}
               >
                 {currentInvitation?.details_title ||
                   (currentLanguage === "kh" ? "សារជូនពរ" : "GREETING MESSAGE")}
-              </h2>
+              </motion.h2>
 
               {/* Form Send */}
               {guestId && (
-                <form
+                <motion.form
                   onSubmit={form.handleSubmit(onSubmit)}
-                  className="space-y-3 sm:space-y-4 py-5 w-full px-5 flex flex-col items-center animate-fade-in animation-delay-300"
+                  className="space-y-3 sm:space-y-4 py-5 w-full px-5 flex flex-col items-center"
+                  variants={fadeUpVariant}
                 >
                   <Controller
                     name="status"
@@ -665,10 +762,10 @@ export default function SpecialTemplate({
                     }
                     className="bg-[#A5AE79]/30 border-0 focus-visible:ring-0 rounded-lg text-[#A5AE79] placeholder:text-[#A5AE79] w-full hover:bg-[#A5AE79]/40 focus:scale-105 transition-all duration-300"
                   />
-                  <div className="text-[10px] text-center w-[200px] md:w-[280px] md:h-[50px] animate-fade-up-delay-100 mb-8">
-                    <button
+                  <div className="text-[10px] text-center w-[200px] md:w-[280px] md:h-[50px] mb-8">
+                    <motion.button
                       type="submit"
-                      className="animate-zoom-in-out cursor-pointer transform md:text-[14px] text-center w-[200px] md:w-[280px] md:h-[50px] inline-block px-3 py-2 hover:scale-110 transition-all duration-300"
+                      className="cursor-pointer transform md:text-[14px] text-center w-[200px] md:w-[280px] md:h-[50px] inline-block px-3 py-2"
                       style={{
                         color: "white",
                         fontFamily: "moul",
@@ -678,49 +775,65 @@ export default function SpecialTemplate({
                         backgroundPosition: "center",
                         borderRadius: "8px",
                       }}
+                      whileHover={{ scale: 1.1 }}
+                      whileTap={{ scale: 0.95 }}
                     >
                       {currentLanguage === "kh" ? "ផ្ញើរ" : "Send"}
-                    </button>
+                    </motion.button>
                   </div>
-                </form>
+                </motion.form>
               )}
 
-              <div className="p-5 w-full flex flex-col gap-2 animate-fade-in animation-delay-500">
+              <motion.div
+                className="p-5 w-full flex flex-col gap-2"
+                variants={staggerContainer}
+              >
                 {guests &&
-                  guests.map((guest, key) => {
-                    return (
-                      <div
-                        key={key}
-                        className="bg-[#A5AE79]/30 p-5 rounded-lg hover:bg-[#A5AE79]/40 hover:scale-105 transition-all duration-300 animate-slide-in-left"
-                      >
-                        <div className="text-[#A5AE79] text-lg">
-                          {guest?.name}
-                        </div>
-                        <div className="border-b-2 border-[#A5AE79]/80"></div>
-                        <div className="text-center text-[#A5AE79] pt-5 text-lg">
-                          "{guest?.wishing_note}"
-                        </div>
-                        <div className="text-center text-[#A5AE79] pt-5 text-xs">
-                          {formatDateCustom(
-                            guest?.sentAt ?? "",
-                            "DD-MM-YYYY | HH:mmA"
-                          )}
-                        </div>
+                  guests.map((guest, key) => (
+                    <motion.div
+                      key={key}
+                      className="bg-[#A5AE79]/30 p-5 rounded-lg hover:bg-[#A5AE79]/40"
+                      variants={slideInLeftVariant}
+                      whileHover={{
+                        scale: 1.02,
+                        y: -5,
+                        transition: { duration: 0.2 },
+                      }}
+                      whileTap={{ scale: 0.98 }}
+                    >
+                      <div className="text-[#A5AE79] text-lg">
+                        {guest?.name}
                       </div>
-                    );
-                  })}
-              </div>
+                      <div className="border-b-2 border-[#A5AE79]/80"></div>
+                      <div className="text-center text-[#A5AE79] pt-5 text-lg">
+                        "{guest?.wishing_note}"
+                      </div>
+                      <div className="text-center text-[#A5AE79] pt-5 text-xs">
+                        {formatDateCustom(
+                          guest?.sentAt ?? "",
+                          "DD-MM-YYYY | HH:mmA"
+                        )}
+                      </div>
+                    </motion.div>
+                  ))}
+              </motion.div>
 
-              <div className="py-2 animate-fade-in animation-delay-800">
+              <motion.div
+                className="py-2"
+                initial={{ opacity: 0, scale: 0.8 }}
+                whileInView={{ opacity: 1, scale: 1 }}
+                viewport={{ once: false }}
+                transition={{ duration: 0.6 }}
+                whileHover={{ scale: 1.1 }}
+              >
                 <Image
                   src="/template/arts/underbar kbach 1.png"
                   alt=""
                   width={200}
                   height={150}
-                  className="hover:scale-110 transition-transform duration-300"
                 />
-              </div>
-            </div>
+              </motion.div>
+            </motion.div>
           </div>
         </div>
       )}
