@@ -93,7 +93,6 @@ export default function Preview({
     const fetchData = async () => {
       setLoading(true);
 
-      // Priority 1: slug (fetches both event and template)
       if (slug) {
         const data = await getEventBySlug(slug);
         if (data) {
@@ -106,7 +105,6 @@ export default function Preview({
         return;
       }
 
-      // Priority 2: eventId + templateId (fetch both separately)
       if (eventId && templateId) {
         const [eventData, templateData] = await Promise.all([
           getEvent(eventId),
@@ -118,7 +116,6 @@ export default function Preview({
         return;
       }
 
-      // Priority 3: just eventId (fetch event only)
       if (!slug) {
         const eventData = await getEvent(eventId || "");
         if (eventData) {
@@ -126,7 +123,6 @@ export default function Preview({
         }
       }
 
-      // Priority 4: just templateId (fetch template only)
       if (templateId) {
         const templateData = await getPreviewTemplate(templateId);
         if (templateData) setTemplate(templateData);
@@ -158,7 +154,7 @@ export default function Preview({
   if (!ComponentToRender) {
     return (
       <div className="flex items-center justify-center min-h-screen">
-        <p className="text-red-600">Template component not found</p>
+        <p className="text-3xl font-bold ">Not Found</p>
       </div>
     );
   }
@@ -171,7 +167,7 @@ export default function Preview({
       : undefined;
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-red-50 to-yellow-50 ">
+    <div className="min-h-screen bg-gradient-to-br from-red-50 to-yellow-50 relative">
       <LanguageProvider>
         <ComponentToRender config={config} data={event || ({} as Event)} />
       </LanguageProvider>

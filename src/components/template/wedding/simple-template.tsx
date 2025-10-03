@@ -451,56 +451,56 @@ export default function SimpleTemplate({
         >
           {currentLanguage === "kh" ? "កម្រងរូបភាព" : "PHOTOS"}
         </h2>
+        <div className="grid grid-cols-2 gap-2">
+          {/* Display photos from config if available, otherwise use default */}
+          {config?.photo_gallary?.photo1 && (
+            <div className="py-2 animate-fade-in-up animation-delay-300">
+              <Image
+                src={config.photo_gallary.photo1}
+                alt="Photo 1"
+                width={200}
+                height={150}
+                className="hover:scale-110 hover:rotate-2 transition-all duration-300  rounded-lg"
+              />
+            </div>
+          )}
 
-        {/* Display photos from config if available, otherwise use default */}
-        {config?.photo_gallary?.photo1 && (
-          <div className="py-2 animate-fade-in-up animation-delay-300">
-            <Image
-              src={config.photo_gallary.photo1}
-              alt="Photo 1"
-              width={200}
-              height={150}
-              className="hover:scale-110 hover:rotate-2 transition-all duration-300  rounded-lg"
-            />
-          </div>
-        )}
+          {config?.photo_gallary?.photo2 && (
+            <div className="py-2 animate-fade-in-up animation-delay-500">
+              <Image
+                src={config.photo_gallary.photo2}
+                alt="Photo 2"
+                width={200}
+                height={150}
+                className="hover:scale-110 hover:-rotate-2 transition-all duration-300  rounded-lg"
+              />
+            </div>
+          )}
 
-        {config?.photo_gallary?.photo2 && (
-          <div className="py-2 animate-fade-in-up animation-delay-500">
-            <Image
-              src={config.photo_gallary.photo2}
-              alt="Photo 2"
-              width={200}
-              height={150}
-              className="hover:scale-110 hover:-rotate-2 transition-all duration-300  rounded-lg"
-            />
-          </div>
-        )}
+          {config?.photo_gallary?.photo3 && (
+            <div className="py-2 animate-fade-in-up animation-delay-700">
+              <Image
+                src={config.photo_gallary.photo3}
+                alt="Photo 3"
+                width={200}
+                height={150}
+                className="hover:scale-110 hover:rotate-1 transition-all duration-300  rounded-lg"
+              />
+            </div>
+          )}
 
-        {config?.photo_gallary?.photo3 && (
-          <div className="py-2 animate-fade-in-up animation-delay-700">
-            <Image
-              src={config.photo_gallary.photo3}
-              alt="Photo 3"
-              width={200}
-              height={150}
-              className="hover:scale-110 hover:rotate-1 transition-all duration-300  rounded-lg"
-            />
-          </div>
-        )}
-
-        {config?.photo_gallary?.photo4 && (
-          <div className="py-2 animate-fade-in-up animation-delay-900">
-            <Image
-              src={config.photo_gallary.photo4}
-              alt="Photo 4"
-              width={200}
-              height={150}
-              className="hover:scale-110 hover:-rotate-1 transition-all duration-300  rounded-lg"
-            />
-          </div>
-        )}
-
+          {config?.photo_gallary?.photo4 && (
+            <div className="py-2 animate-fade-in-up animation-delay-900">
+              <Image
+                src={config.photo_gallary.photo4}
+                alt="Photo 4"
+                width={200}
+                height={150}
+                className="hover:scale-110 hover:-rotate-1 transition-all duration-300  rounded-lg"
+              />
+            </div>
+          )}
+        </div>
         <div className="py-2 animate-fade-in animation-delay-1100">
           <Image
             src="/template/arts/underbar kbach 1.png"

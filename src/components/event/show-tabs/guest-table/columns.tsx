@@ -91,20 +91,11 @@ const ActionsCell = ({ row }: { row: any }) => {
   };
 
   const [copied, setCopied] = useState(false);
-  const [templateId, setTemplateId] = useState("");
-
-  // Memoize the template fetching function
-  const fetchTemplate = useCallback(async (eventId: string) => {
-    const data = await getDefaultEventTemplate(eventId);
-    if (data?.id) {
-      setTemplateId(data.id);
-    }
-  }, []);
 
   // Safe window access for SSR
   const getInviteLink = () => {
     if (typeof window === "undefined") return "";
-    return `${window.location.origin}/preview/${templateId}/event/${row.original.eventId}?guest=${row.original.id}`;
+    return `${window.location.origin}/preview/${row.original.event?.slug}?guest=${row.original.id}`;
   };
 
   const invLink = getInviteLink();
@@ -115,7 +106,6 @@ const ActionsCell = ({ row }: { row: any }) => {
       if (navigator.clipboard && window.isSecureContext) {
         await navigator.clipboard.writeText(invLink);
       } else {
-        // Fallback for older browsers or non-secure contexts
         const textArea = document.createElement("textarea");
         textArea.value = invLink;
         textArea.style.position = "fixed";
@@ -144,19 +134,11 @@ const ActionsCell = ({ row }: { row: any }) => {
           <TooltipTrigger asChild>
             <PopoverTrigger asChild>
               {!row.original.is_invited ? (
-                <Button
-                  size="icon"
-                  variant="outline"
-                  onClick={() => fetchTemplate(row.original.eventId)}
-                >
+                <Button size="icon" variant="outline">
                   <Send className="h-4 w-4" />
                 </Button>
               ) : (
-                <Button
-                  size="icon"
-                  variant="default"
-                  onClick={() => fetchTemplate(row.original.eventId)}
-                >
+                <Button size="icon" variant="default">
                   <CheckCheck className="h-4 w-4" />
                 </Button>
               )}
@@ -178,16 +160,14 @@ const ActionsCell = ({ row }: { row: any }) => {
             <div className="flex gap-2 items-center">
               <Textarea
                 value={invLink}
-                disabled={!templateId}
                 readOnly
                 className="flex-1 px-3 py-2 border border-gray-300 rounded-md bg-gray-50 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
               />
               <Button
                 onClick={handleCopy}
-                disabled={!templateId}
                 className={`p-2 rounded-md transition-colors ${
                   copied
-                    ? "bg-green-100 text-green-600"
+                    ? "bg-green-100 text-white"
                     : "bg-rose-100 text-rose-600 hover:bg-rose-200"
                 }`}
                 title={

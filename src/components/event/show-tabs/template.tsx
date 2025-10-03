@@ -384,19 +384,6 @@ export default function TabTemplate({ paramId }: { paramId: string }) {
             </div>
           </div>
         </LanguageProvider>
-
-        {/* Fullscreen Footer */}
-        <div className="absolute bottom-0 left-0 right-0 bg-gray-100 border-t px-6 py-3">
-          <div className="flex justify-between items-center text-xs text-gray-500">
-            <div>
-              {t("templates.full_screen.template")}:{" "}
-              {template.template?.unique_name} | ID: {template.id}
-            </div>
-            <div className="flex items-center gap-4">
-              <span>{t("templates.full_screen.press_esc")}</span>
-            </div>
-          </div>
-        </div>
       </div>
     );
   }
@@ -433,7 +420,7 @@ export default function TabTemplate({ paramId }: { paramId: string }) {
           )}
         </Button>
       </div>
-      <div className="h-[750px] border-dashed border-3 rounded">
+      <div className="h-[750px] border-dashed border-3 rounded ">
         <LanguageProvider>
           <ResizablePanelGroup direction="horizontal">
             {/* Editor Panel */}
@@ -519,13 +506,6 @@ export default function TabTemplate({ paramId }: { paramId: string }) {
             </ResizablePanel>
           </ResizablePanelGroup>
         </LanguageProvider>
-      </div>
-      {/* Status Bar */}
-      <div className="flex justify-between items-center text-xs text-gray-500 px-2">
-        <div>
-          {t("templates.default_screen.template")}:{" "}
-          {template.template?.unique_name} | ID: {template.id}
-        </div>
       </div>
     </div>
   );

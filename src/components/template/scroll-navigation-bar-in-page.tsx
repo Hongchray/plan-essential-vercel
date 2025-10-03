@@ -1,17 +1,15 @@
 import React, { useState, useEffect } from "react";
 import {
-  ChevronUp,
-  ChevronDown,
   Calendar,
   MapPin,
   Camera,
   MessageCircle,
   Home,
-  ChevronsDown,
   ChevronsUp,
+  ChevronsDown,
 } from "lucide-react";
 
-const ScrollNavigationBar = () => {
+const ScrollNavigationBarInPage = () => {
   const [activeSection, setActiveSection] = useState("main");
   const [showScrollToTop, setShowScrollToTop] = useState(false);
 
@@ -29,7 +27,7 @@ const ScrollNavigationBar = () => {
     },
   ];
 
-  // SMOOTH SCROLL FUNCTION
+  // Smooth scroll inside container
   const scrollToSection = (
     e: React.MouseEvent<HTMLButtonElement, MouseEvent>,
     sectionId: string
@@ -37,16 +35,22 @@ const ScrollNavigationBar = () => {
     e.preventDefault();
     const element = document.getElementById(sectionId);
     if (element) {
-      const offsetTop = element.offsetTop - 20; // Small offset from top
-      window.scrollTo({
-        top: offsetTop,
-        behavior: "smooth",
-      });
+      const container = element.closest(".overflow-y-auto");
+      if (container) {
+        container.scrollTo({
+          top: element.offsetTop,
+          behavior: "smooth",
+        });
+      }
     }
   };
 
   // Track active section and scroll position
   useEffect(() => {
+    const scrollContainer = document.querySelector(".overflow-y-auto");
+
+    if (!scrollContainer) return;
+
     const handleScroll = () => {
       const sectionIds = [
         "main",
@@ -55,54 +59,52 @@ const ScrollNavigationBar = () => {
         "gallery",
         "messages",
       ];
-      let currentSection = "main";
 
-      // Use viewport center as reference point
-      const viewportCenter = window.scrollY + window.innerHeight / 2;
+      let closestSection = "main";
+      let minDistance = Infinity;
 
       for (const sectionId of sectionIds) {
         const element = document.getElementById(sectionId);
         if (element) {
-          const rect = element.getBoundingClientRect();
-          const elementTop = window.scrollY + rect.top;
-          const elementBottom = elementTop + element.offsetHeight;
-
-          // Check if viewport center is within this section
-          if (viewportCenter >= elementTop && viewportCenter < elementBottom) {
-            currentSection = sectionId;
-            break;
+          const distance = Math.abs(
+            element.offsetTop - scrollContainer.scrollTop
+          );
+          if (distance < minDistance) {
+            minDistance = distance;
+            closestSection = sectionId;
           }
         }
       }
 
-      setActiveSection(currentSection);
+      setActiveSection(closestSection);
 
       // Check if near bottom
-      const scrollHeight = document.documentElement.scrollHeight;
-      const scrollTop = window.scrollY;
-      const clientHeight = window.innerHeight;
-      const scrolledToBottom = scrollHeight - scrollTop - clientHeight < 500;
+      const scrolledToBottom =
+        scrollContainer.scrollHeight -
+          scrollContainer.scrollTop -
+          scrollContainer.clientHeight <
+        500;
       setShowScrollToTop(scrolledToBottom);
     };
 
-    window.addEventListener("scroll", handleScroll);
+    scrollContainer.addEventListener("scroll", handleScroll);
     handleScroll(); // Initial check
 
-    return () => window.removeEventListener("scroll", handleScroll);
+    return () => scrollContainer.removeEventListener("scroll", handleScroll);
   }, []);
 
   const scrollToTop = () => {
-    window.scrollTo({
-      top: 0,
-      behavior: "smooth",
-    });
+    const container = document.querySelector(".overflow-y-auto");
+    if (container) {
+      container.scrollTo({ top: 0, behavior: "smooth" });
+    }
   };
 
   const scrollToBottom = () => {
-    window.scrollTo({
-      top: document.documentElement.scrollHeight,
-      behavior: "smooth",
-    });
+    const container = document.querySelector(".overflow-y-auto");
+    if (container) {
+      container.scrollTo({ top: container.scrollHeight, behavior: "smooth" });
+    }
   };
 
   return (
@@ -187,4 +189,4 @@ const ScrollNavigationBar = () => {
   );
 };
 
-export default ScrollNavigationBar;
+export default ScrollNavigationBarInPage;
