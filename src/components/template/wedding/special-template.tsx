@@ -13,6 +13,7 @@ import { GuestStatus } from "@/enums/guests";
 import { toast } from "sonner";
 import { Textarea } from "@/components/ui/textarea";
 import { zodResolver } from "@hookform/resolvers/zod";
+import "aos/dist/aos.css";
 import z from "zod";
 import {
   Select,
@@ -50,27 +51,36 @@ export default function SpecialTemplate({
   };
 
   useEffect(() => {
-    const scrollContainer = document.getElementById("scroll-container");
-
+    // Initialize AOS with proper configuration
     AOS.init({
       duration: 800,
       easing: "ease-in-out",
-      once: true,
+      once: false,
+      mirror: false, // Set to false to prevent potential issues
+      offset: 120, // Explicitly set default offset
+      disable: false, // Ensure AOS is enabled
     });
 
-    if (scrollContainer) {
-      scrollContainer.addEventListener("scroll", () => {
-        AOS.refresh();
-      });
-    }
+    const scrollContainer = document.getElementById("scroll-container");
 
-    return () => {
-      if (scrollContainer) {
-        scrollContainer.removeEventListener("scroll", () => {
-          AOS.refresh();
-        });
-      }
-    };
+    if (scrollContainer) {
+      // Use refresh instead of refreshHard
+      const handleScroll = () => {
+        AOS.refresh();
+      };
+
+      scrollContainer.addEventListener("scroll", handleScroll);
+
+      // Refresh AOS after a brief delay to ensure DOM is ready
+      const refreshTimer = setTimeout(() => {
+        AOS.refresh();
+      }, 100);
+
+      return () => {
+        scrollContainer.removeEventListener("scroll", handleScroll);
+        clearTimeout(refreshTimer);
+      };
+    }
   }, []);
   // Play music when isOpen becomes true
   useEffect(() => {
