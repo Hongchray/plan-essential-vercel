@@ -15,6 +15,7 @@ export interface Event {
   longitude: string;
   startTime: string;
   endTime: string;
+  eating_time: string;
   schedules: any;
   createdAt: string;
   updatedAt: string;

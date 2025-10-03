@@ -1,7 +1,7 @@
 import { NextResponse } from "next/server";
 import type { NextRequest } from "next/server";
 import { getToken } from "next-auth/jwt";
-
+import { Role } from "./enums/roles";
 const PUBLIC_ROUTES = [
   "/login",
   "/signup",
@@ -14,6 +14,7 @@ const PUBLIC_ROUTES = [
   "/preview",
   "/loading",
   "/profile",
+  "/profile/",
 ];
 function isPublicPath(pathname: string): boolean {
   return pathname.startsWith("/preview");
@@ -38,6 +39,14 @@ export async function middleware(request: NextRequest) {
   if (isPublicPath(request.nextUrl.pathname)) {
     return NextResponse.next();
   }
+  function isProfileRoute(pathname: string) {
+    return (
+      pathname === "/profile" ||
+      pathname === "/profile/" ||
+      pathname.startsWith("/profile/")
+    );
+  }
+
   const locale = request.cookies.get("NEXT_LOCALE")?.value || "km";
   const response = NextResponse.next();
   if (!request.cookies.has("NEXT_LOCALE")) {
@@ -53,23 +62,26 @@ export async function middleware(request: NextRequest) {
   });
 
   if ((pathname === "/login" || pathname === "/signup") && token) {
-    if (token.role === "user") {
+    if (token.role === Role.USER) {
       return NextResponse.redirect(new URL("/event", request.url));
     }
 
     return NextResponse.redirect(new URL("/dashboard", request.url));
   }
 
-  if (!isPublicRoute(pathname) && !token) {
-    return NextResponse.redirect(new URL("/login", request.url));
-  }
-
-  if (token?.role === "user") {
-    const allowed = isPublicRoute(pathname) || isEventRoute(pathname);
+  if (token?.role === Role.USER) {
+    const allowed =
+      isPublicRoute(pathname) ||
+      isEventRoute(pathname) ||
+      isProfileRoute(pathname);
 
     if (!allowed) {
       return NextResponse.redirect(new URL("/event", request.url));
     }
+  }
+
+  if (!isPublicRoute(pathname) && !token) {
+    return NextResponse.redirect(new URL("/login", request.url));
   }
 
   if (pathname === "/" && token) {

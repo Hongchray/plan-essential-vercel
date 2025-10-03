@@ -155,7 +155,7 @@ export const useExpenseColumns = (): ColumnDef<Expense>[] => {
       ),
       cell: ({ row }) => (
         <div className="flex gap-2">
-          <span className="max-w-[350px] truncate">
+          <span className="max-w-[250px] truncate">
             {currencyFormatters.usd(row.getValue("budget_amount") ?? 0)}
           </span>
         </div>
@@ -169,13 +169,43 @@ export const useExpenseColumns = (): ColumnDef<Expense>[] => {
           title={t("expense.table.actual_amount")}
         />
       ),
-      cell: ({ row }) => (
-        <div className="flex gap-2">
-          <span className="max-w-[350px] truncate">
-            {currencyFormatters.usd(row.getValue("actual_amount") ?? 0)}
-          </span>
-        </div>
-      ),
+      cell: ({ row }) => {
+        const actual = Number(row.getValue("actual_amount") ?? 0);
+        const budget = Number(row.original.budget_amount ?? 0);
+
+        // Calculate progress percentage
+        const progress =
+          budget > 0 ? Math.min((actual / budget) * 100, 100) : 0;
+
+        return (
+          <div className="flex flex-col gap-1 w-[90%] ">
+            {/* Amount text */}
+            <div className="flex justify-between text-sm font-medium text-gray-700">
+              <span>{currencyFormatters.usd(actual)}</span>
+              <span>{currencyFormatters.usd(budget)}</span>
+            </div>
+
+            {/* Progress bar */}
+            <div className="w-full bg-gray-200 rounded-full h-3 overflow-hidden">
+              <div
+                className={`h-3 rounded-full ${
+                  progress < 50
+                    ? "bg-red-500"
+                    : progress < 100
+                    ? "bg-yellow-400"
+                    : "bg-green-500"
+                }`}
+                style={{ width: `${progress}%` }}
+              />
+            </div>
+
+            {/* Optional: show % */}
+            <div className="text-xs text-gray-500 text-right">
+              {progress.toFixed(0)}%
+            </div>
+          </div>
+        );
+      },
     },
     {
       accessorKey: "description",

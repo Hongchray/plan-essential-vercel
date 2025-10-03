@@ -307,7 +307,7 @@ export function CreateEditGiftForm({
                   {/* Guest Selection */}
                   <div className="space-y-2 px-4">
                     <Label htmlFor="guest-select">
-                      {t("gift.form.no_guest_found")} <RequiredMark />
+                      {t("gift.form.guest")} <RequiredMark />
                     </Label>
 
                     <Popover open={open} onOpenChange={setOpen}>

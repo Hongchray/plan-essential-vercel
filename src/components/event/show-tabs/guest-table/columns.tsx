@@ -415,6 +415,27 @@ export function useGuestColumns(): ColumnDef<Guest>[] {
       ),
     },
     {
+      accessorKey: "wishing_note",
+      header: t("event_dashboard.guest.table.wishing_note"),
+      cell: ({ row }) => {
+        const wishing_note = row.getValue("wishing_note") as
+          | string
+          | null
+          | undefined;
+        const displayNote =
+          wishing_note && wishing_note.trim() !== "" ? wishing_note : "N/A";
+
+        return (
+          <span
+            className="max-w-[200px] block whitespace-nowrap overflow-hidden text-ellipsis hover:whitespace-normal"
+            title={displayNote} // shows full text on hover
+          >
+            {displayNote}
+          </span>
+        );
+      },
+    },
+    {
       accessorKey: "note",
       header: t("event_dashboard.guest.table.note"),
       cell: ({ row }) => {

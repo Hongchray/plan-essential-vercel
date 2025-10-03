@@ -215,7 +215,7 @@ export default function TabGift({
                 </div>
               </div>
               <div className="text-sm font-medium text-red-600 mb-1">
-                <span>{t("gift.total_usd_equivalent")}</span>
+                <span>{t("gift.total_usd_equivalent")}</span>{" "}
                 <span className="text-xs text-red-500">
                   {t("gift.exchange_rate", { rate: EXCHANGE_RATES.USD_TO_KHR })}
                 </span>

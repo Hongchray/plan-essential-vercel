@@ -111,8 +111,11 @@ export default function TabDashboard({ eventId }: { eventId: string }) {
 
           <div className="bg-purple-50 p-4 rounded-lg flex-shrink-0 w-40 md:w-auto">
             <div className="text-2xl font-bold text-purple-600">
-              {currencyFormatters.usd(event.total_gift_income)} ({" "}
-              {currencyFormatters.khr(event.total_income_khr)})
+              {currencyFormatters.usd(event.total_gift_income)}
+            </div>
+            <div>
+              ({currencyFormatters.khr(event.total_income_khr)}){" "}
+              <span>{t("gift.as_riel")}</span>
             </div>
             <div className="text-xs text-purple-500 mt-1">
               {t("gift.exchange_rate", { rate: EXCHANGE_RATES.USD_TO_KHR })}
@@ -123,12 +126,58 @@ export default function TabDashboard({ eventId }: { eventId: string }) {
           </div>
 
           <div className="bg-pink-50 p-4 rounded-lg flex-shrink-0 w-40 md:w-auto">
-            <div className="text-2xl font-bold text-red-600">
+            <div className="text-2xl font-bold text-red-600 break-words">
               {currencyFormatters.usd(event.total_expend_actual || 0)}
             </div>
-            <div className="text-sm text-red-800">
-              {t("event_dashboard.cards.total_expenses_actual")}
-            </div>
+
+            {/* Label */}
+            {/* <div className="text-sm text-red-800 mt-1">
+              Total Expenses (Actual)
+            </div> */}
+
+            {/* Progress bar */}
+            {event.total_expend_budget > 0 && (
+              <div className="mt-3">
+                <div className="flex justify-between text-xs text-red-700 mb-1">
+                  <span>
+                    {currencyFormatters.usd(event.total_expend_actual || 0)}
+                  </span>
+                  <span>
+                    {currencyFormatters.usd(event.total_expend_budget)}
+                  </span>
+                </div>
+
+                <div className="w-full bg-red-100 rounded-full h-3 overflow-hidden">
+                  <div
+                    className={`h-3 rounded-full ${
+                      event.total_expend_actual <
+                      event.total_expend_budget * 0.75
+                        ? "bg-yellow-400"
+                        : event.total_expend_actual < event.total_expend_budget
+                        ? "bg-orange-500"
+                        : "bg-red-600"
+                    }`}
+                    style={{
+                      width: `${Math.min(
+                        (event.total_expend_actual /
+                          event.total_expend_budget) *
+                          100,
+                        100
+                      )}%`,
+                    }}
+                  />
+                </div>
+
+                <div className="text-xs text-red-600 text-right mt-1">
+                  {Math.min(
+                    (event.total_expend_actual / event.total_expend_budget) *
+                      100,
+                    100
+                  ).toFixed(0)}
+                  %
+                </div>
+              </div>
+            )}
           </div>
 
           <div className="bg-cyan-50 p-4 rounded-lg flex-shrink-0 w-40 md:w-auto">

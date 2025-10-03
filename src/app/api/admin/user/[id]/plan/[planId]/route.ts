@@ -5,6 +5,7 @@ import { PrismaClient } from "@prisma/client";
 const prisma = new PrismaClient();
 
 interface UpdatePlanBody {
+  planId?: string;
   limit_guests?: number;
   limit_template?: number;
   limit_export_excel?: boolean;
@@ -22,7 +23,12 @@ export async function PUT(
     };
 
     const body: UpdatePlanBody = await request.json();
-    const { limit_guests, limit_template, limit_export_excel } = body;
+    const {
+      planId: newPlanId, // allow updating to a new plan
+      limit_guests,
+      limit_template,
+      limit_export_excel,
+    } = body;
 
     const existingUserPlan = await prisma.userPlan.findUnique({
       where: { id: userPlanId },
@@ -39,6 +45,7 @@ export async function PUT(
     const updatedUserPlan = await prisma.userPlan.update({
       where: { id: userPlanId },
       data: {
+        planId: newPlanId ?? existingUserPlan.planId, // ✅ allow plan change
         limit_guests: limit_guests ?? existingUserPlan.limit_guests,
         limit_template: limit_template ?? existingUserPlan.limit_template,
         limit_export_excel:
@@ -50,12 +57,12 @@ export async function PUT(
     return NextResponse.json({
       success: true,
       data: updatedUserPlan,
-      message: "Plan limits updated successfully",
+      message: "Plan updated successfully",
     });
   } catch (error) {
     console.error("Error updating user plan:", error);
     return NextResponse.json(
-      { success: false, error: "Failed to update plan limits" },
+      { success: false, error: "Failed to update plan" },
       { status: 500 }
     );
   }

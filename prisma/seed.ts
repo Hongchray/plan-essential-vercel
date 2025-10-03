@@ -22,11 +22,37 @@ async function main() {
     });
   }
 
+  await prisma.plan.createMany({
+    data: [
+      {
+        name: "ឥតគិតថ្លៃ",
+        price: 0,
+        limit_guests: 50,
+        limit_template: 1,
+        limit_export_excel: false,
+      },
+      {
+        name: "ប្រណិត",
+        price: 200,
+        limit_guests: 200,
+        limit_template: 5,
+        limit_export_excel: true,
+      },
+      {
+        name: "អធិកអធម",
+        price: 500,
+        limit_guests: 1000,
+        limit_template: 20,
+        limit_export_excel: true,
+      },
+    ],
+  });
+
   const weddingTemplate = await prisma.template.create({
     data: {
       unique_name: "elegant-wedding", // Adding required unique_name field
       name: "Elegant Wedding",
-      type: "wedding",
+      type: "Wedding",
       image: "https://theapka.com/storage/01J45Z76636PDX9JANP0FTWRGE.png",
       defaultConfig: {
         background: "/templates/wedding/bg.jpg",
@@ -81,6 +107,7 @@ async function main() {
       longitude: "104.9282",
       startTime: new Date("2025-12-01T14:00:00Z"),
       endTime: new Date("2025-12-01T22:00:00Z"),
+      eating_time: "05:00 PM", // 5 PM
       schedules: {
         create: [
           {

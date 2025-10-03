@@ -111,6 +111,20 @@ export default function UserPage() {
     fetchData();
   }, [id]);
 
+  // 👇 add this effect after your states
+  useEffect(() => {
+    if (!selectedPlan) return;
+
+    const plan = plans.find((p) => p.id === selectedPlan);
+    if (plan) {
+      setPlanLimits({
+        limit_guests: plan.limit_guests,
+        limit_template: plan.limit_template,
+        limit_export_excel: plan.limit_export_excel,
+      });
+    }
+  }, [selectedPlan, plans]);
+
   const handleAssignPlan = async () => {
     if (!selectedPlan || !user) return;
 
@@ -135,6 +149,7 @@ export default function UserPage() {
         const userResult = await userRes.json();
         setUser(userResult.data);
       }
+      const plan = plans.find((p) => p.id === selectedPlan);
 
       setPlanDialogOpen(false);
       setSelectedPlan("");
@@ -151,7 +166,7 @@ export default function UserPage() {
   };
 
   const handleEditPlan = async () => {
-    if (!editingUserPlan || !user) return;
+    if (!editingUserPlan || !user || !selectedPlan) return;
 
     setSubmitting(true);
     try {
@@ -159,17 +174,18 @@ export default function UserPage() {
         `/api/admin/user/${user.id}/plan/${editingUserPlan.id}`,
         {
           method: "PUT",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify(planLimits),
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            planId: selectedPlan, // 👈 allow plan change
+            ...planLimits,
+          }),
         }
       );
 
       if (!res.ok) throw new Error("Failed to update plan");
 
       // Refresh user data
-      const userRes = await fetch(`/api/admin/user/${id}`);
+      const userRes = await fetch(`/api/admin/user/${user.id}`);
       if (userRes.ok) {
         const userResult = await userRes.json();
         setUser(userResult.data);
@@ -207,6 +223,7 @@ export default function UserPage() {
 
   const openEditDialog = (userPlan: UserPlan) => {
     setEditingUserPlan(userPlan);
+    setSelectedPlan(userPlan.planId);
     setPlanLimits({
       limit_guests: userPlan.limit_guests,
       limit_template: userPlan.limit_template,
@@ -388,10 +405,12 @@ export default function UserPage() {
                       onOpenChange={setPlanDialogOpen}
                     >
                       <DialogTrigger asChild>
-                        <Button>
-                          <Plus className="h-4 w-4 mr-2" />
-                          {t("user.detail.assignPlan")}
-                        </Button>
+                        {user.userPlan?.length === 0 && (
+                          <Button>
+                            <Plus className="h-4 w-4 mr-2" />
+                            {t("user.detail.assignPlan")}
+                          </Button>
+                        )}
                       </DialogTrigger>
                       <DialogContent className="sm:max-w-md">
                         <DialogHeader>
@@ -807,12 +826,32 @@ export default function UserPage() {
             <DialogHeader>
               <DialogTitle>{t("user.detail.editPlanTitle")}</DialogTitle>
               <DialogDescription>
-                {t("user.detail.editPlanDescription", {
-                  planName: editingUserPlan ? editingUserPlan.plan.name : "",
-                })}
+                {t("user.detail.editPlanDescription")}
+                <span className="font-medium ml-1">
+                  {editingUserPlan?.plan?.name || "No plan selected"}
+                </span>
               </DialogDescription>
             </DialogHeader>
+
             <div className="space-y-4 py-4">
+              {/* 🔹 Plan Selector */}
+              <div className="space-y-2">
+                <Label>{t("user.detail.plan")}</Label>
+                <Select value={selectedPlan} onValueChange={setSelectedPlan}>
+                  <SelectTrigger>
+                    <SelectValue placeholder={t("user.detail.selectPlan")} />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {plans.map((plan) => (
+                      <SelectItem key={plan.id} value={plan.id}>
+                        {plan.name} {plan.price && `($${plan.price})`}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+              </div>
+
+              {/* 🔹 Limits */}
               <div className="grid grid-cols-2 gap-4">
                 <div className="space-y-2">
                   <Label htmlFor="edit-guests">
@@ -835,7 +874,7 @@ export default function UserPage() {
                     {t("user.detail.templateLimit")}
                   </Label>
                   <Input
-                    id="templates"
+                    id="edit-templates"
                     type="number"
                     value={planLimits.limit_template}
                     onChange={(e) =>
@@ -847,6 +886,7 @@ export default function UserPage() {
                   />
                 </div>
               </div>
+
               <div className="flex items-center justify-between">
                 <Label htmlFor="edit-excel">
                   {t("user.detail.excelExport")}
@@ -863,6 +903,7 @@ export default function UserPage() {
                 />
               </div>
             </div>
+
             <DialogFooter>
               <Button onClick={handleEditPlan} disabled={submitting}>
                 {submitting && (
