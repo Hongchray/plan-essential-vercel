@@ -50,15 +50,27 @@ export default function SpecialTemplate({
   };
 
   useEffect(() => {
+    const scrollContainer = document.getElementById("scroll-container");
+
     AOS.init({
       duration: 800,
       easing: "ease-in-out",
       once: true,
     });
 
-    setTimeout(() => {
-      AOS.refresh();
-    }, 100);
+    if (scrollContainer) {
+      scrollContainer.addEventListener("scroll", () => {
+        AOS.refresh();
+      });
+    }
+
+    return () => {
+      if (scrollContainer) {
+        scrollContainer.removeEventListener("scroll", () => {
+          AOS.refresh();
+        });
+      }
+    };
   }, []);
   // Play music when isOpen becomes true
   useEffect(() => {
@@ -332,6 +344,7 @@ export default function SpecialTemplate({
 
           {/* Scrollable content overlay */}
           <div
+            id="scroll-container"
             className="relative z-10 h-full overflow-y-auto overflow-x-hidden scrollbar-hide flex flex-col items-center"
             style={{ scrollbarWidth: "none", msOverflowStyle: "none" }}
           >
