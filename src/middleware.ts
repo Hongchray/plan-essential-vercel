@@ -15,7 +15,7 @@ const PUBLIC_ROUTES = [
   "/loading",
   "/profile",
   "/profile/",
-  "/invitation",
+  "/invitation/",
 ];
 function isPublicPath(pathname: string): boolean {
   return pathname.startsWith("/preview");
