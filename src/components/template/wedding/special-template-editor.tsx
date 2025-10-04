@@ -5,6 +5,30 @@ import React from "react";
 import { TemplateEditorProps } from "@/interfaces/comon/template-editor-prop";
 import { useTranslation } from "react-i18next";
 import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+import {
+  Accordion,
+  AccordionContent,
+  AccordionItem,
+  AccordionTrigger,
+} from "@/components/ui/accordion";
+import {
+  Image,
+  Video,
+  Music,
+  MapPin,
+  Calendar,
+  MessageSquare,
+  Sparkles,
+  Play,
+} from "lucide-react";
 
 export default function SpecialTemplateEditor({
   config,
@@ -12,7 +36,6 @@ export default function SpecialTemplateEditor({
 }: TemplateEditorProps) {
   const { t } = useTranslation("common");
 
-  // Helper function to update top-level config properties
   const updateConfig = (key: string, value: string) => {
     setConfig((prev: any) => ({
       ...prev,
@@ -20,7 +43,6 @@ export default function SpecialTemplateEditor({
     }));
   };
 
-  // Helper function to update gallery photos
   const updateGalleryPhoto = (index: number, value: string) => {
     setConfig((prev: any) => {
       const currentGallery = prev.gallery_photos || [];
@@ -33,7 +55,6 @@ export default function SpecialTemplateEditor({
     });
   };
 
-  // Safety check for config
   if (!config) {
     return (
       <div className="p-4 text-center">
@@ -42,283 +63,320 @@ export default function SpecialTemplateEditor({
     );
   }
 
+  const musics = [
+    { label: "Music 1", value: "/template/audios/music1.mp3" },
+    { label: "Music 2", value: "/template/audios/music2.mp3" },
+    { label: "Music 3", value: "/template/audios/music3.mp3" },
+    { label: "Music 4", value: "/template/audios/music4.mp3" },
+    { label: "Music 5", value: "/template/audios/music5.mp3" },
+    { label: "Music 6", value: "/template/audios/music6.mp3" },
+  ];
+
   return (
-    <div className="space-y-6">
-      {/* Welcome Section */}
-      <div className="space-y-3 p-4 bg-white rounded-lg shadow-sm">
-        <h4 className="font-semibold text-base flex items-center">
-          <span className="w-2 h-2 bg-blue-500 rounded-full mr-2"></span>
-          Welcome Screen Media
-        </h4>
-        <div className="space-y-3">
-          <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">
-              Welcome Logo
-            </label>
-            <ImageUpload
-              label="Logo"
-              folder="/event/template/assets"
-              onChange={(e) => updateConfig("welcome_logo", e.target.value)}
-              value={config?.welcome_logo || ""}
-            />
-          </div>
-
-          <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">
-              Background Video (Welcome)
-            </label>
-            <VideoUpload
-              label="Welcome Background"
-              folder="/event/template/assets"
-              onChange={(e) =>
-                updateConfig("welcome_background_video", e.target.value)
-              }
-              value={config?.welcome_background_video || ""}
-              acceptedFormats={[".webm", ".mp4"]}
-            />
-            <p className="text-xs text-gray-500 mt-1">
-              WEBM format recommended for better compatibility
-            </p>
-          </div>
-
-          <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">
-              Opening/Unboxing Video
-            </label>
-            <VideoUpload
-              label="Unboxing Animation"
-              folder="/event/template/assets"
-              onChange={(e) => updateConfig("unboxing_video", e.target.value)}
-              value={config?.unboxing_video || ""}
-              acceptedFormats={[".webm", ".mp4"]}
-            />
-            <p className="text-xs text-gray-500 mt-1">
-              Video that plays when opening the invitation
-            </p>
-          </div>
-        </div>
-      </div>
-
-      {/* Main Content Section */}
-      <div className="space-y-3 p-4 bg-white rounded-lg shadow-sm">
-        <h4 className="font-semibold text-base flex items-center">
-          <span className="w-2 h-2 bg-green-500 rounded-full mr-2"></span>
-          Main Content Media
-        </h4>
-        <div className="space-y-3">
-          <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">
-              Background Video (Main)
-            </label>
-            <VideoUpload
-              label="Main Background"
-              folder="/event/template/assets"
-              onChange={(e) =>
-                updateConfig("main_background_video", e.target.value)
-              }
-              value={config?.main_background_video || ""}
-              acceptedFormats={[".webm", ".mp4"]}
-            />
-          </div>
-
-          <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">
-              Background Music
-            </label>
-            <AudioUpload
-              label="Background Music"
-              folder="/event/template/assets"
-              onChange={(e) => updateConfig("background_music", e.target.value)}
-              value={config?.background_music || ""}
-              acceptedFormats={[".mp3", ".wav", ".ogg"]}
-            />
-          </div>
-
-          <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">
-              Names & Title Image
-            </label>
-            <ImageUpload
-              label="Names Banner"
-              folder="/event/template/assets"
-              onChange={(e) => updateConfig("names_banner", e.target.value)}
-              value={config?.names_banner || ""}
-            />
-          </div>
-
-          <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">
-              Invitation Message Image
-            </label>
-            <ImageUpload
-              label="Invitation Image"
-              folder="/event/template/assets"
-              onChange={(e) => updateConfig("invitation_image", e.target.value)}
-              value={config?.invitation_image || ""}
-            />
-          </div>
-
-          <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">
-              Pre-Wedding Photo (Countdown Background)
-            </label>
-            <ImageUpload
-              label="Pre-Wedding Photo"
-              folder="/event/template/assets"
-              onChange={(e) => updateConfig("prewedding_photo", e.target.value)}
-              value={config?.prewedding_photo || ""}
-            />
-          </div>
-        </div>
-      </div>
-
-      {/* Event Schedule Section */}
-      <div className="space-y-3 p-4 bg-white rounded-lg shadow-sm">
-        <h4 className="font-semibold text-base flex items-center">
-          <span className="w-2 h-2 bg-purple-500 rounded-full mr-2"></span>
-          Event Schedule Images
-        </h4>
-        <div className="space-y-3">
-          <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">
-              Schedule Image 1
-            </label>
-            <ImageUpload
-              label="Schedule 1"
-              folder="/event/template/assets"
-              onChange={(e) => updateConfig("schedule_image_1", e.target.value)}
-              value={config?.schedule_image_1 || ""}
-            />
-          </div>
-
-          <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">
-              Schedule Image 2
-            </label>
-            <ImageUpload
-              label="Schedule 2"
-              folder="/event/template/assets"
-              onChange={(e) => updateConfig("schedule_image_2", e.target.value)}
-              value={config?.schedule_image_2 || ""}
-            />
-          </div>
-        </div>
-      </div>
-
-      {/* Location Section */}
-      <div className="space-y-3 p-4 bg-white rounded-lg shadow-sm">
-        <h4 className="font-semibold text-base flex items-center">
-          <span className="w-2 h-2 bg-yellow-500 rounded-full mr-2"></span>
-          Location
-        </h4>
-        <div className="space-y-3">
-          <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">
-              Location Image/Map
-            </label>
-            <ImageUpload
-              label="Location Map"
-              folder="/event/template/assets"
-              onChange={(e) => updateConfig("location_image", e.target.value)}
-              value={config?.location_image || ""}
-            />
-          </div>
-
-          <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">
-              Google Maps URL
-            </label>
-            <Input
-              type="url"
-              value={config?.map_url || ""}
-              onChange={(e) => updateConfig("map_url", e.target.value)}
-              className="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-              placeholder="https://maps.app.goo.gl/..."
-            />
-          </div>
-        </div>
-      </div>
-
-      {/* Photo Gallery Section */}
-      <div className="space-y-3 p-4 bg-white rounded-lg shadow-sm">
-        <h4 className="font-semibold text-base flex items-center">
-          <span className="w-2 h-2 bg-pink-500 rounded-full mr-2"></span>
-          Photo Gallery
-        </h4>
-        <div className="grid grid-cols-1 gap-3">
-          {[0, 1, 2, 3].map((index) => (
-            <div key={index}>
-              <label className="block text-sm font-medium text-gray-700 mb-1">
-                Gallery Photo {index + 1}
-              </label>
+    <div className="max-w-4xl mx-auto ">
+      <Accordion
+        type="multiple"
+        defaultValue={["welcome"]}
+        className="space-y-3"
+      >
+        {/* Welcome Section */}
+        <AccordionItem value="welcome" className="border rounded-lg bg-white">
+          <AccordionTrigger className="px-4 py-3 hover:no-underline">
+            <div className="flex items-center gap-2">
+              <div className="h-8 w-8 rounded-full bg-blue-50 flex items-center justify-center">
+                <Play className="h-4 w-4 text-blue-600" />
+              </div>
+              <span className="font-medium">Welcome Screen</span>
+            </div>
+          </AccordionTrigger>
+          <AccordionContent className="px-4 pb-4 space-y-3">
+            <div className="space-y-1.5">
+              <Label className="text-sm">Welcome Logo</Label>
               <ImageUpload
-                label={`Photo ${index + 1}`}
+                label="Logo"
                 folder="/event/template/assets"
-                onChange={(e) => updateGalleryPhoto(index, e.target.value)}
-                value={config?.gallery_photos?.[index] || ""}
+                onChange={(e) => updateConfig("welcome_logo", e.target.value)}
+                value={config?.welcome_logo || ""}
               />
             </div>
-          ))}
-        </div>
-      </div>
 
-      {/* Messages Section */}
-      <div className="space-y-3 p-4 bg-white rounded-lg shadow-sm">
-        <h4 className="font-semibold text-base flex items-center">
-          <span className="w-2 h-2 bg-indigo-500 rounded-full mr-2"></span>
-          Messages Section
-        </h4>
-        <div className="space-y-3">
-          <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">
-              Messages Header Image
-            </label>
-            <ImageUpload
-              label="Messages Header"
-              folder="/event/template/assets"
-              onChange={(e) =>
-                updateConfig("messages_header_image", e.target.value)
-              }
-              value={config?.messages_header_image || ""}
-            />
-          </div>
-        </div>
-      </div>
+            <div className="space-y-1.5">
+              <Label className="text-sm">Background Video</Label>
+              <VideoUpload
+                label="Welcome Background"
+                folder="/event/template/assets"
+                onChange={(e) =>
+                  updateConfig("welcome_background_video", e.target.value)
+                }
+                value={config?.welcome_background_video || ""}
+                acceptedFormats={[".webm", ".mp4"]}
+              />
+              <p className="text-xs text-gray-500">WEBM format recommended</p>
+            </div>
 
-      {/* Decorative Elements */}
-      <div className="space-y-3 p-4 bg-white rounded-lg shadow-sm">
-        <h4 className="font-semibold text-base flex items-center">
-          <span className="w-2 h-2 bg-gray-500 rounded-full mr-2"></span>
-          Decorative Elements
-        </h4>
-        <div className="space-y-3">
-          <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">
-              Button Background
-            </label>
-            <ImageUpload
-              label="Button Style"
-              folder="/event/template/assets"
-              onChange={(e) =>
-                updateConfig("button_background", e.target.value)
-              }
-              value={config?.button_background || ""}
-            />
-          </div>
+            <div className="space-y-1.5">
+              <Label className="text-sm">Opening/Unboxing Video</Label>
+              <VideoUpload
+                label="Unboxing Animation"
+                folder="/event/template/assets"
+                onChange={(e) => updateConfig("unboxing_video", e.target.value)}
+                value={config?.unboxing_video || ""}
+                acceptedFormats={[".webm", ".mp4"]}
+              />
+            </div>
+          </AccordionContent>
+        </AccordionItem>
 
-          <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">
-              Name Bar Background
-            </label>
-            <ImageUpload
-              label="Name Bar"
-              folder="/event/template/assets"
-              onChange={(e) => updateConfig("name_bar", e.target.value)}
-              value={config?.name_bar || ""}
-            />
-          </div>
-        </div>
-      </div>
+        {/* Main Content Section */}
+        <AccordionItem value="content" className="border rounded-lg bg-white">
+          <AccordionTrigger className="px-4 py-3 hover:no-underline">
+            <div className="flex items-center gap-2">
+              <div className="h-8 w-8 rounded-full bg-green-50 flex items-center justify-center">
+                <Image className="h-4 w-4 text-green-600" />
+              </div>
+              <span className="font-medium">Main Content</span>
+            </div>
+          </AccordionTrigger>
+          <AccordionContent className="px-4 pb-4 space-y-3">
+            <div className="space-y-1.5">
+              <Label className="text-sm">Background Video</Label>
+              <VideoUpload
+                label="Main Background"
+                folder="/event/template/assets"
+                onChange={(e) =>
+                  updateConfig("main_background_video", e.target.value)
+                }
+                value={config?.main_background_video || ""}
+                acceptedFormats={[".webm", ".mp4"]}
+              />
+            </div>
+
+            <div className="space-y-1.5">
+              <Label className="text-sm">Background Music</Label>
+              <AudioUpload
+                label="Background Music"
+                folder="/event/template/assets"
+                onChange={(e) =>
+                  updateConfig("background_music", e.target.value)
+                }
+                value={config?.background_music || ""}
+                acceptedFormats={[".mp3", ".wav", ".ogg"]}
+              />
+              <Select
+                value={config?.background_music || ""}
+                onValueChange={(val) => updateConfig("background_music", val)}
+              >
+                <SelectTrigger>
+                  <SelectValue placeholder="Or choose preset music" />
+                </SelectTrigger>
+                <SelectContent>
+                  {musics.map((music) => (
+                    <SelectItem key={music.value} value={music.value}>
+                      {music.label}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+            </div>
+
+            <div className="space-y-1.5">
+              <Label className="text-sm">Names & Title Image</Label>
+              <ImageUpload
+                label="Names Banner"
+                folder="/event/template/assets"
+                onChange={(e) => updateConfig("names_banner", e.target.value)}
+                value={config?.names_banner || ""}
+              />
+            </div>
+
+            <div className="space-y-1.5">
+              <Label className="text-sm">Invitation Message Image</Label>
+              <ImageUpload
+                label="Invitation Image"
+                folder="/event/template/assets"
+                onChange={(e) =>
+                  updateConfig("invitation_image", e.target.value)
+                }
+                value={config?.invitation_image || ""}
+              />
+            </div>
+
+            <div className="space-y-1.5">
+              <Label className="text-sm">Pre-Wedding Photo</Label>
+              <ImageUpload
+                label="Pre-Wedding Photo"
+                folder="/event/template/assets"
+                onChange={(e) =>
+                  updateConfig("prewedding_photo", e.target.value)
+                }
+                value={config?.prewedding_photo || ""}
+              />
+            </div>
+          </AccordionContent>
+        </AccordionItem>
+
+        {/* Event Schedule Section */}
+        <AccordionItem value="schedule" className="border rounded-lg bg-white">
+          <AccordionTrigger className="px-4 py-3 hover:no-underline">
+            <div className="flex items-center gap-2">
+              <div className="h-8 w-8 rounded-full bg-purple-50 flex items-center justify-center">
+                <Calendar className="h-4 w-4 text-purple-600" />
+              </div>
+              <span className="font-medium">Event Schedule</span>
+            </div>
+          </AccordionTrigger>
+          <AccordionContent className="px-4 pb-4">
+            <div className="grid grid-cols-2 gap-3">
+              <div className="space-y-1.5">
+                <Label className="text-sm">Schedule Image 1</Label>
+                <ImageUpload
+                  label="Schedule 1"
+                  folder="/event/template/assets"
+                  onChange={(e) =>
+                    updateConfig("schedule_image_1", e.target.value)
+                  }
+                  value={config?.schedule_image_1 || ""}
+                />
+              </div>
+
+              <div className="space-y-1.5">
+                <Label className="text-sm">Schedule Image 2</Label>
+                <ImageUpload
+                  label="Schedule 2"
+                  folder="/event/template/assets"
+                  onChange={(e) =>
+                    updateConfig("schedule_image_2", e.target.value)
+                  }
+                  value={config?.schedule_image_2 || ""}
+                />
+              </div>
+            </div>
+          </AccordionContent>
+        </AccordionItem>
+
+        {/* Location Section */}
+        <AccordionItem value="location" className="border rounded-lg bg-white">
+          <AccordionTrigger className="px-4 py-3 hover:no-underline">
+            <div className="flex items-center gap-2">
+              <div className="h-8 w-8 rounded-full bg-yellow-50 flex items-center justify-center">
+                <MapPin className="h-4 w-4 text-yellow-600" />
+              </div>
+              <span className="font-medium">Location</span>
+            </div>
+          </AccordionTrigger>
+          <AccordionContent className="px-4 pb-4 space-y-3">
+            <div className="space-y-1.5">
+              <Label className="text-sm">Location Image/Map</Label>
+              <ImageUpload
+                label="Location Map"
+                folder="/event/template/assets"
+                onChange={(e) => updateConfig("location_image", e.target.value)}
+                value={config?.location_image || ""}
+              />
+            </div>
+
+            <div className="space-y-1.5">
+              <Label className="text-sm">Google Maps URL</Label>
+              <Input
+                type="url"
+                value={config?.map_url || ""}
+                onChange={(e) => updateConfig("map_url", e.target.value)}
+                placeholder="https://maps.app.goo.gl/..."
+              />
+            </div>
+          </AccordionContent>
+        </AccordionItem>
+
+        {/* Photo Gallery Section */}
+        <AccordionItem value="gallery" className="border rounded-lg bg-white">
+          <AccordionTrigger className="px-4 py-3 hover:no-underline">
+            <div className="flex items-center gap-2">
+              <div className="h-8 w-8 rounded-full bg-pink-50 flex items-center justify-center">
+                <Image className="h-4 w-4 text-pink-600" />
+              </div>
+              <span className="font-medium">Photo Gallery</span>
+            </div>
+          </AccordionTrigger>
+          <AccordionContent className="px-4 pb-4">
+            <div className="grid grid-cols-2 gap-3">
+              {[0, 1, 2, 3].map((index) => (
+                <div key={index} className="space-y-1.5">
+                  <Label className="text-sm">Gallery Photo {index + 1}</Label>
+                  <ImageUpload
+                    label={`Photo ${index + 1}`}
+                    folder="/event/template/assets"
+                    onChange={(e) => updateGalleryPhoto(index, e.target.value)}
+                    value={config?.gallery_photos?.[index] || ""}
+                  />
+                </div>
+              ))}
+            </div>
+          </AccordionContent>
+        </AccordionItem>
+
+        {/* Messages Section */}
+        <AccordionItem value="messages" className="border rounded-lg bg-white">
+          <AccordionTrigger className="px-4 py-3 hover:no-underline">
+            <div className="flex items-center gap-2">
+              <div className="h-8 w-8 rounded-full bg-indigo-50 flex items-center justify-center">
+                <MessageSquare className="h-4 w-4 text-indigo-600" />
+              </div>
+              <span className="font-medium">Messages</span>
+            </div>
+          </AccordionTrigger>
+          <AccordionContent className="px-4 pb-4 space-y-3">
+            <div className="space-y-1.5">
+              <Label className="text-sm">Messages Header Image</Label>
+              <ImageUpload
+                label="Messages Header"
+                folder="/event/template/assets"
+                onChange={(e) =>
+                  updateConfig("messages_header_image", e.target.value)
+                }
+                value={config?.messages_header_image || ""}
+              />
+            </div>
+          </AccordionContent>
+        </AccordionItem>
+
+        {/* Decorative Elements */}
+        <AccordionItem
+          value="decorative"
+          className="border rounded-lg bg-white"
+        >
+          <AccordionTrigger className="px-4 py-3 hover:no-underline">
+            <div className="flex items-center gap-2">
+              <div className="h-8 w-8 rounded-full bg-gray-50 flex items-center justify-center">
+                <Sparkles className="h-4 w-4 text-gray-600" />
+              </div>
+              <span className="font-medium">Decorative Elements</span>
+            </div>
+          </AccordionTrigger>
+          <AccordionContent className="px-4 pb-4 space-y-3">
+            <div className="space-y-1.5">
+              <Label className="text-sm">Button Background</Label>
+              <ImageUpload
+                label="Button Style"
+                folder="/event/template/assets"
+                onChange={(e) =>
+                  updateConfig("button_background", e.target.value)
+                }
+                value={config?.button_background || ""}
+              />
+            </div>
+
+            <div className="space-y-1.5">
+              <Label className="text-sm">Name Bar Background</Label>
+              <ImageUpload
+                label="Name Bar"
+                folder="/event/template/assets"
+                onChange={(e) => updateConfig("name_bar", e.target.value)}
+                value={config?.name_bar || ""}
+              />
+            </div>
+          </AccordionContent>
+        </AccordionItem>
+      </Accordion>
     </div>
   );
 }

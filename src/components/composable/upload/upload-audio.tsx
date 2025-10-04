@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { Upload, X, Music, Loader2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -23,7 +23,9 @@ export default function AudioUpload({
   const [uploading, setUploading] = useState(false);
   const [previewUrl, setPreviewUrl] = useState(value);
   const [error, setError] = useState<string>("");
-
+  useEffect(() => {
+    setPreviewUrl(value);
+  }, [value]);
   const handleFileChange = async (
     event: React.ChangeEvent<HTMLInputElement>
   ) => {
