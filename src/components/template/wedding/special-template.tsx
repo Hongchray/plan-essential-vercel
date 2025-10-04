@@ -24,6 +24,8 @@ import {
 import { Input } from "@/components/ui/input";
 import ScrollNavigationBar from "../scroll-navigation-bar";
 import ScrollNavigationBarInPage from "../scroll-navigation-bar-in-page";
+import { Footer } from "../footer";
+import { ScrollArea, ScrollBar } from "@/components/ui/scroll-area";
 
 export default function SpecialTemplate({
   config,
@@ -229,7 +231,7 @@ export default function SpecialTemplate({
     <div className="relative min-h-screen max-w-xl mx-auto">
       {/* Background music */}
       {isOpen && (
-        <audio id="welcome-music" loop src="/template/audios/music1.mp3" />
+        <audio id="welcome-music" loop src={config?.background_music} />
       )}
 
       {/* Front envelope */}
@@ -243,7 +245,7 @@ export default function SpecialTemplate({
             playsInline
             className="absolute top-0 left-0 w-full h-full object-cover"
           >
-            <source src="/template/videos/background1.webm" type="video/webm" />
+            <source src={config?.welcome_background_video} type="video/webm" />
           </video>
 
           {/* Overlay content */}
@@ -259,7 +261,7 @@ export default function SpecialTemplate({
                 transition={{ duration: 0.8, ease: "easeOut" }}
               >
                 <Image
-                  src="/template/arts/tgt.png"
+                  src={config?.welcome_logo}
                   alt="logo"
                   width={200}
                   height={200}
@@ -289,7 +291,7 @@ export default function SpecialTemplate({
                 className="mt-5 text-[16px] text-center min-w-[250px] md:min-w-[320px] min-h-[100px] max-h-[100px] max-w-[600px] truncate inline-flex items-center justify-center px-3"
                 style={{
                   fontFamily: "moul",
-                  backgroundImage: "url('/template/arts/bar-kbach.jpg')",
+                  backgroundImage: `url('${config?.name_bar}')`,
                   backgroundSize: "cover",
                   backgroundPosition: "center",
                   borderRadius: "8px",
@@ -307,23 +309,23 @@ export default function SpecialTemplate({
                     fontFamily: "moul",
                   }}
                 >
-                  លោក មករា និងភរិយា
+                  {guest?.name}
                 </span>
               </motion.div>
             </motion.div>
 
             <motion.div
-              className="text-[10px] text-center w-[200px] md:w-[280px] md:h-[50px] mb-8"
+              className="text-[10px] text-center w-[250px] md:w-[280px] md:h-[50px] mb-8"
               variants={fadeUpVariant}
               transition={{ duration: 0.8, delay: 0.8, ease: "easeOut" }}
             >
               <motion.button
                 onClick={() => setIsOpen(true)}
-                className="cursor-pointer transform md:text-[14px] text-center w-[200px] md:w-[280px] md:h-[50px] inline-block px-3 py-2"
+                className="cursor-pointer transform md:text-[14px] text-center w-[250px] md:w-[280px] h-[50px] md:h-[50px] inline-block px-3 py-2"
                 style={{
                   color: "white",
                   fontFamily: "moul",
-                  backgroundImage: "url('/template/arts/button-kbach.png')",
+                  backgroundImage: `url('${config?.button_background}')`,
                   backgroundSize: "cover",
                   backgroundPosition: "center",
                   borderRadius: "8px",
@@ -360,7 +362,7 @@ export default function SpecialTemplate({
             playsInline
             className="absolute top-0 left-0 w-full h-full object-cover"
           >
-            <source src="/template/videos/unboxing1.webm" type="video/webm" />
+            <source src={config?.unboxing_video} type="video/webm" />
           </video>
         </div>
       )}
@@ -368,8 +370,6 @@ export default function SpecialTemplate({
       {/* Main content */}
       {isOpen && !isWelcomeOpen && (
         <div className="front-evelop h-screen relative overflow-hidden">
-          <ScrollNavigationBarInPage />
-
           {/* Background video */}
           <div className="absolute top-0 left-0 w-full h-full">
             <video
@@ -379,10 +379,7 @@ export default function SpecialTemplate({
               playsInline
               className="w-full h-full object-cover"
             >
-              <source
-                src="/template/videos/background2.webm"
-                type="video/webm"
-              />
+              <source src={config?.main_background_video} type="video/webm" />
             </video>
           </div>
 
@@ -407,7 +404,7 @@ export default function SpecialTemplate({
                 transition={{ duration: 0.8 }}
               >
                 <Image
-                  src="/template/contents/txt0.png"
+                  src={config?.names_banner}
                   alt="image"
                   width={600}
                   height={200}
@@ -424,7 +421,7 @@ export default function SpecialTemplate({
                   style={{
                     color: "white",
                     fontFamily: "moul",
-                    backgroundImage: "url('/template/arts/button-kbach.png')",
+                    backgroundImage: `url('${config?.button_background}')`,
                     backgroundSize: "cover",
                     backgroundPosition: "center",
                     borderRadius: "8px",
@@ -448,7 +445,7 @@ export default function SpecialTemplate({
               transition={{ duration: 0.8, ease: "easeOut" }}
             >
               <Image
-                src="/template/contents/txt01.png"
+                src={config?.invitation_image}
                 alt="image"
                 width={600}
                 height={200}
@@ -465,7 +462,7 @@ export default function SpecialTemplate({
             >
               <div className="relative w-full">
                 <motion.img
-                  src="/template/contents/pre-wedding.jpg"
+                  src={config?.prewedding_photo}
                   alt="Event countdown"
                   className="w-full h-auto object-cover rounded"
                   whileHover={{ scale: 1.02 }}
@@ -553,7 +550,7 @@ export default function SpecialTemplate({
 
               <motion.div variants={slideInLeftVariant}>
                 <Image
-                  src="/template/contents/txt02.png"
+                  src={config?.schedule_image_1}
                   alt="image"
                   width={600}
                   height={200}
@@ -562,7 +559,7 @@ export default function SpecialTemplate({
 
               <motion.div variants={slideInRightVariant}>
                 <Image
-                  src="/template/contents/txt02.1.png"
+                  src={config?.schedule_image_2}
                   alt="image"
                   width={600}
                   height={200}
@@ -594,7 +591,7 @@ export default function SpecialTemplate({
                 transition={{ duration: 0.3 }}
               >
                 <Image
-                  src="/template/contents/txt3.png"
+                  src={config?.location_image}
                   alt="image"
                   width={600}
                   height={200}
@@ -603,11 +600,12 @@ export default function SpecialTemplate({
 
               <motion.div className="text-[10px] text-center w-[200px] md:w-[280px] md:h-[50px] mb-8">
                 <motion.button
+                  onClick={() => window.open(config?.map_url, "_blank")}
                   className="cursor-pointer transform md:text-[14px] text-center w-[200px] md:w-[280px] md:h-[50px] inline-block px-3 py-2"
                   style={{
                     color: "white",
                     fontFamily: "moul",
-                    backgroundImage: "url('/template/arts/button-kbach.png')",
+                    backgroundImage: `url('${config?.button_background}')`,
                     backgroundSize: "cover",
                     backgroundPosition: "center",
                     borderRadius: "8px",
@@ -646,31 +644,28 @@ export default function SpecialTemplate({
                 className="grid grid-cols-2 gap-4 p-2"
                 variants={staggerContainer}
               >
-                {[
-                  "/template/groom_bride/Frame-Photo 1.png",
-                  "/template/groom_bride/Frame-Photo 2.png",
-                  "/template/groom_bride/Frame-Photo 1.png",
-                  "/template/groom_bride/Frame-Photo 2.png",
-                ].map((src, index) => (
-                  <motion.div
-                    key={index}
-                    variants={scaleInVariant}
-                    whileHover={{
-                      scale: 1.05,
-                      rotate: index % 2 === 0 ? -1 : 1,
-                      transition: { duration: 0.3 },
-                    }}
-                    whileTap={{ scale: 0.95 }}
-                  >
-                    <Image
-                      src={src}
-                      alt={`Gallery image ${index + 1}`}
-                      width={280}
-                      height={200}
-                      className="rounded-lg "
-                    />
-                  </motion.div>
-                ))}
+                {(config?.gallery_photos || []).map(
+                  (src: string, index: number) => (
+                    <motion.div
+                      key={index}
+                      variants={scaleInVariant}
+                      whileHover={{
+                        scale: 1.05,
+                        rotate: index % 2 === 0 ? -1 : 1,
+                        transition: { duration: 0.3 },
+                      }}
+                      whileTap={{ scale: 0.95 }}
+                    >
+                      <Image
+                        src={src}
+                        alt={`Gallery image ${index + 1}`}
+                        width={280}
+                        height={200}
+                        className="rounded-lg "
+                      />
+                    </motion.div>
+                  )
+                )}
               </motion.div>
             </motion.div>
 
@@ -682,7 +677,7 @@ export default function SpecialTemplate({
               transition={{ duration: 0.8 }}
             >
               <Image
-                src="/template/contents/txt5.png"
+                src={config?.messages_header_image}
                 alt="image"
                 width={600}
                 height={200}
@@ -783,56 +778,58 @@ export default function SpecialTemplate({
                   </div>
                 </motion.form>
               )}
-
-              <motion.div
-                className="p-5 w-full flex flex-col gap-2"
-                variants={staggerContainer}
-              >
-                {guests &&
-                  guests.map((guest, key) => (
-                    <motion.div
-                      key={key}
-                      className="bg-[#A5AE79]/30 p-5 rounded-lg hover:bg-[#A5AE79]/40"
-                      variants={slideInLeftVariant}
-                      whileHover={{
-                        scale: 1.02,
-                        y: -5,
-                        transition: { duration: 0.2 },
-                      }}
-                      whileTap={{ scale: 0.98 }}
-                    >
-                      <div className="text-[#A5AE79] text-lg">
-                        {guest?.name}
-                      </div>
-                      <div className="border-b-2 border-[#A5AE79]/80"></div>
-                      <div className="text-center text-[#A5AE79] pt-5 text-lg">
-                        "{guest?.wishing_note}"
-                      </div>
-                      <div className="text-center text-[#A5AE79] pt-5 text-xs">
-                        {formatDateCustom(
-                          guest?.sentAt ?? "",
-                          "DD-MM-YYYY | HH:mmA"
-                        )}
-                      </div>
-                    </motion.div>
-                  ))}
-              </motion.div>
-
-              <motion.div
-                className="py-2"
-                initial={{ opacity: 0, scale: 0.8 }}
-                whileInView={{ opacity: 1, scale: 1 }}
-                viewport={{ once: false }}
-                transition={{ duration: 0.6 }}
-                whileHover={{ scale: 1.1 }}
-              >
-                <Image
-                  src="/template/arts/underbar kbach 1.png"
-                  alt=""
-                  width={200}
-                  height={150}
-                />
-              </motion.div>
+              <ScrollArea className="h-[800px] rounded-md  ">
+                <motion.div
+                  className="p-5 w-full flex flex-col gap-2"
+                  variants={staggerContainer}
+                >
+                  {guests &&
+                    guests.map((guest, key) => (
+                      <motion.div
+                        key={key}
+                        className="bg-[#A5AE79]/30 p-5 rounded-lg hover:bg-[#A5AE79]/40"
+                        variants={slideInLeftVariant}
+                        whileHover={{
+                          scale: 1.02,
+                          y: -5,
+                          transition: { duration: 0.2 },
+                        }}
+                        whileTap={{ scale: 0.98 }}
+                      >
+                        <div className="text-[#A5AE79] text-lg">
+                          {guest?.name}
+                        </div>
+                        <div className="border-b-2 border-[#A5AE79]/80"></div>
+                        <div className="text-center text-[#A5AE79] pt-5 text-lg">
+                          "{guest?.wishing_note}"
+                        </div>
+                        <div className="text-center text-[#A5AE79] pt-5 text-xs">
+                          {formatDateCustom(
+                            guest?.sentAt ?? "",
+                            "DD-MM-YYYY | HH:mmA"
+                          )}
+                        </div>
+                      </motion.div>
+                    ))}
+                </motion.div>
+                <ScrollBar orientation="vertical" />
+              </ScrollArea>
+            </motion.div>
+            <Footer />
+            <motion.div
+              className="py-2"
+              initial={{ opacity: 0, scale: 0.8 }}
+              whileInView={{ opacity: 1, scale: 1 }}
+              viewport={{ once: false }}
+              transition={{ duration: 0.6 }}
+              whileHover={{ scale: 1.1 }}
+            >
+              <Image
+                src="/template/arts/underbar kbach 1.png"
+                alt=""
+                width={200}
+                height={150}
+              />
             </motion.div>
           </div>
         </div>
