@@ -54,7 +54,7 @@ export default function TemplateClientPage() {
   }, [page, pageSize, search, sort, order]);
 
   return (
-    <div className="h-full flex-1 flex-col gap-2">
+    <div className="h-full flex-1 flex-col gap-2 p-2">
       <h1 className="text-xl font-bold mb-4">
         {isClient && i18n.isInitialized
           ? t("template.title")

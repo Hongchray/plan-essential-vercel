@@ -27,7 +27,7 @@ export default function EventTableClient({ data, meta }: Props) {
   }, []);
 
   return (
-    <div className="space-y-4">
+    <div className="space-y-4 p-2">
       {isClient && i18n.isInitialized ? (
         <h1 className="text-xl font-bold">{t("EventPage.title")}</h1>
       ) : (

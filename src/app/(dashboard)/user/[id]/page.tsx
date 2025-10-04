@@ -747,56 +747,63 @@ export default function UserPage() {
                         key={event.id}
                         className="border rounded-lg p-4 bg-card hover:bg-accent/5 transition-colors"
                       >
-                        <div className="flex items-start gap-4">
+                        <div className="flex flex-col sm:flex-row gap-4">
+                          {/* Event Image */}
                           <img
                             src={
                               event.image ||
                               "/placeholder.svg?height=60&width=60"
                             }
                             alt={event.name}
-                            className="w-15 h-15 rounded-lg object-cover border"
+                            className="w-full sm:w-20 h-20 rounded-lg object-cover border flex-shrink-0"
                           />
-                          <div className="flex-1 min-w-0">
-                            <div className="flex items-start justify-between">
-                              <div className="flex-1">
-                                <h4 className="font-semibold text-base mb-1">
-                                  {event.name}
-                                </h4>
-                                <div className="flex items-center gap-4 text-sm text-muted-foreground mb-2">
+
+                          {/* Event Details */}
+                          <div className="flex-1 min-w-0 flex flex-col sm:flex-row justify-between">
+                            <div className="flex-1">
+                              <h4 className="font-semibold text-base mb-1 truncate">
+                                {event.name}
+                              </h4>
+                              <div className="flex flex-wrap items-center gap-2 text-sm text-muted-foreground mb-2">
+                                {event.type && (
                                   <span className="capitalize">
                                     {event.type}
                                   </span>
-                                  <span className="flex items-center gap-1">
-                                    <Calendar className="h-3 w-3" />
-                                    {new Date(
-                                      event.startTime
-                                    ).toLocaleDateString()}
-                                  </span>
-                                  <span className="flex items-center gap-1">
-                                    <MapPin className="h-3 w-3" />
-                                    {event.location}
-                                  </span>
-                                </div>
+                                )}
+                                <span className="flex items-center gap-1">
+                                  <Calendar className="h-3 w-3" />
+                                  {new Date(
+                                    event.startTime
+                                  ).toLocaleDateString()}
+                                </span>
+                                <span className="flex items-center gap-1">
+                                  <MapPin className="h-3 w-3" />
+                                  {event.location}
+                                </span>
+                              </div>
+                              {event.description && (
                                 <p className="text-sm text-muted-foreground line-clamp-2 mb-3">
                                   {event.description}
                                 </p>
-                              </div>
-                              <div className="flex items-center gap-2 ml-4">
-                                <Badge
-                                  variant={
-                                    event.status === "active"
-                                      ? "default"
-                                      : "secondary"
-                                  }
-                                >
-                                  {event.status}
-                                </Badge>
-                                <Link href={`/event/edit/${event.id}`}>
-                                  <Button size="sm" variant="outline">
-                                    {t("user.detail.viewEvent")}
-                                  </Button>
-                                </Link>
-                              </div>
+                              )}
+                            </div>
+
+                            {/* Badge + Button */}
+                            <div className="flex flex-col sm:flex-row items-start sm:items-end gap-2 mt-2 sm:mt-0">
+                              <Badge
+                                variant={
+                                  event.status === "active"
+                                    ? "default"
+                                    : "secondary"
+                                }
+                              >
+                                {event.status}
+                              </Badge>
+                              <Link href={`/event/edit/${event.id}`}>
+                                <Button size="sm" variant="outline">
+                                  {t("user.detail.viewEvent")}
+                                </Button>
+                              </Link>
                             </div>
                           </div>
                         </div>
@@ -807,7 +814,6 @@ export default function UserPage() {
                   <div className="text-center py-12">
                     <Calendar className="h-12 w-12 mx-auto text-muted-foreground mb-4" />
                     <h3 className="text-lg font-semibold mb-2">
-                      {" "}
                       {t("user.detail.noEvents")}
                     </h3>
                     <p className="text-muted-foreground">

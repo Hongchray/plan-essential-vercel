@@ -48,7 +48,7 @@ export default function UserClientPage() {
   }, [page, per_page, search, sort, order]);
 
   return (
-    <div className="space-y-4">
+    <div className="space-y-4 p-2">
       {isClient && i18n.isInitialized ? (
         <h1 className="text-xl font-bold">{t("user.title")}</h1>
       ) : (

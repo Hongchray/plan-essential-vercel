@@ -83,8 +83,9 @@ export function NavUser() {
               className="p-0 font-normal cursor-pointer hover:bg-gray-100"
               onClick={() => router.push("/profile")}
             >
-              <div className="flex flex-col sm:flex-row items-start sm:items-center gap-1 sm:gap-2 px-1 py-1.5 sm:px-2 sm:py-2 text-left text-xs sm:text-sm">
-                <Avatar className="h-6 w-6 sm:h-8 sm:w-8 rounded-lg">
+              <div className="flex items-center gap-2 px-1 py-1.5 text-left text-xs sm:text-sm">
+                {/* Avatar */}
+                <Avatar className="h-6 w-6 sm:h-8 sm:w-8 rounded-lg flex-shrink-0">
                   <AvatarImage
                     src={user.photoUrl ?? undefined}
                     alt={user.name ?? undefined}
@@ -93,14 +94,21 @@ export function NavUser() {
                     {user.name ? user.name.charAt(0).toUpperCase() : "?"}
                   </AvatarFallback>
                 </Avatar>
-                <div className="grid flex-1 text-left text-xs sm:text-sm leading-tight sm:leading-tight">
-                  <span className="font-medium">{user.name}</span>
-                  <span className="truncate">{user.phone}</span>
-                  {user.role && <span className="capitalize">{user.role}</span>}
-                  {user.telegramId && <span>{user.telegramId}</span>}
+
+                {/* User Info */}
+                <div className="flex-1 min-w-0 grid text-left leading-tight sm:leading-tight gap-0.5">
+                  <span className="font-medium truncate">{user.name}</span>
+                  {user.phone && (
+                    <span className="truncate text-gray-500">{user.phone}</span>
+                  )}
+                  {/* {user.role && <span className="capitalize">{user.role}</span>} */}
+                  {user.telegramId && (
+                    <span className="truncate">{user.telegramId}</span>
+                  )}
                 </div>
               </div>
             </DropdownMenuLabel>
+
             {/* <DropdownMenuSeparator /> */}
 
             {/* <DropdownMenuGroup>

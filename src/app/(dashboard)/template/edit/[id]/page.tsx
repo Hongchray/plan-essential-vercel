@@ -9,7 +9,7 @@ export default async function CreateTemplate({
   const { id } = await params;
 
   return (
-    <div className="p-5">
+    <div className="p-2">
       <CreateEditForm id={id} />
     </div>
   );
