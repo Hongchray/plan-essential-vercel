@@ -200,6 +200,7 @@
     "error_not_found": "OTP not found",
     "error_expired": "OTP expired",
     "error_incorrect": "Invalid OTP",
+
     "forgot_password_title": "Forgot Password",
     "forgot_password_description": "Enter your phone number to receive a verification code.",
     "phone_label": "Phone Number",

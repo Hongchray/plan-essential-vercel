@@ -111,22 +111,33 @@ export default function TabAddTemplate() {
   };
 
   return (
-    <div>
-      <div>
-        <h3 className="text-lg font-semibold mb-4 flex items-center gap-2">
-          {t("add_template.title")}
-          <span className="text-sm text-gray-500">
+    <div className="p-2">
+      <div className="mb-4">
+        <h3 className="text-lg font-semibold flex flex-wrap items-center gap-2">
+          {/* Title: truncate on small screens */}
+          <span className="truncate max-w-[150px] sm:max-w-[300px]">
+            {t("add_template.title")}
+          </span>
+
+          {/* Count */}
+          <span className="text-sm text-gray-500 flex-shrink-0">
             {totalTemplate}/{limitTemplate}
           </span>
-          {totalTemplate >= limitTemplate &&
+
+          {/* Limit badge: wrap on small screens */}
+          {/* {totalTemplate >= limitTemplate &&
             session?.user?.role !== "admin" && (
-              <Badge variant="destructive" className="text-xs">
+              <Badge
+                variant="destructive"
+                className="text-xs flex-shrink-0 break-words max-w-[100px] sm:max-w-[150px]"
+              >
                 {t("add_template.limit_reached")}
               </Badge>
-            )}
+            )} */}
         </h3>
       </div>
-      <div className="grid grid-cols-1 lg:grid-cols-3 xl:grid-cols-4 2xl:grid-cols-6 gap-4 xl:gap-6 p-6">
+
+      <div className="grid grid-cols-1 lg:grid-cols-3 xl:grid-cols-4 2xl:grid-cols-6 gap-4 xl:gap-6">
         {templates.map((tpl) => (
           <div
             key={tpl.id}

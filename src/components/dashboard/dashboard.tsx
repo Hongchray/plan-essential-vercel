@@ -36,12 +36,15 @@ import {
   DollarSign,
   Calendar,
   PartyPopper,
+  EyeIcon,
 } from "lucide-react";
 import { useEffect, useState } from "react";
 import { Loading } from "../composable/loading/loading";
 import { useTranslation } from "react-i18next";
 import { formatDate } from "@/utils/date";
 import { formatCurrency } from "@/utils/currency";
+import { useRouter } from "next/navigation";
+import { Button } from "../ui/button";
 interface MonthlyData {
   month: string;
   users: number;
@@ -65,6 +68,7 @@ export default function DashboardPage() {
   const [loadingEvents, setLoadingEvents] = useState(true);
   const { t } = useTranslation("common");
   const [mounted, setMounted] = useState(false);
+  const router = useRouter();
 
   // Mount check
   useEffect(() => setMounted(true), []);
@@ -105,7 +109,7 @@ export default function DashboardPage() {
 
   return (
     <div className="w-full space-y-6">
-      <div className="grid gap-4 sm:gap-6 md:grid-cols-3 ">
+      <div className="grid gap-4 sm:gap-6 md:grid-cols-3 b ">
         <Card className="relative overflow-hidden flex flex-col gap-3">
           <CardHeader className="flex flex-row items-center justify-between">
             <CardTitle className="text-sm font-medium text-muted-foreground">
@@ -324,52 +328,92 @@ export default function DashboardPage() {
             </div>
           ) : (
             <div className="rounded-md border">
-              {/* Debug: show eventList */}
-              <pre className="p-2 text-xs text-muted-foreground"></pre>
-
-              <Table>
-                <TableHeader>
-                  <TableRow className="bg-muted/50">
-                    <TableHead className="font-semibold">
-                      {t("dashboard.eventName")}
-                    </TableHead>
-                    <TableHead className="font-semibold">
-                      {t("dashboard.userName")}
-                    </TableHead>
-                    <TableHead className="font-semibold">
-                      {t("dashboard.eventDate")}
-                    </TableHead>
-                    <TableHead className="text-right font-semibold">
-                      {t("dashboard.eventLocation")}
-                    </TableHead>
-                  </TableRow>
-                </TableHeader>
-                <TableBody>
-                  {eventList.map((event) => (
-                    <TableRow
-                      key={event.id}
-                      className="hover:bg-muted/50 transition-colors"
-                    >
-                      <TableCell className="font-medium">
-                        <div className="flex items-center gap-2">
-                          <div className="h-2 w-2 rounded-full bg-blue-500"></div>
-                          {event.name}
-                        </div>
-                      </TableCell>
-                      <TableCell>{event.user}</TableCell>
-                      <TableCell>
-                        <div className="flex items-center gap-2">
-                          <Calendar className="h-4 w-4 text-muted-foreground" />
-                          {formatDate(event.date)}
-                        </div>
-                      </TableCell>
-                      <TableCell className="text-right">
-                        {event.location}
-                      </TableCell>
+              {/* Desktop Table */}
+              <div className="hidden md:block">
+                <Table>
+                  <TableHeader>
+                    <TableRow className="bg-muted/50">
+                      <TableHead className="font-semibold">
+                        {t("dashboard.eventName")}
+                      </TableHead>
+                      <TableHead className="font-semibold">
+                        {t("dashboard.userName")}
+                      </TableHead>
+                      <TableHead className="font-semibold">
+                        {t("dashboard.eventDate")}
+                      </TableHead>
+                      <TableHead className="text-right font-semibold">
+                        {t("dashboard.eventLocation")}
+                      </TableHead>
                     </TableRow>
-                  ))}
-                </TableBody>
-              </Table>
+                  </TableHeader>
+                  <TableBody>
+                    {eventList.map((event) => (
+                      <TableRow
+                        key={event.id}
+                        className="hover:bg-muted/50 transition-colors"
+                      >
+                        <TableCell className="font-medium">
+                          <div className="flex items-center gap-2">
+                            <div className="h-2 w-2 rounded-full bg-blue-500"></div>
+                            {event.name}
+                          </div>
+                        </TableCell>
+                        <TableCell>{event.user}</TableCell>
+                        <TableCell>
+                          <div className="flex items-center gap-2">
+                            <Calendar className="h-4 w-4 text-muted-foreground" />
+                            {formatDate(event.date)}
+                          </div>
+                        </TableCell>
+                        <TableCell className="text-right">
+                          {event.location}
+                        </TableCell>
+                        <TableCell className="text-right">
+                          <Button
+                            className="p-1 rounded bg-transparent hover:bg-gray-200"
+                            onClick={() => router.push(`/event/${event.id}`)}
+                            aria-label="View Event"
+                          >
+                            <EyeIcon className="h-4 w-4 text-blue-500" />
+                          </Button>
+                        </TableCell>
+                      </TableRow>
+                    ))}
+                  </TableBody>
+                </Table>
+              </div>
+
+              {/* Mobile Card View */}
+              <div className="md:hidden space-y-3">
+                {eventList.map((event) => (
+                  <div
+                    key={event.id}
+                    className="border rounded-md p-3 bg-white shadow-sm flex flex-col"
+                  >
+                    {/* Event Name */}
+                    <div className="flex items-center justify-between mb-1">
+                      <span className="font-medium">{event.name}</span>
+                    </div>
+
+                    {/* Event Date */}
+                    <div className="flex items-center gap-2 text-sm text-gray-600 mb-2">
+                      <Calendar className="h-4 w-4 text-muted-foreground" />
+                      {formatDate(event.date)}
+                    </div>
+
+                    {/* View Event Button */}
+                    <div className="mt-auto flex justify-end">
+                      <Button
+                        className="px-3 py-1 text-xs font-medium text-white "
+                        onClick={() => router.push(`/event/${event.id}`)}
+                      >
+                        <EyeIcon />
+                      </Button>
+                    </div>
+                  </div>
+                ))}
+              </div>
             </div>
           )}
         </CardContent>

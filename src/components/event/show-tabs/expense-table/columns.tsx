@@ -14,6 +14,7 @@ import { useTranslation } from "react-i18next";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Badge } from "@/components/ui/badge";
 import { getAvatarColor, getInitials } from "@/utils/avatar";
+import { Progress } from "@/components/ui/progress";
 
 const ActionsCell = ({ row }: { row: any }) => {
   const router = useRouter();
@@ -62,38 +63,39 @@ export const MobileExpenseCard = ({
   isSelected: boolean;
 }) => {
   const { t } = useTranslation("common");
+
+  const budget = expense.budget_amount ?? 0;
+  const actual = expense.actual_amount ?? 0;
+
+  const progress = budget > 0 ? Math.min((actual / budget) * 100, 100) : 0;
+
   return (
-    <div className="bg-white border-t border-gray-200 p-2 ">
-      <div className="flex items-start gap-3">
-        {/* Avatar */}
-
-        {/* Guest & Gift info */}
-        <div className="flex-1 min-w-0">
-          <div className="mb-1">
-            <h3 className="text-[13px] font-semibold text-gray-900 break-words">
-              {expense.name}
-            </h3>
-            <p className="text-[11px] text-gray-500">{expense.actual_amount}</p>
-          </div>
-
-          <div className="flex flex-wrap items-center gap-2 text-[11px] text-gray-600">
-            <Badge variant="default" className="text-[10px]">
-              {expense.name}
-            </Badge>
-            <Badge variant="outline" className="text-[10px]">
-              {expense.budget_amount} {expense.budget_amount}
-            </Badge>
-            {expense.budget_amount && (
-              <span className="italic text-gray-500">
-                “{expense.budget_amount}”
-              </span>
-            )}
+    <div className="bg-white border-t border-gray-200 p-3 flex items-center gap-4">
+      {/* Left side: Info */}
+      <div className="flex-1 min-w-0">
+        <h3 className="font-semibold text-gray-900 break-words">
+          {expense.name}
+        </h3>
+        {/* Progress bar */}
+        <div className="mt-2">
+          <Progress value={progress} className="h-2" />
+          <div className="flex justify-between text-[11px] text-gray-600 mt-1">
+            <span>
+              {t("expense.table.actual_amount")}
+              <br />
+              {currencyFormatters.usd(actual)}
+            </span>
+            <span>
+              {t("expense.table.budget_amount")}
+              <br />
+              {currencyFormatters.usd(budget)}
+            </span>
           </div>
         </div>
       </div>
 
-      {/* Actions */}
-      <div className="flex justify-end mt-2">
+      {/* Right side: Actions */}
+      <div className="flex-shrink-0 flex items-start">
         <ActionsCell row={{ original: expense }} />
       </div>
     </div>

@@ -216,7 +216,7 @@ export function CreateEditForm({ id }: { id: string }) {
         </Button>
       )}
       <Dialog open={dialogOpen} onOpenChange={setDialogOpen} modal>
-        <DialogContent className="sm:max-w-4xl max-h-[90vh] overflow-y-auto p-4">
+        <DialogContent className="max-w-sm sm:max-w-4xl max-h-[80vh] sm:max-h-[90vh] overflow-y-auto p-4">
           <DialogHeader>
             <DialogTitle>
               {id ? t("expense.form.editTitle") : t("expense.form.addTitle")}

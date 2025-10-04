@@ -69,46 +69,61 @@ export const MobileGiftCard = ({
   const { bg, text } = getAvatarColor(name);
 
   return (
-    <div className="bg-white border-t border-gray-200 p-2 ">
-      <div className="flex items-start gap-3">
-        {/* Avatar */}
-        <Avatar className="h-8 w-8 flex-shrink-0">
-          {gift.guest?.image ? (
-            <AvatarImage src={gift.guest.image} alt={name} />
-          ) : (
-            <AvatarImage src="/placeholder.svg" />
-          )}
-          <AvatarFallback className={`${bg} ${text} font-bold text-[12px]`}>
-            {getInitials(name)}
-          </AvatarFallback>
-        </Avatar>
-
-        {/* Guest & Gift info */}
-        <div className="flex-1 min-w-0">
-          <div className="mb-1">
-            <h3 className="text-[13px] font-semibold text-gray-900 break-words">
-              {name}
-            </h3>
-            <p className="text-[11px] text-gray-500">{gift.guest?.phone}</p>
-          </div>
-
-          <div className="flex flex-wrap items-center gap-2 text-[11px] text-gray-600">
-            <Badge variant="default" className="text-[10px]">
-              {gift.payment_type}
-            </Badge>
-            <Badge variant="outline" className="text-[10px]">
-              {gift.currency_type} {gift.amount_usd}
-            </Badge>
-            {gift.note && (
-              <span className="italic text-gray-500">“{gift.note}”</span>
+    <div className="bg-white border-t border-gray-200 p-2">
+      <div className="flex items-center justify-between gap-3">
+        {/* Avatar + Guest & Gift info */}
+        <div className="flex items-start gap-3 flex-1 min-w-0">
+          {/* Avatar */}
+          <Avatar className="h-8 w-8 flex-shrink-0">
+            {gift.guest?.image ? (
+              <AvatarImage src={gift.guest.image} alt={name} />
+            ) : (
+              <AvatarImage src="/placeholder.svg" />
             )}
+            <AvatarFallback className={`${bg} ${text} font-bold text-[12px]`}>
+              {getInitials(name)}
+            </AvatarFallback>
+          </Avatar>
+
+          {/* Guest & Gift info */}
+          <div className="flex-1 min-w-0">
+            <div className="mb-1">
+              <h3 className="text-[13px] font-semibold text-gray-900 break-words">
+                {name}
+              </h3>
+              <p className="text-[11px] text-gray-500">{gift.guest?.phone}</p>
+            </div>
+
+            <div className="flex flex-wrap items-center gap-2 text-[11px] text-gray-600">
+              <Badge variant="default" className="text-[10px]">
+                {gift.payment_type}
+              </Badge>
+
+              <div className="flex gap-1">
+                {gift.amount_usd ? (
+                  <Badge variant="outline" className="text-[10px]">
+                    USD {gift.amount_usd}
+                  </Badge>
+                ) : null}
+
+                {gift.amount_khr ? (
+                  <Badge variant="outline" className="text-[10px]">
+                    KHR {gift.amount_khr}
+                  </Badge>
+                ) : null}
+              </div>
+
+              {gift.note && (
+                <span className="italic text-gray-500">“{gift.note}”</span>
+              )}
+            </div>
           </div>
         </div>
-      </div>
 
-      {/* Actions */}
-      <div className="flex justify-end mt-2">
-        <ActionsCell row={{ original: gift }} />
+        {/* Actions button on the same row */}
+        <div className="flex-shrink-0">
+          <ActionsCell row={{ original: gift }} />
+        </div>
       </div>
     </div>
   );

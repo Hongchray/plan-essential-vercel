@@ -83,7 +83,7 @@ export default function ProfilePage() {
     return <p className="p-6 text-gray-600">{t("profile.noProfile")}</p>;
 
   return (
-    <div className="p-6 max-w-6xl mx-auto space-y-6">
+    <div className="p-2 max-w-6xl mx-auto space-y-6">
       {/* Profile Header */}
       <Card className="relative flex flex-col md:flex-row items-center md:items-start space-y-4 md:space-y-0 md:space-x-6 p-6 bg-white shadow-lg rounded-xl border border-gray-200 hover:shadow-xl transition-transform duration-200">
         {/* Edit Button */}

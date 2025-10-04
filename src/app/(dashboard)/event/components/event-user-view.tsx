@@ -17,7 +17,7 @@ export default function EventUserView({ data }: { data: any[] }) {
   if (!mounted) return null; // prevent SSR mismatch
 
   return (
-    <div>
+    <div className="p-2">
       <div className="flex justify-between items-center mb-4">
         <div>
           <h1 className="text-xl font-bold text-rose-700">
