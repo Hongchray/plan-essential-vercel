@@ -113,8 +113,12 @@ export default function TabTemplate({ paramId }: { paramId: string }) {
     getPreviewTemplate(paramId).then((data) => {
       if (data) {
         setEventTemplate(data);
-        setTemplate(data[0]);
-        setConfig(data[0].config);
+        // Find the template that was just set as default
+        const updatedTemplate = data.find((t: any) => t.isDefault === true);
+        if (updatedTemplate) {
+          setTemplate(updatedTemplate);
+          setConfig(updatedTemplate.config);
+        }
       }
       setIsLoading(false);
     });
@@ -403,19 +407,25 @@ export default function TabTemplate({ paramId }: { paramId: string }) {
           <SelectContent>
             {eventTemplate.map((item) => (
               <SelectItem key={item.id} value={item.id}>
-                {item.template.name}
+                <div className="flex items-center justify-between w-full">
+                  <span>{item.template.name}</span>
+                </div>
               </SelectItem>
             ))}
           </SelectContent>
         </Select>
-        <Button onClick={setDefaultTemplate}>
+        <Button
+          onClick={setDefaultTemplate}
+          disabled={template.isDefault}
+          variant={template.isDefault ? "secondary" : "default"}
+        >
           {template.isDefault ? (
             <>
-              <Check /> <div>បានប្រើ</div>
+              <Check className="h-4 w-4 mr-1" /> <div>កំពុងប្រើ</div>
             </>
           ) : (
             <>
-              <Cog /> <div>ដាក់ប្រើ</div>
+              <Cog className="h-4 w-4 mr-1" /> <div>ដាក់ប្រើ</div>
             </>
           )}
         </Button>

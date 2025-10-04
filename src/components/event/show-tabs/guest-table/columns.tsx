@@ -92,10 +92,9 @@ const ActionsCell = ({ row }: { row: any }) => {
 
   const [copied, setCopied] = useState(false);
 
-  // Safe window access for SSR
   const getInviteLink = () => {
     if (typeof window === "undefined") return "";
-    return `${window.location.origin}/preview/${row.original.event?.slug}?guest=${row.original.id}`;
+    return `${window.location.origin}/invitation/${row.original.event?.slug}?guest=${row.original.id}`;
   };
 
   const invLink = getInviteLink();

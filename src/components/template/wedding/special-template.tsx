@@ -12,7 +12,7 @@ import { GuestStatus } from "@/enums/guests";
 import { toast } from "sonner";
 import { Textarea } from "@/components/ui/textarea";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { motion } from "motion/react";
+import { motion, AnimatePresence } from "motion/react";
 import z from "zod";
 import {
   Select,
@@ -24,6 +24,8 @@ import {
 import { Input } from "@/components/ui/input";
 import ScrollNavigationBar from "../scroll-navigation-bar";
 import ScrollNavigationBarInPage from "../scroll-navigation-bar-in-page";
+import { Footer } from "../footer";
+import { ScrollArea, ScrollBar } from "@/components/ui/scroll-area";
 
 export default function SpecialTemplate({
   config,
@@ -57,8 +59,20 @@ export default function SpecialTemplate({
         "welcome-music"
       ) as HTMLAudioElement;
       if (music) {
-        music.play().catch((err) => console.log("Audio play failed:", err));
-        setMusicStarted(true);
+        // iOS requires user gesture, retry with delay
+        const playAudio = async () => {
+          try {
+            await music.play();
+            setMusicStarted(true);
+          } catch (err) {
+            console.log("Audio play failed, retrying...", err);
+            // Retry after user has interacted
+            setTimeout(() => {
+              music.play().catch((e) => console.log("Audio retry failed:", e));
+            }, 500);
+          }
+        };
+        playAudio();
       }
     }
   }, [isOpen, musicStarted]);
@@ -75,6 +89,20 @@ export default function SpecialTemplate({
       }
     };
   }, [handleWelcomeClose]);
+
+  useEffect(() => {
+    // Preload critical assets
+    if (config?.background_music) {
+      const audio = new Audio(config.background_music);
+      audio.preload = "auto";
+    }
+
+    if (config?.welcome_background_video) {
+      const video = document.createElement("video");
+      video.preload = "metadata";
+      video.src = config.welcome_background_video;
+    }
+  }, [config]);
 
   const [timeLeft, setTimeLeft] = useState({
     days: 0,
@@ -110,6 +138,26 @@ export default function SpecialTemplate({
 
     return () => clearInterval(timer);
   }, []);
+  const [isMediaLoading, setIsMediaLoading] = useState(true);
+
+  useEffect(() => {
+    // Check if critical media is loaded
+    const checkMediaLoaded = () => {
+      const video = document.querySelector("video");
+      const images = document.querySelectorAll("img");
+
+      if (
+        video &&
+        video.readyState >= 3 &&
+        Array.from(images).every((img) => img.complete)
+      ) {
+        setIsMediaLoading(false);
+      }
+    };
+
+    const timer = setTimeout(checkMediaLoaded, 1000);
+    return () => clearTimeout(timer);
+  }, [config]);
 
   const getGuest = async (guestId: string, eventId: string) => {
     try {
@@ -228,8 +276,17 @@ export default function SpecialTemplate({
   return (
     <div className="relative min-h-screen max-w-xl mx-auto">
       {/* Background music */}
-      {isOpen && (
-        <audio id="welcome-music" loop src="/template/audios/music1.mp3" />
+      {isOpen && config?.background_music && (
+        <audio
+          id="welcome-music"
+          loop
+          preload="auto"
+          playsInline
+          crossOrigin="anonymous"
+        >
+          <source src={config.background_music} type="audio/mpeg" />
+          <source src={config.background_music} type="audio/mp3" />
+        </audio>
       )}
 
       {/* Front envelope */}
@@ -241,9 +298,14 @@ export default function SpecialTemplate({
             loop
             muted
             playsInline
+            preload="metadata"
             className="absolute top-0 left-0 w-full h-full object-cover"
           >
-            <source src="/template/videos/background1.webm" type="video/webm" />
+            <source src={config?.welcome_background_video} type="video/webm" />
+            <source
+              src={config?.welcome_background_video?.replace(".webm", ".mp4")}
+              type="video/mp4"
+            />
           </video>
 
           {/* Overlay content */}
@@ -259,16 +321,18 @@ export default function SpecialTemplate({
                 transition={{ duration: 0.8, ease: "easeOut" }}
               >
                 <Image
-                  src="/template/arts/tgt.png"
+                  src={config?.welcome_logo}
                   alt="logo"
                   width={200}
                   height={200}
                   className="drop-shadow-2xl"
+                  priority
+                  loading="eager"
                 />
               </motion.div>
 
               <motion.h1
-                className="text-3xl font-bold bg-gradient-to-r from-yellow-400 via-yellow-300 to-yellow-600 bg-clip-text text-transparent p-2"
+                className="text-3xl bg-gradient-to-r from-yellow-400 via-yellow-300 to-yellow-600 bg-clip-text text-transparent p-2"
                 style={{ fontFamily: "moul" }}
                 variants={fadeUpVariant}
                 transition={{ duration: 0.8, delay: 0.2, ease: "easeOut" }}
@@ -277,7 +341,7 @@ export default function SpecialTemplate({
               </motion.h1>
 
               <motion.h2
-                className="text-xl font-bold bg-gradient-to-r from-yellow-400 via-yellow-300 to-yellow-600 bg-clip-text text-transparent p-1"
+                className="text-xl bg-gradient-to-r from-yellow-400 via-yellow-300 to-yellow-600 bg-clip-text text-transparent p-1"
                 style={{ fontFamily: "moul" }}
                 variants={fadeUpVariant}
                 transition={{ duration: 0.8, delay: 0.4, ease: "easeOut" }}
@@ -289,7 +353,7 @@ export default function SpecialTemplate({
                 className="mt-5 text-[16px] text-center min-w-[250px] md:min-w-[320px] min-h-[100px] max-h-[100px] max-w-[600px] truncate inline-flex items-center justify-center px-3"
                 style={{
                   fontFamily: "moul",
-                  backgroundImage: "url('/template/arts/bar-kbach.jpg')",
+                  backgroundImage: `url('${config?.name_bar}')`,
                   backgroundSize: "cover",
                   backgroundPosition: "center",
                   borderRadius: "8px",
@@ -307,23 +371,23 @@ export default function SpecialTemplate({
                     fontFamily: "moul",
                   }}
                 >
-                  លោក មករា និងភរិយា
+                  {guest?.name}
                 </span>
               </motion.div>
             </motion.div>
 
             <motion.div
-              className="text-[10px] text-center w-[200px] md:w-[280px] md:h-[50px] mb-8"
+              className="text-[10px] text-center w-[250px] md:w-[280px] md:h-[50px] mb-8"
               variants={fadeUpVariant}
               transition={{ duration: 0.8, delay: 0.8, ease: "easeOut" }}
             >
               <motion.button
                 onClick={() => setIsOpen(true)}
-                className="cursor-pointer transform md:text-[14px] text-center w-[200px] md:w-[280px] md:h-[50px] inline-block px-3 py-2"
+                className="cursor-pointer transform md:text-[14px] text-center w-[250px] md:w-[280px] h-[50px] md:h-[50px] inline-block px-3 py-2"
                 style={{
                   color: "white",
                   fontFamily: "moul",
-                  backgroundImage: "url('/template/arts/button-kbach.png')",
+                  backgroundImage: `url('${config?.button_background}')`,
                   backgroundSize: "cover",
                   backgroundPosition: "center",
                   borderRadius: "8px",
@@ -350,474 +414,506 @@ export default function SpecialTemplate({
           </div>
         </div>
       )}
-
-      {/* Welcome video */}
-      {isOpen && isWelcomeOpen && (
-        <div className="welcome-video h-screen">
-          <video
-            id="welcome-video"
-            autoPlay
-            playsInline
-            className="absolute top-0 left-0 w-full h-full object-cover"
+      <AnimatePresence mode="wait">
+        {/* Welcome video */}
+        {isOpen && isWelcomeOpen && (
+          <motion.div
+            key="welcome-video"
+            className="welcome-video h-screen"
+            initial={{ opacity: 1 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            transition={{ duration: 1 }}
           >
-            <source src="/template/videos/unboxing1.webm" type="video/webm" />
-          </video>
-        </div>
-      )}
-
-      {/* Main content */}
-      {isOpen && !isWelcomeOpen && (
-        <div className="front-evelop h-screen relative overflow-hidden">
-          <ScrollNavigationBarInPage />
-
-          {/* Background video */}
-          <div className="absolute top-0 left-0 w-full h-full">
             <video
+              id="welcome-video"
               autoPlay
-              loop
-              muted
               playsInline
-              className="w-full h-full object-cover"
+              muted={false}
+              preload="auto"
+              className="absolute top-0 left-0 w-full h-full object-cover"
             >
+              <source src={config?.unboxing_video} type="video/webm" />
               <source
-                src="/template/videos/background2.webm"
-                type="video/webm"
+                src={config?.unboxing_video?.replace(".webm", ".mp4")}
+                type="video/mp4"
               />
             </video>
-          </div>
+          </motion.div>
+        )}
 
-          {/* Scrollable content overlay */}
-          <div
-            id="scroll-container"
-            className="relative z-10 h-full overflow-y-auto overflow-x-hidden scrollbar-hide flex flex-col items-center"
-            style={{ scrollbarWidth: "none", msOverflowStyle: "none" }}
+        {/* Main content */}
+
+        {isOpen && !isWelcomeOpen && (
+          <motion.div
+            className="front-evelop h-screen relative overflow-hidden"
+            initial={{ opacity: 1 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            transition={{ duration: 1 }}
           >
-            <motion.div
-              id="main"
-              className="flex flex-col items-center w-full"
-              initial="initial"
-              whileInView="animate"
-              viewport={{ once: false, margin: "-50px" }}
-              variants={staggerContainer}
+            {/* Background video */}
+            <div className="absolute top-0 left-0 w-full h-full">
+              <video
+                autoPlay
+                loop
+                muted
+                playsInline
+                preload="metadata"
+                className="w-full h-full object-cover"
+              >
+                <source src={config?.main_background_video} type="video/webm" />
+                <source
+                  src={config?.main_background_video?.replace(".webm", ".mp4")}
+                  type="video/mp4"
+                />
+              </video>
+            </div>
+
+            {/* Scrollable content overlay */}
+            <div
+              id="scroll-container"
+              className="relative z-10 h-full overflow-y-auto overflow-x-hidden scrollbar-hide flex flex-col items-center"
+              style={{ scrollbarWidth: "none", msOverflowStyle: "none" }}
             >
-              {/* Groom and Bride Name */}
               <motion.div
-                className="flex flex-col items-center justify-center gap-4 mt-8"
-                variants={fadeUpVariant}
+                id="main"
+                className="flex flex-col items-center w-full"
+                initial="initial"
+                whileInView="animate"
+                viewport={{ once: false, margin: "-50px" }}
+                variants={staggerContainer}
+              >
+                {/* Groom and Bride Name */}
+                <motion.div
+                  className="flex flex-col items-center justify-center gap-4 mt-8"
+                  variants={fadeUpVariant}
+                  transition={{ duration: 0.8 }}
+                >
+                  <Image
+                    src={config?.names_banner}
+                    alt="image"
+                    width={600}
+                    height={200}
+                    priority={true}
+                  />
+                </motion.div>
+
+                <motion.div
+                  className="text-[10px] text-center w-[200px] md:w-[280px] md:h-[50px] mb-8"
+                  variants={fadeUpVariant}
+                  transition={{ duration: 0.8, delay: 0.2 }}
+                >
+                  <motion.button
+                    className="cursor-pointer transform md:text-[14px] text-center w-[200px] md:w-[280px] md:h-[50px] inline-block px-3 py-2"
+                    style={{
+                      color: "white",
+                      fontFamily: "moul",
+                      backgroundImage: `url('${config?.button_background}')`,
+                      backgroundSize: "cover",
+                      backgroundPosition: "center",
+                      borderRadius: "8px",
+                    }}
+                    whileHover={{ scale: 1.1 }}
+                    whileTap={{ scale: 0.95 }}
+                  >
+                    {currentLanguage === "kh"
+                      ? "ដាក់ក្នុងប្រតិទិន"
+                      : "Add to the calendar"}
+                  </motion.button>
+                </motion.div>
+              </motion.div>
+
+              {/* Invitation */}
+              <motion.div
+                id="invitation"
+                initial={{ opacity: 0, y: 60 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: false }}
+                transition={{ duration: 0.8, ease: "easeOut" }}
+              >
+                <Image
+                  src={config?.invitation_image}
+                  alt="image"
+                  width={600}
+                  height={200}
+                  loading="lazy"
+                />
+              </motion.div>
+
+              {/* Countdown Event */}
+              <motion.div
+                className="w-full max-w-2xl mx-auto"
+                initial={{ opacity: 0, scale: 0.9 }}
+                whileInView={{ opacity: 1, scale: 1 }}
+                viewport={{ once: false }}
+                transition={{ duration: 0.6, ease: "easeOut" }}
+              >
+                <div className="relative w-full">
+                  <motion.img
+                    src={config?.prewedding_photo}
+                    alt="Event countdown"
+                    className="w-full h-auto object-cover rounded"
+                    whileHover={{ scale: 1.02 }}
+                    transition={{ duration: 0.3 }}
+                  />
+                  {/* Countdown */}
+                  <div className="absolute inset-0 flex items-start justify-center bg-opacity-10 rounded">
+                    <div className="text-center text-white px-4 pt-8">
+                      <motion.h2
+                        className="text-2xl md:text-4xl font-bold mb-2 tracking-wide"
+                        initial={{ opacity: 0, y: 30 }}
+                        whileInView={{ opacity: 1, y: 0 }}
+                        viewport={{ once: false }}
+                        transition={{ duration: 0.6 }}
+                      >
+                        ចំនួនថ្ងៃរាប់ថយក្រោយ
+                      </motion.h2>
+                      <motion.h3
+                        className="text-lg md:text-xl font-semibold mb-6 text-white"
+                        initial={{ opacity: 0, y: 30 }}
+                        whileInView={{ opacity: 1, y: 0 }}
+                        viewport={{ once: false }}
+                        transition={{ duration: 0.6, delay: 0.1 }}
+                      >
+                        Event Countdown
+                      </motion.h3>
+
+                      {/* Countdown Timer */}
+                      <motion.div
+                        className="flex gap-4 md:gap-6 justify-center"
+                        variants={staggerContainer}
+                        initial="initial"
+                        whileInView="animate"
+                        viewport={{ once: false }}
+                      >
+                        {[
+                          { value: timeLeft.days, label: "ថ្ងៃ" },
+                          { value: timeLeft.hours, label: "ម៉ោង" },
+                          { value: timeLeft.minutes, label: "នាទី" },
+                          { value: timeLeft.seconds, label: "វិនាទី" },
+                        ].map((item, index) => (
+                          <motion.div
+                            key={index}
+                            className="flex flex-col items-center bg-[#A5AE79]/70 backdrop-blur-sm rounded-lg p-3 md:p-4 min-w-[70px] md:min-w-[90px]"
+                            variants={scaleInVariant}
+                            transition={{ duration: 0.5, delay: index * 0.1 }}
+                            whileHover={{ scale: 1.1, y: -5 }}
+                          >
+                            <span className="text-3xl md:text-3xl font-bold">
+                              {item.value}
+                            </span>
+                            <span
+                              className="text-xs md:text-sm uppercase mt-1"
+                              style={{ fontFamily: "moul" }}
+                            >
+                              {item.label}
+                            </span>
+                          </motion.div>
+                        ))}
+                      </motion.div>
+                    </div>
+                  </div>
+                </div>
+              </motion.div>
+
+              {/* Event Agenda */}
+              <motion.div
+                id="schedule"
+                className="py-5 w-full"
+                initial="initial"
+                whileInView="animate"
+                viewport={{ once: false }}
+                variants={staggerContainer}
+              >
+                <motion.h2
+                  className="text-2xl font-semibold text-center py-2"
+                  style={{ color: "#dfab24", fontFamily: "moul" }}
+                  variants={fadeUpVariant}
+                >
+                  {currentInvitation?.details_title ||
+                    (currentLanguage === "kh"
+                      ? "របៀបវារៈកម្មវិធី"
+                      : "EVENT AGENDA")}
+                </motion.h2>
+
+                <motion.div variants={slideInLeftVariant}>
+                  <Image
+                    src={config?.schedule_image_1}
+                    alt="image"
+                    width={600}
+                    height={200}
+                  />
+                </motion.div>
+
+                <motion.div variants={slideInRightVariant}>
+                  <Image
+                    src={config?.schedule_image_2}
+                    alt="image"
+                    width={600}
+                    height={200}
+                  />
+                </motion.div>
+              </motion.div>
+
+              {/* Location */}
+              <motion.div
+                id="location"
+                className="flex flex-col items-center w-full"
+                initial={{ opacity: 0, y: 60 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: false }}
+                transition={{ duration: 0.8 }}
+              >
+                <motion.h2
+                  className="text-2xl font-semibold text-center py-2"
+                  style={{ color: "#dfab24", fontFamily: "moul" }}
+                >
+                  {currentInvitation?.details_title ||
+                    (currentLanguage === "kh"
+                      ? "ទីតាំងប្រារព្ធកម្មវិធី"
+                      : "EVENT LOCATION")}
+                </motion.h2>
+
+                <motion.div
+                  whileHover={{ scale: 1.03 }}
+                  transition={{ duration: 0.3 }}
+                >
+                  <Image
+                    src={config?.location_image}
+                    alt="image"
+                    width={600}
+                    height={200}
+                  />
+                </motion.div>
+
+                <motion.div className="text-[10px] text-center w-[200px] md:w-[280px] md:h-[50px] mb-8">
+                  <motion.button
+                    onClick={() => window.open(config?.map_url, "_blank")}
+                    className="cursor-pointer transform md:text-[14px] text-center w-[200px] md:w-[280px] md:h-[50px] inline-block px-3 py-2"
+                    style={{
+                      color: "white",
+                      fontFamily: "moul",
+                      backgroundImage: `url('${config?.button_background}')`,
+                      backgroundSize: "cover",
+                      backgroundPosition: "center",
+                      borderRadius: "8px",
+                    }}
+                    whileHover={{ scale: 1.1 }}
+                    whileTap={{ scale: 0.95 }}
+                  >
+                    {currentLanguage === "kh"
+                      ? "បើកមើលក្នុង Google Map"
+                      : "Google Map"}
+                  </motion.button>
+                </motion.div>
+              </motion.div>
+
+              {/* Gallery */}
+              <motion.div
+                id="gallery"
+                className="w-full"
+                initial="initial"
+                whileInView="animate"
+                viewport={{ once: false }}
+              >
+                <motion.h2
+                  className="text-2xl font-semibold text-center py-2"
+                  style={{ color: "#dfab24", fontFamily: "moul" }}
+                  initial={{ opacity: 0, y: 30 }}
+                  whileInView={{ opacity: 1, y: 0 }}
+                  viewport={{ once: false }}
+                  transition={{ duration: 0.6 }}
+                >
+                  {currentInvitation?.details_title ||
+                    (currentLanguage === "kh" ? "វិចិត្រសាល" : "GALLERY")}
+                </motion.h2>
+
+                <motion.div
+                  className="grid grid-cols-2 gap-4 p-2"
+                  variants={staggerContainer}
+                >
+                  {(config?.gallery_photos || []).map(
+                    (src: string, index: number) => (
+                      <motion.div
+                        key={index}
+                        variants={scaleInVariant}
+                        whileHover={{
+                          scale: 1.05,
+                          rotate: index % 2 === 0 ? -1 : 1,
+                          transition: { duration: 0.3 },
+                        }}
+                        whileTap={{ scale: 0.95 }}
+                      >
+                        <Image
+                          src={src}
+                          alt={`Gallery image ${index + 1}`}
+                          width={280}
+                          height={200}
+                          className="rounded-lg"
+                          loading="lazy"
+                          quality={85}
+                          sizes="(max-width: 768px) 45vw, 280px"
+                        />
+                      </motion.div>
+                    )
+                  )}
+                </motion.div>
+              </motion.div>
+
+              {/* Messages Header */}
+              <motion.div
+                initial={{ opacity: 0, y: 50 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: false }}
                 transition={{ duration: 0.8 }}
               >
                 <Image
-                  src="/template/contents/txt0.png"
+                  src={config?.messages_header_image}
                   alt="image"
                   width={600}
                   height={200}
                 />
               </motion.div>
 
+              {/* Greeting Messages */}
               <motion.div
-                className="text-[10px] text-center w-[200px] md:w-[280px] md:h-[50px] mb-8"
-                variants={fadeUpVariant}
-                transition={{ duration: 0.8, delay: 0.2 }}
-              >
-                <motion.button
-                  className="cursor-pointer transform md:text-[14px] text-center w-[200px] md:w-[280px] md:h-[50px] inline-block px-3 py-2"
-                  style={{
-                    color: "white",
-                    fontFamily: "moul",
-                    backgroundImage: "url('/template/arts/button-kbach.png')",
-                    backgroundSize: "cover",
-                    backgroundPosition: "center",
-                    borderRadius: "8px",
-                  }}
-                  whileHover={{ scale: 1.1 }}
-                  whileTap={{ scale: 0.95 }}
-                >
-                  {currentLanguage === "kh"
-                    ? "ដាក់ក្នុងប្រតិទិន"
-                    : "Add to the calendar"}
-                </motion.button>
-              </motion.div>
-            </motion.div>
-
-            {/* Invitation */}
-            <motion.div
-              id="invitation"
-              initial={{ opacity: 0, y: 60 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: false }}
-              transition={{ duration: 0.8, ease: "easeOut" }}
-            >
-              <Image
-                src="/template/contents/txt01.png"
-                alt="image"
-                width={600}
-                height={200}
-              />
-            </motion.div>
-
-            {/* Countdown Event */}
-            <motion.div
-              className="w-full max-w-2xl mx-auto"
-              initial={{ opacity: 0, scale: 0.9 }}
-              whileInView={{ opacity: 1, scale: 1 }}
-              viewport={{ once: false }}
-              transition={{ duration: 0.6, ease: "easeOut" }}
-            >
-              <div className="relative w-full">
-                <motion.img
-                  src="/template/contents/pre-wedding.jpg"
-                  alt="Event countdown"
-                  className="w-full h-auto object-cover rounded"
-                  whileHover={{ scale: 1.02 }}
-                  transition={{ duration: 0.3 }}
-                />
-                {/* Countdown */}
-                <div className="absolute inset-0 flex items-start justify-center bg-opacity-10 rounded">
-                  <div className="text-center text-white px-4 pt-8">
-                    <motion.h2
-                      className="text-2xl md:text-4xl font-bold mb-2 tracking-wide"
-                      initial={{ opacity: 0, y: 30 }}
-                      whileInView={{ opacity: 1, y: 0 }}
-                      viewport={{ once: false }}
-                      transition={{ duration: 0.6 }}
-                    >
-                      ចំនួនថ្ងៃរាប់ថយក្រោយ
-                    </motion.h2>
-                    <motion.h3
-                      className="text-lg md:text-xl font-semibold mb-6 text-white"
-                      initial={{ opacity: 0, y: 30 }}
-                      whileInView={{ opacity: 1, y: 0 }}
-                      viewport={{ once: false }}
-                      transition={{ duration: 0.6, delay: 0.1 }}
-                    >
-                      Event Countdown
-                    </motion.h3>
-
-                    {/* Countdown Timer */}
-                    <motion.div
-                      className="flex gap-4 md:gap-6 justify-center"
-                      variants={staggerContainer}
-                      initial="initial"
-                      whileInView="animate"
-                      viewport={{ once: false }}
-                    >
-                      {[
-                        { value: timeLeft.days, label: "ថ្ងៃ" },
-                        { value: timeLeft.hours, label: "ម៉ោង" },
-                        { value: timeLeft.minutes, label: "នាទី" },
-                        { value: timeLeft.seconds, label: "វិនាទី" },
-                      ].map((item, index) => (
-                        <motion.div
-                          key={index}
-                          className="flex flex-col items-center bg-[#A5AE79]/70 backdrop-blur-sm rounded-lg p-3 md:p-4 min-w-[70px] md:min-w-[90px]"
-                          variants={scaleInVariant}
-                          transition={{ duration: 0.5, delay: index * 0.1 }}
-                          whileHover={{ scale: 1.1, y: -5 }}
-                        >
-                          <span className="text-3xl md:text-3xl font-bold">
-                            {item.value}
-                          </span>
-                          <span
-                            className="text-xs md:text-sm uppercase mt-1"
-                            style={{ fontFamily: "moul" }}
-                          >
-                            {item.label}
-                          </span>
-                        </motion.div>
-                      ))}
-                    </motion.div>
-                  </div>
-                </div>
-              </div>
-            </motion.div>
-
-            {/* Event Agenda */}
-            <motion.div
-              id="schedule"
-              className="py-5 w-full"
-              initial="initial"
-              whileInView="animate"
-              viewport={{ once: false }}
-              variants={staggerContainer}
-            >
-              <motion.h2
-                className="text-2xl font-semibold text-center py-2"
-                style={{ color: "#dfab24", fontFamily: "moul" }}
-                variants={fadeUpVariant}
-              >
-                {currentInvitation?.details_title ||
-                  (currentLanguage === "kh"
-                    ? "របៀបវារៈកម្មវិធី"
-                    : "EVENT AGENDA")}
-              </motion.h2>
-
-              <motion.div variants={slideInLeftVariant}>
-                <Image
-                  src="/template/contents/txt02.png"
-                  alt="image"
-                  width={600}
-                  height={200}
-                />
-              </motion.div>
-
-              <motion.div variants={slideInRightVariant}>
-                <Image
-                  src="/template/contents/txt02.1.png"
-                  alt="image"
-                  width={600}
-                  height={200}
-                />
-              </motion.div>
-            </motion.div>
-
-            {/* Location */}
-            <motion.div
-              id="location"
-              className="flex flex-col items-center w-full"
-              initial={{ opacity: 0, y: 60 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: false }}
-              transition={{ duration: 0.8 }}
-            >
-              <motion.h2
-                className="text-2xl font-semibold text-center py-2"
-                style={{ color: "#dfab24", fontFamily: "moul" }}
-              >
-                {currentInvitation?.details_title ||
-                  (currentLanguage === "kh"
-                    ? "ទីតាំងប្រារព្ធកម្មវិធី"
-                    : "EVENT LOCATION")}
-              </motion.h2>
-
-              <motion.div
-                whileHover={{ scale: 1.03 }}
-                transition={{ duration: 0.3 }}
-              >
-                <Image
-                  src="/template/contents/txt3.png"
-                  alt="image"
-                  width={600}
-                  height={200}
-                />
-              </motion.div>
-
-              <motion.div className="text-[10px] text-center w-[200px] md:w-[280px] md:h-[50px] mb-8">
-                <motion.button
-                  className="cursor-pointer transform md:text-[14px] text-center w-[200px] md:w-[280px] md:h-[50px] inline-block px-3 py-2"
-                  style={{
-                    color: "white",
-                    fontFamily: "moul",
-                    backgroundImage: "url('/template/arts/button-kbach.png')",
-                    backgroundSize: "cover",
-                    backgroundPosition: "center",
-                    borderRadius: "8px",
-                  }}
-                  whileHover={{ scale: 1.1 }}
-                  whileTap={{ scale: 0.95 }}
-                >
-                  {currentLanguage === "kh"
-                    ? "បើកមើលក្នុង Google Map"
-                    : "Google Map"}
-                </motion.button>
-              </motion.div>
-            </motion.div>
-
-            {/* Gallery */}
-            <motion.div
-              id="gallery"
-              className="w-full"
-              initial="initial"
-              whileInView="animate"
-              viewport={{ once: false }}
-            >
-              <motion.h2
-                className="text-2xl font-semibold text-center py-2"
-                style={{ color: "#dfab24", fontFamily: "moul" }}
-                initial={{ opacity: 0, y: 30 }}
-                whileInView={{ opacity: 1, y: 0 }}
+                id="messages"
+                className="mt-5 mx-auto w-full md:px-5 flex flex-col items-center"
+                initial="initial"
+                whileInView="animate"
                 viewport={{ once: false }}
-                transition={{ duration: 0.6 }}
-              >
-                {currentInvitation?.details_title ||
-                  (currentLanguage === "kh" ? "វិចិត្រសាល" : "GALLERY")}
-              </motion.h2>
-
-              <motion.div
-                className="grid grid-cols-2 gap-4 p-2"
                 variants={staggerContainer}
               >
-                {[
-                  "/template/groom_bride/Frame-Photo 1.png",
-                  "/template/groom_bride/Frame-Photo 2.png",
-                  "/template/groom_bride/Frame-Photo 1.png",
-                  "/template/groom_bride/Frame-Photo 2.png",
-                ].map((src, index) => (
-                  <motion.div
-                    key={index}
-                    variants={scaleInVariant}
-                    whileHover={{
-                      scale: 1.05,
-                      rotate: index % 2 === 0 ? -1 : 1,
-                      transition: { duration: 0.3 },
-                    }}
-                    whileTap={{ scale: 0.95 }}
-                  >
-                    <Image
-                      src={src}
-                      alt={`Gallery image ${index + 1}`}
-                      width={280}
-                      height={200}
-                      className="rounded-lg "
-                    />
-                  </motion.div>
-                ))}
-              </motion.div>
-            </motion.div>
-
-            {/* Messages Header */}
-            <motion.div
-              initial={{ opacity: 0, y: 50 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: false }}
-              transition={{ duration: 0.8 }}
-            >
-              <Image
-                src="/template/contents/txt5.png"
-                alt="image"
-                width={600}
-                height={200}
-              />
-            </motion.div>
-
-            {/* Greeting Messages */}
-            <motion.div
-              id="messages"
-              className="mt-5 mx-auto w-full md:px-5 flex flex-col items-center"
-              initial="initial"
-              whileInView="animate"
-              viewport={{ once: false }}
-              variants={staggerContainer}
-            >
-              <motion.h2
-                className="text-2xl font-semibold text-center py-2"
-                style={{ color: "#dfab24", fontFamily: "moul" }}
-                variants={fadeUpVariant}
-              >
-                {currentInvitation?.details_title ||
-                  (currentLanguage === "kh" ? "សារជូនពរ" : "GREETING MESSAGE")}
-              </motion.h2>
-
-              {/* Form Send */}
-              {guestId && (
-                <motion.form
-                  onSubmit={form.handleSubmit(onSubmit)}
-                  className="space-y-3 sm:space-y-4 py-5 w-full px-5 flex flex-col items-center"
+                <motion.h2
+                  className="text-2xl font-semibold text-center py-2"
+                  style={{ color: "#dfab24", fontFamily: "moul" }}
                   variants={fadeUpVariant}
                 >
-                  <Controller
-                    name="status"
-                    control={form.control}
-                    render={({ field }) => (
-                      <Select
-                        onValueChange={field.onChange}
-                        value={field.value}
+                  {currentInvitation?.details_title ||
+                    (currentLanguage === "kh"
+                      ? "សារជូនពរ"
+                      : "GREETING MESSAGE")}
+                </motion.h2>
+
+                {/* Form Send */}
+                {guestId && (
+                  <motion.form
+                    onSubmit={form.handleSubmit(onSubmit)}
+                    className="space-y-3 sm:space-y-4 py-5 w-full px-5 flex flex-col items-center"
+                    variants={fadeUpVariant}
+                  >
+                    <Controller
+                      name="status"
+                      control={form.control}
+                      render={({ field }) => (
+                        <Select
+                          onValueChange={field.onChange}
+                          value={field.value}
+                        >
+                          <SelectTrigger className="bg-[#A5AE79]/30 border-0 focus-visible:ring-0 rounded-lg text-[#A5AE79] placeholder:text-[#A5AE79] w-full hover:bg-[#A5AE79]/40 focus:scale-105 transition-all duration-300">
+                            <SelectValue
+                              className="text-[#A5AE79] placeholder:text-[#A5AE79]"
+                              placeholder={
+                                currentLanguage === "kh"
+                                  ? "តើអ្នកចូលរួមអត់?"
+                                  : "Will you attend?"
+                              }
+                            />
+                          </SelectTrigger>
+                          <SelectContent>
+                            <SelectItem value={GuestStatus.CONFIRMED}>
+                              {currentLanguage === "kh"
+                                ? "ចូលរួម"
+                                : "Attending"}
+                            </SelectItem>
+                            <SelectItem value={GuestStatus.REJECTED}>
+                              {currentLanguage === "kh"
+                                ? "បដិសេធ"
+                                : "Cannot attend"}
+                            </SelectItem>
+                          </SelectContent>
+                        </Select>
+                      )}
+                    />
+                    <Input
+                      {...form.register("number_guest")}
+                      placeholder={
+                        currentLanguage === "kh"
+                          ? "ចំនួនភ្ញៀវចូលរួម"
+                          : "Number of guests"
+                      }
+                      type="number"
+                      className="bg-[#A5AE79]/30 border-0 focus-visible:ring-0 rounded-lg text-[#A5AE79] placeholder:text-[#A5AE79] w-full hover:bg-[#A5AE79]/40 focus:scale-105 transition-all duration-300"
+                    />
+                    <Textarea
+                      {...form.register("message")}
+                      placeholder={
+                        currentLanguage === "kh"
+                          ? "សារជូនពរ"
+                          : "Greeting message"
+                      }
+                      className="bg-[#A5AE79]/30 border-0 focus-visible:ring-0 rounded-lg text-[#A5AE79] placeholder:text-[#A5AE79] w-full hover:bg-[#A5AE79]/40 focus:scale-105 transition-all duration-300"
+                    />
+                    <div className="text-[10px] text-center w-[200px] md:w-[280px] md:h-[50px] mb-8">
+                      <motion.button
+                        type="submit"
+                        className="cursor-pointer transform md:text-[14px] text-center w-[200px] md:w-[280px] md:h-[50px] inline-block px-3 py-2"
+                        style={{
+                          color: "white",
+                          fontFamily: "moul",
+                          backgroundImage:
+                            "url('/template/arts/button-kbach.png')",
+                          backgroundSize: "cover",
+                          backgroundPosition: "center",
+                          borderRadius: "8px",
+                        }}
+                        whileHover={{ scale: 1.1 }}
+                        whileTap={{ scale: 0.95 }}
                       >
-                        <SelectTrigger className="bg-[#A5AE79]/30 border-0 focus-visible:ring-0 rounded-lg text-[#A5AE79] placeholder:text-[#A5AE79] w-full hover:bg-[#A5AE79]/40 focus:scale-105 transition-all duration-300">
-                          <SelectValue
-                            className="text-[#A5AE79] placeholder:text-[#A5AE79]"
-                            placeholder={
-                              currentLanguage === "kh"
-                                ? "តើអ្នកចូលរួមអត់?"
-                                : "Will you attend?"
-                            }
-                          />
-                        </SelectTrigger>
-                        <SelectContent>
-                          <SelectItem value={GuestStatus.CONFIRMED}>
-                            {currentLanguage === "kh" ? "ចូលរួម" : "Attending"}
-                          </SelectItem>
-                          <SelectItem value={GuestStatus.REJECTED}>
-                            {currentLanguage === "kh"
-                              ? "បដិសេធ"
-                              : "Cannot attend"}
-                          </SelectItem>
-                        </SelectContent>
-                      </Select>
-                    )}
-                  />
-                  <Input
-                    {...form.register("number_guest")}
-                    placeholder={
-                      currentLanguage === "kh"
-                        ? "ចំនួនភ្ញៀវចូលរួម"
-                        : "Number of guests"
-                    }
-                    type="number"
-                    className="bg-[#A5AE79]/30 border-0 focus-visible:ring-0 rounded-lg text-[#A5AE79] placeholder:text-[#A5AE79] w-full hover:bg-[#A5AE79]/40 focus:scale-105 transition-all duration-300"
-                  />
-                  <Textarea
-                    {...form.register("message")}
-                    placeholder={
-                      currentLanguage === "kh" ? "សារជូនពរ" : "Greeting message"
-                    }
-                    className="bg-[#A5AE79]/30 border-0 focus-visible:ring-0 rounded-lg text-[#A5AE79] placeholder:text-[#A5AE79] w-full hover:bg-[#A5AE79]/40 focus:scale-105 transition-all duration-300"
-                  />
-                  <div className="text-[10px] text-center w-[200px] md:w-[280px] md:h-[50px] mb-8">
-                    <motion.button
-                      type="submit"
-                      className="cursor-pointer transform md:text-[14px] text-center w-[200px] md:w-[280px] md:h-[50px] inline-block px-3 py-2"
-                      style={{
-                        color: "white",
-                        fontFamily: "moul",
-                        backgroundImage:
-                          "url('/template/arts/button-kbach.png')",
-                        backgroundSize: "cover",
-                        backgroundPosition: "center",
-                        borderRadius: "8px",
-                      }}
-                      whileHover={{ scale: 1.1 }}
-                      whileTap={{ scale: 0.95 }}
-                    >
-                      {currentLanguage === "kh" ? "ផ្ញើរ" : "Send"}
-                    </motion.button>
-                  </div>
-                </motion.form>
-              )}
-
-              <motion.div
-                className="p-5 w-full flex flex-col gap-2"
-                variants={staggerContainer}
-              >
-                {guests &&
-                  guests.map((guest, key) => (
-                    <motion.div
-                      key={key}
-                      className="bg-[#A5AE79]/30 p-5 rounded-lg hover:bg-[#A5AE79]/40"
-                      variants={slideInLeftVariant}
-                      whileHover={{
-                        scale: 1.02,
-                        y: -5,
-                        transition: { duration: 0.2 },
-                      }}
-                      whileTap={{ scale: 0.98 }}
-                    >
-                      <div className="text-[#A5AE79] text-lg">
-                        {guest?.name}
-                      </div>
-                      <div className="border-b-2 border-[#A5AE79]/80"></div>
-                      <div className="text-center text-[#A5AE79] pt-5 text-lg">
-                        "{guest?.wishing_note}"
-                      </div>
-                      <div className="text-center text-[#A5AE79] pt-5 text-xs">
-                        {formatDateCustom(
-                          guest?.sentAt ?? "",
-                          "DD-MM-YYYY | HH:mmA"
-                        )}
-                      </div>
-                    </motion.div>
-                  ))}
+                        {currentLanguage === "kh" ? "ផ្ញើរ" : "Send"}
+                      </motion.button>
+                    </div>
+                  </motion.form>
+                )}
+                <ScrollArea className="h-[800px] rounded-md  ">
+                  <motion.div
+                    className="p-5 w-full flex flex-col gap-2"
+                    variants={staggerContainer}
+                  >
+                    {guests &&
+                      guests.map((guest, key) => (
+                        <motion.div
+                          key={key}
+                          className="bg-[#A5AE79]/30 p-5 rounded-lg hover:bg-[#A5AE79]/40"
+                          variants={slideInLeftVariant}
+                          whileHover={{
+                            scale: 1.02,
+                            y: -5,
+                            transition: { duration: 0.2 },
+                          }}
+                          whileTap={{ scale: 0.98 }}
+                        >
+                          <div className="text-[#A5AE79] text-lg">
+                            {guest?.name}
+                          </div>
+                          <div className="border-b-2 border-[#A5AE79]/80"></div>
+                          <div className="text-center text-[#A5AE79] pt-5 text-lg">
+                            "{guest?.wishing_note}"
+                          </div>
+                          <div className="text-center text-[#A5AE79] pt-5 text-xs">
+                            {formatDateCustom(
+                              guest?.sentAt ?? "",
+                              "DD-MM-YYYY | HH:mmA"
+                            )}
+                          </div>
+                        </motion.div>
+                      ))}
+                  </motion.div>
+                  <ScrollBar orientation="vertical" />
+                </ScrollArea>
               </motion.div>
-
+              <Footer />
               <motion.div
                 className="py-2"
                 initial={{ opacity: 0, scale: 0.8 }}
@@ -833,10 +929,10 @@ export default function SpecialTemplate({
                   height={150}
                 />
               </motion.div>
-            </motion.div>
-          </div>
-        </div>
-      )}
+            </div>
+          </motion.div>
+        )}
+      </AnimatePresence>
     </div>
   );
 }

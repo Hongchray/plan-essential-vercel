@@ -23,6 +23,7 @@ import { GuestStatus } from "@/enums/guests";
 import { toast } from "sonner";
 import ScrollNavigationBar from "../scroll-navigation-bar";
 import { useLanguage } from "@/hooks/LanguageContext";
+import { Footer } from "../footer";
 export default function SimpleTemplate({
   config,
   data,
@@ -621,7 +622,10 @@ export default function SimpleTemplate({
               );
             })}
         </div>
+      </div>
+      <Footer />
 
+      <div className="w-full flex items-center justify-center h-[150px]">
         <div className="py-2 animate-fade-in animation-delay-800">
           <Image
             src="/template/arts/underbar kbach 1.png"
