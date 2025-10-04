@@ -298,7 +298,7 @@ export default function SpecialTemplate({
             loop
             muted
             playsInline
-            preload="auto"
+            preload="metadata"
             className="absolute top-0 left-0 w-full h-full object-cover"
           >
             <source src={config?.welcome_background_video} type="video/webm" />
@@ -495,9 +495,7 @@ export default function SpecialTemplate({
                     alt="image"
                     width={600}
                     height={200}
-                    loading="lazy"
-                    placeholder="blur"
-                    blurDataURL="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mNk+M9QDwADhgGAWjR9awAAAABJRU5ErkJggg=="
+                    priority={true}
                   />
                 </motion.div>
 
@@ -539,6 +537,7 @@ export default function SpecialTemplate({
                   alt="image"
                   width={600}
                   height={200}
+                  loading="lazy"
                 />
               </motion.div>
 
