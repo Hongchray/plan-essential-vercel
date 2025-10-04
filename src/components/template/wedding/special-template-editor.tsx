@@ -119,9 +119,6 @@ export default function SpecialTemplateEditor({
               value={config?.main_background_video || ""}
               acceptedFormats={[".webm", ".mp4"]}
             />
-            <p className="text-xs text-gray-500 mt-1">
-              Background video for main content
-            </p>
           </div>
 
           <div>
@@ -135,9 +132,6 @@ export default function SpecialTemplateEditor({
               value={config?.background_music || ""}
               acceptedFormats={[".mp3", ".wav", ".ogg"]}
             />
-            <p className="text-xs text-gray-500 mt-1">
-              Music that plays throughout the invitation
-            </p>
           </div>
 
           <div>
@@ -324,18 +318,6 @@ export default function SpecialTemplateEditor({
             />
           </div>
         </div>
-      </div>
-
-      {/* Info Box */}
-      <div className="p-4 bg-blue-50 border border-blue-200 rounded-lg">
-        <h5 className="font-medium text-blue-900 mb-2">Template Notes:</h5>
-        <ul className="text-sm text-blue-800 space-y-1 list-disc list-inside">
-          <li>This template uses videos and animations</li>
-          <li>Videos should be in WEBM format for best compatibility</li>
-          <li>Music should be in MP3 format</li>
-          <li>All decorative images use traditional Khmer art styles</li>
-          <li>Gallery supports 4 framed photos</li>
-        </ul>
       </div>
     </div>
   );
