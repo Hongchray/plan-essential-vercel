@@ -785,6 +785,8 @@
       "anniversary": "Anniversary"
     },
     "status": "Status",
+    "isFree": "Is Free",
+    "premium": "Premium",
     "defaultConfig": "Default Config",
     "cancel": "Cancel",
 

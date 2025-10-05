@@ -6,7 +6,7 @@ import { Badge } from "@/components/ui/badge";
 import { Checkbox } from "@/components/ui/checkbox";
 
 import { labels, priorities, statuses } from "../data/data";
-import { Template } from "../data/schema";
+import { Template } from "@/interfaces/template";
 import { DataTableColumnHeader } from "./data-table-column-header";
 import { DataTableRowActions } from "./data-table-row-actions";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
@@ -112,6 +112,8 @@ export const MobileTemplateCard = ({
 };
 
 export const useTemplateColumns = (): ColumnDef<Template>[] => {
+  const { t } = useTranslation("common");
+
   // We no longer call t() here for the headers
   return [
     {
@@ -161,12 +163,9 @@ export const useTemplateColumns = (): ColumnDef<Template>[] => {
       ),
       cell: ({ row }) => (
         <div className="flex gap-2">
-          <Link
-            href={`/event/${row.original.id}`} // link to view page
-            className="max-w-[200px] truncate font-medium text-blue-600 hover:underline"
-          >
+          <div className="max-w-[200px] truncate font-medium text-blue-600 hover:underline">
             {row.getValue("name")}
-          </Link>
+          </div>
         </div>
       ),
     },
@@ -181,6 +180,24 @@ export const useTemplateColumns = (): ColumnDef<Template>[] => {
         return (
           <Badge variant="secondary" className="capitalize">
             {type || "-"}
+          </Badge>
+        );
+      },
+    },
+    {
+      accessorKey: "isFree",
+      header: ({ column }) => (
+        <DataTableColumnHeader column={column} title="template.isFree" />
+      ),
+      cell: ({ row }) => {
+        const isFree = row.getValue("isFree") as boolean;
+
+        return (
+          <Badge
+            variant={isFree ? "default" : "secondary"}
+            className="capitalize"
+          >
+            {isFree ? t("template.isFree") : t("template.premium")}
           </Badge>
         );
       },

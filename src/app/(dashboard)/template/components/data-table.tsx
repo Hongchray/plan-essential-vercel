@@ -30,7 +30,7 @@ import { DataTablePagination } from "./data-table-pagination";
 import { DataTableToolbar } from "./data-table-toolbar";
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
 import { MobileTemplateCard } from "./columns";
-import { Template } from "../data/schema";
+import { Template } from "@/interfaces/template";
 
 interface DataTableProps<TData, TValue> {
   columns: ColumnDef<TData, TValue>[];

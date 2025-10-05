@@ -101,6 +101,7 @@ model Template {
   defaultConfig  Json?
   unique_name    String          @unique //wedding.basic-template
   eventTemplates EventTemplate[]
+  isFree         Boolean         @default(false)
   createdAt      DateTime        @default(now())
   status         String
   updatedAt      DateTime        @updatedAt

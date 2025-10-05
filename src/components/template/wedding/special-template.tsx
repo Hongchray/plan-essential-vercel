@@ -22,7 +22,7 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { Input } from "@/components/ui/input";
-import ScrollNavigationBar from "../scroll-navigation-bar";
+// import ScrollNavigationBar from "../scroll-navigation-bar";
 import ScrollNavigationBarInPage from "../scroll-navigation-bar-in-page";
 import { Footer } from "../footer";
 import { ScrollArea, ScrollBar } from "@/components/ui/scroll-area";
@@ -452,6 +452,8 @@ export default function SpecialTemplate({
             exit={{ opacity: 0 }}
             transition={{ duration: 1 }}
           >
+            <ScrollNavigationBarInPage />
+
             {/* Background video */}
             <div className="absolute top-0 left-0 w-full h-full">
               <video
@@ -459,7 +461,7 @@ export default function SpecialTemplate({
                 loop
                 muted
                 playsInline
-                preload="metadata"
+                preload="auto"
                 className="w-full h-full object-cover"
               >
                 <source src={config?.main_background_video} type="video/webm" />

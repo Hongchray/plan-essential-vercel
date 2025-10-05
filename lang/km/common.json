@@ -777,6 +777,8 @@
       "anniversary": "គំរូខួប"
     },
     "status": "ស្ថានភាព",
+    "isFree": "ឥតគិតថ្លៃ",
+    "premium": "គិតថ្លៃ",
     "defaultConfig": "ការកំណត់លំនាំដើម",
     "cancel": "បោះបង់",
 

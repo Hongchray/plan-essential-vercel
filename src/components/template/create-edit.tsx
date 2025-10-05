@@ -49,6 +49,7 @@ export function CreateEditForm({ id }: { id?: string }) {
     image: z.string(),
     defaultConfig: z.any(),
     status: z.string(),
+    isFree: z.boolean(),
     unique_name: z
       .string()
       .min(
@@ -70,6 +71,7 @@ export function CreateEditForm({ id }: { id?: string }) {
       defaultConfig: "",
       status: "",
       unique_name: "",
+      isFree: false,
     },
   });
 
@@ -217,6 +219,13 @@ export function CreateEditForm({ id }: { id?: string }) {
             name="status"
             trueValue="active"
             falseValue="inactive"
+            form={form}
+          />
+          <SwitchField
+            label={t("template.isFree")}
+            name="isFree"
+            trueValue={true}
+            falseValue={false}
             form={form}
           />
         </div>
