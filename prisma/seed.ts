@@ -50,7 +50,7 @@ async function main() {
 
   const weddingTemplate = await prisma.template.create({
     data: {
-      unique_name: "elegant-wedding", // Adding required unique_name field
+      unique_name: "elegant-wedding",
       name: "Elegant Wedding",
       type: "Wedding",
       image: "https://theapka.com/storage/01J45Z76636PDX9JANP0FTWRGE.png",
