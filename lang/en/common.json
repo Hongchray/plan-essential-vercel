@@ -278,6 +278,7 @@
     "welcome": "Welcome! We're glad to have you here.",
     "explore": "Explore your events below or create a new one to get started.",
     "create_button": "Create",
+    "at": "at",
     "create": {
       "title": "Create Event",
       "edit": "Edit Event",
@@ -337,7 +338,8 @@
       "endTimeRequired": "End time is required",
       "endTimeInvalid": "End time must be a valid date",
       "endTimeAfterStart": "End time must be after start time",
-      "ownerRequired": "Owner name is required"
+      "ownerRequired": "Owner name is required",
+      "eatingTimeRequired": "Eating Time is required"
     },
 
     "message": {

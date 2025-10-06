@@ -15,6 +15,12 @@ import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Badge } from "@/components/ui/badge";
 import { getAvatarColor, getInitials } from "@/utils/avatar";
 import { Progress } from "@/components/ui/progress";
+import { ColoredProgress } from "./components/ColoredProgress";
+function getProgressColor(progress: number) {
+  if (progress < 50) return "bg-red-500";
+  if (progress < 100) return "bg-yellow-400";
+  return "bg-green-500";
+}
 
 const ActionsCell = ({ row }: { row: any }) => {
   const router = useRouter();
@@ -63,10 +69,8 @@ export const MobileExpenseCard = ({
   isSelected: boolean;
 }) => {
   const { t } = useTranslation("common");
-
   const budget = expense.budget_amount ?? 0;
   const actual = expense.actual_amount ?? 0;
-
   const progress = budget > 0 ? Math.min((actual / budget) * 100, 100) : 0;
 
   return (
@@ -76,9 +80,10 @@ export const MobileExpenseCard = ({
         <h3 className="font-semibold text-gray-900 break-words">
           {expense.name}
         </h3>
-        {/* Progress bar */}
+
         <div className="mt-2">
-          <Progress value={progress} className="h-2" />
+          <ColoredProgress value={progress} />
+
           <div className="flex justify-between text-[11px] text-gray-600 mt-1">
             <span>
               {t("expense.table.actual_amount")}
@@ -174,34 +179,18 @@ export const useExpenseColumns = (): ColumnDef<Expense>[] => {
       cell: ({ row }) => {
         const actual = Number(row.getValue("actual_amount") ?? 0);
         const budget = Number(row.original.budget_amount ?? 0);
-
-        // Calculate progress percentage
         const progress =
           budget > 0 ? Math.min((actual / budget) * 100, 100) : 0;
 
         return (
-          <div className="flex flex-col gap-1 w-[90%] ">
-            {/* Amount text */}
+          <div className="flex flex-col gap-1 w-[90%]">
             <div className="flex justify-between text-sm font-medium text-gray-700">
               <span>{currencyFormatters.usd(actual)}</span>
               <span>{currencyFormatters.usd(budget)}</span>
             </div>
 
-            {/* Progress bar */}
-            <div className="w-full bg-gray-200 rounded-full h-3 overflow-hidden">
-              <div
-                className={`h-3 rounded-full ${
-                  progress < 50
-                    ? "bg-red-500"
-                    : progress < 100
-                    ? "bg-yellow-400"
-                    : "bg-green-500"
-                }`}
-                style={{ width: `${progress}%` }}
-              />
-            </div>
+            <ColoredProgress value={progress} />
 
-            {/* Optional: show % */}
             <div className="text-xs text-gray-500 text-right">
               {progress.toFixed(0)}%
             </div>

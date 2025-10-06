@@ -154,18 +154,21 @@ const ImageUpload = React.forwardRef<HTMLInputElement, ImageUploadProps>(
         <div className="w-full h-[150px] aspect-video relative flex items-center justify-center border-2 border-dashed rounded-lg overflow-hidden bg-gray-50">
           {preview ? (
             <Image
-              src={preview} // ensure src is not empty
+              src={preview} // ✅ only rendered if preview has a value
               alt="Preview"
               width={150}
               height={150}
               className="w-full h-full object-cover"
             />
           ) : (
+            // ✅ fallback UI when preview is empty/null/undefined
             <div className="flex flex-col items-center justify-center gap-2">
               <ImageIcon className="h-6 w-6 text-gray-400" />
               <span className="text-gray-500 text-xs">{label}</span>
             </div>
           )}
+
+          {/* ✅ overlay loader when uploading */}
           {uploading && (
             <div className="absolute inset-0 bg-black/50 flex items-center justify-center">
               <Loader2 className="h-8 w-8 text-white animate-spin" />

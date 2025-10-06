@@ -82,31 +82,41 @@ export function CreateEditGiftForm({
       payment_type: z.enum(["CASH", "KHQR"], {
         message: t("gift.form.error_payment_required"),
       }),
-      currency_type: z.string().min(1, {
+      currency_type: z.enum(["USD", "KHR"], {
         message: t("gift.form.error_currency_required"),
       }),
-      amount_khr: z.coerce.number().optional(),
-      amount_usd: z.coerce.number().optional(),
+      amount_khr: z.coerce.number(),
+      amount_usd: z.coerce.number(),
+    })
+    .transform((data) => {
+      if (data.currency_type === "USD") {
+        return {
+          ...data,
+          amount_khr: 0, // auto reset
+        };
+      }
+      if (data.currency_type === "KHR") {
+        return {
+          ...data,
+          amount_usd: 0, // auto reset
+        };
+      }
+      return data;
     })
     .superRefine((data, ctx) => {
-      if (data.currency_type === "KHR") {
-        if (!data.amount_khr || data.amount_khr <= 0) {
-          ctx.addIssue({
-            path: ["amount_khr"],
-            code: "custom",
-            message: t("gift.form.error_amount_required"),
-          });
-        }
+      if (data.currency_type === "USD" && data.amount_usd <= 0) {
+        ctx.addIssue({
+          path: ["amount_usd"],
+          code: "custom",
+          message: t("gift.form.error_amount_required"),
+        });
       }
-
-      if (data.currency_type === "USD") {
-        if (!data.amount_usd || data.amount_usd <= 0) {
-          ctx.addIssue({
-            path: ["amount_usd"],
-            code: "custom",
-            message: t("gift.form.error_amount_required"),
-          });
-        }
+      if (data.currency_type === "KHR" && data.amount_khr <= 0) {
+        ctx.addIssue({
+          path: ["amount_khr"],
+          code: "custom",
+          message: t("gift.form.error_amount_required"),
+        });
       }
     });
 

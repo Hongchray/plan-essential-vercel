@@ -17,6 +17,8 @@ import { ScrollArea, ScrollBar } from "@/components/ui/scroll-area";
 interface GiftAggregates {
   received: number;
   by_currency: any[];
+  total_amount_usd: number;
+  total_amount_khr: number;
   total_amount_usd_equivalent: number;
 }
 
@@ -65,6 +67,8 @@ export default function TabGift({
   const [aggregates, setAggregates] = useState<GiftAggregates>({
     received: 0,
     by_currency: [],
+    total_amount_khr: 0,
+    total_amount_usd: 0,
     total_amount_usd_equivalent: 0,
   });
   const [loading, setLoading] = useState(true);
@@ -146,9 +150,7 @@ export default function TabGift({
                         size="sm"
                       />
                     ) : (
-                      currencyFormatters.usd(
-                        aggregates?.by_currency[1]?._sum?.amount_usd ?? 0
-                      )
+                      currencyFormatters.usd(aggregates?.total_amount_usd ?? 0)
                     )}
                   </div>
                 </div>

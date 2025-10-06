@@ -44,9 +44,9 @@ export const createSchemas = (t: TFunction) => {
     name: z.string().min(1, t("timeline.name_required")),
     time: z
       .string({
-        required_error: t("timeline.time_required"),
+        required_error: t("EventPage.create.timeline.time_required"),
       })
-      .min(1, t("timeline.time_required")),
+      .min(1, t("EventPage.create.timeline.time_required")),
   });
 
   const shiftSchema = z.object({

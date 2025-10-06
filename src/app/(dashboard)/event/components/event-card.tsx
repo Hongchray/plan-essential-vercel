@@ -1,5 +1,5 @@
 "use client";
-import { Event } from "../data/schema";
+import { Event } from "@/interfaces/event";
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import {
@@ -78,7 +78,8 @@ export default function EventCard({ event }: { event: Event }) {
                 <Calendar1Icon className="w-4 h-4 inline" />
               </span>{" "}
               <span className="align-middle">
-                {formatDate(event.startTime)} - {formatDate(event.endTime)}
+                {formatDate(event.startTime)} {t("EventPage.at")}{" "}
+                {event.eating_time}
               </span>
             </p>
           </div>
