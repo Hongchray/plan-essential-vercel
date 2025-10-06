@@ -276,8 +276,14 @@ export default function SpecialTemplate({
   };
 
   const googleCalendarUrl = useMemo(() => {
-    const formatDate = (date: Date) =>
-      date.toISOString().replace(/-|:|\.\d+/g, "");
+    if (!data?.startTime || !data?.endTime) return "";
+
+    const formatDate = (date: Date) => {
+      // Ensure valid Date
+      const d = new Date(date);
+      if (isNaN(d.getTime())) return "";
+      return d.toISOString().replace(/[-:]/g, "").split(".")[0] + "Z";
+    };
 
     const startTime = formatDate(new Date(data.startTime));
     const endTime = formatDate(new Date(data.endTime));
