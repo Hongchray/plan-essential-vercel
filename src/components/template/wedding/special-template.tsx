@@ -112,15 +112,15 @@ export default function SpecialTemplate({
   });
 
   useEffect(() => {
-    // Set your target date here (example: 7 days from now)
-    const targetDate = new Date();
-    targetDate.setDate(targetDate.getDate() + 7);
+    if (!data?.startTime) return;
+
+    const targetDate = new Date(data.startTime);
 
     const timer = setInterval(() => {
       const now = new Date().getTime();
       const distance = targetDate.getTime() - now;
 
-      if (distance < 0) {
+      if (distance <= 0) {
         clearInterval(timer);
         setTimeLeft({ days: 0, hours: 0, minutes: 0, seconds: 0 });
         return;
@@ -137,7 +137,7 @@ export default function SpecialTemplate({
     }, 1000);
 
     return () => clearInterval(timer);
-  }, []);
+  }, [data?.startTime]);
   const [isMediaLoading, setIsMediaLoading] = useState(true);
 
   useEffect(() => {
@@ -684,6 +684,7 @@ export default function SpecialTemplate({
                   <Image
                     src={config?.location_image}
                     alt="image"
+                    className="py-5"
                     width={600}
                     height={200}
                   />
