@@ -691,7 +691,7 @@ export default function SpecialTemplate({
                 >
                   {currentInvitation?.details_title ||
                     (currentLanguage === "kh"
-                      ? "ទីតាំងប្រារព្ធកម្មវិធី"
+                      ? "ទីតាំងកម្មវិធី"
                       : "EVENT LOCATION")}
                 </motion.h2>
 
@@ -889,7 +889,7 @@ export default function SpecialTemplate({
                           onValueChange={field.onChange}
                           value={field.value}
                         >
-                          <SelectTrigger className="bg-[#A5AE79]/40 border-0 border-[#A5AE79]/50 focus-visible:ring-2 focus-visible:ring-[#A5AE79] rounded-xl text-[#2C3E1F] font-medium placeholder:text-[#A5AE79]/70 w-full hover:bg-[#A5AE79]/50 focus:scale-[1.02] transition-all duration-300">
+                          <SelectTrigger className="text-[#6f7c2b] bg-[#A5AE79]/40 border-0 border-[#A5AE79]/50 focus-visible:ring-2 focus-visible:ring-[#A5AE79] rounded-xl font-medium placeholder:text-[#A5AE79]/70 w-full hover:bg-[#A5AE79]/50 focus:scale-[1.02] transition-all duration-300">
                             <SelectValue
                               className="text-[#2C3E1F]"
                               placeholder={
@@ -899,7 +899,7 @@ export default function SpecialTemplate({
                               }
                             />
                           </SelectTrigger>
-                          <SelectContent className="bg-white border-[#A5AE79]/30">
+                          <SelectContent className="bg-white border-[#A5AE79]/30 text-[#6f7c2b] hover:text-[#6f7c2b]">
                             <SelectItem
                               value={GuestStatus.CONFIRMED}
                               className="cursor-pointer hover:bg-[#A5AE79]/20"
@@ -930,7 +930,7 @@ export default function SpecialTemplate({
                       }
                       type="number"
                       min="0"
-                      className="bg-[#A5AE79]/40 border-0 border-[#A5AE79]/50 focus-visible:ring-2 focus-visible:ring-[#A5AE79] rounded-xl text-[#2C3E1F] font-medium placeholder:text-[#A5AE79]/70 w-full hover:bg-[#A5AE79]/50 focus:scale-[1.02] transition-all duration-300 "
+                      className=" text-[#6f7c2b] bg-[#A5AE79]/40 border-0 border-[#A5AE79]/50 focus-visible:ring-2 focus-visible:ring-[#A5AE79] rounded-xl  font-medium placeholder:text-[#A5AE79]/70 w-full hover:bg-[#A5AE79]/50 focus:scale-[1.02] transition-all duration-300 "
                     />
 
                     <Textarea
@@ -941,7 +941,7 @@ export default function SpecialTemplate({
                           : "Greeting message"
                       }
                       rows={4}
-                      className="bg-[#A5AE79]/40 border-0 border-[#A5AE79]/50 focus-visible:ring-2 focus-visible:ring-[#A5AE79] rounded-xl text-[#2C3E1F] font-medium placeholder:text-[#A5AE79]/70 w-full hover:bg-[#A5AE79]/50 focus:scale-[1.02] transition-all duration-300 resize-none"
+                      className="bg-[#A5AE79]/40 border-0 border-[#A5AE79]/50 focus-visible:ring-2 focus-visible:ring-[#A5AE79] rounded-xl text-[#6f7c2b] font-medium placeholder:text-[#A5AE79]/70 w-full hover:bg-[#A5AE79]/50 focus:scale-[1.02] transition-all duration-300 resize-none"
                     />
 
                     <div className="w-full flex justify-center mt-6">
@@ -987,11 +987,11 @@ export default function SpecialTemplate({
                               }}
                               whileTap={{ scale: 0.99 }}
                             >
-                              <div className="text-[#2C3E1F] text-lg md:text-xl font-semibold mb-2">
+                              <div className="text-[#A5AE79] text-lg md:text-xl font-semibold mb-2">
                                 {guest?.name}
                               </div>
                               <div className="border-b-2 border-[#A5AE79]/60 mb-4"></div>
-                              <div className="text-[#2C3E1F] text-base md:text-lg leading-relaxed mb-4 italic">
+                              <div className="text-[#A5AE79] text-base md:text-lg leading-relaxed mb-4 italic">
                                 "{guest?.wishing_note}"
                               </div>
                               <div className="text-[#A5AE79] text-xs md:text-sm font-medium text-right">

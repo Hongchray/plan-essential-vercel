@@ -167,7 +167,7 @@ export default function Preview({
       : undefined;
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-red-50 to-yellow-50 relative">
+    <div className="min-h-screen bg-gradient-to-br from-pink-50 to-yellow-50 relative">
       <LanguageProvider>
         <ComponentToRender config={config} data={event || ({} as Event)} />
       </LanguageProvider>
