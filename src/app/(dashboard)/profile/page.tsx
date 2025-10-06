@@ -8,7 +8,7 @@ import { Loading } from "@/components/composable/loading/loading";
 import { Button } from "@/components/ui/button";
 import { useTranslation } from "react-i18next";
 import { useRouter } from "next/navigation";
-import { Pencil, Plus } from "lucide-react";
+import { Pencil, Plus, PlusIcon } from "lucide-react";
 import { formatDate } from "@/utils/date";
 interface Event {
   id: string;
@@ -221,6 +221,7 @@ export default function ProfilePage() {
                 className="px-4 py-2 text-white font-medium rounded-lg shadow transition-colors cursor-pointer"
                 onClick={() => router.push("/event/create")}
               >
+                <PlusIcon />
                 {t("profile.addNewEvent")}
               </Button>
             </div>
@@ -249,7 +250,7 @@ export default function ProfilePage() {
                       <div className="flex flex-wrap gap-2 mt-2">
                         <Badge
                           variant="outline"
-                          className="text-green-700 bg-green-100"
+                          className="text-green-700 bg-green-100 capitalize"
                         >
                           {event.status}
                         </Badge>

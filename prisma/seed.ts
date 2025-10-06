@@ -33,9 +33,9 @@ async function main() {
       },
       {
         name: "ប្រណិត",
-        price: 200,
-        limit_guests: 200,
-        limit_template: 5,
+        price: 59,
+        limit_guests: 350,
+        limit_template: 2,
         limit_export_excel: true,
       },
       {
