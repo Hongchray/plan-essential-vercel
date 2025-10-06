@@ -17,7 +17,7 @@ export async function PUT(
   context: any // Let Next.js infer types
 ) {
   try {
-    const { id: userId, planId: userPlanId } = context.params as {
+    const { id: userId, planId: userPlanId } = (await context.params) as {
       id: string;
       planId: string;
     };

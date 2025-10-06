@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { Event } from "@/interfaces/event";
 import { useLanguage } from "@/hooks/LanguageContext";
 import Image from "next/image";
@@ -22,10 +22,11 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { Input } from "@/components/ui/input";
-// import ScrollNavigationBar from "../scroll-navigation-bar";
 import ScrollNavigationBarInPage from "../scroll-navigation-bar-in-page";
 import { Footer } from "../footer";
 import { ScrollArea, ScrollBar } from "@/components/ui/scroll-area";
+import { useQRCode } from "next-qrcode";
+import { Label } from "@/components/ui/label";
 
 export default function SpecialTemplate({
   config,
@@ -42,7 +43,7 @@ export default function SpecialTemplate({
   const [guest, setGuest] = useState<Guest>();
   const searchParams = useSearchParams();
   const guestId = searchParams.get("guest");
-
+  const { Image: QRCodeImage } = useQRCode();
   const currentInvitation =
     currentLanguage === "kh"
       ? config?.invitation_kh || config?.invitation
@@ -198,6 +199,7 @@ export default function SpecialTemplate({
       }
 
       const result = await res.json();
+      form.reset();
       getMessage();
       toast.success("អ្នកបានផ្ញើសារជូនពរដោយជោគជ័យ");
     } catch (error) {
@@ -272,6 +274,20 @@ export default function SpecialTemplate({
       },
     },
   };
+
+  const googleCalendarUrl = useMemo(() => {
+    const formatDate = (date: Date) =>
+      date.toISOString().replace(/-|:|\.\d+/g, "");
+
+    const startTime = formatDate(new Date(data.startTime));
+    const endTime = formatDate(new Date(data.endTime));
+
+    return `https://www.google.com/calendar/render?action=TEMPLATE&text=${encodeURIComponent(
+      data.name
+    )}&dates=${startTime}/${endTime}&details=${encodeURIComponent(
+      data.description || ""
+    )}&location=${encodeURIComponent(data.location || "")}`;
+  }, [data]);
 
   return (
     <div className="relative min-h-screen max-w-xl mx-auto">
@@ -514,8 +530,10 @@ export default function SpecialTemplate({
                       backgroundImage: `url('${config?.button_background}')`,
                       backgroundSize: "cover",
                       backgroundPosition: "center",
+
                       borderRadius: "8px",
                     }}
+                    onClick={() => window.open(googleCalendarUrl, "_blank")}
                     whileHover={{ scale: 1.1 }}
                     whileTap={{ scale: 0.95 }}
                   >
@@ -629,7 +647,7 @@ export default function SpecialTemplate({
                 variants={staggerContainer}
               >
                 <motion.h2
-                  className="text-2xl font-semibold text-center py-2"
+                  className="text-2xl  text-center py-2"
                   style={{ color: "#dfab24", fontFamily: "moul" }}
                   variants={fadeUpVariant}
                 >
@@ -668,7 +686,7 @@ export default function SpecialTemplate({
                 transition={{ duration: 0.8 }}
               >
                 <motion.h2
-                  className="text-2xl font-semibold text-center py-2"
+                  className="text-2xl  text-center py-2"
                   style={{ color: "#dfab24", fontFamily: "moul" }}
                 >
                   {currentInvitation?.details_title ||
@@ -680,11 +698,12 @@ export default function SpecialTemplate({
                 <motion.div
                   whileHover={{ scale: 1.03 }}
                   transition={{ duration: 0.3 }}
+                  className="py-5 px-5 "
                 >
                   <Image
                     src={config?.location_image}
                     alt="image"
-                    className="py-5"
+                    className="rounded-lg  overflow-hidden"
                     width={600}
                     height={200}
                   />
@@ -721,7 +740,7 @@ export default function SpecialTemplate({
                 viewport={{ once: false }}
               >
                 <motion.h2
-                  className="text-2xl font-semibold text-center py-2"
+                  className="text-2xl  text-center py-2"
                   style={{ color: "#dfab24", fontFamily: "moul" }}
                   initial={{ opacity: 0, y: 30 }}
                   whileInView={{ opacity: 1, y: 0 }}
@@ -779,6 +798,62 @@ export default function SpecialTemplate({
                 />
               </motion.div>
 
+              <div id="khqr">
+                <motion.div
+                  initial={{ opacity: 0, y: 50 }}
+                  whileInView={{ opacity: 1, y: 0 }}
+                  viewport={{ once: false }}
+                  transition={{ duration: 0.8 }}
+                  className="py-5"
+                >
+                  <motion.h2
+                    className="text-2xl  text-center py-4"
+                    style={{ color: "#dfab24", fontFamily: "moul" }}
+                  >
+                    ចងដៃតាមរយៈ KHQR
+                  </motion.h2>
+                  <Image
+                    src={config?.khqr}
+                    alt="image"
+                    width={300}
+                    height={200}
+                  />
+                </motion.div>
+                {/* QR Code */}
+                {guestId && (
+                  <motion.div
+                    initial={{ opacity: 0, y: 50 }}
+                    whileInView={{ opacity: 1, y: 0 }}
+                    viewport={{ once: false }}
+                    transition={{ duration: 0.8 }}
+                    className="py-5"
+                  >
+                    <motion.h2
+                      className="text-2xl  text-center py-4"
+                      style={{ color: "#dfab24", fontFamily: "moul" }}
+                      variants={fadeUpVariant}
+                    >
+                      QRCode ភ្ញៀវ
+                    </motion.h2>
+                    <QRCodeImage
+                      text={guestId}
+                      options={{
+                        type: "image/jpeg",
+                        quality: 1,
+                        errorCorrectionLevel: "H",
+                        margin: 3,
+                        scale: 1,
+                        width: 300,
+                        color: {
+                          dark: "#dfab24",
+                          light: "#FFFFFF",
+                        },
+                      }}
+                    />
+                  </motion.div>
+                )}
+              </div>
+
               {/* Greeting Messages */}
               <motion.div
                 id="messages"
@@ -789,7 +864,7 @@ export default function SpecialTemplate({
                 variants={staggerContainer}
               >
                 <motion.h2
-                  className="text-2xl font-semibold text-center py-2"
+                  className="text-2xl  text-center py-2"
                   style={{ color: "#dfab24", fontFamily: "moul" }}
                   variants={fadeUpVariant}
                 >
@@ -803,7 +878,7 @@ export default function SpecialTemplate({
                 {guestId && (
                   <motion.form
                     onSubmit={form.handleSubmit(onSubmit)}
-                    className="space-y-3 sm:space-y-4 py-5 w-full px-5 flex flex-col items-center"
+                    className="space-y-4 sm:space-y-5 py-6 w-full max-w-2xl mx-auto px-6 flex flex-col items-center rounded-xl bg-white/5 backdrop-blur-sm"
                     variants={fadeUpVariant}
                   >
                     <Controller
@@ -814,9 +889,9 @@ export default function SpecialTemplate({
                           onValueChange={field.onChange}
                           value={field.value}
                         >
-                          <SelectTrigger className="bg-[#A5AE79]/30 border-0 focus-visible:ring-0 rounded-lg text-[#A5AE79] placeholder:text-[#A5AE79] w-full hover:bg-[#A5AE79]/40 focus:scale-105 transition-all duration-300">
+                          <SelectTrigger className="bg-[#A5AE79]/40 border-0 border-[#A5AE79]/50 focus-visible:ring-2 focus-visible:ring-[#A5AE79] rounded-xl text-[#2C3E1F] font-medium placeholder:text-[#A5AE79]/70 w-full hover:bg-[#A5AE79]/50 focus:scale-[1.02] transition-all duration-300">
                             <SelectValue
-                              className="text-[#A5AE79] placeholder:text-[#A5AE79]"
+                              className="text-[#2C3E1F]"
                               placeholder={
                                 currentLanguage === "kh"
                                   ? "តើអ្នកចូលរួមអត់?"
@@ -824,13 +899,19 @@ export default function SpecialTemplate({
                               }
                             />
                           </SelectTrigger>
-                          <SelectContent>
-                            <SelectItem value={GuestStatus.CONFIRMED}>
+                          <SelectContent className="bg-white border-[#A5AE79]/30">
+                            <SelectItem
+                              value={GuestStatus.CONFIRMED}
+                              className="cursor-pointer hover:bg-[#A5AE79]/20"
+                            >
                               {currentLanguage === "kh"
                                 ? "ចូលរួម"
                                 : "Attending"}
                             </SelectItem>
-                            <SelectItem value={GuestStatus.REJECTED}>
+                            <SelectItem
+                              value={GuestStatus.REJECTED}
+                              className="cursor-pointer hover:bg-[#A5AE79]/20"
+                            >
                               {currentLanguage === "kh"
                                 ? "បដិសេធ"
                                 : "Cannot attend"}
@@ -839,6 +920,7 @@ export default function SpecialTemplate({
                         </Select>
                       )}
                     />
+
                     <Input
                       {...form.register("number_guest")}
                       placeholder={
@@ -847,8 +929,10 @@ export default function SpecialTemplate({
                           : "Number of guests"
                       }
                       type="number"
-                      className="bg-[#A5AE79]/30 border-0 focus-visible:ring-0 rounded-lg text-[#A5AE79] placeholder:text-[#A5AE79] w-full hover:bg-[#A5AE79]/40 focus:scale-105 transition-all duration-300"
+                      min="0"
+                      className="bg-[#A5AE79]/40 border-0 border-[#A5AE79]/50 focus-visible:ring-2 focus-visible:ring-[#A5AE79] rounded-xl text-[#2C3E1F] font-medium placeholder:text-[#A5AE79]/70 w-full hover:bg-[#A5AE79]/50 focus:scale-[1.02] transition-all duration-300 "
                     />
+
                     <Textarea
                       {...form.register("message")}
                       placeholder={
@@ -856,12 +940,14 @@ export default function SpecialTemplate({
                           ? "សារជូនពរ"
                           : "Greeting message"
                       }
-                      className="bg-[#A5AE79]/30 border-0 focus-visible:ring-0 rounded-lg text-[#A5AE79] placeholder:text-[#A5AE79] w-full hover:bg-[#A5AE79]/40 focus:scale-105 transition-all duration-300"
+                      rows={4}
+                      className="bg-[#A5AE79]/40 border-0 border-[#A5AE79]/50 focus-visible:ring-2 focus-visible:ring-[#A5AE79] rounded-xl text-[#2C3E1F] font-medium placeholder:text-[#A5AE79]/70 w-full hover:bg-[#A5AE79]/50 focus:scale-[1.02] transition-all duration-300 resize-none"
                     />
-                    <div className="text-[10px] text-center w-[200px] md:w-[280px] md:h-[50px] mb-8">
+
+                    <div className="w-full flex justify-center mt-6">
                       <motion.button
                         type="submit"
-                        className="cursor-pointer transform md:text-[14px] text-center w-[200px] md:w-[280px] md:h-[50px] inline-block px-3 py-2"
+                        className="cursor-pointer transform text-base md:text-lg text-center w-[220px] md:w-[300px] h-[50px] md:h-[60px] inline-flex items-center justify-center px-6 py-3 "
                         style={{
                           color: "white",
                           fontFamily: "moul",
@@ -869,52 +955,65 @@ export default function SpecialTemplate({
                             "url('/template/arts/button-kbach.png')",
                           backgroundSize: "cover",
                           backgroundPosition: "center",
-                          borderRadius: "8px",
+                          borderRadius: "12px",
                         }}
-                        whileHover={{ scale: 1.1 }}
-                        whileTap={{ scale: 0.95 }}
+                        whileHover={{ scale: 1.05 }}
+                        whileTap={{ scale: 0.97 }}
                       >
                         {currentLanguage === "kh" ? "ផ្ញើរ" : "Send"}
                       </motion.button>
                     </div>
                   </motion.form>
                 )}
-                <ScrollArea className="h-[800px] rounded-md  ">
-                  <motion.div
-                    className="p-5 w-full flex flex-col gap-2"
-                    variants={staggerContainer}
-                  >
-                    {guests &&
-                      guests.map((guest, key) => (
-                        <motion.div
-                          key={key}
-                          className="bg-[#A5AE79]/30 p-5 rounded-lg hover:bg-[#A5AE79]/40"
-                          variants={slideInLeftVariant}
-                          whileHover={{
-                            scale: 1.02,
-                            y: -5,
-                            transition: { duration: 0.2 },
-                          }}
-                          whileTap={{ scale: 0.98 }}
-                        >
-                          <div className="text-[#A5AE79] text-lg">
-                            {guest?.name}
+
+                {/* Guest Messages Section */}
+                <div className="w-full  mx-auto mt-8 ">
+                  <div className="relative">
+                    <ScrollArea className="h-[600px] md:h-[700px] rounded-xl border border-[#A5AE79]/20 bg-white/5 backdrop-blur-sm">
+                      <motion.div
+                        className="p-4 md:p-6 w-full flex flex-col gap-4"
+                        variants={staggerContainer}
+                      >
+                        {guests && guests.length > 0 ? (
+                          guests.map((guest, key) => (
+                            <motion.div
+                              key={key}
+                              className="bg-[#A5AE79]/30 backdrop-blur-sm p-5 md:p-6 rounded-xl border border-[#A5AE79]/30 hover:bg-[#A5AE79]/40 hover:border-[#A5AE79]/50"
+                              variants={slideInLeftVariant}
+                              whileHover={{
+                                scale: 1.01,
+                                y: -3,
+                                transition: { duration: 0.2 },
+                              }}
+                              whileTap={{ scale: 0.99 }}
+                            >
+                              <div className="text-[#2C3E1F] text-lg md:text-xl font-semibold mb-2">
+                                {guest?.name}
+                              </div>
+                              <div className="border-b-2 border-[#A5AE79]/60 mb-4"></div>
+                              <div className="text-[#2C3E1F] text-base md:text-lg leading-relaxed mb-4 italic">
+                                "{guest?.wishing_note}"
+                              </div>
+                              <div className="text-[#A5AE79] text-xs md:text-sm font-medium text-right">
+                                {formatDateCustom(
+                                  guest?.sentAt ?? "",
+                                  "DD-MM-YYYY | HH:mmA"
+                                )}
+                              </div>
+                            </motion.div>
+                          ))
+                        ) : (
+                          <div className="text-center text-[#A5AE79]/60 py-12 text-base">
+                            {currentLanguage === "kh"
+                              ? "មិនទាន់មានសារជូនពរ"
+                              : "No messages yet"}
                           </div>
-                          <div className="border-b-2 border-[#A5AE79]/80"></div>
-                          <div className="text-center text-[#A5AE79] pt-5 text-lg">
-                            "{guest?.wishing_note}"
-                          </div>
-                          <div className="text-center text-[#A5AE79] pt-5 text-xs">
-                            {formatDateCustom(
-                              guest?.sentAt ?? "",
-                              "DD-MM-YYYY | HH:mmA"
-                            )}
-                          </div>
-                        </motion.div>
-                      ))}
-                  </motion.div>
-                  <ScrollBar orientation="vertical" />
-                </ScrollArea>
+                        )}
+                      </motion.div>
+                      <ScrollBar orientation="vertical" />
+                    </ScrollArea>
+                  </div>
+                </div>
               </motion.div>
               <Footer />
               <motion.div

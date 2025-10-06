@@ -49,49 +49,55 @@ export function Footer() {
             <div className="absolute -bottom-3 -left-3 w-6 h-6 border-b-2 border-l-2 border-[#A5AE79]/20 rounded-bl-lg" />
             <div className="absolute -bottom-3 -right-3 w-6 h-6 border-b-2 border-r-2 border-[#A5AE79]/20 rounded-br-lg" />
 
-            <div className="flex items-center gap-6 px-8 py-4 bg-background/10 backdrop-blur-sm rounded-lg border border-[#A5AE79]/20">
-              <motion.div
-                className="relative w-14 h-14 flex items-center justify-center"
-                initial={{ opacity: 0, x: -20 }}
-                whileInView={{ opacity: 1, x: 0 }}
-                viewport={{ once: false }}
-                transition={{ duration: 0.6, delay: 0.2 }}
-              >
-                <Image
-                  src="https://planessential.com/logo.png"
-                  alt="Plan Essential"
-                  width={56}
-                  height={56}
-                  className="object-contain drop-shadow-lg"
-                />
-              </motion.div>
+            <a
+              href="https://t.me/planessential"
+              target="_blank"
+              rel="noopener noreferrer"
+            >
+              <div className="flex items-center gap-6 px-8 py-4 bg-background/10 backdrop-blur-sm rounded-lg border border-[#A5AE79]/20">
+                <motion.div
+                  className="relative w-14 h-14 flex items-center justify-center"
+                  initial={{ opacity: 0, x: -20 }}
+                  whileInView={{ opacity: 1, x: 0 }}
+                  viewport={{ once: false }}
+                  transition={{ duration: 0.6, delay: 0.2 }}
+                >
+                  <Image
+                    src="https://planessential.com/logo.png"
+                    alt="Plan Essential"
+                    width={56}
+                    height={56}
+                    className="object-contain drop-shadow-lg"
+                  />
+                </motion.div>
 
-              <motion.span
-                className="text-2xl text-[#A5AE79] font-thin"
-                initial={{ opacity: 0, scale: 0 }}
-                whileInView={{ opacity: 1, scale: 1 }}
-                viewport={{ once: false }}
-                transition={{ duration: 0.4, delay: 0.4 }}
-              >
-                ×
-              </motion.span>
+                <motion.span
+                  className="text-2xl text-[#A5AE79] font-thin"
+                  initial={{ opacity: 0, scale: 0 }}
+                  whileInView={{ opacity: 1, scale: 1 }}
+                  viewport={{ once: false }}
+                  transition={{ duration: 0.4, delay: 0.4 }}
+                >
+                  ×
+                </motion.span>
 
-              <motion.div
-                className="relative w-28 h-14 flex items-center justify-center"
-                initial={{ opacity: 0, x: 20 }}
-                whileInView={{ opacity: 1, x: 0 }}
-                viewport={{ once: false }}
-                transition={{ duration: 0.6, delay: 0.2 }}
-              >
-                <Image
-                  src="https://focuzsolution.com/logo.png"
-                  alt="Focuz Solution"
-                  width={112}
-                  height={56}
-                  className="object-contain drop-shadow-lg"
-                />
-              </motion.div>
-            </div>
+                <motion.div
+                  className="relative w-28 h-14 flex items-center justify-center"
+                  initial={{ opacity: 0, x: 20 }}
+                  whileInView={{ opacity: 1, x: 0 }}
+                  viewport={{ once: false }}
+                  transition={{ duration: 0.6, delay: 0.2 }}
+                >
+                  <Image
+                    src="https://focuzsolution.com/logo.png"
+                    alt="Focuz Solution"
+                    width={112}
+                    height={56}
+                    className="object-contain drop-shadow-lg"
+                  />
+                </motion.div>
+              </div>
+            </a>
           </motion.div>
 
           <motion.div

@@ -28,6 +28,7 @@ import {
   MessageSquare,
   Sparkles,
   Play,
+  QrCode,
 } from "lucide-react";
 
 export default function SpecialTemplateEditor({
@@ -334,6 +335,28 @@ export default function SpecialTemplateEditor({
                   updateConfig("messages_header_image", e.target.value)
                 }
                 value={config?.messages_header_image || ""}
+              />
+            </div>
+          </AccordionContent>
+        </AccordionItem>
+        {/* KHQR Section */}
+        <AccordionItem value="khqr" className="border rounded-lg bg-white">
+          <AccordionTrigger className="px-4 py-3 hover:no-underline">
+            <div className="flex items-center gap-2">
+              <div className="h-8 w-8 rounded-full bg-red-50 flex items-center justify-center">
+                <QrCode className="h-4 w-4 text-red-600" />
+              </div>
+              <span className="font-medium">KHQR</span>
+            </div>
+          </AccordionTrigger>
+          <AccordionContent className="px-4 pb-4 space-y-3">
+            <div className="space-y-1.5">
+              <Label className="text-sm">KHQR Image</Label>
+              <ImageUpload
+                label="KHQR"
+                folder="/event/template/assets"
+                onChange={(e) => updateConfig("khqr", e.target.value)}
+                value={config?.khqr || ""}
               />
             </div>
           </AccordionContent>

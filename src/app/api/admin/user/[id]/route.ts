@@ -3,7 +3,7 @@ import { prisma } from "@/lib/prisma";
 
 export async function GET(request: NextRequest, context: any) {
   // cast params to correct type
-  const { id } = context.params as { id: string };
+  const { id } = (await context.params) as { id: string };
 
   try {
     const user = await prisma.user.findUnique({

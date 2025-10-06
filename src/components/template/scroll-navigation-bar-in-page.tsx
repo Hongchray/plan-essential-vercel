@@ -7,6 +7,7 @@ import {
   Home,
   ChevronsUp,
   ChevronsDown,
+  QrCode,
 } from "lucide-react";
 
 const ScrollNavigationBarInPage = () => {
@@ -19,6 +20,7 @@ const ScrollNavigationBarInPage = () => {
     { id: "schedule", label: "Schedule", icon: Calendar, labelKh: "កម្មវិធី" },
     { id: "location", label: "Location", icon: MapPin, labelKh: "ទីតាំង" },
     { id: "gallery", label: "Photos", icon: Camera, labelKh: "រូបភាព" },
+    { id: "khqr", label: "KHQR", icon: QrCode, labelKh: "ចងដៃ" },
     {
       id: "messages",
       label: "Messages",
@@ -57,6 +59,7 @@ const ScrollNavigationBarInPage = () => {
         "schedule",
         "location",
         "gallery",
+        "khqr",
         "messages",
       ];
 
@@ -131,7 +134,7 @@ const ScrollNavigationBarInPage = () => {
                   `}
                   title={section.label}
                 >
-                  <Icon size={24} />
+                  <Icon size={18} className="md:size-6" />
 
                   {/* Active indicator */}
                   {isActive && (
@@ -159,14 +162,14 @@ const ScrollNavigationBarInPage = () => {
           onClick={scrollToTop}
           className="fixed bottom-6 right-4 z-50 bg-[#A5AE79] text-white p-3 rounded-full shadow-lg hover:bg-[#A5AE79]/80 hover:scale-110 transform transition-all duration-300 animate-bounce-gentle"
         >
-          <ChevronsUp size={24} />
+          <ChevronsUp size={18} className="md:size-6" />
         </button>
       ) : (
         <button
           onClick={scrollToBottom}
           className="fixed bottom-6 right-4 z-50 bg-[#A5AE79] text-white p-3 rounded-full shadow-lg hover:bg-[#A5AE79]/80 hover:scale-110 transform transition-all duration-300 animate-bounce-gentle"
         >
-          <ChevronsDown size={24} />
+          <ChevronsDown size={18} className="md:size-6" />
         </button>
       )}
 
