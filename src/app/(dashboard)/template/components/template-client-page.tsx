@@ -2,7 +2,7 @@
 
 import { useTemplateColumns } from "../components/columns";
 import { DataTable } from "../components/data-table";
-import { Template } from "../data/schema";
+import { Template } from "@/interfaces/template";
 import { useEffect, useState } from "react";
 import { useSearchParams } from "next/navigation";
 import { IAPIResponse } from "@/interfaces/comon/api-response";
