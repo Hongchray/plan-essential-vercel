@@ -3,6 +3,8 @@ import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
 import { Toaster } from "@/components/ui/sonner";
 import { LocaleFontProvider } from "@/components/locale-font-provider";
+import { Analytics } from "@vercel/analytics/next";
+import { SpeedInsights } from "@vercel/speed-insights/next";
 const geistSans = Geist({
   variable: "--font-geist-sans",
   subsets: ["latin"],
@@ -42,6 +44,10 @@ export default function RootLayout({
         />
       </head>
       <body className="antialiased">
+        {/* Analytics */}
+        <Analytics />
+        {/* SpeedInsights */}
+        <SpeedInsights />
         <LocaleFontProvider>
           <Toaster position="top-center" />
           {children}
