@@ -150,7 +150,10 @@ export const useTemplateColumns = (): ColumnDef<Template>[] => {
       ),
       cell: ({ row }) => (
         <Avatar>
-          <AvatarImage src={row.getValue("image")} alt={row.getValue("name")} />
+          <AvatarImage
+            src={row.getValue("image") || "/no-image.png"}
+            alt={row.getValue("name")}
+          />
           <AvatarFallback>CN</AvatarFallback>
         </Avatar>
       ),
