@@ -43,21 +43,45 @@ export default function EventCard({ event }: { event: Event }) {
   return (
     <div className="border bg-white rounded-lg p-4 shadow hover:shadow-lg transition flex flex-col justify-between">
       <div>
-        {event.image && (
-          <img
-            src={event.image}
-            alt={event.name}
-            className="w-full h-40 object-cover rounded-md mb-4"
-          />
-        )}
+        <div className="relative mb-4">
+          {event.image ? (
+            <img
+              src={event.image}
+              alt={event.name}
+              className="w-full h-40 object-cover rounded-md"
+            />
+          ) : (
+            <div className="w-full h-40 flex items-center justify-center bg-gray-100 rounded-md">
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                className="h-10 w-10 text-gray-400"
+                fill="none"
+                viewBox="0 0 24 24"
+                stroke="currentColor"
+                strokeWidth={2}
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  d="M3 5a2 2 0 012-2h14a2 2 0 012 2v14a2 2 0 01-2 2H5a2 2 0 01-2-2V5z"
+                />
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  d="M21 15l-5-5L5 21"
+                />
+              </svg>
+            </div>
+          )}
+
+          {event.type && (
+            <span className="absolute top-2 left-2 bg-rose-300 text-black text-xs font-semibold rounded-2xl px-2.5 py-1.5 mb-2 capitalize  shadow-sm">
+              {event.type}
+            </span>
+          )}
+        </div>
 
         <h3 className="text-xl font-bold mb-2 text-[#FDAE33]">{event.name}</h3>
-
-        {event.type && (
-          <span className="inline-block bg-blue-100 text-blue-800 text-xs font-semibold px-2 py-1 rounded-full mb-2 capitalize">
-            {event.type}
-          </span>
-        )}
 
         <p className="text-gray-700 mb-2">
           {event.description || t("EventPage.no_description")}

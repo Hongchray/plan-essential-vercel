@@ -37,7 +37,10 @@ export const authOptions: AuthOptions = {
         password: { label: "Password", type: "password" },
       },
       async authorize(credentials) {
-        if (!credentials?.phone || !credentials?.password) return null;
+        if (!credentials?.phone || !credentials?.password) {
+          throw new Error("login.missing_fields");
+        }
+
         const user = await prisma.user.findUnique({
           where: { phone: credentials.phone },
           include: {
@@ -46,7 +49,14 @@ export const authOptions: AuthOptions = {
             },
           },
         });
-        if (!user) return null;
+        if (!user) {
+          throw new Error("login.user_not_found");
+        }
+
+        const isValid = await compare(credentials.password, user.password);
+        if (!isValid) {
+          throw new Error("login.invalid_password");
+        }
         if (!(await compare(credentials.password, user.password))) return null;
 
         return {
@@ -105,25 +115,28 @@ export const authOptions: AuthOptions = {
               photoUrl,
               updatedAt: new Date(),
             },
+            include: {
+              userPlan: { include: { plan: true } },
+            },
           });
 
           return {
-            id: updatedUser.id,
-            email: updatedUser.email ?? "",
-            name: updatedUser.name ?? null,
-            username: updatedUser.username ?? null,
-            photoUrl: updatedUser.photoUrl ?? null,
-            phone: updatedUser.phone ?? null,
-            role: updatedUser.role,
-            telegramId: updatedUser.telegramId ?? null,
-            otp_code: updatedUser.otp_code ?? null,
-            otp_expires_at: updatedUser.otp_expires_at ?? null,
-            phone_verified: updatedUser.phone_verified,
-            phone_verified_at: updatedUser.phone_verified_at ?? null,
-            createdAt: updatedUser.createdAt,
-            updatedAt: updatedUser.updatedAt,
+            ...updatedUser,
+            plans: updatedUser.userPlan.map((up) => ({
+              id: up.plan.id,
+              name: up.plan.name,
+              price: up.plan.price,
+              limit_guests: up.limit_guests,
+              limit_template: up.limit_template,
+              limit_export_excel: up.limit_export_excel,
+            })),
           };
         } else {
+          // ✅ Find default plan (you can adjust the name or ID as needed)
+          const defaultPlan = await prisma.plan.findFirst({
+            where: { price: 0 },
+          });
+
           const newUser = await prisma.user.create({
             data: {
               telegramId,
@@ -134,6 +147,19 @@ export const authOptions: AuthOptions = {
               photoUrl,
               role: "user",
               phone_verified: false,
+              userPlan: defaultPlan
+                ? {
+                    create: {
+                      planId: defaultPlan.id,
+                      limit_guests: defaultPlan.limit_guests,
+                      limit_template: defaultPlan.limit_template,
+                      limit_export_excel: defaultPlan.limit_export_excel,
+                    },
+                  }
+                : undefined, // fallback: no plan assigned if none found
+            },
+            include: {
+              userPlan: { include: { plan: true } },
             },
           });
 
@@ -152,6 +178,14 @@ export const authOptions: AuthOptions = {
             phone_verified_at: newUser.phone_verified_at ?? null,
             createdAt: newUser.createdAt,
             updatedAt: newUser.updatedAt,
+            plans: newUser.userPlan.map((up) => ({
+              id: up.plan.id,
+              name: up.plan.name,
+              price: up.plan.price,
+              limit_guests: up.limit_guests,
+              limit_template: up.limit_template,
+              limit_export_excel: up.limit_export_excel,
+            })),
           };
         }
       },

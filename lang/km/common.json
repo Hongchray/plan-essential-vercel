@@ -24,7 +24,11 @@
     "password_min_length": "លេខសម្ងាត់ត្រូវតែមានយ៉ាងហោចណាស់ ៨ តួអក្សរ",
     "version": "កំណែលេខ",
     "enter_password": "បញ្ចូលលេខសម្ងាត់",
-    "phone_placeholder": "ឧ. 012345678"
+    "phone_placeholder": "ឧ. 012345678",
+    "user_not_found": "រកមិនឃើញអ្នកប្រើប្រាស់ទេ។",
+    "invalid_password": "ពាក្យសម្ងាត់មិនត្រឹមត្រូវទេ។",
+    "missing_fields": "សូមបញ្ចូលលេខទូរស័ព្ទ និងពាក្យសម្ងាត់របស់អ្នក។",
+    "unknown_error": "មានបញ្ហាផ្លូវការ។ សូមព្យាយាមម្តងទៀត។"
   },
   "signup": {
     "sign_up": "បង្កើតគណនី",
@@ -300,7 +304,7 @@
       "birthday": "ខួបកំណើត",
       "anniversary": "ខួបអាពាហ៍ពិពាហ៍",
       "description": "ពិពណ៌នា (មិនចាំបាច់)",
-      "descriptionPlaceholder": "ឧ. សាលមហោស្រពកោះពេជ្រ អាគា A",
+      "descriptionPlaceholder": "សរសេរកំណត់ចំណាំរបស់អ្នក",
       "location": "ទីតាំងប្រារព្ធពិធី (អាចបំពេញពេលក្រោយបាន)",
       "locationPlaceholder": "ឧ. សាលមហោស្រពកោះពេជ្រ អាគា A",
       "startDate": "កាលបរិច្ឆេទចាប់ផ្តើមកម្មវិធី",

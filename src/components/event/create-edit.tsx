@@ -438,9 +438,9 @@ export function CreateEditForm({ id }: { id?: string }) {
 
           <div className="sm:col-span-1">
             <TextareaField
-              label={t("EventPage.create.description")}
-              name="description"
-              placeholder={t("EventPage.create.descriptionPlaceholder")}
+              label={t("EventPage.create.location")}
+              name="location"
+              placeholder={t("EventPage.create.locationPlaceholder")}
               form={form}
               disabled={loading}
             />
@@ -448,9 +448,9 @@ export function CreateEditForm({ id }: { id?: string }) {
 
           <div className="sm:col-span-1">
             <TextareaField
-              label={t("EventPage.create.location")}
-              name="location"
-              placeholder={t("EventPage.create.locationPlaceholder")}
+              label={t("EventPage.create.description")}
+              name="description"
+              placeholder={t("EventPage.create.descriptionPlaceholder")}
               form={form}
               disabled={loading}
             />
@@ -480,7 +480,7 @@ export function CreateEditForm({ id }: { id?: string }) {
                     </span>
                     {hasSchedule && (
                       <span className="text-xs sm:text-sm bg-blue-100 px-2 py-1 rounded">
-                        {shiftFields.length} ពេល
+                        {shiftFields.length} របៀបវីរៈ
                       </span>
                     )}
                   </div>
@@ -509,7 +509,7 @@ export function CreateEditForm({ id }: { id?: string }) {
                       className="w-full sm:w-auto"
                     >
                       <Plus className="w-4 h-4 mr-2" />
-                      បន្ថែមពេល
+                      បន្ថែមរបៀបវីរៈ
                     </Button>
                   </div>
                 ) : (
@@ -533,7 +533,7 @@ export function CreateEditForm({ id }: { id?: string }) {
                       disabled={loading}
                     >
                       <Plus className="w-4 h-4 mr-2" />
-                      បន្ថែមពេល
+                      បន្ថែមរបៀបវីរៈ
                     </Button>
                   </div>
                 )}
@@ -594,7 +594,7 @@ function ShiftCard({
         <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-1 sm:gap-2">
           <CardTitle className="text-sm sm:text-base flex items-center gap-2">
             <Users className="w-4 h-4" />
-            ពេលទី {shiftIndex + 1}
+            របៀបវីរៈទី {shiftIndex + 1}
           </CardTitle>
           {canRemove && (
             <Button
@@ -615,7 +615,7 @@ function ShiftCard({
         <div className="grid grid-cols-1  gap-2 sm:gap-3">
           <div className="sm:col-span-1">
             <InputTextField
-              label="ឈ្មោះពេល"
+              label="ឈ្មោះរបៀបវីរៈ"
               name={`schedule.shifts.${shiftIndex}.name`}
               placeholder="ឧ. កម្មវិធីថ្ងៃទី ១​ : ថ្ងៃអាទិត្យ ទី២១ ខែកញ្ញា ឆ្នាំ២០២៥"
               form={form}

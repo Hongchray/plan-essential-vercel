@@ -23,7 +23,11 @@
     "password_min_length": "Password must be at least 8 characters long",
     "version": "Version",
     "enter_password": "Enter password",
-    "phone_placeholder": "0123456789"
+    "phone_placeholder": "0123456789",
+    "user_not_found": "User not found.",
+    "invalid_password": "Incorrect password.",
+    "missing_fields": "Please enter your phone number and password.",
+    "unknown_error": "Something went wrong. Please try again."
   },
   "signup": {
     "sign_up": "Sign Up",
@@ -298,7 +302,7 @@
       "birthday": "Birthday",
       "anniversary": "Anniversary",
       "description": "Description",
-      "descriptionPlaceholder": "Enter description",
+      "descriptionPlaceholder": "Enter your description",
       "location": "Location",
       "locationPlaceholder": "Enter location",
       "startDate": "Event Date",
