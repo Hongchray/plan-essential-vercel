@@ -230,14 +230,12 @@ export default function ProfilePage() {
             {profile.events && profile.events.length > 0 ? (
               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
                 {profile.events.map((event) => (
-                  <Card key={event.id} className="overflow-hidden">
-                    {event.image && (
-                      <img
-                        src={event.image}
-                        alt={event.name}
-                        className="w-full h-40 object-cover"
-                      />
-                    )}
+                  <Card key={event.id} className="overflow-hidden py-0 pb-4">
+                    <img
+                      src={event.image || "/no-image.png"}
+                      alt={event.name}
+                      className="w-full h-40 object-cover"
+                    />
                     <CardHeader className="space-y-1">
                       <h3 className="font-semibold text-gray-800">
                         {event.name}

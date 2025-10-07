@@ -52,7 +52,65 @@ export default function SpecialTemplate({
   const handleWelcomeClose = () => {
     setIsWelcomeOpen(false);
   };
+  useEffect(() => {
+    if (isOpen && !musicStarted) {
+      const music = document.getElementById(
+        "welcome-music"
+      ) as HTMLAudioElement;
+      if (music) {
+        // iOS-specific audio handling
+        const playAudio = async () => {
+          try {
+            // Load the audio first
+            music.load();
 
+            // Attempt to play
+            const playPromise = music.play();
+
+            if (playPromise !== undefined) {
+              playPromise
+                .then(() => {
+                  setMusicStarted(true);
+                  console.log("Audio playing successfully");
+                })
+                .catch((err) => {
+                  console.log("Audio play failed:", err);
+
+                  // For iOS: Add click listener to entire document
+                  const playOnInteraction = () => {
+                    music
+                      .play()
+                      .then(() => {
+                        setMusicStarted(true);
+                        document.removeEventListener(
+                          "touchstart",
+                          playOnInteraction
+                        );
+                        document.removeEventListener(
+                          "click",
+                          playOnInteraction
+                        );
+                      })
+                      .catch((e) => console.log("Retry failed:", e));
+                  };
+
+                  document.addEventListener("touchstart", playOnInteraction, {
+                    once: true,
+                  });
+                  document.addEventListener("click", playOnInteraction, {
+                    once: true,
+                  });
+                });
+            }
+          } catch (err) {
+            console.log("Audio error:", err);
+          }
+        };
+
+        playAudio();
+      }
+    }
+  }, [isOpen, musicStarted]);
   // Play music when isOpen becomes true
   useEffect(() => {
     if (isOpen && !musicStarted) {
@@ -81,15 +139,49 @@ export default function SpecialTemplate({
   // Handle welcome video close by detect video end
   useEffect(() => {
     const video = document.getElementById("welcome-video") as HTMLVideoElement;
+
     if (video) {
-      video.addEventListener("ended", handleWelcomeClose);
+      // iOS requires inline playback
+      video.setAttribute("playsinline", "true");
+      video.setAttribute("webkit-playsinline", "true");
+
+      // Handle video end
+      const handleEnded = () => {
+        handleWelcomeClose();
+      };
+
+      // Handle video errors
+      const handleError = (e: ErrorEvent) => {
+        console.error("Video error:", e);
+        // Fallback: close welcome screen after 3 seconds
+        setTimeout(() => {
+          handleWelcomeClose();
+        }, 3000);
+      };
+
+      video.addEventListener("ended", handleEnded);
+      video.addEventListener("error", (e: ErrorEvent) => handleError(e));
+
+      // Force play on iOS
+      const forcePlay = () => {
+        video.play().catch((err) => {
+          console.log("Video play failed:", err);
+          // If video fails, skip to main content
+          setTimeout(() => {
+            handleWelcomeClose();
+          }, 1000);
+        });
+      };
+
+      // Try to play with a slight delay
+      setTimeout(forcePlay, 100);
+
+      return () => {
+        video.removeEventListener("ended", handleEnded);
+        video.removeEventListener("error", handleError);
+      };
     }
-    return () => {
-      if (video) {
-        video.removeEventListener("ended", handleWelcomeClose);
-      }
-    };
-  }, [handleWelcomeClose]);
+  }, [isOpen, isWelcomeOpen]);
 
   useEffect(() => {
     // Preload critical assets
@@ -104,6 +196,18 @@ export default function SpecialTemplate({
       video.src = config.welcome_background_video;
     }
   }, [config]);
+
+  useEffect(() => {
+    // Ensure viewport is set correctly for iOS
+    const viewportMeta = document.querySelector('meta[name="viewport"]');
+    if (!viewportMeta) {
+      const meta = document.createElement("meta");
+      meta.name = "viewport";
+      meta.content =
+        "width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no";
+      document.head.appendChild(meta);
+    }
+  }, []);
 
   const [timeLeft, setTimeLeft] = useState({
     days: 0,
@@ -305,12 +409,25 @@ export default function SpecialTemplate({
           preload="auto"
           playsInline
           crossOrigin="anonymous"
+          onError={(e) => {
+            console.error("Audio error:", e);
+          }}
+        >
+          <source src={config.background_music} type="audio/mpeg" />
+        </audio>
+      )}
+      {isOpen && config?.background_music && (
+        <audio
+          id="welcome-music"
+          loop
+          preload="auto"
+          playsInline
+          crossOrigin="anonymous"
         >
           <source src={config.background_music} type="audio/mpeg" />
           <source src={config.background_music} type="audio/mp3" />
         </audio>
       )}
-
       {/* Front envelope */}
       {!isOpen && (
         <div className="front-evelop h-screen">
@@ -320,14 +437,22 @@ export default function SpecialTemplate({
             loop
             muted
             playsInline
-            preload="metadata"
+            webkit-playsinline="true"
+            preload="auto"
             className="absolute top-0 left-0 w-full h-full object-cover"
+            onLoadedData={(e) => {
+              // Force play on iOS after loaded
+              const video = e.currentTarget;
+              video
+                .play()
+                .catch((err) => console.log("Autoplay prevented:", err));
+            }}
           >
-            <source src={config?.welcome_background_video} type="video/webm" />
             <source
               src={config?.welcome_background_video?.replace(".webm", ".mp4")}
               type="video/mp4"
             />
+            <source src={config?.welcome_background_video} type="video/webm" />
           </video>
 
           {/* Overlay content */}
@@ -451,15 +576,25 @@ export default function SpecialTemplate({
               id="welcome-video"
               autoPlay
               playsInline
+              webkit-playsinline="true"
               muted={false}
               preload="auto"
               className="absolute top-0 left-0 w-full h-full object-cover"
+              onLoadedData={(e) => {
+                const video = e.currentTarget;
+                // iOS needs explicit play call
+                video.play().catch((err) => {
+                  console.log("Video play error:", err);
+                  // Auto-close if video fails
+                  setTimeout(() => handleWelcomeClose(), 1000);
+                });
+              }}
             >
-              <source src={config?.unboxing_video} type="video/webm" />
               <source
                 src={config?.unboxing_video?.replace(".webm", ".mp4")}
                 type="video/mp4"
               />
+              <source src={config?.unboxing_video} type="video/webm" />
             </video>
           </motion.div>
         )}
@@ -483,14 +618,22 @@ export default function SpecialTemplate({
                 loop
                 muted
                 playsInline
+                webkit-playsinline="true"
                 preload="auto"
                 className="w-full h-full object-cover"
+                onLoadedData={(e) => {
+                  e.currentTarget
+                    .play()
+                    .catch((err) =>
+                      console.log("Background video error:", err)
+                    );
+                }}
               >
-                <source src={config?.main_background_video} type="video/webm" />
                 <source
                   src={config?.main_background_video?.replace(".webm", ".mp4")}
                   type="video/mp4"
                 />
+                <source src={config?.main_background_video} type="video/webm" />
               </video>
             </div>
 
