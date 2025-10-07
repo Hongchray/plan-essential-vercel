@@ -154,12 +154,18 @@ export const useEventColumns = (): ColumnDef<Event>[] => {
       header: ({ column }) => (
         <DataTableColumnHeader column={column} title="EventPage.table.logo" />
       ),
-      cell: ({ row }) => (
-        <Avatar>
-          <AvatarImage src={row.getValue("image")} alt={row.getValue("name")} />
-          <AvatarFallback>CN</AvatarFallback>
-        </Avatar>
-      ),
+      cell: ({ row }) => {
+        const name: string = row.getValue("name") ?? "";
+        const { bg, text } = getAvatarColor(name);
+        return (
+          <Avatar>
+            <AvatarImage src={row.getValue("image")} alt="@shadcn" />
+            <AvatarFallback className={`${bg} ${text} font-bold text-[12px]`}>
+              {getInitials(name)}
+            </AvatarFallback>
+          </Avatar>
+        );
+      },
     },
 
     {
@@ -221,9 +227,9 @@ export const useEventColumns = (): ColumnDef<Event>[] => {
 
         const variant =
           status === "active"
-            ? "secondary"
-            : status === "inactive"
             ? "default"
+            : status === "inactive"
+            ? "secondary"
             : "outline"; // fallback
 
         return (

@@ -112,12 +112,18 @@ export const useUserColumns = (): ColumnDef<User>[] => {
       header: ({ column }) => (
         <DataTableColumnHeader column={column} title="user.table.logo" />
       ),
-      cell: ({ row }) => (
-        <Avatar>
-          <AvatarImage src={row.getValue("photoUrl")} alt="@shadcn" />
-          <AvatarFallback>CN</AvatarFallback>
-        </Avatar>
-      ),
+      cell: ({ row }) => {
+        const name: string = row.getValue("name") ?? "";
+        const { bg, text } = getAvatarColor(name);
+        return (
+          <Avatar>
+            <AvatarImage src={row.getValue("photoUrl")} alt="@shadcn" />
+            <AvatarFallback className={`${bg} ${text} font-bold text-[12px]`}>
+              {getInitials(name)}
+            </AvatarFallback>
+          </Avatar>
+        );
+      },
     },
 
     {
