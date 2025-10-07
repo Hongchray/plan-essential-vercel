@@ -183,7 +183,8 @@ export function LoginForm() {
       </Card>
       <div className="text-center py-2">
         <span className="text-muted-foreground text-sm">
-          {t("login.version")} {process.env.NEXT_PUBLIC_APP_VERSION}
+          {t("login.version")} {process.env.NEXT_PUBLIC_APP_VERSION} -
+          {process.env.NEXT_PUBLIC_ENVIRONMENT}
         </span>
       </div>
     </div>
