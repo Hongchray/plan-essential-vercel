@@ -345,56 +345,72 @@ export async function importGuestsFromExcel(
     let imported = 0;
     let skipped = 0;
 
-    // Process guests in transaction
-    await prisma.$transaction(async (tx) => {
-      for (let i = 0; i < guestData.length; i++) {
-        const guest = guestData[i];
+    const BATCH_SIZE = 100;
 
-        try {
-          // Check if guest already exists (by name and email/phone)
-          const existingGuest = await tx.guest.findFirst({
-            where: {
-              eventId,
-              name: guest.name,
-              OR: guest.email
-                ? [{ email: guest.email }, { phone: guest.phone }]
-                : [{ phone: guest.phone }].filter(Boolean),
-            },
-          });
+    for (let i = 0; i < guestData.length; i += BATCH_SIZE) {
+      const batch = guestData.slice(i, i + BATCH_SIZE);
 
-          if (existingGuest) {
-            skipped++;
-            errors.push(`Row ${i + 2}: Guest "${guest.name}" already exists`);
-            continue;
-          }
+      // Build all queries for this batch first
+      const queries = [];
 
-          // Create new guest
-          await tx.guest.create({
-            data: {
-              eventId,
-              name: guest.name,
-              email: guest.email,
-              phone: guest.phone,
-              address: guest.address,
-              note: guest.note,
-              status: guest.status || "pending",
-              wishing_note: guest.wishing_note,
-              number_of_guests: guest.number_of_guests || 0,
-              is_invited: guest.is_invited || false,
-            },
-          });
+      for (const [index, guest] of batch.entries()) {
+        const rowNumber = i + index + 2;
 
-          imported++;
-        } catch (error) {
-          skipped++;
-          errors.push(
-            `Row ${i + 2}: ${
-              error instanceof Error ? error.message : "Unknown error occurred"
-            }`
-          );
-        }
+        queries.push(
+          (async () => {
+            try {
+              // Check if guest exists
+              const existingGuest = await prisma.guest.findFirst({
+                where: {
+                  eventId,
+                  name: guest.name,
+                  OR: guest.email
+                    ? [{ email: guest.email }, { phone: guest.phone }]
+                    : [{ phone: guest.phone }].filter(Boolean),
+                },
+              });
+
+              if (existingGuest) {
+                skipped++;
+                errors.push(
+                  `Row ${rowNumber}: Guest "${guest.name}" already exists`
+                );
+                return;
+              }
+
+              await prisma.guest.create({
+                data: {
+                  eventId,
+                  name: guest.name,
+                  email: guest.email,
+                  phone: guest.phone,
+                  address: guest.address,
+                  note: guest.note,
+                  status: guest.status || "pending",
+                  wishing_note: guest.wishing_note,
+                  number_of_guests: guest.number_of_guests || 0,
+                  is_invited: guest.is_invited || false,
+                },
+              });
+
+              imported++;
+            } catch (error) {
+              skipped++;
+              errors.push(
+                `Row ${rowNumber}: ${
+                  error instanceof Error
+                    ? error.message
+                    : "Unknown error occurred"
+                }`
+              );
+            }
+          })()
+        );
       }
-    });
+
+      // Run all batch operations in parallel safely (no long transaction)
+      await Promise.all(queries);
+    }
 
     return { imported, skipped, errors };
   } catch (error) {

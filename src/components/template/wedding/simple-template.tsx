@@ -24,6 +24,8 @@ import { toast } from "sonner";
 import ScrollNavigationBar from "../scroll-navigation-bar";
 import { useLanguage } from "@/hooks/LanguageContext";
 import { Footer } from "../footer";
+import PhotoGallery from "@/components/composable/PhotoGallery";
+import SingleImagePreview from "@/components/composable/SingleImagePreview";
 export default function SimpleTemplate({
   config,
   data,
@@ -35,6 +37,12 @@ export default function SimpleTemplate({
   const searchParams = useSearchParams();
   const guestId = searchParams.get("guest");
   const [guest, setGuest] = useState<Guest>();
+  const weddingPhotos = [
+    config?.photo_gallary?.photo1,
+    config?.photo_gallary?.photo2,
+    config?.photo_gallary?.photo3,
+    config?.photo_gallary?.photo4,
+  ].filter(Boolean);
   const getGuest = async (guestId: string, eventId: string) => {
     try {
       const res = await fetch(`/api/admin/event/${eventId}/guest/${guestId}`);
@@ -409,12 +417,9 @@ export default function SimpleTemplate({
         </h2>
         {config?.event_location && (
           <div className="animate-zoom-in animation-delay-300">
-            <Image
+            <SingleImagePreview
               src={config?.event_location}
-              alt="map"
-              width={500}
-              height={450}
-              className="hover:scale-105 transition-transform duration-300  rounded-lg"
+              alt="Event Location Map"
             />
           </div>
         )}
@@ -452,8 +457,7 @@ export default function SimpleTemplate({
         >
           {currentLanguage === "kh" ? "កម្រងរូបភាព" : "PHOTOS"}
         </h2>
-        <div className="grid grid-cols-2 gap-2">
-          {/* Display photos from config if available, otherwise use default */}
+        {/* <div className="grid grid-cols-2 gap-2">
           {config?.photo_gallary?.photo1 && (
             <div className="py-2 animate-fade-in-up animation-delay-300">
               <Image
@@ -501,6 +505,10 @@ export default function SimpleTemplate({
               />
             </div>
           )}
+        </div> */}
+
+        <div className="my-4">
+          <PhotoGallery photos={weddingPhotos} />
         </div>
         <div className="py-2 animate-fade-in animation-delay-1100">
           <Image

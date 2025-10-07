@@ -57,7 +57,8 @@ export async function POST(req: Request) {
     },
   });
 
-  if (!userPlan) {
+  if (userPlan.length === 0) {
+    // <-- check for empty array
     const freePlan = await prisma.plan.findFirst({
       where: {
         price: 0,
