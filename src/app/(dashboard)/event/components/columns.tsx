@@ -159,7 +159,10 @@ export const useEventColumns = (): ColumnDef<Event>[] => {
         const { bg, text } = getAvatarColor(name);
         return (
           <Avatar>
-            <AvatarImage src={row.getValue("image")} alt="@shadcn" />
+            <AvatarImage
+              src={row.getValue("image") || "/no-image.png"}
+              alt="@shadcn"
+            />
             <AvatarFallback className={`${bg} ${text} font-bold text-[12px]`}>
               {getInitials(name)}
             </AvatarFallback>

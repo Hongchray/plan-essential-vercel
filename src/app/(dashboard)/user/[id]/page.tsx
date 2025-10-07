@@ -47,6 +47,7 @@ import type { UserPlan, Plan } from "@/interfaces/plan";
 import { Role } from "@/enums/roles";
 import { Loading } from "@/components/composable/loading/loading";
 import { useTranslation } from "react-i18next";
+import Image from "next/image";
 interface UserProfile {
   id: string;
   email: string;
@@ -292,11 +293,11 @@ export default function UserPage() {
                 <div className="flex flex-col items-center text-center space-y-4">
                   {user.photoUrl ? (
                     <img
-                      src={user.photoUrl || "/placeholder.svg"}
+                      src={user.photoUrl || "/no-image.png"}
                       alt={
                         user.name || user.username || t("user.detail.noName")
                       }
-                      className="w-24 h-24 rounded-full object-cover border-4 border-background shadow-lg"
+                      className="w-24 h-24 rounded-full object-cover border-4 border-background shadow"
                     />
                   ) : (
                     <div className="w-24 h-24 rounded-full bg-primary/10 flex items-center justify-center">
@@ -749,12 +750,11 @@ export default function UserPage() {
                       >
                         <div className="flex flex-col sm:flex-row gap-4">
                           {/* Event Image */}
-                          <img
-                            src={
-                              event.image ||
-                              "/placeholder.svg?height=60&width=60"
-                            }
+                          <Image
+                            src={event.image || "/no-image.png"}
                             alt={event.name}
+                            width={60}
+                            height={100}
                             className="w-full sm:w-20 h-20 rounded-lg object-cover border flex-shrink-0"
                           />
 
