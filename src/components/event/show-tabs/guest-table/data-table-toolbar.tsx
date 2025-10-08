@@ -42,7 +42,7 @@ interface DataTableToolbarProps<TData> {
   table: Table<TData>;
   serverPagination?: boolean;
   totalGuests?: number; // optional, default to 0
-  session?: unknown; // optional, default to null
+  session?: any; // optional, default to null
 }
 
 export function DataTableToolbar<TData>({
@@ -142,7 +142,7 @@ export function DataTableToolbar<TData>({
   const hasSelectedRows = selectedCount > 0;
 
   const handleImportComplete = () => {
-    toast.success("បានបញ្ជូលជោគជ័យ");
+    router.refresh();
   };
   const { exportGuestList, isExporting } = useExcelOperations(eventId);
 

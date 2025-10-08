@@ -13,6 +13,10 @@ import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Badge } from "@/components/ui/badge";
 import { getAvatarColor, getInitials } from "@/utils/avatar";
 import { Gift } from "@/interfaces/gift";
+import { CurrencyType } from "@/enums/currency_type";
+import { PaymentType } from "@/enums/payment_type";
+import { cn } from "@/lib/utils";
+
 const ActionsCell = ({ row }: { row: any }) => {
   const router = useRouter();
   const { t } = useTranslation("common");
@@ -95,19 +99,43 @@ export const MobileGiftCard = ({
             </div>
 
             <div className="flex flex-wrap items-center gap-2 text-[11px] text-gray-600">
-              <Badge variant="default" className="text-[10px]">
+              <Badge
+                variant="outline"
+                className={cn(
+                  "text-[10px] font-medium border px-2 py-0.5",
+                  gift.payment_type === PaymentType.CASH &&
+                    "border-green-400 text-green-600 bg-green-50",
+                  gift.payment_type === PaymentType.BANK &&
+                    "border-emerald-400 text-emerald-600 bg-emerald-50"
+                )}
+              >
                 {gift.payment_type}
               </Badge>
 
+              {/* Amounts */}
               <div className="flex gap-1">
                 {gift.amount_usd ? (
-                  <Badge variant="outline" className="text-[10px]">
+                  <Badge
+                    variant="default"
+                    className={cn(
+                      "text-[10px] font-medium px-2 py-0.5 text-white",
+                      gift.currency_type === CurrencyType.USD &&
+                        "bg-emerald-700 hover:bg-emerald-800"
+                    )}
+                  >
                     USD {gift.amount_usd}
                   </Badge>
                 ) : null}
 
                 {gift.amount_khr ? (
-                  <Badge variant="outline" className="text-[10px]">
+                  <Badge
+                    variant="default"
+                    className={cn(
+                      "text-[10px] font-medium px-2 py-0.5 text-white",
+                      gift.currency_type === CurrencyType.KHR &&
+                        "bg-green-700 hover:bg-emerald-800"
+                    )}
+                  >
                     KHR {gift.amount_khr}
                   </Badge>
                 ) : null}

@@ -107,9 +107,9 @@ export function ManageTagForm({ callBack }: { callBack: () => void }) {
       <button
         type="button"
         onClick={() => setDialogOpen(true)}
-        className="text-rose-500 hover:text-rose-700 text-sm flex items-center gap-1 cursor-pointer border border-dashed rounded-md p-1 border-rose-200"
+        className="text-rose-500 hover:text-rose-700 text-xs flex items-center gap-1 cursor-pointer border border-dashed rounded-md p-1 border-rose-200"
       >
-        <Settings className="h-4 w-4" />{" "}
+        <Settings className="h-3 w-3" />{" "}
         {t("guest_form.create_edit.manage_tags")}
       </button>
 

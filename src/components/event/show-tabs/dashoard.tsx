@@ -90,8 +90,9 @@ export default function TabDashboard({ eventId }: { eventId: string }) {
         {t("event_dashboard.title")}
       </h3>
       <ScrollArea>
-        <div className="flex gap-4 w-full overflow-x-auto md:grid grid-cols-5">
-          <div className="bg-blue-50 p-4 rounded-lg flex-shrink-0 w-40 md:w-auto">
+        <div className="flex gap-4 w-full overflow-x-auto md:grid md:grid-cols-5">
+          {/* Total Guests */}
+          <div className="border border-gray-200 bg-blue-50 p-4 rounded-lg flex-shrink-0 w-[65%] md:w-auto">
             <div className="text-2xl font-bold text-blue-600">
               {event.total_guest}
             </div>
@@ -100,7 +101,8 @@ export default function TabDashboard({ eventId }: { eventId: string }) {
             </div>
           </div>
 
-          <div className="bg-green-50 p-4 rounded-lg flex-shrink-0 w-40 md:w-auto">
+          {/* Confirmed */}
+          <div className="border border-gray-200 bg-green-50 p-4 rounded-lg flex-shrink-0 w-[65%] md:w-auto">
             <div className="text-2xl font-bold text-green-600">
               {event.total_confirmed}
             </div>
@@ -109,7 +111,8 @@ export default function TabDashboard({ eventId }: { eventId: string }) {
             </div>
           </div>
 
-          <div className="bg-purple-50 p-4 rounded-lg flex-shrink-0 w-40 md:w-auto">
+          {/* Gift Income */}
+          <div className="border border-gray-200 bg-purple-50 p-4 rounded-lg flex-shrink-0 w-[65%] md:w-auto">
             <div className="text-2xl font-bold text-purple-600">
               {currencyFormatters.usd(event.total_gift_income)}
             </div>
@@ -125,17 +128,12 @@ export default function TabDashboard({ eventId }: { eventId: string }) {
             </div>
           </div>
 
-          <div className="bg-pink-50 p-4 rounded-lg flex-shrink-0 w-40 md:w-auto">
+          {/* Expenses */}
+          <div className="border border-gray-200 bg-pink-50 p-4 rounded-lg flex-shrink-0 w-[65%] md:w-auto">
             <div className="text-2xl font-bold text-red-600 break-words">
               {currencyFormatters.usd(event.total_expend_actual || 0)}
             </div>
 
-            {/* Label */}
-            {/* <div className="text-sm text-red-800 mt-1">
-              Total Expenses (Actual)
-            </div> */}
-
-            {/* Progress bar */}
             {event.total_expend_budget > 0 && (
               <div className="mt-3">
                 <div className="flex justify-between text-xs text-red-700 mb-1">
@@ -180,7 +178,8 @@ export default function TabDashboard({ eventId }: { eventId: string }) {
             )}
           </div>
 
-          <div className="bg-cyan-50 p-4 rounded-lg flex-shrink-0 w-40 md:w-auto">
+          {/* Profit / Loss */}
+          <div className="border border-gray-200 bg-cyan-50 p-4 rounded-lg flex-shrink-0 w-[65%] md:w-auto">
             <div className="text-2xl font-bold text-cyan-600">
               {currencyFormatters.usd(event.netAmount || 0)}
             </div>

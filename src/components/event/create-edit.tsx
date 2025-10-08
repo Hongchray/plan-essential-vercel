@@ -27,6 +27,8 @@ import {
   ChevronDown,
   ChevronUp,
   X,
+  ArrowLeft,
+  ChevronLeft,
 } from "lucide-react";
 
 import { TFunction } from "i18next";
@@ -547,11 +549,11 @@ export function CreateEditForm({ id }: { id?: string }) {
           <Button
             variant="outline"
             type="button"
-            onClick={() => router.push("/event")}
-            className="w-full sm:w-auto"
+            onClick={() => router.back()} // 👈 Go back to previous page
+            className="w-full sm:w-auto cursor-pointer"
           >
-            <X className="w-4 h-4 mr-2" />
-            {t("EventPage.create.cancel")}
+            <ChevronLeft className="w-4 h-4 mr-1" />
+            {t("EventPage.create.back")}
           </Button>
           <SubmitButton loading={loading} entityId={id} />
         </div>

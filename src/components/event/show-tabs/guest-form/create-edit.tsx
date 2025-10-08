@@ -28,7 +28,9 @@ import { useParams, useRouter } from "next/navigation";
 import { EditIcon, Plus, X } from "lucide-react";
 import ImageUpload from "@/components/composable/upload/upload-image";
 import { useTranslation } from "react-i18next";
-
+import { RequiredMark } from "@/components/composable/required-mark";
+import { useSession } from "next-auth/react";
+import { toast } from "sonner";
 export function CreateEditForm({ id }: { id: string }) {
   const { t } = useTranslation("common"); // assuming your translations are in common.json
   const params = useParams();
@@ -66,6 +68,7 @@ export function CreateEditForm({ id }: { id: string }) {
   const [dialogOpen, setDialogOpen] = useState(false);
   const [tagList, setTagList] = useState<Tag[]>([]);
   const [groupList, setGroupList] = useState<Group[]>([]);
+  const { data: session } = useSession();
 
   // edit guest
   const editGuest = useCallback(async () => {
@@ -97,23 +100,48 @@ export function CreateEditForm({ id }: { id: string }) {
 
   const onSubmit = async (values: GuestFormData) => {
     setLoading(true);
-    if (id) {
-      await fetch(`/api/admin/event/${eventId}/guest/${id}`, {
-        method: "PUT",
-        body: JSON.stringify(values),
-      });
-    } else {
-      await fetch(`/api/admin/event/${eventId}/guest`, {
-        method: "POST",
-        body: JSON.stringify(values),
-      });
-    }
-    setLoading(false);
-    setDialogOpen(false);
-    form.reset();
-    router.refresh();
-  };
 
+    if (!session?.user?.id) {
+      toast.error("Not logged in!");
+      setLoading(false);
+      return;
+    }
+
+    const payload = { ...values, userId: session.user.id };
+
+    try {
+      const res = await fetch(`/api/admin/event/${eventId}/guest`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(payload),
+      });
+
+      const data = await res.json();
+
+      // Check if the request was successful
+      if (!res.ok) {
+        // Handle limit reached or other errors
+        if (data.limitReached) {
+          toast.error("You have reached your guest limit.");
+        } else {
+          toast.error(data.message || "Failed to create guest");
+        }
+        setLoading(false);
+        return;
+      }
+
+      // Success case
+      toast.success("Guest created successfully!");
+      setDialogOpen(false);
+      form.reset();
+      router.refresh();
+      setLoading(false);
+    } catch (err) {
+      console.error(err);
+      toast.error("An error occurred while creating the guest.");
+      setLoading(false);
+    }
+  };
   const groupOptions = useMemo(
     () =>
       groupList.map((group) => ({
@@ -194,6 +222,7 @@ export function CreateEditForm({ id }: { id: string }) {
                 placeholder={t("guest_form.create_edit.name_placeholder")}
                 form={form}
                 disabled={loading}
+                required
               />
               <InputTextField
                 label={t("guest_form.create_edit.phone")}

@@ -109,9 +109,9 @@ export default function TabGift({
       <h3 className="text-lg font-semibold mb-4">{t("gift.wedding_gifts")}</h3>
       <>
         <ScrollArea>
-          <div className="flex gap-4 w-full  md:grid grid-cols-4  md:grid-cols-4 ">
+          <div className="flex gap-4 w-full md:grid grid-cols-4">
             {/* Gifts Received */}
-            <div className="flex-shrink-0 min-w-40 md:w-auto relative bg-gradient-to-br from-blue-50 to-blue-100 p-4 rounded-2xl  transition-all duration-300 border-blue-200/50">
+            <div className="flex-shrink-0 w-[50%] md:w-auto relative bg-gradient-to-br from-blue-50 to-blue-100 p-4 rounded-2xl border border-blue-200 transition-all duration-300">
               <div className="flex items-center justify-between mb-3">
                 <div className="p-2 bg-blue-500/10 rounded-lg">
                   <Users className="w-6 h-6 text-blue-600" />
@@ -136,7 +136,7 @@ export default function TabGift({
             </div>
 
             {/* Total Value (USD) */}
-            <div className="flex-shrink-0 min-w-40 md:w-auto relative bg-gradient-to-br from-green-50 to-green-100 p-4 rounded-2xl  transition-all duration-300 border-green-200/50">
+            <div className="flex-shrink-0 w-[50%] md:w-auto relative bg-gradient-to-br from-green-50 to-green-100 p-4 rounded-2xl border border-green-200 transition-all duration-300">
               <div className="flex items-center justify-between mb-3">
                 <div className="p-2 bg-green-500/10 rounded-lg">
                   <DollarSign className="w-6 h-6 text-green-600" />
@@ -161,14 +161,12 @@ export default function TabGift({
             </div>
 
             {/* Total Value (KHR) */}
-            <div className="flex-shrink-0 min-w-40 md:w-auto relative bg-gradient-to-br from-purple-50 to-purple-100 p-4 rounded-2xl  transition-all duration-300 border-purple-200/50">
+            <div className="flex-shrink-0 w-[50%] md:w-auto relative bg-gradient-to-br from-purple-50 to-purple-100 p-4 rounded-2xl border border-purple-200 transition-all duration-300">
               <div className="flex items-center justify-between mb-3">
                 <div className="p-2 bg-purple-500/10 rounded-lg">
                   <div
-                    className="text-xl font-bold text-purple-600 px-2 "
-                    style={{
-                      fontFamily: "Moul",
-                    }}
+                    className="text-xl font-bold text-purple-600 px-2"
+                    style={{ fontFamily: "Moul" }}
                   >
                     ៛
                   </div>
@@ -195,7 +193,7 @@ export default function TabGift({
             </div>
 
             {/* Total USD Equivalent */}
-            <div className="flex-shrink-0 min-w-40 md:w-auto relative bg-gradient-to-br from-red-50 to-red-100 p-4 rounded-2xl  transition-all duration-300 border-red-200/50">
+            <div className="flex-shrink-0 w-[50%] md:w-auto relative bg-gradient-to-br from-red-50 to-red-100 p-4 rounded-2xl border border-red-200 transition-all duration-300">
               <div className="flex items-center justify-between mb-3">
                 <div className="p-2 bg-red-500/10 rounded-lg">
                   <TrendingUp className="w-6 h-6 text-red-600" />
@@ -226,6 +224,7 @@ export default function TabGift({
           </div>
           <ScrollBar orientation="horizontal" />
         </ScrollArea>
+
         <h3 className="text-lg font-semibold mb-4">{t("gift.title")}</h3>
         <DataTable
           data={data}

@@ -331,88 +331,116 @@ export function parseExcelFile(fileBuffer: Buffer): GuestImportData[] {
   }
 }
 
+// lib/excel-export-import.ts
 export async function importGuestsFromExcel(
   eventId: string,
-  fileBuffer: Buffer
+  fileBuffer: Buffer,
+  userId: string
 ): Promise<{
   imported: number;
   skipped: number;
   errors: string[];
+  limitReached: boolean;
 }> {
   try {
     const guestData = parseExcelFile(fileBuffer);
     const errors: string[] = [];
     let imported = 0;
     let skipped = 0;
+    let limitReached = false;
+
+    // Get user plan
+    const userPlan = await prisma.userPlan.findFirst({
+      where: { userId },
+    });
+
+    if (!userPlan) {
+      throw new Error("User plan not found");
+    }
 
     const BATCH_SIZE = 100;
 
     for (let i = 0; i < guestData.length; i += BATCH_SIZE) {
       const batch = guestData.slice(i, i + BATCH_SIZE);
 
-      // Build all queries for this batch first
-      const queries = [];
-
       for (const [index, guest] of batch.entries()) {
         const rowNumber = i + index + 2;
 
-        queries.push(
-          (async () => {
-            try {
-              // Check if guest exists
-              const existingGuest = await prisma.guest.findFirst({
-                where: {
-                  eventId,
-                  name: guest.name,
-                  OR: guest.email
-                    ? [{ email: guest.email }, { phone: guest.phone }]
-                    : [{ phone: guest.phone }].filter(Boolean),
-                },
-              });
+        try {
+          // ✅ Check limit BEFORE creating guest
+          if (userPlan.limit_guests > 0) {
+            const currentGuestCount = await prisma.guest.count({
+              where: { eventId },
+            });
 
-              if (existingGuest) {
-                skipped++;
-                errors.push(
-                  `Row ${rowNumber}: Guest "${guest.name}" already exists`
-                );
-                return;
-              }
-
-              await prisma.guest.create({
-                data: {
-                  eventId,
-                  name: guest.name,
-                  email: guest.email,
-                  phone: guest.phone,
-                  address: guest.address,
-                  note: guest.note,
-                  status: guest.status || "pending",
-                  wishing_note: guest.wishing_note,
-                  number_of_guests: guest.number_of_guests || 0,
-                  is_invited: guest.is_invited || false,
-                },
-              });
-
-              imported++;
-            } catch (error) {
+            if (currentGuestCount >= userPlan.limit_guests) {
+              limitReached = true;
               skipped++;
               errors.push(
-                `Row ${rowNumber}: ${
-                  error instanceof Error
-                    ? error.message
-                    : "Unknown error occurred"
-                }`
+                `Row ${rowNumber}: Skipped - guest limit of ${userPlan.limit_guests} reached`
               );
+              continue; // skip this guest
             }
-          })()
-        );
+          }
+
+          // Check if guest already exists
+          const existingGuest = await prisma.guest.findFirst({
+            where: {
+              eventId,
+              name: guest.name,
+              OR: guest.email
+                ? [{ email: guest.email }, { phone: guest.phone }]
+                : [{ phone: guest.phone }].filter(Boolean),
+            },
+          });
+
+          if (existingGuest) {
+            skipped++;
+            errors.push(
+              `Row ${rowNumber}: Guest "${guest.name}" already exists`
+            );
+            continue;
+          }
+
+          // Create guest
+          await prisma.guest.create({
+            data: {
+              eventId,
+              name: guest.name,
+              email: guest.email,
+              phone: guest.phone,
+              address: guest.address,
+              note: guest.note,
+              status: guest.status || "pending",
+              wishing_note: guest.wishing_note,
+              number_of_guests: guest.number_of_guests || 0,
+              is_invited: guest.is_invited || false,
+            },
+          });
+
+          imported++;
+        } catch (error) {
+          skipped++;
+          errors.push(
+            `Row ${rowNumber}: ${
+              error instanceof Error ? error.message : "Unknown error occurred"
+            }`
+          );
+        }
       }
 
-      // Run all batch operations in parallel safely (no long transaction)
-      await Promise.all(queries);
+      // Stop processing if limit reached
+      if (limitReached) {
+        const remaining = guestData.length - (i + batch.length);
+        if (remaining > 0) {
+          skipped += remaining;
+          errors.push(`${remaining} remaining guests skipped due to limit`);
+        }
+        break;
+      }
     }
 
-    return { imported, skipped, errors };
+    return { imported, skipped, errors, limitReached };
   } catch (error) {
     console.error("Error importing guests from Excel:", error);
     throw new Error("Failed to import guests from Excel");
