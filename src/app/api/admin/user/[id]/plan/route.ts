@@ -27,7 +27,9 @@ export async function GET(request: NextRequest, context: any) {
 // POST /api/admin/user/[id]/plan
 export async function POST(request: NextRequest, context: any) {
   try {
-    const { userId } = context.params as { userId: string }; // cast here
+    const { id } = context.params as { id: string };
+    const userId = id; // assign to userId for clarity
+
     const body = await request.json();
     const { planId, limit_guests, limit_template, limit_export_excel } = body;
 

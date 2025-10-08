@@ -19,13 +19,16 @@ export default function EventUserView({ data }: { data: any[] }) {
   return (
     <div className="p-2">
       <div className="flex justify-between items-center mb-4">
-        <div>
+        <div className="max-w-7/10 ">
           <h1 className="text-xl font-bold text-rose-700">
             {t("EventPage.welcome")}
           </h1>
-          <p className="text-rose-600">{t("EventPage.explore")}</p>
+          <p className="text-rose-600 text-wrap">{t("EventPage.explore")}</p>
         </div>
-        <CreateEventButton />
+        <div className="max-w-3/10">
+          {" "}
+          <CreateEventButton />
+        </div>
       </div>
 
       {data.length === 0 ? (
