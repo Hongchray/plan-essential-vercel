@@ -281,12 +281,7 @@ export default function SimpleTemplate({
                 role="img"
                 aria-label={`Guest name: ${guest?.name || "Unknown"}`}
               >
-                <span
-                  className="text-white relative z-10"
-                  style={{
-                    textShadow: "1px 2px 4px #000000",
-                  }}
-                >
+                <span className="text-[#999999] relative z-10">
                   {guest?.name || "លោក សុខ រតនៈវិសាល និងភរិយា"}
                 </span>
               </div>
@@ -468,7 +463,7 @@ export default function SimpleTemplate({
           {currentLanguage === "kh" ? "ទីតាំងកម្មវិធី" : "EVENT LOCATION"}
         </h2>
         {config?.event_location && (
-          <div className="animate-zoom-in animation-delay-300">
+          <div className="animate-zoom-in animation-delay-300 pb-2">
             <SingleImagePreview
               src={config?.event_location}
               alt="Event Location Map"

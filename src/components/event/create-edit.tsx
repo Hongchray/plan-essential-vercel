@@ -54,10 +54,7 @@ export const createSchemas = (t: TFunction) => {
   const shiftSchema = z.object({
     id: z.string().optional(),
     name: z.string().min(1, t("shift.name_required")),
-    date: z.coerce.date({
-      required_error: t("shift.date_required"),
-      invalid_type_error: t("shift.date_invalid"),
-    }),
+    date: z.coerce.date().optional(),
     timelines: z.array(timelineSchema).min(1, t("shift.timeline_required")),
   });
 
@@ -109,10 +106,7 @@ export function CreateEditForm({ id }: { id?: string }) {
           message: t("EventPage.error.startTimeInvalid"),
         })
         .transform((val) => new Date(val)),
-      endTime: z.preprocess(
-        (val) => (val === "" || val === undefined ? null : val),
-        z.date().nullable().optional()
-      ),
+      endTime: z.coerce.date().optional(),
       owner: z.coerce.string().optional(),
       schedule: scheduleSchema.optional(),
     })
@@ -168,7 +162,7 @@ export function CreateEditForm({ id }: { id?: string }) {
       latitude: "",
       longitude: "",
       startTime: new Date(),
-      endTime: null,
+      endTime: undefined,
       eating_time: "",
       owner: "",
       bride: "",
@@ -268,6 +262,10 @@ export function CreateEditForm({ id }: { id?: string }) {
 
   if (!mounted) return null;
   const onSubmit = async (data: FormData) => {
+    console.log("=== FORM SUBMISSION START ===");
+    console.log("Form Data:", JSON.stringify(data, null, 2));
+    console.log("Form Errors:", form.formState.errors);
+    console.log("Is Valid:", form.formState.isValid);
     setLoading(true);
     try {
       let res;
@@ -317,7 +315,6 @@ export function CreateEditForm({ id }: { id?: string }) {
           {id ? t("EventPage.create.edit") : t("EventPage.create.title")}
         </h2>
       </div>
-
       <form
         onSubmit={form.handleSubmit(onSubmit)}
         className="space-y-3 sm:space-y-4"
@@ -478,11 +475,11 @@ export function CreateEditForm({ id }: { id?: string }) {
                   <div className="flex items-center gap-3">
                     <Calendar className="w-5 h-5" />
                     <span className="text-base sm:text-lg">
-                      របៀបវីរៈកម្មវិធី
+                      របៀបវារៈកម្មវិធី
                     </span>
                     {hasSchedule && (
                       <span className="text-xs sm:text-sm bg-blue-100 px-2 py-1 rounded">
-                        {shiftFields.length} របៀបវីរៈ
+                        {shiftFields.length} របៀបវារៈ
                       </span>
                     )}
                   </div>
@@ -511,7 +508,7 @@ export function CreateEditForm({ id }: { id?: string }) {
                       className="w-full sm:w-auto"
                     >
                       <Plus className="w-4 h-4 mr-2" />
-                      បន្ថែមរបៀបវីរៈ
+                      បន្ថែមរបៀបវារៈ
                     </Button>
                   </div>
                 ) : (
@@ -535,7 +532,7 @@ export function CreateEditForm({ id }: { id?: string }) {
                       disabled={loading}
                     >
                       <Plus className="w-4 h-4 mr-2" />
-                      បន្ថែមរបៀបវីរៈ
+                      បន្ថែមរបៀបវារៈ
                     </Button>
                   </div>
                 )}
@@ -596,7 +593,7 @@ function ShiftCard({
         <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-1 sm:gap-2">
           <CardTitle className="text-sm sm:text-base flex items-center gap-2">
             <Users className="w-4 h-4" />
-            របៀបវីរៈទី {shiftIndex + 1}
+            របៀបវារៈទី {shiftIndex + 1}
           </CardTitle>
           {canRemove && (
             <Button
@@ -617,7 +614,7 @@ function ShiftCard({
         <div className="grid grid-cols-1  gap-2 sm:gap-3">
           <div className="sm:col-span-1">
             <InputTextField
-              label="ឈ្មោះរបៀបវីរៈ"
+              label="ឈ្មោះរបៀបវារៈ"
               name={`schedule.shifts.${shiftIndex}.name`}
               placeholder="ឧ. កម្មវិធីថ្ងៃទី ១​ : ថ្ងៃអាទិត្យ ទី២១ ខែកញ្ញា ឆ្នាំ២០២៥"
               form={form}
