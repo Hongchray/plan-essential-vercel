@@ -45,7 +45,7 @@ export default function ForgotPasswordPage() {
     }
   };
   return (
-    <div className="flex items-center justify-center min-h-screen p-4">
+    <div className="flex items-center justify-center  p-4">
       <div className="bg-white shadow-lg rounded-xl p-8 w-full max-w-md">
         <h2 className="text-2xl font-bold mb-2 text-center text-gray-900">
           {t("forgot_password.forgot_password_title")}

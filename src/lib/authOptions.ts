@@ -38,14 +38,12 @@ export const authOptions: AuthOptions = {
       },
       async authorize(credentials) {
         if (!credentials?.phone || !credentials?.password) return null;
+
         const user = await prisma.user.findUnique({
           where: { phone: credentials.phone },
-          include: {
-            userPlan: {
-              include: { plan: true },
-            },
-          },
+          include: { userPlan: { include: { plan: true } } },
         });
+
         if (!user) return null;
         if (!(await compare(credentials.password, user.password))) return null;
 
@@ -85,8 +83,7 @@ export const authOptions: AuthOptions = {
         if (!credentials?.authData) return null;
         const authData = JSON.parse(credentials.authData);
         const botToken = process.env.TELEGRAM_BOT_TOKEN;
-        if (!botToken) return null;
-        if (!verifyTelegramAuth(authData, botToken)) return null;
+        if (!botToken || !verifyTelegramAuth(authData, botToken)) return null;
 
         const telegramId = authData.id.toString();
         const firstName = authData.first_name;
@@ -97,7 +94,7 @@ export const authOptions: AuthOptions = {
         let user = await prisma.user.findUnique({ where: { telegramId } });
 
         if (user) {
-          const updatedUser = await prisma.user.update({
+          user = await prisma.user.update({
             where: { telegramId },
             data: {
               name: `${firstName} ${lastName}`.trim(),
@@ -106,25 +103,8 @@ export const authOptions: AuthOptions = {
               updatedAt: new Date(),
             },
           });
-
-          return {
-            id: updatedUser.id,
-            email: updatedUser.email ?? "",
-            name: updatedUser.name ?? null,
-            username: updatedUser.username ?? null,
-            photoUrl: updatedUser.photoUrl ?? null,
-            phone: updatedUser.phone ?? null,
-            role: updatedUser.role,
-            telegramId: updatedUser.telegramId ?? null,
-            otp_code: updatedUser.otp_code ?? null,
-            otp_expires_at: updatedUser.otp_expires_at ?? null,
-            phone_verified: updatedUser.phone_verified,
-            phone_verified_at: updatedUser.phone_verified_at ?? null,
-            createdAt: updatedUser.createdAt,
-            updatedAt: updatedUser.updatedAt,
-          };
         } else {
-          const newUser = await prisma.user.create({
+          user = await prisma.user.create({
             data: {
               telegramId,
               email: ``,
@@ -136,42 +116,68 @@ export const authOptions: AuthOptions = {
               phone_verified: false,
             },
           });
-
-          return {
-            id: newUser.id,
-            email: newUser.email ?? "",
-            name: newUser.name ?? null,
-            username: newUser.username ?? null,
-            photoUrl: newUser.photoUrl ?? null,
-            phone: newUser.phone ?? null,
-            role: newUser.role,
-            telegramId: newUser.telegramId ?? null,
-            otp_code: newUser.otp_code ?? null,
-            otp_expires_at: newUser.otp_expires_at ?? null,
-            phone_verified: newUser.phone_verified,
-            phone_verified_at: newUser.phone_verified_at ?? null,
-            createdAt: newUser.createdAt,
-            updatedAt: newUser.updatedAt,
-          };
         }
+
+        return {
+          id: user.id,
+          email: user.email ?? "",
+          name: user.name ?? null,
+          username: user.username ?? null,
+          photoUrl: user.photoUrl ?? null,
+          phone: user.phone ?? null,
+          role: user.role,
+          telegramId: user.telegramId ?? null,
+          otp_code: user.otp_code ?? null,
+          otp_expires_at: user.otp_expires_at ?? null,
+          phone_verified: user.phone_verified,
+          phone_verified_at: user.phone_verified_at ?? null,
+          createdAt: user.createdAt,
+          updatedAt: user.updatedAt,
+        };
       },
     }),
   ],
+
   pages: {
     signIn: "/login",
     error: "/login",
   },
+
   session: {
     strategy: "jwt",
     maxAge: 30 * 24 * 60 * 60,
   },
+
   callbacks: {
     async jwt({ token, user }) {
+      // When user logs in, merge user info
       if (user) {
         Object.assign(token, user);
+      } else if (token?.id) {
+        // Always fetch fresh user from DB on subsequent calls
+        const dbUser = await prisma.user.findUnique({
+          where: { id: token.id as string },
+          include: { userPlan: { include: { plan: true } } },
+        });
+
+        if (dbUser) {
+          token.name = dbUser.name;
+          token.username = dbUser.username;
+          token.photoUrl = dbUser.photoUrl;
+          token.updatedAt = dbUser.updatedAt;
+          token.plans = dbUser.userPlan.map((up) => ({
+            id: up.plan.id,
+            name: up.plan.name,
+            price: up.plan.price,
+            limit_guests: up.limit_guests,
+            limit_template: up.limit_template,
+            limit_export_excel: up.limit_export_excel,
+          }));
+        }
       }
       return token;
     },
+
     async session({ session, token }) {
       if (token) {
         session.user = {

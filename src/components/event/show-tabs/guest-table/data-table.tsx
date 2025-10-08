@@ -38,7 +38,9 @@ interface DataTableProps<TData, TValue> {
   pageCount: number;
   total: number;
   serverPagination: boolean;
-  loading?: boolean; // optional
+  loading?: boolean; // optional, default to false
+  totalGuests?: number; // optional, default to 0
+  session?: unknown; // optional, default to null
 }
 
 export function DataTable<TData, TValue>({
@@ -48,6 +50,8 @@ export function DataTable<TData, TValue>({
   total,
   serverPagination,
   loading = false, // default to false
+  totalGuests = 0,
+  session = null, // default to null
 }: DataTableProps<TData, TValue>) {
   const router = useRouter();
   const pathname = usePathname();
@@ -166,7 +170,12 @@ export function DataTable<TData, TValue>({
 
   return (
     <div className="space-y-4 bg-white p-2 md:p-5 rounded-lg border">
-      <DataTableToolbar table={table} serverPagination={serverPagination} />
+      <DataTableToolbar
+        table={table}
+        serverPagination={serverPagination}
+        totalGuests={totalGuests}
+        session={session}
+      />
 
       {/* Mobile List View */}
       {isMobile ? (
