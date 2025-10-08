@@ -43,7 +43,7 @@ export function useExpenseFormSchema() {
     name: z.string().min(1, { message: t("expense.form.error_name_required") }),
     description: z.string().nullable().optional(),
     budget_amount: z.coerce
-      .number()
+      .number({ invalid_type_error: t("expense.form.error_budget_invalid") })
       .min(1, { message: t("expense.form.error_budget_required") }),
     actual_amount: z.coerce.number().optional(),
     payments: z.array(
@@ -145,6 +145,11 @@ export function CreateEditForm({ id }: { id: string }) {
     }));
   };
 
+  const getNestedError = (errors: any, path: string) =>
+    path
+      .split(".")
+      .reduce((acc: any, key: string) => (acc ? acc[key] : undefined), errors);
+
   const onSubmit = async (values: ExpenseFormData) => {
     setLoading(true);
 
@@ -187,6 +192,9 @@ export function CreateEditForm({ id }: { id: string }) {
       setLoading(false);
     }
   };
+
+  const getFieldError = (path: string) =>
+    getNestedError(form.formState.errors, path)?.message;
 
   useEffect(() => {
     if (id && dialogOpen) {
@@ -233,6 +241,15 @@ export function CreateEditForm({ id }: { id: string }) {
                 placeholder={t("expense.form.name_placeholder")}
                 form={form}
                 disabled={loading}
+                required
+              />
+              <CustomCurrencyInput
+                label={t("expense.form.budget")}
+                name="budget_amount"
+                placeholder={t("expense.form.amount_placeholder")}
+                form={form}
+                disabled={loading}
+                required
               />
               <TextareaField
                 label={t("expense.form.desc")}
@@ -242,14 +259,6 @@ export function CreateEditForm({ id }: { id: string }) {
                 disabled={loading}
               />
               <Separator />
-              <CustomCurrencyInput
-                label={t("expense.form.budget")}
-                name="budget_amount"
-                placeholder={t("expense.form.amount_placeholder")}
-                form={form}
-                disabled={loading}
-                required
-              />
             </div>
 
             {/* Payments Section */}
@@ -381,7 +390,14 @@ export function CreateEditForm({ id }: { id: string }) {
                               )}
                               form={form}
                               disabled={loading}
+                              required
                             />
+                            {getFieldError(`payments.${index}.name`) && (
+                              <p className="text-sm text-destructive">
+                                {getFieldError(`payments.${index}.name`)}
+                              </p>
+                            )}
+
                             <CustomCurrencyInput
                               label={t("expense.form.payments.amount")}
                               name={`payments.${index}.amount`}
@@ -390,7 +406,13 @@ export function CreateEditForm({ id }: { id: string }) {
                               )}
                               form={form}
                               disabled={loading}
+                              required
                             />
+                            {getFieldError(`payments.${index}.amount`) && (
+                              <p className="text-sm text-destructive">
+                                {getFieldError(`payments.${index}.amount`)}
+                              </p>
+                            )}
                           </div>
                           <div className="grid grid-cols-1 md:grid-cols-1 gap-4">
                             <TextareaField

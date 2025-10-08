@@ -74,11 +74,57 @@ export async function POST(
   req: NextRequest,
   context: { params: Promise<{ id: string }> }
 ) {
-  const { id } = await context.params;
+  const { id } = await context.params; // event id
   const data = await req.json();
+  console.log("🚀 POST /guest called with data:", data);
 
   try {
-    const response = await prisma.guest.create({
+    if (!data.userId) {
+      console.error("❌ Missing userId in request body");
+      return NextResponse.json(
+        { message: "User ID is required" },
+        { status: 400 }
+      );
+    }
+
+    const userPlan = await prisma.userPlan.findFirst({
+      where: { userId: data.userId },
+    });
+
+    if (!userPlan) {
+      console.error(`❌ User plan not found for userId: ${data.userId}`);
+      return NextResponse.json(
+        { message: "User plan not found" },
+        { status: 400 }
+      );
+    }
+
+    console.log("📋 User plan:", userPlan);
+
+    // Count current guests for this event
+    const guestCount = await prisma.guest.count({
+      where: { eventId: id },
+    });
+
+    console.log(`👥 Current guest count for event ${id}:`, guestCount);
+
+    // Check if limit is reached BEFORE creating the guest
+    if (userPlan.limit_guests > 0 && guestCount >= userPlan.limit_guests) {
+      console.warn(
+        `⚠️ Guest limit reached for userId ${data.userId}: ${userPlan.limit_guests}`
+      );
+      return NextResponse.json(
+        {
+          message: "You have reached your guest limit.",
+          limitReached: true,
+        },
+        { status: 403 } // Use 403 Forbidden status
+      );
+    }
+
+    // Create the guest only if limit is not reached
+    console.log("📝 Creating guest...");
+    const guest = await prisma.guest.create({
       data: {
         name: data.name,
         email: data.email,
@@ -88,14 +134,16 @@ export async function POST(
         image: data.image,
         eventId: id,
         guestTag: {
-          create: data.tags.map((tagId: string) => ({
-            tag: { connect: { id: tagId } },
-          })),
+          create:
+            data.tags?.map((tagId: string) => ({
+              tag: { connect: { id: tagId } },
+            })) || [],
         },
         guestGroup: {
-          create: data.groups.map((groupId: string) => ({
-            group: { connect: { id: groupId } },
-          })),
+          create:
+            data.groups?.map((groupId: string) => ({
+              group: { connect: { id: groupId } },
+            })) || [],
         },
       },
       include: {
@@ -104,13 +152,14 @@ export async function POST(
       },
     });
 
-    return NextResponse.json(response, { status: 200 });
+    console.log("✅ Guest created successfully:", guest);
+    return NextResponse.json({ guest, limitReached: false }, { status: 200 });
   } catch (error) {
-    console.error(error); // 👈 log to debug
+    console.error("❌ Error creating guest:", error);
     return NextResponse.json(
       {
         message: "Internal server error",
-        error: error instanceof Error ? error.message : "Unknown error",
+        error: error instanceof Error ? error.message : JSON.stringify(error),
       },
       { status: 500 }
     );

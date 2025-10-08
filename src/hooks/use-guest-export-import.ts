@@ -39,6 +39,7 @@ export const useExcelOperations = (eventId: string) => {
     }
   };
 
+  // Client-side code
   const importGuestList = async (file: File) => {
     setIsImporting(true);
     try {
@@ -54,20 +55,29 @@ export const useExcelOperations = (eventId: string) => {
       const result = await response.json();
 
       if (!response.ok) {
-        throw new Error(result.error || "Import failed");
+        if (result.limitReached) {
+          toast.error("You have reached your guest limit!");
+        } else {
+          throw new Error(result.error || "Import failed");
+        }
+        return result;
       }
 
-      // Show detailed results
-      const messages = [
-        `Successfully imported ${result.imported} guests`,
-        result.skipped > 0 ? `Skipped ${result.skipped} duplicates` : null,
-      ].filter(Boolean);
+      if (result.limitReached) {
+        toast.warning(
+          `Import partially completed. Guest limit reached after importing ${result.imported} guests.`
+        );
+      } else {
+        const messages = [
+          `Successfully imported ${result.imported} guests`,
+          result.skipped > 0 ? `Skipped ${result.skipped} duplicates` : null,
+        ].filter(Boolean);
 
-      toast.success(messages.join(", "));
+        toast.success(messages.join(", "));
+      }
 
       if (result.errors && result.errors.length > 0) {
         console.warn("Import errors:", result.errors);
-        // You might want to show these errors in a modal or detailed view
       }
 
       return result;

@@ -314,6 +314,7 @@
       "submit": "Create",
       "update": "Update",
       "eating_time": "Eating Time",
+      "back": "Back",
 
       "timeline": {
         "name_required": "Timeline name is required",
@@ -464,15 +465,15 @@
       "photo": "Photo",
       "name": "Name",
       "name_placeholder": "Enter name",
-      "phone": "Phone",
+      "phone": "Phone (Not require)",
       "phone_placeholder": "Enter phone",
-      "note": "Note",
+      "note": "Note (Not require)",
       "note_placeholder": "Enter note",
       "address": "Address",
       "address_placeholder": "Enter address",
-      "groups": "Groups",
+      "groups": "Groups (Not require)",
       "groups_placeholder": "Enter groups",
-      "tags": "Tags",
+      "tags": "Tags (Not require)",
       "tags_placeholder": "Enter tags",
       "cancel": "Cancel",
       "manage_groups": "Manage Groups",
@@ -495,7 +496,9 @@
     "message": {
       "name_required": "Name is required",
       "phone_required": "Phone number is required",
-      "phone_max": "Phone number cannot exceed 50 characters"
+      "phone_max": "Phone number cannot exceed 50 characters",
+      "tag_required": "At least one tag is required",
+      "group_required": "At least one group is required"
     }
   },
 
@@ -523,7 +526,7 @@
       "description": "Fill in expense details below",
       "name": "Name",
       "name_placeholder": "Enter name",
-      "desc": "Description",
+      "desc": "Description (Not require)",
       "desc_placeholder": "Enter description",
       "budget": "Budget Amount",
       "actual": "Actual Amount",
@@ -532,6 +535,7 @@
       "error_name_required": "Name is required",
       "error_budget_required": "Budget is required",
       "calculated_from_payments": "Calculated from payments",
+      "error_budget_invalid": "Please enter a valid amount",
       "payment": {
         "error_name_required": "Payment name is required",
         "error_amount_required": "Payment amount must be greater than 0"
@@ -539,6 +543,7 @@
       "payments": {
         "title": "Payments",
         "add": "Add Payment",
+
         "no_payments": "No payments added yet. Click 'Add Payment' to get started.",
         "payment": "Payment",
         "name": "Payment for",
@@ -546,7 +551,7 @@
         "amount": "Amount",
         "amount_placeholder": "Enter payment amount",
         "paid_date": "Payment Date",
-        "note": "Note",
+        "note": "Note (Not require)",
         "note_placeholder": "Optional payment note",
         "total": "Total Payments"
       }
@@ -839,5 +844,12 @@
     "save": "Save",
     "saving": "Saving...",
     "cancel": "Cancel"
+  },
+
+  "alert": {
+    "info": "Info",
+    "error": "Error",
+    "success": "Success",
+    "warning": "Warning"
   }
 }

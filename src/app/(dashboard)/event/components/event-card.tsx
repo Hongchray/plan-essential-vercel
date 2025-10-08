@@ -21,9 +21,12 @@ import { TrashIcon, MoreVerticalIcon } from "lucide-react";
 import { toast } from "sonner";
 import { useRouter } from "next/navigation";
 import { ConfirmDialog } from "@/components/composable/dialog/confirm-dialog";
+import { EventType } from "@/enums/event";
+
 export default function EventCard({ event }: { event: Event }) {
   const { t } = useTranslation("common");
   const router = useRouter();
+
   const deleteEvent = async (id: string) => {
     try {
       const res = await fetch(`/api/admin/event/${id}`, {
@@ -40,9 +43,29 @@ export default function EventCard({ event }: { event: Event }) {
     }
   };
 
+  // Helper function to determine badge color based on event type
+  const getBadgeColor = (type?: EventType) => {
+    switch (type) {
+      case EventType.WEDDING:
+        return "bg-pink-200 text-pink-800";
+      case EventType.HOUSEWARMING:
+        return "bg-orange-200 text-orange-800";
+      case EventType.BIRTHDAY:
+        return "bg-blue-200 text-blue-800";
+      case EventType.ANNIVERSARY:
+        return "bg-purple-200 text-purple-800";
+      default:
+        return "bg-gray-200 text-gray-800";
+    }
+  };
+
   return (
-    <div className="border bg-white rounded-lg p-4 shadow hover:shadow-lg transition flex flex-col justify-between">
-      <div>
+    <div className="border bg-white rounded-lg p-4 shadow hover:shadow-lg transition flex flex-col justify-between ">
+      {/* Clickable section */}
+      <div
+        className="cursor-pointer"
+        onClick={() => router.push(`/event/${event.id}`)}
+      >
         <div className="relative mb-4">
           {event.image ? (
             <img
@@ -75,7 +98,11 @@ export default function EventCard({ event }: { event: Event }) {
           )}
 
           {event.type && (
-            <span className="absolute top-2 left-2 bg-rose-300 text-black text-xs font-semibold rounded-2xl px-2.5 py-1.5 mb-2 capitalize  shadow-sm">
+            <span
+              className={`absolute top-2 left-2 text-xs font-semibold rounded-2xl px-2.5 py-1.5 mb-2 capitalize shadow-sm ${getBadgeColor(
+                event.type as EventType
+              )}`}
+            >
               {event.type}
             </span>
           )}
@@ -91,16 +118,12 @@ export default function EventCard({ event }: { event: Event }) {
           <div className="text-sm text-gray-500">
             {event.location && (
               <p>
-                <span className="align-middle">
-                  <MapPin className="w-4 h-4 inline" />
-                </span>{" "}
+                <MapPin className="w-4 h-4 inline" />{" "}
                 <span className="align-middle">{event.location}</span>
               </p>
             )}
             <p>
-              <span className="align-middle">
-                <Calendar1Icon className="w-4 h-4 inline" />
-              </span>{" "}
+              <Calendar1Icon className="w-4 h-4 inline" />{" "}
               <span className="align-middle">
                 {formatDate(event.startTime)} {t("EventPage.at")}{" "}
                 {event.eating_time}
@@ -110,58 +133,54 @@ export default function EventCard({ event }: { event: Event }) {
         )}
       </div>
 
-      {/* Edit button */}
+      {/* Action buttons */}
       <div className="mt-4 flex justify-end gap-3">
-        <div className="mt-4 flex justify-end">
-          <Button
-            type="button"
-            variant="outline"
-            onClick={() => (window.location.href = `/event/${event.id}`)}
-          >
-            <LayoutDashboard />
-            {t("EventPage.dashboard")}
-          </Button>
-        </div>
-        <div className="mt-4 flex justify-end ">
-          <DropdownMenu>
-            <DropdownMenuTrigger asChild>
-              <Button
-                variant="outline"
-                className="!bg-gray-200 !border-gray-200 !text-gray-800 hover:!bg-gray-300 hover:!text-gray-900 transition-colors duration-150"
-              >
-                <MoreVerticalIcon className="w-4 h-4" />
-              </Button>
-            </DropdownMenuTrigger>
+        <Button
+          type="button"
+          variant="outline"
+          onClick={() => router.push(`/event/${event.id}`)}
+          className="cursor-pointer"
+        >
+          <LayoutDashboard />
+          {t("EventPage.dashboard")}
+        </Button>
 
-            <DropdownMenuContent align="end">
-              {/* Edit */}
-              <DropdownMenuItem
-                onClick={() =>
-                  (window.location.href = `/event/edit/${event.id}`)
-                }
-              >
-                <PencilIcon className="w-4 h-4 mr-2" />
-                {t("EventPage.edit")}
-              </DropdownMenuItem>
+        <DropdownMenu>
+          <DropdownMenuTrigger asChild>
+            <Button
+              variant="outline"
+              className="!bg-gray-200 !border-gray-200 !text-gray-800 hover:!bg-gray-300 hover:!text-gray-900 transition-colors duration-150"
+              onClick={(e) => e.stopPropagation()} // prevent card click
+            >
+              <MoreVerticalIcon className="w-4 h-4" />
+            </Button>
+          </DropdownMenuTrigger>
 
-              {/* Delete */}
-              <ConfirmDialog
-                trigger={
-                  <DropdownMenuItem
-                    onSelect={(e) => e.preventDefault()} // ⬅️ keep menu open so dialog can show
-                    className="text-red-600 cursor-pointer focus:text-red-600 focus:bg-red-50"
-                  >
-                    <TrashIcon className="w-4 h-4 mr-2 text-red-500" />
-                    {t("EventPage.delete")}
-                  </DropdownMenuItem>
-                }
-                title={t("EventPage.message.delete_title")}
-                description={t("EventPage.message.delete_description")}
-                onConfirm={() => deleteEvent(event.id)}
-              />
-            </DropdownMenuContent>
-          </DropdownMenu>
-        </div>
+          <DropdownMenuContent align="end">
+            <DropdownMenuItem
+              onClick={() => router.push(`/event/edit/${event.id}`)}
+              className="cursor-pointer"
+            >
+              <PencilIcon className="w-4 h-4 mr-2" />
+              {t("EventPage.edit")}
+            </DropdownMenuItem>
+
+            <ConfirmDialog
+              trigger={
+                <DropdownMenuItem
+                  onSelect={(e) => e.preventDefault()}
+                  className="text-red-600 cursor-pointer focus:text-red-600 focus:bg-red-50"
+                >
+                  <TrashIcon className="w-4 h-4 mr-2 text-red-500" />
+                  {t("EventPage.delete")}
+                </DropdownMenuItem>
+              }
+              title={t("EventPage.message.delete_title")}
+              description={t("EventPage.message.delete_description")}
+              onConfirm={() => deleteEvent(event.id)}
+            />
+          </DropdownMenuContent>
+        </DropdownMenu>
       </div>
     </div>
   );
