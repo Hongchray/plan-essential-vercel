@@ -91,7 +91,8 @@ export const authOptions: AuthOptions = {
         if (!credentials?.authData) return null;
         const authData = JSON.parse(credentials.authData);
         const botToken = process.env.TELEGRAM_BOT_TOKEN;
-        if (!botToken || !verifyTelegramAuth(authData, botToken)) return null;
+        if (!botToken) return null;
+        if (!verifyTelegramAuth(authData, botToken)) return null;
 
         const telegramId = authData.id.toString();
         const firstName = authData.first_name;
@@ -102,7 +103,7 @@ export const authOptions: AuthOptions = {
         let user = await prisma.user.findUnique({ where: { telegramId } });
 
         if (user) {
-          user = await prisma.user.update({
+          const updatedUser = await prisma.user.update({
             where: { telegramId },
             data: {
               name: `${firstName} ${lastName}`.trim(),
@@ -127,7 +128,6 @@ export const authOptions: AuthOptions = {
             })),
           };
         } else {
-          // ✅ Find default plan (you can adjust the name or ID as needed)
           const defaultPlan = await prisma.plan.findFirst({
             where: { price: 0 },
           });
