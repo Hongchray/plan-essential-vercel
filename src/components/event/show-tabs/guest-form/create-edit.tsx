@@ -110,11 +110,18 @@ export function CreateEditForm({ id }: { id: string }) {
     const payload = { ...values, userId: session.user.id };
 
     try {
-      const res = await fetch(`/api/admin/event/${eventId}/guest`, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(payload),
-      });
+      let res;
+      if (id) {
+        res = await fetch(`/api/admin/event/${eventId}/guest/${id}`, {
+          method: "PUT",
+          body: JSON.stringify(values),
+        });
+      } else {
+        res = await fetch(`/api/admin/event/${eventId}/guest`, {
+          method: "POST",
+          body: JSON.stringify(values),
+        });
+      }
 
       const data = await res.json();
 

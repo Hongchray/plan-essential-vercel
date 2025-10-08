@@ -36,7 +36,7 @@ export async function GET(req: NextRequest) {
     // If slug is provided, try to find that specific event
     const event = await prisma.event.findUnique({
       where: {
-        slug,
+        id: slug,
       },
       include: {
         schedules: {
@@ -78,6 +78,9 @@ export async function GET(req: NextRequest) {
           },
         },
       },
+    },
+    orderBy: {
+      createdAt: "asc",
     },
   });
 
