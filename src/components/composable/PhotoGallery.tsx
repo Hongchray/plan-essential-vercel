@@ -57,11 +57,11 @@ export default function PhotoGallery({ photos }: PhotoGalleryProps) {
   return (
     <>
       {/* Photo grid */}
-      <div className="grid grid-cols-2 gap-2">
+      <div className="grid grid-cols-2 gap-2 px-4">
         {photos.map((photo, index) => (
           <div
             key={index}
-            className={`py-2 animate-fade-in-up animation-delay-${
+            className={`animate-fade-in-up animation-delay-${
               300 + index * 200
             }`}
           >
@@ -71,7 +71,7 @@ export default function PhotoGallery({ photos }: PhotoGalleryProps) {
               width={200}
               height={150}
               onClick={() => openImage(photo, index)}
-              className="cursor-pointer hover:scale-110 hover:rotate-2 transition-all duration-300 rounded-lg"
+              className="aspect-[9/16] object-cover object-center cursor-pointer hover:scale-110 hover:rotate-2 transition-all duration-300 rounded-lg"
             />
           </div>
         ))}

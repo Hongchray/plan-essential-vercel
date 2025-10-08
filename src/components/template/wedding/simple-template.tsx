@@ -26,6 +26,8 @@ import { useLanguage } from "@/hooks/LanguageContext";
 import { Footer } from "../footer";
 import PhotoGallery from "@/components/composable/PhotoGallery";
 import SingleImagePreview from "@/components/composable/SingleImagePreview";
+import { ScrollArea, ScrollBar } from "@/components/ui/scroll-area";
+import { motion, AnimatePresence } from "motion/react";
 export default function SimpleTemplate({
   config,
   data,
@@ -92,6 +94,7 @@ export default function SimpleTemplate({
       const result = await res.json();
       getMessage();
       toast.success("អ្នកបានផ្ញើសារជូនពរដោយជោគជ័យ");
+      form.reset();
     } catch (error) {
       toast.error("អ្នកបានផ្ញើសារជូនពបរាជ័យ");
     }
@@ -135,7 +138,21 @@ export default function SimpleTemplate({
       status: GuestStatus.CONFIRMED,
     },
   });
-
+  const staggerContainer = {
+    animate: {
+      transition: {
+        staggerChildren: 0.1,
+      },
+    },
+  };
+  const slideInLeftVariant = {
+    initial: { opacity: 0, x: -60 },
+    animate: { opacity: 1, x: 0 },
+  };
+  const fadeUpVariant = {
+    initial: { opacity: 0, y: 60 },
+    animate: { opacity: 1, y: 0 },
+  };
   return (
     <div className="relative">
       <ScrollNavigationBar />
@@ -173,7 +190,7 @@ export default function SimpleTemplate({
         </button>
       </div>
 
-      <div className="space-y-6 max-w-md mx-auto">
+      <div className="max-w-md mx-auto">
         {/* Main Header Card */}
         <div
           id="main"
@@ -187,21 +204,21 @@ export default function SimpleTemplate({
           <div className="relative z-10 space-y-2 flex flex-col justify-between h-full">
             <div className="animate-slide-down">
               <h1
-                className="text-xl md:text-3xl font-bold drop- "
+                className="text-3xl md:text-3xl drop- pt-5 "
                 style={{
                   color: config?.primaryColor,
                   fontFamily: "Great Vibes, Moul, sans-serif",
-                  textShadow: "2px 2px 5px rgba(0,0,0,0.8)",
+                  textShadow: "1px 2px 4px #000000",
                 }}
               >
                 {currentInvitation?.main_title}
               </h1>
               <div className="flex items-center justify-center gap-2 pt-9 animate-fade-in-up animation-delay-300">
                 <div
-                  className="text-xl font-semibold drop- hover:scale-110 transition-transform duration-300"
+                  className="text-xl drop- hover:scale-110 transition-transform duration-300"
                   style={{
                     color: config?.primaryColor,
-                    textShadow: "2px 2px 4px rgba(0,0,0,0.5)",
+                    textShadow: "1px 2px 4px #000000",
                     fontFamily: "Great Vibes, Moul, sans-serif",
                   }}
                 >
@@ -224,10 +241,10 @@ export default function SimpleTemplate({
                   </span>
                 </div>
                 <div
-                  className="text-xl font-semibold drop- hover:scale-110 transition-transform duration-300"
+                  className="text-xl drop- hover:scale-110 transition-transform duration-300"
                   style={{
                     color: config?.primaryColor,
-                    textShadow: "2px 2px 4px rgba(0,0,0,0.5)",
+                    textShadow: "1px 2px 4px #000000",
                     fontFamily: "Great Vibes, Moul, sans-serif",
                   }}
                 >
@@ -237,10 +254,10 @@ export default function SimpleTemplate({
             </div>
             <div className="animate-slide-up animation-delay-500">
               <p
-                className="text-[12px] drop- pt-8"
+                className="text-md  pt-8"
                 style={{
                   color: config?.primaryColor,
-                  textShadow: "1px 1px 2px rgba(0,0,0,0.7)",
+                  textShadow: "1px 2px 4px #000000",
                   fontFamily: "Great Vibes, Moul, sans-serif",
                 }}
               >
@@ -248,35 +265,48 @@ export default function SimpleTemplate({
               </p>
 
               <div
-                className="text-[16px] text-center w-[320px] h-[80px] inline-flex items-center justify-center px-3 hover:scale-105 transition-transform duration-300 animate-fade-in"
+                className="relative text-[16px] text-center inline-flex items-center justify-center px-3 hover:scale-105 transition-transform duration-300 animate-fade-in"
                 style={{
                   fontFamily: "moul",
-                  backgroundImage: "url('/template/arts/bar-kbach.jpg')",
-                  backgroundSize: "cover",
+                  backgroundImage:
+                    "url('/template/arts/free-0/name-frame-kbach.png')",
+                  backgroundSize: "contain",
+                  backgroundRepeat: "no-repeat",
                   backgroundPosition: "center",
-                  borderRadius: "8px",
-                  textShadow: "1px 1px 1px rgba(0,0,0,0.7)",
+                  aspectRatio: "4 / 1", // Adjust based on your image ratio (320/80 = 4/1)
+                  width: "100%",
+                  maxWidth: "420px",
+                  minHeight: "90px",
                 }}
+                role="img"
+                aria-label={`Guest name: ${guest?.name || "Unknown"}`}
               >
-                <span className="pb-6 text-white">{guest?.name}</span>
+                <span
+                  className="text-white relative z-10"
+                  style={{
+                    textShadow: "1px 2px 4px #000000",
+                  }}
+                >
+                  {guest?.name || "លោក សុខ រតនៈវិសាល និងភរិយា"}
+                </span>
               </div>
               <p
-                className="text-[12px] drop- animate-fade-in animation-delay-700"
+                className="text-base drop- animate-fade-in animation-delay-700"
                 style={{
                   color: config?.primaryColor,
-                  textShadow: "1px 1px 2px rgba(0,0,0,0.7)",
-                  fontFamily: "Great Vibes, Kantumruy Pro, sans-serif",
+                  textShadow: "1px 2px 4px #000000",
+                  fontFamily: "Kantumruy Pro, sans-serif",
                 }}
               >
                 {currentInvitation?.date_time}
               </p>
 
               <p
-                className="text-[12px] drop- animate-fade-in animation-delay-1000"
+                className="text-base drop- animate-fade-in animation-delay-1000"
                 style={{
                   color: config?.primaryColor,
-                  textShadow: "1px 1px 2px rgba(0,0,0,0.7)",
-                  fontFamily: "Great Vibes, Kantumruy Pro, sans-serif",
+                  textShadow: "1px 2px 4px #000000",
+                  fontFamily: "Kantumruy Pro, sans-serif",
                 }}
               >
                 {currentInvitation?.location}
@@ -288,20 +318,35 @@ export default function SimpleTemplate({
         {/* Invitation Message Card */}
         <div
           id="invitation"
-          className="p-6 text-center animate-fade-in-up animation-delay-300 hover: transition-shadow duration-300"
+          className="p-6 text-center animate-fade-in-up animation-delay-300 hover: transition-shadow duration-300 flex flex-col items-center"
         >
           <h2
-            className="text-lg font-semibold mb-4 animate-slide-in-left"
-            style={{ color: config?.textColor, fontFamily: "moul" }}
+            className="text-lg mb-4 animate-slide-in-left"
+            style={{
+              color: config?.textColor,
+              fontFamily: " Moul, sans-serif",
+            }}
           >
             {currentInvitation?.invitation_title}
           </h2>
           <p
-            className="leading-relaxed animate-fade-in animation-delay-500"
-            style={{ color: config?.textColor }}
+            className="text-base leading-relaxed animate-fade-in animation-delay-500"
+            style={{
+              color: config?.textColor,
+              fontFamily: "Kantumruy Pro, sans-serif",
+            }}
           >
             {currentInvitation?.invitation_message}
           </p>
+          <div className=" animate-fade-in animation-delay-1100 ">
+            <Image
+              src="/template/arts/underbar kbach 1.png"
+              alt=""
+              width={200}
+              height={150}
+              className="hover:scale-110 transition-transform duration-300"
+            />
+          </div>
         </div>
 
         {/* Event schedule Card */}
@@ -318,12 +363,16 @@ export default function SimpleTemplate({
 
           <div className="relative z-10 p-6 bg-black/10 backdrop-blur-[2px] min-h-[600px]">
             <h2
-              className="text-lg font-semibold text-center mb-4 animate-slide-down"
-              style={{ color: config?.textColor, fontFamily: "moul" }}
+              className="text-lg text-center mb-4 animate-slide-down"
+              style={{
+                color: config?.textColor,
+                fontFamily: " Moul, sans-serif",
+                textShadow: "1px 2px 4px #000000",
+              }}
             >
               {currentInvitation?.details_title ||
                 (currentLanguage === "kh"
-                  ? "របៀបវីរៈកម្មវិធី"
+                  ? "របៀបវារៈកម្មវិធី"
                   : "EVENT AGENDA")}
             </h2>
 
@@ -336,13 +385,17 @@ export default function SimpleTemplate({
               >
                 {/* Shifts */}
                 {schedule.shifts?.map((shift: any, shiftIndex: number) => (
-                  <div key={shift.id} className="mb-4">
+                  <div key={shift.id} className="mb-4 pb-5">
                     {/* Optional: Show shift name/date */}
                     <p
-                      className={`text-xs text-center mb-2 animate-slide-in-left animation-delay-${
+                      className={`pb-4 text-sm text-center mb-2 animate-slide-in-left animation-delay-${
                         (shiftIndex + 1) * 100
                       }`}
-                      style={{ color: config.textColor, fontFamily: "moul" }}
+                      style={{
+                        color: config.textColor,
+                        fontFamily: " Moul, sans-serif",
+                        textShadow: "1px 2px 4px #000000",
+                      }}
                     >
                       {shift.name}
                     </p>
@@ -356,29 +409,34 @@ export default function SimpleTemplate({
                               (timelineIndex + 1) * 150
                             }`}
                           >
-                            <div className="">
-                              <Image
-                                src="/template/arts/under-style1.png"
-                                alt=""
-                                width={80}
-                                height={100}
-                                className="hover:rotate-6 transition-transform duration-300"
-                              />
-                            </div>
+                            {timelineIndex >= 1 && (
+                              <div className="">
+                                <Image
+                                  src="/template/arts/under-style1.png"
+                                  alt=""
+                                  width={80}
+                                  height={100}
+                                  className="hover:rotate-6 transition-transform duration-300"
+                                />
+                              </div>
+                            )}
 
                             <span
-                              className="animate-pulse-soft"
+                              className="text-[14px]"
                               style={{
                                 color: config.textColor,
                                 fontFamily: "moulpali",
+                                textShadow: "1px 2px 4px #000000",
                               }}
                             >
                               វេលាម៉ោង {timeline.time}
                             </span>
                             <span
+                              className="text-[14px]"
                               style={{
                                 color: config.textColor,
                                 fontFamily: "moulpali",
+                                textShadow: "1px 2px 4px #000000",
                               }}
                             >
                               {timeline.name}
@@ -389,15 +447,6 @@ export default function SimpleTemplate({
                     </div>
                   </div>
                 ))}
-                <div className="mx-auto animate-fade-in-up animation-delay-1000">
-                  <Image
-                    src="/template/arts/underbar kbach 1.png"
-                    alt=""
-                    width={200}
-                    height={150}
-                    className="hover:scale-110 transition-transform duration-300"
-                  />
-                </div>
               </div>
             ))}
           </div>
@@ -407,11 +456,14 @@ export default function SimpleTemplate({
       {/* Event Location */}
       <div
         id="location"
-        className="mt-5 mx-auto max-w-md flex flex-col items-center animate-fade-in-up animation-delay-1200"
+        className="py-5 mx-auto max-w-md flex flex-col items-center animate-fade-in-up animation-delay-1200"
       >
         <h2
-          className="text-lg font-semibold text-center mb-4 animate-slide-in-left"
-          style={{ color: config?.textColor, fontFamily: "moul" }}
+          className="text-lg  text-center mb-4 animate-slide-in-left"
+          style={{
+            color: config?.textColor,
+            fontFamily: " Moul, sans-serif",
+          }}
         >
           {currentLanguage === "kh" ? "ទីតាំងកម្មវិធី" : "EVENT LOCATION"}
         </h2>
@@ -449,63 +501,14 @@ export default function SimpleTemplate({
       {/* Photo Gallery */}
       <div
         id="gallery"
-        className="mt-5 mx-auto max-w-md flex flex-col items-center animate-fade-in-up animation-delay-1400"
+        className="py-5 mx-auto max-w-md flex flex-col items-center animate-fade-in-up animation-delay-1400"
       >
         <h2
-          className="text-lg font-semibold text-center mb-4 animate-slide-in-right"
-          style={{ color: config?.textColor, fontFamily: "moul" }}
+          className="text-lg text-center mb-4 animate-slide-in-right"
+          style={{ color: config?.textColor, fontFamily: "moul, sans-serif" }}
         >
           {currentLanguage === "kh" ? "កម្រងរូបភាព" : "PHOTOS"}
         </h2>
-        {/* <div className="grid grid-cols-2 gap-2">
-          {config?.photo_gallary?.photo1 && (
-            <div className="py-2 animate-fade-in-up animation-delay-300">
-              <Image
-                src={config.photo_gallary.photo1}
-                alt="Photo 1"
-                width={200}
-                height={150}
-                className="hover:scale-110 hover:rotate-2 transition-all duration-300  rounded-lg"
-              />
-            </div>
-          )}
-
-          {config?.photo_gallary?.photo2 && (
-            <div className="py-2 animate-fade-in-up animation-delay-500">
-              <Image
-                src={config.photo_gallary.photo2}
-                alt="Photo 2"
-                width={200}
-                height={150}
-                className="hover:scale-110 hover:-rotate-2 transition-all duration-300  rounded-lg"
-              />
-            </div>
-          )}
-
-          {config?.photo_gallary?.photo3 && (
-            <div className="py-2 animate-fade-in-up animation-delay-700">
-              <Image
-                src={config.photo_gallary.photo3}
-                alt="Photo 3"
-                width={200}
-                height={150}
-                className="hover:scale-110 hover:rotate-1 transition-all duration-300  rounded-lg"
-              />
-            </div>
-          )}
-
-          {config?.photo_gallary?.photo4 && (
-            <div className="py-2 animate-fade-in-up animation-delay-900">
-              <Image
-                src={config.photo_gallary.photo4}
-                alt="Photo 4"
-                width={200}
-                height={150}
-                className="hover:scale-110 hover:-rotate-1 transition-all duration-300  rounded-lg"
-              />
-            </div>
-          )}
-        </div> */}
 
         <div className="my-4">
           <PhotoGallery photos={weddingPhotos} />
@@ -527,7 +530,7 @@ export default function SimpleTemplate({
         className="mt-5 mx-auto max-w-md flex flex-col items-center animate-fade-in-up animation-delay-1600"
       >
         <h2
-          className="text-lg font-semibold text-center mb-4 animate-slide-in-left"
+          className="text-lg text-center mb-4 animate-slide-in-left"
           style={{ color: config?.textColor, fontFamily: "moul" }}
         >
           {currentLanguage === "kh" ? "សារជូនពរ" : "GREETING MESSAGE"}
@@ -535,23 +538,19 @@ export default function SimpleTemplate({
 
         {/* Form Send */}
         {guestId && (
-          <form
+          <motion.form
             onSubmit={form.handleSubmit(onSubmit)}
-            className="space-y-3 sm:space-y-4 py-5 w-full px-5 flex flex-col items-center animate-fade-in animation-delay-300"
+            className="space-y-4 sm:space-y-5 py-6 w-full max-w-2xl mx-auto px-6 flex flex-col items-center rounded-xl bg-white/5 backdrop-blur-sm"
+            variants={fadeUpVariant}
           >
-            {/* <Input
-              {...form.register("name")}
-              placeholder={currentLanguage === "kh" ? "ឈ្មោះ" : "Name"}
-              className="bg-[#A5AE79]/30 border-0 focus-visible:ring-0 rounded-lg text-[#A5AE79] placeholder:text-[#A5AE79] w-full hover:bg-[#A5AE79]/40 focus:scale-105 transition-all duration-300"
-            /> */}
             <Controller
               name="status"
               control={form.control}
               render={({ field }) => (
                 <Select onValueChange={field.onChange} value={field.value}>
-                  <SelectTrigger className="bg-[#A5AE79]/30 border-0 focus-visible:ring-0 rounded-lg text-[#A5AE79] placeholder:text-[#A5AE79] w-full hover:bg-[#A5AE79]/40 focus:scale-105 transition-all duration-300">
+                  <SelectTrigger className="text-[#6f7c2b] bg-[#A5AE79]/40 border-0 border-[#A5AE79]/50 focus-visible:ring-2 focus-visible:ring-[#A5AE79] rounded-xl font-medium placeholder:text-[#A5AE79]/70 w-full hover:bg-[#A5AE79]/50 focus:scale-[1.02] transition-all duration-300">
                     <SelectValue
-                      className="text-[#A5AE79] placeholder:text-[#A5AE79]"
+                      className="text-[#2C3E1F]"
                       placeholder={
                         currentLanguage === "kh"
                           ? "តើអ្នកចូលរួមអត់?"
@@ -559,17 +558,24 @@ export default function SimpleTemplate({
                       }
                     />
                   </SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value={GuestStatus.CONFIRMED}>
+                  <SelectContent className="bg-white border-[#A5AE79]/30 text-[#6f7c2b] hover:text-[#6f7c2b]">
+                    <SelectItem
+                      value={GuestStatus.CONFIRMED}
+                      className="cursor-pointer hover:bg-[#A5AE79]/20"
+                    >
                       {currentLanguage === "kh" ? "ចូលរួម" : "Attending"}
                     </SelectItem>
-                    <SelectItem value={GuestStatus.REJECTED}>
+                    <SelectItem
+                      value={GuestStatus.REJECTED}
+                      className="cursor-pointer hover:bg-[#A5AE79]/20"
+                    >
                       {currentLanguage === "kh" ? "បដិសេធ" : "Cannot attend"}
                     </SelectItem>
                   </SelectContent>
                 </Select>
               )}
             />
+
             <Input
               {...form.register("number_guest")}
               placeholder={
@@ -578,57 +584,93 @@ export default function SimpleTemplate({
                   : "Number of guests"
               }
               type="number"
-              className="bg-[#A5AE79]/30 border-0 focus-visible:ring-0 rounded-lg text-[#A5AE79] placeholder:text-[#A5AE79] w-full hover:bg-[#A5AE79]/40 focus:scale-105 transition-all duration-300"
+              min="0"
+              className=" text-[#6f7c2b] bg-[#A5AE79]/40 border-0 border-[#A5AE79]/50 focus-visible:ring-2 focus-visible:ring-[#A5AE79] rounded-xl  font-medium placeholder:text-[#A5AE79]/70 w-full hover:bg-[#A5AE79]/50 focus:scale-[1.02] transition-all duration-300 "
             />
+
             <Textarea
               {...form.register("message")}
               placeholder={
                 currentLanguage === "kh" ? "សារជូនពរ" : "Greeting message"
               }
-              className="bg-[#A5AE79]/30 border-0 focus-visible:ring-0 rounded-lg text-[#A5AE79] placeholder:text-[#A5AE79] w-full hover:bg-[#A5AE79]/40 focus:scale-105 transition-all duration-300"
+              rows={4}
+              className="bg-[#A5AE79]/40 border-0 border-[#A5AE79]/50 focus-visible:ring-2 focus-visible:ring-[#A5AE79] rounded-xl text-[#6f7c2b] font-medium placeholder:text-[#A5AE79]/70 w-full hover:bg-[#A5AE79]/50 focus:scale-[1.02] transition-all duration-300 resize-none"
             />
-            <div className="text-[10px] text-center w-[200px] h-auto">
-              <button
-                type="submit"
-                className="text-[12px] text-center w-[200px] h-auto inline-block px-3 py-2 hover:scale-110 transform transition-all duration-300 active:scale-95"
-                style={{
-                  color: "white",
-                  fontFamily: "moul",
-                  backgroundImage: "url('/template/arts/button-kbach.png')",
-                  backgroundSize: "cover",
-                  backgroundPosition: "center",
-                  display: "inline-block",
-                  borderRadius: "8px",
-                }}
-              >
-                {currentLanguage === "kh" ? "ផ្ញើរ" : "Send"}
-              </button>
+
+            <div className="w-full flex justify-center mt-6">
+              <div className="text-[10px] text-center w-[200px] h-auto animate-fade-in animation-delay-500">
+                <button
+                  type="submit"
+                  className="text-[12px] text-center w-[200px] h-auto inline-block px-3 py-2 hover:scale-110 hover: transform transition-all duration-300"
+                  style={{
+                    color: "white",
+                    fontFamily: "moul",
+                    backgroundImage: "url('/template/arts/button-kbach.png')",
+                    backgroundSize: "cover",
+                    backgroundPosition: "center",
+                    display: "inline-block",
+                    borderRadius: "8px",
+                  }}
+                >
+                  {currentLanguage === "kh" ? "ផ្ញើរ" : "Send"}
+                </button>
+              </div>
             </div>
-          </form>
+          </motion.form>
         )}
 
-        <div className="p-5 w-full flex flex-col gap-2 animate-fade-in animation-delay-500">
-          {guests &&
-            guests.map((guest, key) => {
-              return (
-                <div
-                  key={key}
-                  className="bg-[#A5AE79]/30 p-5 rounded-lg hover:bg-[#A5AE79]/40 hover:scale-105 transition-all duration-300 animate-slide-in-left"
-                >
-                  <div className="text-[#A5AE79]">{guest?.name}</div>
-                  <div className="border-b border-[#A5AE79]"></div>
-                  <div className="text-center text-[#A5AE79] pt-5">
-                    "{guest?.wishing_note}"
+        <div className="w-full mx-auto mt-8">
+          <div className="relative">
+            {/* Top shadow */}
+            <div className="absolute top-0 left-0 right-0 h-12 bg-gradient-to-b from-white/60 to-transparent z-10 pointer-events-none rounded-t-xl" />
+
+            {/* Bottom shadow */}
+            <div className="absolute bottom-0 left-0 right-0 h-12 bg-gradient-to-t from-white/60 to-transparent z-10 pointer-events-none rounded-b-xl" />
+
+            <ScrollArea className="h-[600px] md:h-[700px] rounded-xl  border-[#A5AE79]/20 bg-white/5 backdrop-blur-sm">
+              <motion.div
+                className="p-4 md:p-6 w-full flex flex-col gap-4"
+                variants={staggerContainer}
+              >
+                {guests && guests.length > 0 ? (
+                  guests.map((guest, key) => (
+                    <motion.div
+                      key={key}
+                      className="bg-[#A5AE79]/30 backdrop-blur-sm p-5 md:p-6 rounded-xl border border-[#A5AE79]/30 hover:bg-[#A5AE79]/40 hover:border-[#A5AE79]/50"
+                      variants={slideInLeftVariant}
+                      whileHover={{
+                        scale: 1.01,
+                        y: -3,
+                        transition: { duration: 0.2 },
+                      }}
+                      whileTap={{ scale: 0.99 }}
+                    >
+                      <div className="text-[#A5AE79] text-base md:text-md font-semibold mb-2">
+                        {guest?.name}
+                      </div>
+                      <div className="border-b-2 border-[#A5AE79]/60 mb-4"></div>
+                      <div className="text-[#A5AE79] text-base md:text-lg leading-relaxed mb-4 italic">
+                        "{guest?.wishing_note}"
+                      </div>
+                      <div className="text-[#A5AE79] text-xs md:text-sm font-medium text-right">
+                        {formatDateCustom(
+                          guest?.sentAt ?? "",
+                          "DD-MM-YYYY | HH:mmA"
+                        )}
+                      </div>
+                    </motion.div>
+                  ))
+                ) : (
+                  <div className="text-center text-[#A5AE79]/60 py-12 text-base">
+                    {currentLanguage === "kh"
+                      ? "មិនទាន់មានសារជូនពរ"
+                      : "No messages yet"}
                   </div>
-                  <div className="text-center text-[#A5AE79] pt-5 text-xs">
-                    {formatDateCustom(
-                      guest?.sentAt ?? "",
-                      "DD-MM-YYYY | HH:mmA"
-                    )}
-                  </div>
-                </div>
-              );
-            })}
+                )}
+              </motion.div>
+              <ScrollBar orientation="vertical" />
+            </ScrollArea>
+          </div>
         </div>
       </div>
       <Footer />

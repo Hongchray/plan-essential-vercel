@@ -2,34 +2,36 @@
 
 import { motion } from "framer-motion";
 import Image from "next/image";
+import { Facebook, Instagram, Send } from "lucide-react";
+import { SiTiktok } from "@icons-pack/react-simple-icons";
 
 export function Footer() {
   return (
-    <footer className="relative py-16 ">
+    <footer className="relative py-10">
       <div className="absolute inset-0 opacity-20">
         <div className="absolute top-0 left-1/4 w-32 h-32 bg-[#A5AE79]/10 rounded-full blur-3xl" />
         <div className="absolute bottom-0 right-1/4 w-40 h-40 bg-[#A5AE79]/10 rounded-full blur-3xl" />
       </div>
 
       <div className="container mx-auto px-4 relative z-10">
-        <div className="flex items-center justify-center mb-8">
+        <div className="flex items-center justify-center mb-2">
           <div className="h-px w-20 bg-gradient-to-r from-transparent to-[#A5AE79]/30" />
           <div className="mx-4 text-[#A5AE79]/40 text-2xl">✦</div>
           <div className="h-px w-20 bg-gradient-to-l from-transparent to-[#A5AE79]/30" />
         </div>
 
         <motion.div
-          className="flex flex-col items-center justify-center gap-6"
+          className="flex flex-col items-center justify-center gap-2"
           initial={{ opacity: 0, y: 20 }}
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: false }}
           transition={{ duration: 0.8, ease: "easeOut" }}
         >
           <motion.div
-            className="text-lg text-[#A5AE79] font-light tracking-[0.2em] uppercase"
+            className="text-lg text-[#43652F]"
             transition={{ duration: 0.6 }}
           >
-            Design by Plan Essential
+            រចនាធៀបការឌីជិថល ដោយ
           </motion.div>
 
           <div className="flex items-center gap-2">
@@ -99,7 +101,56 @@ export function Footer() {
               </div>
             </a>
           </motion.div>
+          <motion.div
+            className="text-sm text-[#43652F] mt-2"
+            transition={{ duration: 0.6 }}
+          >
+            តាមដានបណ្តាញសង្គមរបស់ពួកយើង
+          </motion.div>
+          <div className="text-center space-y-8">
+            {/* Social Media Icons */}
+            <div className="flex items-center justify-center gap-4">
+              <a
+                href="https://t.me/planessential"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="group relative w-8 h-8 md:w-10 md:h-10 rounded-full bg-primary/20 hover:bg-primary/30 transition-all duration-300 flex items-center justify-center hover:scale-110"
+                aria-label="Telegram"
+              >
+                <Send className="w-4 h-4 md:w-5 md:h-5 text-primary group-hover:text-primary/90" />
+              </a>
 
+              <a
+                href="https://www.facebook.com/planessential"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="group relative w-8 h-8 md:w-10 md:h-10 rounded-full bg-primary/20 hover:bg-primary/30 transition-all duration-300 flex items-center justify-center hover:scale-110"
+                aria-label="Facebook"
+              >
+                <Facebook className="w-4 h-4 md:w-5 md:h-5 text-primary group-hover:text-primary/90 fill-current" />
+              </a>
+
+              <a
+                href="https://www.tiktok.com/@planessential"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="group relative w-8 h-8 md:w-10 md:h-10 rounded-full bg-primary/20 hover:bg-primary/30 transition-all duration-300 flex items-center justify-center hover:scale-110"
+                aria-label="TikTok"
+              >
+                <SiTiktok className="w-4 h-4 md:w-5 md:h-5 text-primary group-hover:text-primary/90" />
+              </a>
+
+              <a
+                href="https://www.tiktok.com/@planessential"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="group relative w-8 h-8 md:w-10 md:h-10 rounded-full bg-primary/20 hover:bg-primary/30 transition-all duration-300 flex items-center justify-center hover:scale-110"
+                aria-label="Instagram"
+              >
+                <Instagram className="w-4 h-4 md:w-5 md:h-5 text-primary group-hover:text-primary/90" />
+              </a>
+            </div>
+          </div>
           <motion.div
             className="mt-4 text-[#A5AE79]/30 text-sm"
             initial={{ opacity: 0 }}

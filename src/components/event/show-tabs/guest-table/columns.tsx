@@ -94,7 +94,7 @@ const ActionsCell = ({ row }: { row: any }) => {
 
   const getInviteLink = () => {
     if (typeof window === "undefined") return "";
-    return `${window.location.origin}/invitation/${row.original.event?.slug}?guest=${row.original.id}`;
+    return `${window.location.origin}/invitation/${row.original.event?.id}?guest=${row.original.id}`;
   };
 
   const invLink = getInviteLink();
