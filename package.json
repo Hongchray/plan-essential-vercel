@@ -1,6 +1,6 @@
 {
-  "name": "app-eyvan",
-  "version": "0.1.0",
+  "name": "app-plan-essential",
+  "version": "1.0.0",
   "private": true,
   "scripts": {
     "prisma:generate": "prisma generate",

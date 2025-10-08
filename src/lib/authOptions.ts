@@ -43,11 +43,7 @@ export const authOptions: AuthOptions = {
 
         const user = await prisma.user.findUnique({
           where: { phone: credentials.phone },
-          include: {
-            userPlan: {
-              include: { plan: true },
-            },
-          },
+          include: { userPlan: { include: { plan: true } } },
         });
         if (!user) {
           throw new Error("login.user_not_found");
@@ -95,8 +91,7 @@ export const authOptions: AuthOptions = {
         if (!credentials?.authData) return null;
         const authData = JSON.parse(credentials.authData);
         const botToken = process.env.TELEGRAM_BOT_TOKEN;
-        if (!botToken) return null;
-        if (!verifyTelegramAuth(authData, botToken)) return null;
+        if (!botToken || !verifyTelegramAuth(authData, botToken)) return null;
 
         const telegramId = authData.id.toString();
         const firstName = authData.first_name;
@@ -107,7 +102,7 @@ export const authOptions: AuthOptions = {
         let user = await prisma.user.findUnique({ where: { telegramId } });
 
         if (user) {
-          const updatedUser = await prisma.user.update({
+          user = await prisma.user.update({
             where: { telegramId },
             data: {
               name: `${firstName} ${lastName}`.trim(),
@@ -191,21 +186,47 @@ export const authOptions: AuthOptions = {
       },
     }),
   ],
+
   pages: {
     signIn: "/login",
     error: "/login",
   },
+
   session: {
     strategy: "jwt",
     maxAge: 30 * 24 * 60 * 60,
   },
+
   callbacks: {
     async jwt({ token, user }) {
+      // When user logs in, merge user info
       if (user) {
         Object.assign(token, user);
+      } else if (token?.id) {
+        // Always fetch fresh user from DB on subsequent calls
+        const dbUser = await prisma.user.findUnique({
+          where: { id: token.id as string },
+          include: { userPlan: { include: { plan: true } } },
+        });
+
+        if (dbUser) {
+          token.name = dbUser.name;
+          token.username = dbUser.username;
+          token.photoUrl = dbUser.photoUrl;
+          token.updatedAt = dbUser.updatedAt;
+          token.plans = dbUser.userPlan.map((up) => ({
+            id: up.plan.id,
+            name: up.plan.name,
+            price: up.plan.price,
+            limit_guests: up.limit_guests,
+            limit_template: up.limit_template,
+            limit_export_excel: up.limit_export_excel,
+          }));
+        }
       }
       return token;
     },
+
     async session({ session, token }) {
       if (token) {
         session.user = {

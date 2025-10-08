@@ -69,9 +69,9 @@ export async function POST(req: Request) {
         data: {
           userId: user.id,
           planId: freePlan.id,
-          limit_guests: 350,
-          limit_template: 1,
-          limit_export_excel: false,
+          limit_guests: freePlan.limit_guests,
+          limit_template: freePlan.limit_template,
+          limit_export_excel: freePlan.limit_export_excel,
         },
       });
     }

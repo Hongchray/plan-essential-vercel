@@ -38,7 +38,13 @@ export default function TabGuest({
   const [loading, setLoading] = useState(true);
   const { t } = useTranslation("common");
   const { data: session } = useSession();
+  const [totalGuests, setTotalGuests] = useState<number>(0);
 
+  const fetchGuestCount = async () => {
+    const res = await fetch(`/api/admin/event/${paramId}/guest-count`);
+    const data = await res.json();
+    setTotalGuests(data.totalGuests);
+  };
   useEffect(() => {
     async function fetchData() {
       setLoading(true);
@@ -60,6 +66,7 @@ export default function TabGuest({
       }
     }
     fetchData();
+    fetchGuestCount();
   }, [paramId, params]);
 
   return (
@@ -74,7 +81,9 @@ export default function TabGuest({
           pageCount={meta.pageCount}
           total={meta.total}
           serverPagination={true}
-          loading={loading} // pass loading state
+          loading={loading}
+          totalGuests={totalGuests}
+          session={session}
         />
       </>
     </div>

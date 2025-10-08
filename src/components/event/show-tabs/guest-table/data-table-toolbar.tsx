@@ -41,11 +41,15 @@ import { useSession } from "next-auth/react";
 interface DataTableToolbarProps<TData> {
   table: Table<TData>;
   serverPagination?: boolean;
+  totalGuests?: number; // optional, default to 0
+  session?: unknown; // optional, default to null
 }
 
 export function DataTableToolbar<TData>({
   table,
   serverPagination = false,
+  totalGuests = 0,
+  session = null, // default to null
 }: DataTableToolbarProps<TData>) {
   const router = useRouter();
   const params = useParams();
@@ -54,27 +58,14 @@ export function DataTableToolbar<TData>({
   const eventId = params.id as string;
   const searchParams = useSearchParams();
   const { t } = useTranslation("common");
-  const { data: session } = useSession();
   const limitGuests = session?.user?.plans?.[0]?.limit_guests ?? 0;
   const limitExportExcel =
     session?.user?.plans?.[0]?.limit_export_excel ?? false;
-
-  const [totalGuests, setTotalGuests] = useState<number>(0);
 
   const [searchValue, setSearchValue] = useState(
     searchParams.get("search") || ""
   );
   const timeoutRef = useRef<NodeJS.Timeout | null>(null);
-
-  useEffect(() => {
-    const fetchGuestCount = async () => {
-      const res = await fetch(`/api/admin/event/${eventId}/guest-count`);
-      const data = await res.json();
-      setTotalGuests(data.totalGuests);
-    };
-
-    fetchGuestCount();
-  }, [eventId]);
 
   const handleSearch = (value: string) => {
     setSearchValue(value);
