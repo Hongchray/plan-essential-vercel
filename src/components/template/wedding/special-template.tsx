@@ -497,7 +497,7 @@ export default function SpecialTemplate({
               </motion.h2>
 
               <motion.div
-                className="mt-5 text-[16px] text-center min-w-[250px] md:min-w-[320px] min-h-[100px] max-h-[100px] max-w-[600px] truncate inline-flex items-center justify-center px-3"
+                className=" text-[16px] text-center min-w-[250px] md:min-w-[320px] min-h-[100px] max-h-[100px] max-w-[600px] truncate inline-flex items-center justify-center px-3"
                 style={{
                   fontFamily: "moul",
                   backgroundImage: `url('${config?.name_bar}')`,
@@ -730,11 +730,12 @@ export default function SpecialTemplate({
                   <div className="absolute inset-0 flex items-start justify-center bg-opacity-10 rounded">
                     <div className="text-center text-white px-4 pt-8">
                       <motion.h2
-                        className="text-2xl md:text-4xl font-bold mb-2 tracking-wide"
+                        className="text-xl md:text-2xl tracking-wide"
                         initial={{ opacity: 0, y: 30 }}
                         whileInView={{ opacity: 1, y: 0 }}
                         viewport={{ once: false }}
                         transition={{ duration: 0.6 }}
+                        style={{ fontFamily: "moul" }}
                       >
                         ចំនួនថ្ងៃរាប់ថយក្រោយ
                       </motion.h2>
@@ -948,26 +949,29 @@ export default function SpecialTemplate({
               </motion.div>
 
               <div id="khqr">
-                <motion.div
-                  initial={{ opacity: 0, y: 50 }}
-                  whileInView={{ opacity: 1, y: 0 }}
-                  viewport={{ once: false }}
-                  transition={{ duration: 0.8 }}
-                  className="py-5"
-                >
-                  <motion.h2
-                    className="text-2xl  text-center py-4"
-                    style={{ color: "#dfab24", fontFamily: "moul" }}
+                {config?.khqr && (
+                  <motion.div
+                    initial={{ opacity: 0, y: 50 }}
+                    whileInView={{ opacity: 1, y: 0 }}
+                    viewport={{ once: false }}
+                    transition={{ duration: 0.8 }}
+                    className="py-5"
                   >
-                    ចងដៃតាមរយៈ KHQR
-                  </motion.h2>
-                  <Image
-                    src={config?.khqr}
-                    alt="image"
-                    width={300}
-                    height={200}
-                  />
-                </motion.div>
+                    <motion.h2
+                      className="text-2xl  text-center py-4"
+                      style={{ color: "#dfab24", fontFamily: "moul" }}
+                    >
+                      ចងដៃតាមរយៈ KHQR
+                    </motion.h2>
+                    <Image
+                      src={config?.khqr}
+                      alt="image"
+                      width={300}
+                      height={200}
+                    />
+                  </motion.div>
+                )}
+
                 {/* QR Code */}
                 {guestId && (
                   <motion.div
@@ -1100,8 +1104,7 @@ export default function SpecialTemplate({
                         style={{
                           color: "white",
                           fontFamily: "moul",
-                          backgroundImage:
-                            "url('/template/arts/button-kbach.png')",
+                          backgroundImage: `url('${config?.button_background}')`,
                           backgroundSize: "cover",
                           backgroundPosition: "center",
                           borderRadius: "12px",
@@ -1116,15 +1119,21 @@ export default function SpecialTemplate({
                 )}
 
                 {/* Guest Messages Section */}
-                <div className="w-full  mx-auto mt-8 ">
-                  <div className="relative">
-                    <ScrollArea className="h-[600px] md:h-[700px] rounded-xl border border-[#A5AE79]/20 bg-white/5 backdrop-blur-sm">
-                      <motion.div
-                        className="p-4 md:p-6 w-full flex flex-col gap-4"
-                        variants={staggerContainer}
-                      >
-                        {guests && guests.length > 0 ? (
-                          guests.map((guest, key) => (
+                {guests && guests.length > 0 ? (
+                  <div className="w-full mx-auto mt-8">
+                    <div className="relative">
+                      {/* Top shadow */}
+                      <div className="absolute top-0 left-0 right-0 h-12 bg-gradient-to-b from-white/60 to-transparent z-10 pointer-events-none rounded-t-xl" />
+
+                      {/* Bottom shadow */}
+                      <div className="absolute bottom-0 left-0 right-0 h-12 bg-gradient-to-t from-white/60 to-transparent z-10 pointer-events-none rounded-b-xl" />
+
+                      <ScrollArea className="h-[600px] md:h-[700px] rounded-xl  border-[#A5AE79]/20 bg-white/5 backdrop-blur-sm">
+                        <motion.div
+                          className="p-4 md:p-6 w-full flex flex-col gap-4"
+                          variants={staggerContainer}
+                        >
+                          {guests.map((guest, key) => (
                             <motion.div
                               key={key}
                               className="bg-[#A5AE79]/30 backdrop-blur-sm p-5 md:p-6 rounded-xl border border-[#A5AE79]/30 hover:bg-[#A5AE79]/40 hover:border-[#A5AE79]/50"
@@ -1136,7 +1145,7 @@ export default function SpecialTemplate({
                               }}
                               whileTap={{ scale: 0.99 }}
                             >
-                              <div className="text-[#A5AE79] text-lg md:text-xl font-semibold mb-2">
+                              <div className="text-[#A5AE79] text-base md:text-md font-semibold mb-2">
                                 {guest?.name}
                               </div>
                               <div className="border-b-2 border-[#A5AE79]/60 mb-4"></div>
@@ -1150,19 +1159,19 @@ export default function SpecialTemplate({
                                 )}
                               </div>
                             </motion.div>
-                          ))
-                        ) : (
-                          <div className="text-center text-[#A5AE79]/60 py-12 text-base">
-                            {currentLanguage === "kh"
-                              ? "មិនទាន់មានសារជូនពរ"
-                              : "No messages yet"}
-                          </div>
-                        )}
-                      </motion.div>
-                      <ScrollBar orientation="vertical" />
-                    </ScrollArea>
+                          ))}
+                        </motion.div>
+                        <ScrollBar orientation="vertical" />
+                      </ScrollArea>
+                    </div>
                   </div>
-                </div>
+                ) : (
+                  <div className="text-center text-[#A5AE79]/60 py-2 text-base">
+                    {currentLanguage === "kh"
+                      ? "មិនទាន់មានសារជូនពរ"
+                      : "No messages yet"}
+                  </div>
+                )}
               </motion.div>
               <Footer />
               <motion.div

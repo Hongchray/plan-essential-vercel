@@ -76,19 +76,25 @@ export async function POST(
 ) {
   const { id } = await context.params; // event id
   const data = await req.json();
-  console.log("🚀 POST /guest called with data:", data);
 
   try {
-    if (!data.userId) {
-      console.error("❌ Missing userId in request body");
-      return NextResponse.json(
-        { message: "User ID is required" },
-        { status: 400 }
-      );
+    // if (!data.userId) {
+    //   console.error("❌ Missing userId in request body");
+    //   return NextResponse.json(
+    //     { message: "User ID is required" },
+    //     { status: 400 }
+    //   );
+    // }
+
+    const event = await prisma.event.findUnique({
+      where: { id },
+    });
+    if (!event) {
+      return NextResponse.json({ message: "Event not found" }, { status: 400 });
     }
 
     const userPlan = await prisma.userPlan.findFirst({
-      where: { userId: data.userId },
+      where: { userId: event.userId },
     });
 
     if (!userPlan) {
@@ -122,8 +128,6 @@ export async function POST(
       );
     }
 
-    // Create the guest only if limit is not reached
-    console.log("📝 Creating guest...");
     const guest = await prisma.guest.create({
       data: {
         name: data.name,
@@ -152,7 +156,6 @@ export async function POST(
       },
     });
 
-    console.log("✅ Guest created successfully:", guest);
     return NextResponse.json({ guest, limitReached: false }, { status: 200 });
   } catch (error) {
     console.error("❌ Error creating guest:", error);
