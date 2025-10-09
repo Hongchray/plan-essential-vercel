@@ -108,7 +108,6 @@ export async function POST(
 
     console.log(`👥 Current guest count for event ${id}:`, guestCount);
 
-    // Check if limit is reached BEFORE creating the guest
     if (userPlan.limit_guests > 0 && guestCount >= userPlan.limit_guests) {
       console.warn(
         `⚠️ Guest limit reached for userId ${data.userId}: ${userPlan.limit_guests}`
@@ -122,7 +121,6 @@ export async function POST(
       );
     }
 
-    // Create the guest only if limit is not reached
     console.log("📝 Creating guest...");
     const guest = await prisma.guest.create({
       data: {
