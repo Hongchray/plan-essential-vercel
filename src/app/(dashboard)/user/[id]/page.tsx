@@ -76,6 +76,8 @@ export default function UserPage() {
   const [planDialogOpen, setPlanDialogOpen] = useState(false);
   const [editPlanDialogOpen, setEditPlanDialogOpen] = useState(false);
   const [selectedPlan, setSelectedPlan] = useState("");
+  const [userSelectedNewPlan, setUserSelectedNewPlan] = useState(false);
+
   const { t } = useTranslation("common");
   const [planLimits, setPlanLimits] = useState({
     limit_guests: 0,
@@ -116,15 +118,19 @@ export default function UserPage() {
   useEffect(() => {
     if (!selectedPlan) return;
 
-    const plan = plans.find((p) => p.id === selectedPlan);
-    if (plan) {
+    // If user manually selects a new plan, mark it
+    setUserSelectedNewPlan(true);
+
+    // Only apply plan defaults if user *manually changed* plan
+    const selected = plans.find((p) => p.id === selectedPlan);
+    if (selected && userSelectedNewPlan) {
       setPlanLimits({
-        limit_guests: plan.limit_guests,
-        limit_template: plan.limit_template,
-        limit_export_excel: plan.limit_export_excel,
+        limit_guests: selected.limit_guests,
+        limit_template: selected.limit_template,
+        limit_export_excel: selected.limit_export_excel,
       });
     }
-  }, [selectedPlan, plans]);
+  }, [selectedPlan]);
 
   const handleAssignPlan = async () => {
     if (!selectedPlan || !user) return;
@@ -165,6 +171,20 @@ export default function UserPage() {
       setSubmitting(false);
     }
   };
+
+  useEffect(() => {
+    if (!planDialogOpen || !user?.userPlan?.length) return;
+
+    // user already has a plan → show from userPlan table
+    const existingPlan = user.userPlan[0];
+    setSelectedPlan(existingPlan.planId);
+    setPlanLimits({
+      limit_guests: existingPlan.limit_guests ?? 0,
+      limit_template: existingPlan.limit_template ?? 0,
+      limit_export_excel: existingPlan.limit_export_excel ?? false,
+    });
+    setUserSelectedNewPlan(false); // reset manual change flag
+  }, [planDialogOpen, user]);
 
   const handleEditPlan = async () => {
     if (!editingUserPlan || !user || !selectedPlan) return;
@@ -432,20 +452,7 @@ export default function UserPage() {
                               value={selectedPlan}
                               onValueChange={(planId) => {
                                 setSelectedPlan(planId);
-
-                                // auto-fill recommended limits from selected plan
-                                const selected = plans.find(
-                                  (p) => p.id === planId
-                                );
-                                if (selected) {
-                                  setPlanLimits({
-                                    limit_guests: selected.limit_guests ?? 0,
-                                    limit_template:
-                                      selected.limit_template ?? 0,
-                                    limit_export_excel:
-                                      selected.limit_export_excel ?? false,
-                                  });
-                                }
+                                setUserSelectedNewPlan(true);
                               }}
                             >
                               <SelectTrigger>
