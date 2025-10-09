@@ -1,5 +1,7 @@
 import { prisma } from "@/lib/prisma";
 import { NextRequest, NextResponse } from "next/server";
+import { getServerSession } from "next-auth/next";
+import { authOptions } from "@/lib/authOptions"; // your NextAuth options
 
 export async function GET(
   req: NextRequest,
@@ -76,52 +78,45 @@ export async function POST(
 ) {
   const { id } = await context.params; // event id
   const data = await req.json();
-  console.log("🚀 POST /guest called with data:", data);
 
   try {
-    if (!data.userId) {
-      console.error("❌ Missing userId in request body");
-      return NextResponse.json(
-        { message: "User ID is required" },
-        { status: 400 }
-      );
+    // ✅ Get logged-in user session
+    const session = await getServerSession(authOptions);
+    if (!session?.user?.id) {
+      return NextResponse.json({ message: "Not logged in" }, { status: 401 });
     }
 
-    const userPlan = await prisma.userPlan.findFirst({
-      where: { userId: data.userId },
-    });
+    const currentUser = session.user;
 
-    if (!userPlan) {
-      console.error(`❌ User plan not found for userId: ${data.userId}`);
-      return NextResponse.json(
-        { message: "User plan not found" },
-        { status: 400 }
-      );
+    const event = await prisma.event.findUnique({ where: { id } });
+    if (!event) {
+      return NextResponse.json({ message: "Event not found" }, { status: 400 });
     }
 
-    console.log("📋 User plan:", userPlan);
+    // ✅ Check plan only if user is NOT admin
+    if (currentUser.role !== "admin") {
+      const userPlan = await prisma.userPlan.findFirst({
+        where: { userId: event.userId },
+      });
 
-    // Count current guests for this event
-    const guestCount = await prisma.guest.count({
-      where: { eventId: id },
-    });
+      if (!userPlan) {
+        return NextResponse.json(
+          { message: "User plan not found" },
+          { status: 400 }
+        );
+      }
 
-    console.log(`👥 Current guest count for event ${id}:`, guestCount);
+      const guestCount = await prisma.guest.count({ where: { eventId: id } });
 
-    if (userPlan.limit_guests > 0 && guestCount >= userPlan.limit_guests) {
-      console.warn(
-        `⚠️ Guest limit reached for userId ${data.userId}: ${userPlan.limit_guests}`
-      );
-      return NextResponse.json(
-        {
-          message: "You have reached your guest limit.",
-          limitReached: true,
-        },
-        { status: 403 } // Use 403 Forbidden status
-      );
+      if (userPlan.limit_guests > 0 && guestCount >= userPlan.limit_guests) {
+        return NextResponse.json(
+          { message: "You have reached your guest limit.", limitReached: true },
+          { status: 403 }
+        );
+      }
     }
 
-    console.log("📝 Creating guest...");
+    // ✅ Create guest
     const guest = await prisma.guest.create({
       data: {
         name: data.name,
@@ -150,7 +145,6 @@ export async function POST(
       },
     });
 
-    console.log("✅ Guest created successfully:", guest);
     return NextResponse.json({ guest, limitReached: false }, { status: 200 });
   } catch (error) {
     console.error("❌ Error creating guest:", error);

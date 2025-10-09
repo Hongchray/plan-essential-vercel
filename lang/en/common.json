@@ -498,7 +498,16 @@
       "phone_required": "Phone number is required",
       "phone_max": "Phone number cannot exceed 50 characters",
       "tag_required": "At least one tag is required",
-      "group_required": "At least one group is required"
+      "group_required": "At least one group is required",
+      "not_logged_in": "Not logged in!",
+      "create_success": "Guest created successfully!",
+      "update_success": "Guest updated successfully!",
+      "create_error": "An error occurred while creating the guest.",
+      "limit_reached": "You have reached your guest limit!",
+      "limit_reached_partial": "Import partially completed. Guest limit reached after importing {{imported}} guests.",
+      "import_success": "Successfully imported {{imported}} guests",
+      "import_skipped": "Skipped {{skipped}} duplicates",
+      "create_failed": "Failed to create guest"
     }
   },
 
@@ -616,7 +625,13 @@
       "Riel": "Riel (៛)",
       "Dollar": "Dollar ($)",
       "search_guest": "Search guest...",
-      "no_guest_found": "No guest found"
+      "no_guest_found": "No guest found",
+      "duplicate_guest": "This guest already has a gift.",
+      "save_failed": "Failed to save gift.",
+      "add_success": "Gift added successfully!",
+      "update_success": "Gift updated successfully!",
+      "save_error": "An error occurred while saving the gift.",
+      "loading_guests": "Loading guests..."
     }
   },
   "add_template": {

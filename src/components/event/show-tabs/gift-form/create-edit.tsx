@@ -26,6 +26,7 @@ import {
   ChevronsUpDown,
   Search,
   X,
+  Loader2,
 } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { Label } from "@/components/ui/label";
@@ -54,6 +55,7 @@ import { PlusIcon } from "lucide-react";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { Circle, CircleDot, CircleCheck } from "lucide-react";
 import { CustomCurrencyInput } from "./components/custom-currency-input";
+import { toast } from "sonner";
 export function CreateEditGiftForm({
   id,
   onSelect,
@@ -190,27 +192,44 @@ export function CreateEditGiftForm({
   const onSubmit = async (values: GiftFormData) => {
     console.log(values);
     setLoading(true);
-    if (id) {
-      await fetch(`/api/admin/event/${eventId}/gift/${id}`, {
-        method: "PUT",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify(values),
-      });
-    } else {
-      await fetch(`/api/admin/event/${eventId}/gift`, {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify(values),
-      });
+
+    try {
+      const res = await fetch(
+        id
+          ? `/api/admin/event/${eventId}/gift/${id}`
+          : `/api/admin/event/${eventId}/gift`,
+        {
+          method: id ? "PUT" : "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(values),
+        }
+      );
+
+      const data = await res.json();
+
+      if (!res.ok) {
+        if (data.duplicate) {
+          toast.warning(t("gift.form.duplicate_guest"));
+        } else {
+          toast.error(t("gift.form.save_failed"));
+        }
+        setLoading(false);
+        return;
+      }
+
+      toast.success(
+        id ? t("gift.form.update_success") : t("gift.form.add_success")
+      );
+
+      setDialogOpen(false);
+      form.reset();
+      router.refresh();
+    } catch (error) {
+      console.error(error);
+      toast.error(t("gift.form.save_error"));
+    } finally {
+      setLoading(false);
     }
-    setLoading(false);
-    setDialogOpen(false);
-    form.reset();
-    router.refresh();
   };
 
   useEffect(() => {
@@ -360,81 +379,89 @@ export function CreateEditGiftForm({
                             onValueChange={setSearchQuery}
                             placeholder={t("gift.form.search_guest")}
                           />
+
                           <CommandList
                             className="max-h-60 overflow-y-auto"
-                            onWheel={(e) => {
-                              e.stopPropagation();
-                            }}
+                            onWheel={(e) => e.stopPropagation()}
                           >
-                            <CommandEmpty>
-                              {t("gift.form.no_guest_found")}
-                            </CommandEmpty>
-                            <CommandGroup>
-                              {filteredGuests.map((guest) => (
-                                <CommandItem
-                                  key={guest.id}
-                                  value={guest.name}
-                                  onSelect={() => {
-                                    handleGuestSelect(guest);
-                                    onSelect?.(guest);
-                                    setOpen(false);
-                                  }}
-                                  className={cn(
-                                    "border mt-1",
-                                    selectedGuest?.id === guest.id
-                                      ? "!bg-rose-50 !hover:bg-rose-50 !text-primary !hover:text-primary border-rose-500 border-2"
-                                      : " "
-                                  )}
-                                >
-                                  <div className="flex items-center gap-3 py-2">
-                                    {" "}
-                                    {/* add some vertical padding */}
-                                    <CircleCheck
-                                      className={cn(
-                                        "h-4 w-4 mt-0.5",
-                                        selectedGuest?.id === guest.id
-                                          ? "opacity-100 text-primary"
-                                          : "opacity-0"
-                                      )}
-                                    />
-                                    <Avatar className="h-8 w-8">
-                                      {guest.image ? (
-                                        <AvatarImage src={guest.image} />
-                                      ) : (
-                                        <AvatarFallback className="font-bold text-[12px]">
-                                          {guest.name.slice(0, 2).toUpperCase()}
-                                        </AvatarFallback>
-                                      )}
-                                    </Avatar>
-                                    <div className="flex flex-col gap-1 min-w-0">
-                                      <span className="font-medium text-sm">
-                                        {guest.name}
-                                      </span>
-                                      <div className="flex gap-1 flex-wrap text-xs text-muted-foreground">
-                                        {guest.guestGroup?.map((gg) => (
-                                          <Badge
-                                            key={gg.id}
-                                            variant="default"
-                                            className="text-[10px] px-2 py-0.5"
-                                          >
-                                            {gg.group?.name_kh}
-                                          </Badge>
-                                        ))}
-                                        {guest.guestTag?.map((gt) => (
-                                          <Badge
-                                            key={gt.id}
-                                            variant="secondary"
-                                            className="text-[10px] px-2 py-0.5"
-                                          >
-                                            {gt.tag?.name_kh}
-                                          </Badge>
-                                        ))}
+                            {guestsLoading ? (
+                              // 🔄 Show loading spinner or skeleton
+                              <div className="flex items-center justify-center py-6 text-sm text-muted-foreground">
+                                <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                                {t("gift.form.loading_guests")}
+                              </div>
+                            ) : filteredGuests.length === 0 ? (
+                              <CommandEmpty>
+                                {t("gift.form.no_guest_found")}
+                              </CommandEmpty>
+                            ) : (
+                              <CommandGroup>
+                                {filteredGuests.map((guest) => (
+                                  <CommandItem
+                                    key={guest.id}
+                                    value={guest.name}
+                                    onSelect={() => {
+                                      handleGuestSelect(guest);
+                                      onSelect?.(guest);
+                                      setOpen(false);
+                                    }}
+                                    className={cn(
+                                      "border mt-1",
+                                      selectedGuest?.id === guest.id
+                                        ? "!bg-rose-50 !hover:bg-rose-50 !text-primary !hover:text-primary border-rose-500 border-2"
+                                        : ""
+                                    )}
+                                  >
+                                    <div className="flex items-center gap-3 py-2">
+                                      <CircleCheck
+                                        className={cn(
+                                          "h-4 w-4 mt-0.5",
+                                          selectedGuest?.id === guest.id
+                                            ? "opacity-100 text-primary"
+                                            : "opacity-0"
+                                        )}
+                                      />
+                                      <Avatar className="h-8 w-8">
+                                        {guest.image ? (
+                                          <AvatarImage src={guest.image} />
+                                        ) : (
+                                          <AvatarFallback className="font-bold text-[12px]">
+                                            {guest.name
+                                              .slice(0, 2)
+                                              .toUpperCase()}
+                                          </AvatarFallback>
+                                        )}
+                                      </Avatar>
+                                      <div className="flex flex-col gap-1 min-w-0">
+                                        <span className="font-medium text-sm">
+                                          {guest.name}
+                                        </span>
+                                        <div className="flex gap-1 flex-wrap text-xs text-muted-foreground">
+                                          {guest.guestGroup?.map((gg) => (
+                                            <Badge
+                                              key={gg.id}
+                                              variant="default"
+                                              className="text-[10px] px-2 py-0.5"
+                                            >
+                                              {gg.group?.name_kh}
+                                            </Badge>
+                                          ))}
+                                          {guest.guestTag?.map((gt) => (
+                                            <Badge
+                                              key={gt.id}
+                                              variant="secondary"
+                                              className="text-[10px] px-2 py-0.5"
+                                            >
+                                              {gt.tag?.name_kh}
+                                            </Badge>
+                                          ))}
+                                        </div>
                                       </div>
                                     </div>
-                                  </div>
-                                </CommandItem>
-                              ))}
-                            </CommandGroup>
+                                  </CommandItem>
+                                ))}
+                              </CommandGroup>
+                            )}
                           </CommandList>
                         </Command>
                       </PopoverContent>

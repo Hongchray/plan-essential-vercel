@@ -32,7 +32,7 @@ export default function EventUserView({ data }: { data: any[] }) {
       </div>
 
       {data.length === 0 ? (
-        <div className="flex flex-col items-center justify-center bg-gray-50 border border-gray-200 rounded-xl p-10 shadow-sm text-center">
+        <div className="flex flex-col items-center justify-center  border  rounded-xl p-10 shadow-sm text-center">
           <Calendar className="h-16 w-16 text-gray-400 mb-4" />
           <h2 className="text-lg font-semibold text-gray-600 mb-2">
             {t("EventPage.noEventsTitle")}

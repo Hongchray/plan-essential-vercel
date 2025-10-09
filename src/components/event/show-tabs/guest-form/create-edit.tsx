@@ -102,7 +102,7 @@ export function CreateEditForm({ id }: { id: string }) {
     setLoading(true);
 
     if (!session?.user?.id) {
-      toast.error("Not logged in!");
+      toast.error(t("guest_form.message.not_logged_in"));
       setLoading(false);
       return;
     }
@@ -114,41 +114,46 @@ export function CreateEditForm({ id }: { id: string }) {
       if (id) {
         res = await fetch(`/api/admin/event/${eventId}/guest/${id}`, {
           method: "PUT",
-          body: JSON.stringify(values),
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(payload),
         });
       } else {
         res = await fetch(`/api/admin/event/${eventId}/guest`, {
           method: "POST",
-          body: JSON.stringify(values),
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(payload),
         });
       }
 
       const data = await res.json();
 
-      // Check if the request was successful
       if (!res.ok) {
-        // Handle limit reached or other errors
         if (data.limitReached) {
-          toast.error("You have reached your guest limit.");
+          toast.error(t("guest_form.message.limit_reached"));
         } else {
-          toast.error(data.message || "Failed to create guest");
+          toast.error(data.message || t("guest_form.message.create_failed"));
         }
         setLoading(false);
         return;
       }
 
-      // Success case
-      toast.success("Guest created successfully!");
+      toast.success(
+        id
+          ? t("guest_form.message.update_success")
+          : t("guest_form.message.create_success")
+      );
+
       setDialogOpen(false);
       form.reset();
       router.refresh();
-      setLoading(false);
     } catch (err) {
       console.error(err);
-      toast.error("An error occurred while creating the guest.");
+      toast.error(t("guest_form.message.create_error"));
+    } finally {
       setLoading(false);
     }
   };
+
   const groupOptions = useMemo(
     () =>
       groupList.map((group) => ({

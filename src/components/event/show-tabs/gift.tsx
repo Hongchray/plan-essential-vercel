@@ -10,10 +10,12 @@ import { Loading } from "@/components/composable/loading/loading";
 import { currencyFormatters } from "@/utils/currency";
 import { useTranslation } from "react-i18next";
 import { EXCHANGE_RATES } from "@/utils/exchangeRates";
-import { Users, DollarSign, TrendingUp } from "lucide-react";
+import { Users, DollarSign, TrendingUp, ScanQrCode } from "lucide-react";
 import { IconMoneybagPlus } from "@tabler/icons-react";
 import { ScrollArea, ScrollBar } from "@/components/ui/scroll-area";
-
+import { QrCode } from "lucide-react";
+import { Button } from "@/components/ui/button";
+import { FloatingQRButton } from "./gift-table/floating-qr-button";
 interface GiftAggregates {
   received: number;
   by_currency: any[];
@@ -234,6 +236,8 @@ export default function TabGift({
           serverPagination={true}
           loading={loading}
         />
+
+        <FloatingQRButton />
       </>
     </div>
   );

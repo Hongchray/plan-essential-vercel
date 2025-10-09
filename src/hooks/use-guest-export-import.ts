@@ -1,11 +1,11 @@
 // Excel Import/Export Hook
 import { useState } from "react";
 import { toast } from "sonner";
-
+import { useTranslation } from "react-i18next";
 export const useExcelOperations = (eventId: string) => {
   const [isExporting, setIsExporting] = useState(false);
   const [isImporting, setIsImporting] = useState(false);
-
+  const { t } = useTranslation("common");
   const exportGuestList = async () => {
     setIsExporting(true);
     try {
@@ -56,21 +56,29 @@ export const useExcelOperations = (eventId: string) => {
 
       if (!response.ok) {
         if (result.limitReached) {
-          toast.error("You have reached your guest limit!");
+          toast.error(t("guest_form.message.limit_reached"));
         } else {
-          throw new Error(result.error || "Import failed");
+          throw new Error(
+            result.error || t("guest_form.message.create_failed")
+          );
         }
         return result;
       }
 
       if (result.limitReached) {
         toast.warning(
-          `Import partially completed. Guest limit reached after importing ${result.imported} guests.`
+          t("guest_form.message.limit_reached_partial", {
+            imported: result.imported,
+          })
         );
       } else {
         const messages = [
-          `Successfully imported ${result.imported} guests`,
-          result.skipped > 0 ? `Skipped ${result.skipped} duplicates` : null,
+          t("guest_form.message.import_success", { imported: result.imported }),
+          result.skipped > 0
+            ? t("guest_form.message.import_skipped", {
+                skipped: result.skipped,
+              })
+            : null,
         ].filter(Boolean);
 
         toast.success(messages.join(", "));
@@ -83,7 +91,9 @@ export const useExcelOperations = (eventId: string) => {
       return result;
     } catch (error) {
       toast.error(
-        error instanceof Error ? error.message : "Failed to import guest list"
+        error instanceof Error
+          ? error.message
+          : t("guest_form.message.create_error")
       );
       throw error;
     } finally {

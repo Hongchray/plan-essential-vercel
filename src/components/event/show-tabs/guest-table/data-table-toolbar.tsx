@@ -170,11 +170,13 @@ export function DataTableToolbar<TData>({
         )}
       </div>
       <div className="flex gap-4">
-        {session?.user?.role !== "admin" && (
-          <div className="ml-2 text-md text-gray-500 flex items-center">
-            <User2Icon /> {totalGuests}/{limitGuests}
-          </div>
-        )}
+        <div className="ml-2 text-md text-gray-500 flex items-center">
+          {session?.user?.role !== "admin" && (
+            <>
+              <User2Icon /> {totalGuests}/{limitGuests}
+            </>
+          )}
+        </div>
 
         {(session?.user?.role === "admin" || totalGuests < limitGuests) && (
           <CreateEditForm id="" />

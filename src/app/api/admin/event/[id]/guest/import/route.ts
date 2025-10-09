@@ -37,6 +37,25 @@ export async function POST(req: NextRequest) {
 
     const fileBuffer = Buffer.from(await file.arrayBuffer());
 
+    // ✅ If user is admin → skip guest limit and userPlan validation
+    if (session.user.role === "admin") {
+      const result = await importGuestsFromExcel(
+        eventId,
+        fileBuffer,
+        session.user.id,
+        true
+      ); // true = admin override
+      return NextResponse.json({
+        message: "Import completed (admin override)",
+        imported: result.imported,
+        skipped: result.skipped,
+        errors: result.errors,
+        limitReached: false,
+        success: true,
+      });
+    }
+
+    // 👇 Non-admin users → must follow plan limits
     const result = await importGuestsFromExcel(
       eventId,
       fileBuffer,

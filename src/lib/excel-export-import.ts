@@ -335,115 +335,71 @@ export function parseExcelFile(fileBuffer: Buffer): GuestImportData[] {
 export async function importGuestsFromExcel(
   eventId: string,
   fileBuffer: Buffer,
-  userId: string
-): Promise<{
-  imported: number;
-  skipped: number;
-  errors: string[];
-  limitReached: boolean;
-}> {
+  userId: string,
+  isAdmin: boolean = false
+) {
   try {
     const guestData = parseExcelFile(fileBuffer);
     const errors: string[] = [];
     let imported = 0;
     let skipped = 0;
-    let limitReached = false;
 
-    // Get user plan
-    const userPlan = await prisma.userPlan.findFirst({
-      where: { userId },
-    });
+    // 🟢 Skip plan limit if admin
+    if (!isAdmin) {
+      const event = await prisma.event.findUnique({ where: { id: eventId } });
+      if (!event) throw new Error("Event not found");
 
-    if (!userPlan) {
-      throw new Error("User plan not found");
-    }
+      const userPlan = await prisma.userPlan.findFirst({
+        where: { userId: event.userId },
+      });
 
-    const BATCH_SIZE = 100;
-
-    for (let i = 0; i < guestData.length; i += BATCH_SIZE) {
-      const batch = guestData.slice(i, i + BATCH_SIZE);
-
-      for (const [index, guest] of batch.entries()) {
-        const rowNumber = i + index + 2;
-
-        try {
-          // ✅ Check limit BEFORE creating guest
-          if (userPlan.limit_guests > 0) {
-            const currentGuestCount = await prisma.guest.count({
-              where: { eventId },
-            });
-
-            if (currentGuestCount >= userPlan.limit_guests) {
-              limitReached = true;
-              skipped++;
-              errors.push(
-                `Row ${rowNumber}: Skipped - guest limit of ${userPlan.limit_guests} reached`
-              );
-              continue; // skip this guest
-            }
-          }
-
-          // Check if guest already exists
-          const existingGuest = await prisma.guest.findFirst({
-            where: {
-              eventId,
-              name: guest.name,
-              OR: guest.email
-                ? [{ email: guest.email }, { phone: guest.phone }]
-                : [{ phone: guest.phone }].filter(Boolean),
-            },
-          });
-
-          if (existingGuest) {
-            skipped++;
-            errors.push(
-              `Row ${rowNumber}: Guest "${guest.name}" already exists`
-            );
-            continue;
-          }
-
-          // Create guest
-          await prisma.guest.create({
-            data: {
-              eventId,
-              name: guest.name,
-              email: guest.email,
-              phone: guest.phone,
-              address: guest.address,
-              note: guest.note,
-              status: guest.status || "pending",
-              wishing_note: guest.wishing_note,
-              number_of_guests: guest.number_of_guests || 0,
-              is_invited: guest.is_invited || false,
-            },
-          });
-
-          imported++;
-        } catch (error) {
-          skipped++;
-          errors.push(
-            `Row ${rowNumber}: ${
-              error instanceof Error ? error.message : "Unknown error occurred"
-            }`
-          );
-        }
+      if (!userPlan) {
+        return {
+          imported,
+          skipped,
+          errors,
+          limitReached: true,
+          error: "User plan not found",
+        };
       }
 
-      // Stop processing if limit reached
-      if (limitReached) {
-        const remaining = guestData.length - (i + batch.length);
-        if (remaining > 0) {
-          skipped += remaining;
-          errors.push(`${remaining} remaining guests skipped due to limit`);
-        }
-        break;
+      const guestCount = await prisma.guest.count({
+        where: { eventId },
+      });
+
+      if (guestCount >= userPlan.limit_guests) {
+        return {
+          imported,
+          skipped,
+          errors,
+          limitReached: true,
+          error: "Guest limit reached",
+        };
       }
     }
 
-    return { imported, skipped, errors, limitReached };
+    // ✅ proceed to import normally
+    for (const guest of guestData) {
+      try {
+        await prisma.guest.create({
+          data: {
+            name: guest.name,
+            phone: guest.phone,
+            email: guest.email,
+            eventId,
+          },
+        });
+        imported++;
+      } catch (err: any) {
+        skipped++;
+        errors.push(err.message);
+      }
+    }
+
+    return { imported, skipped, errors, limitReached: false };
   } catch (error) {
-    console.error("Error importing guests from Excel:", error);
-    throw new Error("Failed to import guests from Excel");
+    console.error("Import failed:", error);
+    throw error;
   }
 }
 

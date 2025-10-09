@@ -99,23 +99,50 @@ export async function POST(
   req: NextRequest,
   { params }: { params: Promise<{ id: string }> }
 ) {
-  const { id } = await params; // ✅ await here too
+  const { id } = await params; // event id
   const { guestId, note, payment_type, currency_type, amount_usd, amount_khr } =
     await req.json();
 
-  const gift = await prisma.gift.create({
-    data: {
-      eventId: id,
-      guestId,
-      note,
-      payment_type,
-      currency_type,
-      amount_usd,
-      amount_khr,
-    },
-  });
+  try {
+    // 🔍 Check if this guest already has a gift for this event
+    const existingGift = await prisma.gift.findFirst({
+      where: {
+        eventId: id,
+        guestId,
+      },
+    });
 
-  return NextResponse.json(gift);
+    if (existingGift) {
+      return NextResponse.json(
+        { message: "This guest already has a gift.", duplicate: true },
+        { status: 400 }
+      );
+    }
+
+    // ✅ Create new gift
+    const gift = await prisma.gift.create({
+      data: {
+        eventId: id,
+        guestId,
+        note,
+        payment_type,
+        currency_type,
+        amount_usd,
+        amount_khr,
+      },
+    });
+
+    return NextResponse.json(gift, { status: 201 });
+  } catch (error) {
+    console.error("❌ Error creating gift:", error);
+    return NextResponse.json(
+      {
+        message: "Internal server error",
+        error: error instanceof Error ? error.message : String(error),
+      },
+      { status: 500 }
+    );
+  }
 }
 
 export async function DELETE(req: NextRequest) {
